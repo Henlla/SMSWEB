@@ -1,4 +1,4 @@
-package com.example.smsweb.Models;
+package com.example.smsweb.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

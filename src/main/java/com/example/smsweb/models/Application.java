@@ -1,6 +1,5 @@
-package com.example.smsweb.Models;
+package com.example.smsweb.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
