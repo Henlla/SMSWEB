@@ -18,9 +18,5 @@ public class GenericController<T> {
     public ResponseEntity<List<T>> findall(){
         return new ResponseEntity<List<T>>(dao.findAll(), HttpStatus.OK);
     }
-    @PostMapping("/post")
-    public ResponseEntity<T> post(@RequestBody T t){
-        dao.save(t);
-        return new ResponseEntity<T>(t,HttpStatus.OK);
-    }
+
 }

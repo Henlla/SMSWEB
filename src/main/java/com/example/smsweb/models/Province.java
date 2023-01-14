@@ -1,4 +1,4 @@
-package com.example.smsweb.Models;
+package com.example.smsweb.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class District {
+public class Province {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -22,17 +22,12 @@ public class District {
     @Column(name = "_name")
     private String name;
     @Basic
-    @Column(name = "_prefix")
-    private String prefix;
-    @Basic
-    @Column(name = "_province_id")
-    private int provinceId;
-    @ManyToOne
-    @JoinColumn(name = "_province_id", referencedColumnName = "id",insertable = false,updatable = false)
-    private Province provinceByProvinceId;
-    @OneToMany(mappedBy = "districtByDistrictId")
+    @Column(name = "_code")
+    private String code;
+    @OneToMany(mappedBy = "provinceByProvinceId")
+    private Collection<District> districtsById;
+    @OneToMany(mappedBy = "provinceByProvinceId")
     private Collection<Profile> profilesById;
-    @OneToMany(mappedBy = "districtByDistrictId")
+    @OneToMany(mappedBy = "provinceByProvinceId")
     private Collection<Ward> wardsById;
-
 }
