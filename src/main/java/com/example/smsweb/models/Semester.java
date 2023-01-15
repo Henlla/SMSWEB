@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Semester {
     @Column(name = "major_id")
     private Integer majorId;
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "major_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Major majorByMajorId;
 }
