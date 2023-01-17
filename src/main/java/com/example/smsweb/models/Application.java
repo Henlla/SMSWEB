@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,9 +34,11 @@ public class Application {
     private Integer applicationTypeId;
     @ManyToOne
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JsonManagedReference
     private Student studentByStudentId;
     @ManyToOne
     @JoinColumn(name = "application_type_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JsonManagedReference
     private ApplicationType applicationTypeByApplicationTypeId;
 
 }

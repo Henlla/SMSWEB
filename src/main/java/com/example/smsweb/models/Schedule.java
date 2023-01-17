@@ -1,5 +1,7 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +31,9 @@ public class Schedule {
     private Integer classId;
     @ManyToOne
     @JoinColumn(name = "class_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JsonManagedReference
     private Classses classsesByClassId;
     @OneToMany(mappedBy = "scheduleByScheduleId")
+    @JsonBackReference
     private Collection<ScheduleDetail> scheduleDetailsById;
 }

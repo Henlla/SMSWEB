@@ -43,6 +43,7 @@ public class WebConfig {
                 .cors().and().csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/accounts/**").permitAll()
+                .requestMatchers("/libs/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
