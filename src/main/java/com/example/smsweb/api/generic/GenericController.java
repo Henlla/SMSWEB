@@ -16,4 +16,5 @@ public class GenericController<T> {
         return new ResponseEntity<List<T>>(dao.findAll(), HttpStatus.OK);
     }
 
+    
 }
