@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class Classses {
     @Column(name = "major_id")
     private Integer majorId;
     @OneToMany(mappedBy = "classsesByClassId")
-    @JsonManagedReference
+    @JsonBackReference
     private Collection<Schedule> schedulesById;
 
 }

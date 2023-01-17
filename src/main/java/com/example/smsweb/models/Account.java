@@ -34,7 +34,7 @@ public class Account implements UserDetails {
     private Integer roleId;
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id",insertable = false,updatable = false)
-//    @JsonManagedReference
+    @JsonManagedReference
     private Role roleByRoleId;
     @OneToMany(mappedBy = "accountByAccountId")
     @JsonBackReference

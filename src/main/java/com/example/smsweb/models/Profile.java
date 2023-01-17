@@ -1,5 +1,7 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,18 +58,24 @@ public class Profile {
     private Integer accountId;
     @ManyToOne
     @JoinColumn(name = "province_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JsonManagedReference
     private Province provinceByProvinceId;
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "district_id", referencedColumnName = "id",insertable = false,updatable = false)
     private District districtByDistrictId;
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "ward_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Ward wardByWardId;
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "account_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Account accountByAccountId;
     @OneToMany(mappedBy = "profileByProfileId")
+    @JsonBackReference
     private Collection<Staff> staffById;
     @OneToMany(mappedBy = "profileByProfileId")
+    @JsonBackReference
     private Collection<Teacher> teachersById;
 }
