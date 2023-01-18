@@ -3,6 +3,7 @@ package com.example.smsweb.models;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class Classses {
@@ -23,7 +24,8 @@ public class Classses {
     @Column(name = "major_id")
     private Integer majorId;
     @OneToMany(mappedBy = "classsesByClassId")
-    private Collection<Schedule> schedulesById;
+    @JsonBackReference(value = "schedulesById")
+    private List<Schedule> schedulesById;
 
     public int getId() {
         return id;

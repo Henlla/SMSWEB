@@ -1,8 +1,10 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class District {
@@ -21,11 +23,17 @@ public class District {
     private Object provinceId;
     @ManyToOne
     @JoinColumn(name = "_province_id", referencedColumnName = "id",insertable = false,updatable = false)
-    private Province provinceByProvinceId;
+//    @JsonManagedReference(value = "provinceByProvinceId")
+    @JsonIgnore
+    private Province districtProvince;
     @OneToMany(mappedBy = "districtByDistrictId")
-    private Collection<Profile> profilesById;
+//    @JsonBackReference(value = "profile-district")
+    @JsonIgnore
+    private List<Profile> profilesById;
     @OneToMany(mappedBy = "districtByDistrictId")
-    private Collection<Ward> wardsById;
+//    @JsonBackReference(value = "wardsById")
+    @JsonIgnore
+    private List<Ward> wardsById;
 
     public Object getId() {
         return id;
