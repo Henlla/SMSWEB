@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
