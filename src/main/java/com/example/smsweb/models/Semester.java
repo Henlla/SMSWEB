@@ -1,11 +1,14 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Collection;
 
 @Entity
 @Getter
@@ -20,11 +23,7 @@ public class Semester {
     @Basic
     @Column(name = "semester_code")
     private String semesterCode;
-    @Basic
-    @Column(name = "major_id")
-    private Integer majorId;
-    @ManyToOne
-    @JsonManagedReference
-    @JoinColumn(name = "major_id", referencedColumnName = "id",insertable = false,updatable = false)
-    private Major majorByMajorId;
+    @OneToMany(mappedBy = "semesterBySemesterId")
+    @JsonManagedReference("subjectSemesterBackReference")
+    private Collection<Subject> subjectsById;
 }
