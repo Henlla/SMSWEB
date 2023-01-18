@@ -1,9 +1,9 @@
 package com.example.smsweb.api.service;
 
 import com.example.smsweb.api.exception.ErrorHandler;
+import com.example.smsweb.models.Account;
 import com.example.smsweb.api.di.irepository.IAccount;
 import com.example.smsweb.api.di.repository.AccountRepository;
-import com.example.smsweb.models.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 public class AccountService implements IAccount , UserDetailsService {
     @Autowired
-    AccountRepository dao;
+    AccountRepository accountRepository;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -25,10 +25,15 @@ public class AccountService implements IAccount , UserDetailsService {
     public void save(Account account) {
         try {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
-            dao.save(account);
+            accountRepository.save(account);
         }catch (Exception e){
             throw new ErrorHandler("Cannot save data");
         }
+    }
+
+    @Override
+    public void update(Account account) {
+
     }
 
     @Override
@@ -38,17 +43,17 @@ public class AccountService implements IAccount , UserDetailsService {
 
     @Override
     public List<Account> findAll() {
-        return dao.findAll();
+        return accountRepository.findAll();
     }
 
     @Override
     public Account findOne(int id) {
-        return dao.findById(id).orElseThrow(()->new ErrorHandler("Can not find student with id = "+1));
+        return accountRepository.findById(id).orElseThrow(()->new ErrorHandler("Can not find student with id = "+1));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = dao.findAccountByUsername(username);
+        Account account = accountRepository.findAccountByUsername(username);
         if(account==null){
             throw new UsernameNotFoundException(username + " not found ");
         }

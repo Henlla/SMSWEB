@@ -1,10 +1,19 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Collection;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -17,79 +26,12 @@ public class Student {
     @Column(name = "profile_id")
     private Integer profileId;
     @OneToMany(mappedBy = "studentByStudentId")
+    @JsonBackReference
     private Collection<Application> applicationsById;
     @OneToMany(mappedBy = "studentByStudentId")
+    @JsonBackReference
     private Collection<MajorStudent> majorStudentsById;
     @OneToMany(mappedBy = "studentByStudentId")
+    @JsonBackReference
     private Collection<StudentSubject> studentSubjectsById;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getStudentCard() {
-        return studentCard;
-    }
-
-    public void setStudentCard(String studentCard) {
-        this.studentCard = studentCard;
-    }
-
-    public Integer getProfileId() {
-        return profileId;
-    }
-
-    public void setProfileId(Integer profileId) {
-        this.profileId = profileId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Student student = (Student) o;
-
-        if (id != student.id) return false;
-        if (studentCard != null ? !studentCard.equals(student.studentCard) : student.studentCard != null) return false;
-        if (profileId != null ? !profileId.equals(student.profileId) : student.profileId != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (studentCard != null ? studentCard.hashCode() : 0);
-        result = 31 * result + (profileId != null ? profileId.hashCode() : 0);
-        return result;
-    }
-
-    public Collection<Application> getApplicationsById() {
-        return applicationsById;
-    }
-
-    public void setApplicationsById(Collection<Application> applicationsById) {
-        this.applicationsById = applicationsById;
-    }
-
-    public Collection<MajorStudent> getMajorStudentsById() {
-        return majorStudentsById;
-    }
-
-    public void setMajorStudentsById(Collection<MajorStudent> majorStudentsById) {
-        this.majorStudentsById = majorStudentsById;
-    }
-
-    public Collection<StudentSubject> getStudentSubjectsById() {
-        return studentSubjectsById;
-    }
-
-    public void setStudentSubjectsById(Collection<StudentSubject> studentSubjectsById) {
-        this.studentSubjectsById = studentSubjectsById;
-    }
 }

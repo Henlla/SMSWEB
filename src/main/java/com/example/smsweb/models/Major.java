@@ -26,10 +26,18 @@ public class Major {
     @Basic
     @Column(name = "major_name")
     private String majorName;
+    @Basic
+    @Column(name = "subject_id")
+    private Integer subjectId;
+    @ManyToOne
+    @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JsonManagedReference
+    private Subject subjectBySubjectId;
     @OneToMany(mappedBy = "majorByMajorId")
-    @JsonManagedReference("majorMajorStudentBackReference")
+    @JsonBackReference
     private Collection<MajorStudent> majorStudentsById;
     @OneToMany(mappedBy = "majorByMajorId")
-    @JsonManagedReference("subjectMajorBackReference")
-    private Collection<Subject> subjectsById;
+    @JsonBackReference
+    private Collection<Semester> semestersById;
+
 }

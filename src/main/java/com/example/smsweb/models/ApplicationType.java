@@ -1,11 +1,20 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Collection;
 
 @Entity
 @Table(name = "application_type", schema = "smdb", catalog = "")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ApplicationType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -15,49 +24,6 @@ public class ApplicationType {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "applicationTypeByApplicationTypeId")
+    @JsonBackReference
     private Collection<Application> applicationsById;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ApplicationType that = (ApplicationType) o;
-
-        if (id != that.id) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
-    }
-
-    public Collection<Application> getApplicationsById() {
-        return applicationsById;
-    }
-
-    public void setApplicationsById(Collection<Application> applicationsById) {
-        this.applicationsById = applicationsById;
-    }
 }

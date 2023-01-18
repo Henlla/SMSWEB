@@ -42,7 +42,7 @@ public class WebConfig {
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/accounts/findOne/{id}","/api/major/**","/api/subject/**").hasAuthority("ADMIN")
+                .requestMatchers("/api/accounts/get/{id}").hasAuthority("ADMIN")
                 .requestMatchers("/api/accounts/**").permitAll()
                 .requestMatchers("/libs/**").permitAll()
                 .anyRequest().authenticated()

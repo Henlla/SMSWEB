@@ -1,12 +1,17 @@
 package com.example.smsweb.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.util.*;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
 @Getter
@@ -29,11 +34,11 @@ public class Account implements UserDetails {
     private Integer roleId;
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id",insertable = false,updatable = false)
-//    @JsonManagedReference(value = "roleByRoleId")
+    @JsonManagedReference
     private Role roleByRoleId;
     @OneToMany(mappedBy = "accountByAccountId")
-//    @JsonBackReference(value = "profile-account")
-    private List<Profile> accountProfile;
+    @JsonBackReference
+    private Collection<Profile> profilesById;
 
     @Override
     @JsonIgnore
