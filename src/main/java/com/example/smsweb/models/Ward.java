@@ -19,7 +19,7 @@ public class Ward {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private int id;
+    private Object id;
     @Basic
     @Column(name = "_name")
     private String name;
@@ -28,10 +28,10 @@ public class Ward {
     private String prefix;
     @Basic
     @Column(name = "_province_id")
-    private int provinceId;
+    private Object provinceId;
     @Basic
     @Column(name = "_district_id")
-    private int districtId;
+    private Object districtId;
     @OneToMany(mappedBy = "wardByWardId")
     @JsonIgnore
     private List<Profile> profilesById;
@@ -43,4 +43,5 @@ public class Ward {
     @JsonIgnore
     @JoinColumn(name = "_district_id", referencedColumnName = "id",insertable = false,updatable = false)
     private District districtByDistrictId;
+
 }
