@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "application_type", schema = "smdb", catalog = "")
@@ -24,6 +25,6 @@ public class ApplicationType {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "applicationTypeByApplicationTypeId")
-    @JsonBackReference
-    private Collection<Application> applicationsById;
+    @JsonBackReference(value = "applicationsById")
+    private List<Application> applicationsById;
 }

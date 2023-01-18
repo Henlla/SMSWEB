@@ -31,13 +31,13 @@ public class Major {
     private Integer subjectId;
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference
+    @JsonManagedReference(value = "subjectBySubjectId")
     private Subject subjectBySubjectId;
     @OneToMany(mappedBy = "majorByMajorId")
-    @JsonBackReference
+    @JsonBackReference(value = "majorStudentsById")
     private Collection<MajorStudent> majorStudentsById;
     @OneToMany(mappedBy = "majorByMajorId")
-    @JsonBackReference
+    @JsonBackReference(value = "semestersById")
     private Collection<Semester> semestersById;
 
 }

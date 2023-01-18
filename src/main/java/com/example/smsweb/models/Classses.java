@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,7 +34,7 @@ public class Classses {
     @Column(name = "major_id")
     private Integer majorId;
     @OneToMany(mappedBy = "classsesByClassId")
-    @JsonBackReference
-    private Collection<Schedule> schedulesById;
+    @JsonBackReference(value = "schedulesById")
+    private List<Schedule> schedulesById;
 
 }

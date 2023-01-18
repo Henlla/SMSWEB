@@ -34,11 +34,11 @@ public class Application {
     private Integer applicationTypeId;
     @ManyToOne
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference
+    @JsonManagedReference(value = "studentByStudentId")
     private Student studentByStudentId;
     @ManyToOne
     @JoinColumn(name = "application_type_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference
+    @JsonManagedReference(value = "applicationTypeByApplicationTypeId")
     private ApplicationType applicationTypeByApplicationTypeId;
 
 }

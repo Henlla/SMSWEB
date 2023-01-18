@@ -28,11 +28,11 @@ public class ScheduleDetail {
     @Column(name = "schedule_id")
     private Integer scheduleId;
     @ManyToOne
-    @JsonManagedReference
+    @JsonManagedReference(value = "subjectBySubjectId")
     @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Subject subjectBySubjectId;
     @ManyToOne
-    @JsonManagedReference
+    @JsonManagedReference(value = "scheduleByScheduleId")
     @JoinColumn(name = "schedule_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Schedule scheduleByScheduleId;
 

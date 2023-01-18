@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,12 +33,12 @@ public class Subject {
     @Column(name = "semester")
     private Integer semester;
     @OneToMany(mappedBy = "subjectBySubjectId")
-    @JsonBackReference
-    private Collection<Major> majorsById;
+    @JsonBackReference(value = "majorsById")
+    private List<Major> majorsById;
     @OneToMany(mappedBy = "subjectBySubjectId")
-    @JsonBackReference
-    private Collection<ScheduleDetail> scheduleDetailsById;
+    @JsonBackReference(value = "scheduleDetailsById")
+    private List<ScheduleDetail> scheduleDetailsById;
     @OneToMany(mappedBy = "subjectBySubjectId")
-    @JsonBackReference
-    private Collection<StudentSubject> studentSubjectsById;
+    @JsonBackReference(value = "studentSubjectsById")
+    private List<StudentSubject> studentSubjectsById;
 }

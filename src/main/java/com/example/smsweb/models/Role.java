@@ -1,17 +1,18 @@
 package com.example.smsweb.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode
 public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -21,6 +22,7 @@ public class Role {
     @Column(name = "role_name")
     private String roleName;
     @OneToMany(mappedBy = "roleByRoleId")
-    @JsonBackReference
-    private Collection<Account> accountsById;
+    @JsonManagedReference
+    private List<Account> accountsById;
+
 }
