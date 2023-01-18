@@ -1,12 +1,16 @@
 package com.example.smsweb.api.controller;
 
 import com.example.smsweb.dto.LoginResponse;
+import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JwtTokenProvider;
 import com.example.smsweb.models.Account;
 import com.example.smsweb.api.di.irepository.IAccount;
 import com.example.smsweb.api.generic.GenericController;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalTime;
 
 @RestController
 @RequestMapping("api/accounts")
@@ -26,10 +32,11 @@ public class AccountController extends GenericController<Account> {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping(value = "/",headers = {"content-type=application/json" })
-    public ResponseEntity<?> postAccount(@RequestBody Account account){
-        iAccount.save(account);
-        return new ResponseEntity<>(account, HttpStatus.OK);
+    @PostMapping(value = "/")
+    public ResponseEntity<?> postAccount(@RequestParam("account")String account) throws JsonProcessingException {
+        Account accountConvert = new ObjectMapper().readValue(account, Account.class);
+        iAccount.save(accountConvert);
+        return new ResponseEntity<>(new ResponseModel("success",LocalTime.now().toString(),accountConvert), HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -58,6 +65,28 @@ public class AccountController extends GenericController<Account> {
         Account account = iAccount.findOne(id);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
+
+    @PutMapping("changePassword/{id}")
+    public ResponseEntity<?> changePasswordAccount(@PathVariable("id") Integer id,
+                                                   @RequestParam("password") String password,
+                                                   @RequestParam("newPassword") String newPassword) {
+        try {
+            log.info("START method change password width params id= {},password ={}, newPassword= {} ",id,password,newPassword);
+            Account account = iAccount.findOne(id);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(account, password)
+            );
+            Account getAccount = (Account) authentication.getPrincipal();
+            getAccount.setPassword(newPassword);
+            iAccount.save(getAccount);
+            log.info("FINISH method changePasswordAccount :::::::::");
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), getAccount));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel(e.getMessage(), LocalTime.now().toString(), null));
+        }
+    }
+
 
 
 }

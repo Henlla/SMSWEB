@@ -1,6 +1,8 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="id")
 public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -21,7 +24,7 @@ public class Teacher {
     @Column(name = "profile_id")
     private Integer profileId;
     @ManyToOne
-    @JsonManagedReference
+//    @JsonManagedReference(value = "profile-teacher")
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Profile profileByProfileId;
 }

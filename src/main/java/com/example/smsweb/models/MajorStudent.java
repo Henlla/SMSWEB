@@ -26,10 +26,10 @@ public class MajorStudent {
     private Integer studentId;
     @ManyToOne
     @JoinColumn(name = "major_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference
+    @JsonManagedReference(value = "majorByMajorId")
     private Major majorByMajorId;
     @ManyToOne
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference
+    @JsonManagedReference(value = "studentByStudentId")
     private Student studentByStudentId;
 }
