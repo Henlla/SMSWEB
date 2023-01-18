@@ -2,9 +2,9 @@ package com.example.smsweb.api.controller;
 
 import com.example.smsweb.dto.LoginResponse;
 import com.example.smsweb.jwt.JwtTokenProvider;
-import com.example.smsweb.models.Account;
 import com.example.smsweb.api.di.irepository.IAccount;
 import com.example.smsweb.api.generic.GenericController;
+import com.example.smsweb.models.Account;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,12 +52,5 @@ public class AccountController extends GenericController<Account> {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoginResponse(null, null, "failed"));
     }
-
-    @GetMapping("/get/{id}")
-    public ResponseEntity<?> getAccount(@PathVariable("id")Integer id){
-        Account account = iAccount.findOne(id);
-        return new ResponseEntity<>(account, HttpStatus.OK);
-    }
-
 
 }
