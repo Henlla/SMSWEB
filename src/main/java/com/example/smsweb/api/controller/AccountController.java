@@ -28,12 +28,8 @@ public class AccountController extends GenericController<Account> {
 
     @PostMapping(value = "/",headers = {"content-type=application/json" })
     public ResponseEntity<?> postAccount(@RequestBody Account account){
-        try {
-            iAccount.save(account);
-            return new ResponseEntity<>(account, HttpStatus.OK);
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
+        iAccount.save(account);
+        return new ResponseEntity<>(account, HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -55,6 +51,12 @@ public class AccountController extends GenericController<Account> {
             log.info("FAILED method login :::::::::");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoginResponse(null, null, "failed"));
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getAccount(@PathVariable("id")Integer id){
+        Account account = iAccount.findOne(id);
+        return new ResponseEntity<>(account, HttpStatus.OK);
     }
 
 

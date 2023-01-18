@@ -1,5 +1,6 @@
 package com.example.smsweb.api.service;
 
+import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.models.Account;
 import com.example.smsweb.api.di.irepository.IAccount;
 import com.example.smsweb.api.di.repository.AccountRepository;
@@ -22,8 +23,12 @@ public class AccountService implements IAccount , UserDetailsService {
 
     @Override
     public void save(Account account) {
-        account.setPassword(passwordEncoder.encode(account.getPassword()));
-        accountRepository.save(account);
+        try {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+            accountRepository.save(account);
+        }catch (Exception e){
+            throw new ErrorHandler("Cannot save data");
+        }
     }
 
     @Override
@@ -43,7 +48,7 @@ public class AccountService implements IAccount , UserDetailsService {
 
     @Override
     public Account findOne(int id) {
-        return accountRepository.findById(id).orElse(null);
+        return accountRepository.findById(id).orElseThrow(()->new ErrorHandler("Can not find student with id = "+1));
     }
 
     @Override
