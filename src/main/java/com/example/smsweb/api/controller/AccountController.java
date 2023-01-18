@@ -3,9 +3,9 @@ package com.example.smsweb.api.controller;
 import com.example.smsweb.dto.LoginResponse;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JwtTokenProvider;
-import com.example.smsweb.models.Account;
 import com.example.smsweb.api.di.irepository.IAccount;
 import com.example.smsweb.api.generic.GenericController;
+import com.example.smsweb.models.Account;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +86,4 @@ public class AccountController extends GenericController<Account> {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel(e.getMessage(), LocalTime.now().toString(), null));
         }
     }
-
-
-
 }
