@@ -1,14 +1,13 @@
 package com.example.smsweb.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.Hibernate;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -31,13 +30,13 @@ public class Profile {
     private String dob;
     @Basic
     @Column(name = "province_id")
-    private Object provinceId;
+    private Integer provinceId;
     @Basic
     @Column(name = "district_id")
-    private Object districtId;
+    private Integer districtId;
     @Basic
     @Column(name = "ward_id")
-    private Object wardId;
+    private Integer wardId;
     @Basic
     @Column(name = "address")
     private String address;
@@ -58,24 +57,22 @@ public class Profile {
     private Integer accountId;
     @ManyToOne
     @JoinColumn(name = "province_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference
-    private Province provinceByProvinceId;
+
+    private Province profileProvince;
     @ManyToOne
-    @JsonManagedReference
     @JoinColumn(name = "district_id", referencedColumnName = "id",insertable = false,updatable = false)
     private District districtByDistrictId;
     @ManyToOne
-    @JsonManagedReference
     @JoinColumn(name = "ward_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Ward wardByWardId;
-    @ManyToOne
-    @JsonManagedReference
+    @OneToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JsonBackReference
     private Account accountByAccountId;
     @OneToMany(mappedBy = "profileByProfileId")
-    @JsonBackReference
-    private Collection<Staff> staffById;
+    private List<Staff> staffById;
     @OneToMany(mappedBy = "profileByProfileId")
-    @JsonBackReference
-    private Collection<Teacher> teachersById;
+    private List<Teacher> teachersById;
+
+
 }

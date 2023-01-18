@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "student_subject", schema = "smdb", catalog = "")
@@ -31,17 +32,17 @@ public class StudentSubject {
     @Column(name = "status")
     private String status;
     @OneToMany(mappedBy = "studentSubjectByStudentSubjectId")
-    @JsonBackReference
-    private Collection<Attendance> attendancesById;
+    @JsonBackReference(value = "attendancesById")
+    private List<Attendance> attendancesById;
     @OneToMany(mappedBy = "studentSubjectByStudentSubjectId")
-    @JsonBackReference
-    private Collection<Mark> marksById;
+    @JsonBackReference(value = "marksById")
+    private List<Mark> marksById;
     @ManyToOne
-    @JsonManagedReference
+    @JsonManagedReference(value = "subjectBySubjectId")
     @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Subject subjectBySubjectId;
     @ManyToOne
-    @JsonManagedReference
+    @JsonManagedReference(value = "studentByStudentId")
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Student studentByStudentId;
 }

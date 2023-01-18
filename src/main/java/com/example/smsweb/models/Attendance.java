@@ -31,7 +31,7 @@ public class Attendance {
     private String note;
     @ManyToOne
     @JoinColumn(name = "student_subject_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference
+    @JsonManagedReference(value = "studentSubjectByStudentSubjectId")
     private StudentSubject studentSubjectByStudentSubjectId;
 
 }
