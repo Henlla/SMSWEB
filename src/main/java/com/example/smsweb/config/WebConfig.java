@@ -46,7 +46,7 @@ public class WebConfig {
                 .requestMatchers("/api/accounts/get/{id}","/api/profiles","/api/profiles/{id}").hasAuthority("ADMIN")
                 .requestMatchers("/api/accounts/changePassword/{id}").hasAuthority("STUDENT")
                 .requestMatchers("/api/accounts/**","/**").permitAll()
-                .requestMatchers("/libs/**","/css/**","/js/**","/plugins/**").permitAll()
+                .requestMatchers("/css/**","/js/**","/plugins/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

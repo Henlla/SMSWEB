@@ -10,4 +10,9 @@ public class DashboardController {
     public String index(){
         return "dashboard/index";
     }
+
+    @GetMapping("/dashboard/create-student")
+    public String createStudent(){
+        return "dashboard/student/create_student";
+    }
 }
