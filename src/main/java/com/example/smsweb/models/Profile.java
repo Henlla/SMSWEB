@@ -44,6 +44,9 @@ public class Profile {
     @Column(name = "phone")
     private String phone;
     @Basic
+    @Column(name = "email")
+    private String email;
+    @Basic
     @Column(name = "avartar_url")
     private String avartarUrl;
     @Basic
