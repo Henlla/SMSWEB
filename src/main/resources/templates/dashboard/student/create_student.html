@@ -41,16 +41,40 @@
                             <input type="text" id="prefixInside1" class="form-control">
                             <label for="prefixInside1">Example label </label>
                         </div>
-                        <div class="md-form input-with-pre-icon">
-                            <i class="fas fa-user input-prefix"></i>
-                            <input type="text" id="prefixInside2" class="form-control">
-                            <label for="prefixInside2">Example label </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+
+                        <div class="col-6">
+                            <div class="md-form input-with-pre-icon">
+                                <i class="fas fa-user input-prefix"></i>
+                                <input type="text" id="first_name" name="first_name" class="form-control">
+                                <label for="first_name">Họ</label>
+                            </div>
+                            <div class="md-form input-with-pre-icon">
+                                <i class="fas fa-user input-prefix"></i>
+                                <input type="text" id="last_name" name="last_name" class="form-control">
+                                <label for="last_name">Tên</label>
+                            </div>
+                            <div class="form-group">
+                                <label>Ngày sinh:</label>
+                                <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+
         </div>
     </section>
 </div>
+        </section>
+    </div>
+    <th:block layout:fragment="script">
+        <script>
+            $('#reservationdate').datetimepicker({
+                format: 'L'
+            });
+        </script>
+    </th:block>
 </body>
 </html>
