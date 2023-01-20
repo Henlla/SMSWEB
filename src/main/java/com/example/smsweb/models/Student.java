@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Collection;
@@ -17,10 +18,13 @@ public class Student {
     @Column(name = "profile_id")
     private Integer profileId;
     @OneToMany(mappedBy = "studentByStudentId")
+    @JsonManagedReference("application_student")
     private Collection<Application> applicationsById;
     @OneToMany(mappedBy = "studentByStudentId")
+    @JsonManagedReference("student_major")
     private Collection<MajorStudent> majorStudentsById;
     @OneToMany(mappedBy = "studentByStudentId")
+    @JsonManagedReference("student_student_subject")
     private Collection<StudentSubject> studentSubjectsById;
 
     public int getId() {

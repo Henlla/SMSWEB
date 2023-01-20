@@ -24,6 +24,6 @@ public class Semester {
     @Column(name = "semester_code")
     private String semesterCode;
     @OneToMany(mappedBy = "semesterBySemesterId")
-    @JsonManagedReference("subjectSemesterBackReference")
+    @JsonManagedReference("subject_semester")
     private Collection<Subject> subjectsById;
 }

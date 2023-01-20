@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -23,7 +24,7 @@ public class Attendance {
     private String note;
     @ManyToOne
     @JoinColumn(name = "student_subject_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonManagedReference(value = "studentSubjectByStudentSubjectId")
+    @JsonBackReference("attendance_student_subject")
     private StudentSubject studentSubjectByStudentSubjectId;
 
     public int getId() {

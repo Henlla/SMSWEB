@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,9 +20,11 @@ public class ScheduleDetail {
     @Column(name = "schedule_id")
     private Integer scheduleId;
     @ManyToOne
+    @JsonBackReference("subject_schedule_detail")
     @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Subject subjectBySubjectId;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "schedule_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Schedule scheduleByScheduleId;
 

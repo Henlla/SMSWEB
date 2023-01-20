@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +19,7 @@ public class Mark {
     @Column(name = "student_subject_id")
     private Integer studentSubjectId;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "student_subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private StudentSubject studentSubjectByStudentSubjectId;
 
