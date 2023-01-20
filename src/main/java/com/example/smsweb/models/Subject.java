@@ -1,6 +1,7 @@
 package com.example.smsweb.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -28,16 +29,18 @@ public class Subject {
     @Column(name = "major_id")
     private Integer majorId;
     @OneToMany(mappedBy = "subjectBySubjectId")
+    @JsonManagedReference("subject_schedule_detail")
     private Collection<ScheduleDetail> scheduleDetailsById;
     @OneToMany(mappedBy = "subjectBySubjectId")
+    @JsonManagedReference("subject_student_subject")
     private Collection<StudentSubject> studentSubjectsById;
     @ManyToOne
     @JoinColumn(name = "semester_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonBackReference("subjectSemesterBackReference")
+    @JsonBackReference("subject_semester")
     private Semester semesterBySemesterId;
     @ManyToOne
     @JoinColumn(name = "major_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonBackReference("subjectMajorBackReference")
+    @JsonBackReference("subject_major")
     private Major majorByMajorId;
 
     public int getId() {

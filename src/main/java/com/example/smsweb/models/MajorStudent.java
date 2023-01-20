@@ -19,10 +19,10 @@ public class MajorStudent {
     private Integer studentId;
     @ManyToOne
     @JoinColumn(name = "major_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonBackReference("majorMajorStudentBackReference")
+    @JsonBackReference("major_major_student")
     private Major majorByMajorId;
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference("student_major")
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Student studentByStudentId;
 

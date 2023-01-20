@@ -60,9 +60,9 @@ public class Profile {
     private Integer accountId;
     @ManyToOne
     @JoinColumn(name = "province_id", referencedColumnName = "id",insertable = false,updatable = false)
-
     private Province profileProvince;
     @ManyToOne
+    @JsonBackReference("district_profile")
     @JoinColumn(name = "district_id", referencedColumnName = "id",insertable = false,updatable = false)
     private District districtByDistrictId;
     @ManyToOne
@@ -70,7 +70,7 @@ public class Profile {
     private Ward wardByWardId;
     @OneToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonBackReference
+    @JsonBackReference("account_profile")
     private Account accountByAccountId;
     @OneToMany(mappedBy = "profileByProfileId")
     private List<Staff> staffById;

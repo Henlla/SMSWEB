@@ -33,13 +33,16 @@ public class Ward {
     @Column(name = "_district_id")
     private Object districtId;
     @OneToMany(mappedBy = "wardByWardId")
+    @JsonManagedReference
     @JsonIgnore
     private List<Profile> profilesById;
     @ManyToOne
+    @JsonBackReference
     @JsonIgnore
     @JoinColumn(name = "_province_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Province wardProvince;
     @ManyToOne
+    @JsonBackReference
     @JsonIgnore
     @JoinColumn(name = "_district_id", referencedColumnName = "id",insertable = false,updatable = false)
     private District districtByDistrictId;

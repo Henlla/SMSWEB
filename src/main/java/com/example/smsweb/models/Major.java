@@ -27,9 +27,9 @@ public class Major {
     @Column(name = "major_name")
     private String majorName;
     @OneToMany(mappedBy = "majorByMajorId")
-    @JsonManagedReference("majorMajorStudentBackReference")
+    @JsonManagedReference("major_major_student")
     private Collection<MajorStudent> majorStudentsById;
     @OneToMany(mappedBy = "majorByMajorId")
-    @JsonManagedReference("subjectMajorBackReference")
+    @JsonManagedReference("subject_major")
     private Collection<Subject> subjectsById;
 }

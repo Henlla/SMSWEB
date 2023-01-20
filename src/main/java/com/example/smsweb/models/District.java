@@ -30,16 +30,16 @@ public class District {
     @Column(name = "_province_id")
     private Object provinceId;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "_province_id", referencedColumnName = "id",insertable = false,updatable = false)
-//    @JsonManagedReference(value = "provinceByProvinceId")
     @JsonIgnore
     private Province districtProvince;
     @OneToMany(mappedBy = "districtByDistrictId")
-//    @JsonBackReference(value = "profile-district")
+    @JsonManagedReference("district_profile")
     @JsonIgnore
     private List<Profile> profilesById;
     @OneToMany(mappedBy = "districtByDistrictId")
-//    @JsonBackReference(value = "wardsById")
+    @JsonManagedReference
     @JsonIgnore
     private List<Ward> wardsById;
 }

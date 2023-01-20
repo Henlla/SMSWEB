@@ -23,7 +23,7 @@ public class Role {
     @Column(name = "role_name")
     private String roleName;
     @OneToMany(mappedBy = "roleByRoleId")
-    @JsonManagedReference
+    @JsonManagedReference("account_role")
     private List<Account> accountsById;
 
 }
