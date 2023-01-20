@@ -29,10 +29,10 @@ public class Account implements UserDetails {
     private Integer roleId;
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonBackReference
+    @JsonBackReference("account_role")
     private Role roleByRoleId;
     @OneToOne(mappedBy = "accountByAccountId",fetch=FetchType.EAGER)
-    @JsonManagedReference
+    @JsonManagedReference("account_profile")
     private Profile accountProfile;
 
     @Override

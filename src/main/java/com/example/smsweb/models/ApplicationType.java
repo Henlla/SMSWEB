@@ -1,6 +1,7 @@
 package com.example.smsweb.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Collection;
@@ -17,6 +18,6 @@ public class ApplicationType {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "applicationTypeByApplicationTypeId")
-    @JsonBackReference(value = "applicationsById")
+    @JsonManagedReference("application_application_type")
     private List<Application> applicationsById;
 }

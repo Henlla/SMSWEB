@@ -15,4 +15,5 @@ public class DashboardController {
     public String createStudent(){
         return "dashboard/student/create_student";
     }
+
 }
