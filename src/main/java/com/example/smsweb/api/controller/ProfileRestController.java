@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("api/profiles")
 @Slf4j
-public class ProfileController {
+public class ProfileRestController {
     @Autowired
     private ProfileService service;
 

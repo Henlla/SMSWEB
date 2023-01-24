@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +23,7 @@ import java.time.LocalTime;
 @RestController
 @RequestMapping("api/accounts")
 @Slf4j
-public class AccountController extends GenericController<Account> {
+public class AccountRestController extends GenericController<Account> {
     @Autowired
     IAccount iAccount;
     @Autowired
