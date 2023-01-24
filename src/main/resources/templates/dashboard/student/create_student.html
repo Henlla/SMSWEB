@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Thêm sinh viên</title>
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div layout:fragment="content">
@@ -26,55 +28,155 @@
                 </div>
             </div>
             <div class="container">
-                <div class="row">
-                    <div class="col-6">
+                <form id="form-create">
+                    <div class="row">
+                        <div class="col-3" style="display: block;margin: 0 auto">
+                            <div>
+                                <img src="/img/avatar.png" class="background-choose_image" style="">
+                                <input type="file" id="avatar" name="avatar" hidden>
+                                <span class="errorAvatar">Vui lòng chọn hình ảnh</span>
+                                <img src="/img/plus.png" class="icon-choose_image" width="40" height="40">
+                                <img src="/img/multiply.png" class="icon-cancel_image" width="40" height="40">
 
-                    </div>
-                    <div class="col-6">
-                        <div class="md-form input-with-pre-icon">
-                            <i class="fas fa-user input-prefix"></i>
-                            <input type="text" id="prefixInside" class="form-control">
-                            <label for="prefixInside">Example label </label>
-                        </div>
-                        <div class="md-form input-with-pre-icon">
-                            <i class="fas fa-user input-prefix"></i>
-                            <input type="text" id="prefixInside1" class="form-control">
-                            <label for="prefixInside1">Example label </label>
-                        </div>
-
-
-                        <div class="col-6">
-                            <div class="md-form input-with-pre-icon">
-                                <i class="fas fa-user input-prefix"></i>
-                                <input type="text" id="first_name" name="first_name" class="form-control">
-                                <label for="first_name">Họ</label>
                             </div>
-                            <div class="md-form input-with-pre-icon">
-                                <i class="fas fa-user input-prefix"></i>
-                                <input type="text" id="last_name" name="last_name" class="form-control">
-                                <label for="last_name">Tên</label>
-                            </div>
-                            <div class="form-group">
-                                <label>Ngày sinh:</label>
-                                <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
-                                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                        <div class="col-9">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="first_name">Họ :</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name"
+                                               placeholder="Nhập họ sinh viên">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="last_name">Tên :</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name"
+                                               placeholder="Nhập tên sinh viên">
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Ngày sinh:</label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" class="form-control datetimepicker-input"
+                                                   data-target="#reservationdate" id="dob" name="dob"
+                                                   placeholder="Chọn ngày sinh"/>
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="phone">Số điện thoại :</label>
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                               placeholder="Nhập tên sinh viên">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label for="email">Email :</label>
+                                        <input type="text" class="form-control" id="email" name="email"
+                                               placeholder="Nhập email sinh viên">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label for="email">CMND/CCCD :</label>
+                                        <input type="text" class="form-control" id="identityCard" name="identityCard"
+                                               placeholder="Nhập CMND/CCCD sinh viên">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <label>Nghành Học :</label>
+                                    <select id="major" class="form-control major" name="major" style="width: 100%;">
+                                        <option selected="selected" value="">----- Chọn nghành học------</option>
+                                        <th:block th:each="major : ${majors}">
+                                            <option th:value="${major.id}">[[${major.majorName}]]</option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Tỉnh/Thành Phố :</label>
+                                        <select id="province" class="form-control province" name="province"
+                                                style="width: 100%;">
+                                            <option selected="selected" value="">----- Chọn Tỉnh/Thành Phố------</option>
+                                            <th:block th:each="province : ${provinces}">
+                                                <option th:value="${province.id}">[[${province.name}]]</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Quận/Huyện :</label>
+                                        <select id="district" class="form-control district" name="district"
+                                                style="width: 100%;">
+                                            <option selected="selected" value="">----- Chọn Quận/Huyện------</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Xã/Thị trấn :</label>
+                                        <select id="ward" class="form-control ward" name="ward" style="width: 100%;">
+                                            <option selected="selected" value="">----- Chọn Xã/Thị Trấn------</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Địa chỉ :</label>
+                                <textarea type="text" cols="3" rows="2" style="resize: none" class="form-control"
+                                          name="address" id="address" placeholder="Nhập địa chỉ sinh viên"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" id="btn_create_student" class="btn btn-default">Tạo sinh viên
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
         </div>
     </section>
 </div>
-        </section>
-    </div>
-    <th:block layout:fragment="script">
-        <script>
-            $('#reservationdate').datetimepicker({
-                format: 'L'
-            });
-        </script>
-    </th:block>
+<th:block layout:fragment="optional">
+    <script  src="/plugins/jquery/jquery.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
+
+    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="/plugins/select2/js/select2.full.min.js"></script>
+    <script type="text/javascript">
+        $('#reservationdate').datetimepicker({
+            format: 'DD/MM/YYYY'
+        })
+        $('.province').select2({
+            theme: 'bootstrap4'
+        })
+        $('.district').select2({
+            theme: 'bootstrap4'
+        })
+        $('.ward').select2({
+            theme: 'bootstrap4'
+        })
+        $('.major').select2({
+            theme: 'bootstrap4'
+        })
+    </script>
+    <script type="text/javascript" src="/js/create_student.js"></script>
+</th:block>
 </body>
 </html>

@@ -19,7 +19,7 @@ public class District {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private Object id;
+    private int id;
     @Basic
     @Column(name = "_name")
     private String name;
@@ -28,7 +28,7 @@ public class District {
     private String prefix;
     @Basic
     @Column(name = "_province_id")
-    private Object provinceId;
+    private Integer provinceId;
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "_province_id", referencedColumnName = "id",insertable = false,updatable = false)
