@@ -50,4 +50,13 @@ public class SubjectService implements ISubject {
             throw new ErrorHandler("Can't find subject with id: " + id);
         }
     }
+
+    @Override
+    public List<Subject> findSubjectByMajorId(int majorId) {
+        try {
+            return dao.findAllByMajorId(majorId);
+        }catch (Exception e){
+            throw new ErrorHandler("Not found");
+        }
+    }
 }
