@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
+    <title>Subject Index</title>
+    <style>
+        .font-13 {
+            font-size: 13px;
+        }
+
+        .error {
+            color: red;
+            font-weight: normal !important;
+            margin: 0 !important;
+            font-size: 13px;
+        }
+
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <section>
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h5 class="m-0">Quản lý môn học</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="button" class="btn btn-info btn-sm" data-target="#subject-modal"
+                                   data-toggle="modal" value="Thêm mới">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table id="subject-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th class="th-sm">Mã môn học</th>
+                                    <th class="th-sm">Tên môn học</th>
+                                    <th class="th-sm">Học phí</th>
+                                    <th class="th-sm">Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="item:${listSubject}">
+                                    <td>[[${item.subjectCode}]]</td>
+                                    <td>[[${item.subjectName}]]</td>
+                                    <td>[[${item.fee}]]</td>
+                                    <td class="text-center">
+                                        <a th:data-name="${item.id}"
+                                           onclick="OnEditSubject(this.getAttribute('data-name'))" class="mr-3"><i
+                                                class="fas fa-pen indigo-text"></i></a>
+                                        <a th:href="@{'/subject/delete/' + ${item.id}}"><i
+                                                class="fas fa-trash red-text"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="subject-modal" data-backdrop="static" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thêm mới môn học</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form th:id="create-form">
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Mã môn học</label>
+                            <input type="text" name="create_subject_code_validate" th:id="create_subject_code"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập mã môn học">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Tên môn học</label>
+                            <input type="text" name="create_subject_name_validate" th:id="create_subject_name"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập mã tên môn học">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Học phí</label>
+                            <input type="text" name="create_fee_validate" th:id="create_fee"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập học phí">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Số tiết học</label>
+                            <input type="text" name="create_slot_validate" th:id="create_slot"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập số tiết học">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Học kì</label>
+                            <select th:id="create_semester_id" class="form-control form-control-sm">
+                                <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Ngành học</label>
+                            <select th:id="create_major_id" class="form-control select2bs4 form-control-sm">
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorName}]]</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                            class="fas fa-times"></i> Đóng
+                    </button>
+                    <button type="button" onclick="OnCreateSubject()" class="btn btn-primary btn-sm"><i
+                            class="fas fa-plus"></i> Tạo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="subject-edit-modal" data-backdrop="static" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cập nhật môn học</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" th:id="edit_id" hidden>
+                    <form th:id="edit-form">
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Mã môn học</label>
+                            <input type="text" name="edit_subject_code_validate" th:id="edit_subject_code"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập mã môn học">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Tên môn học</label>
+                            <input type="text" name="edit_subject_name_validate" th:id="edit_subject_name"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập mã tên môn học">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Học phí</label>
+                            <input type="text" name="edit_fee_validate" th:id="edit_fee"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập học phí">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Số tiết học</label>
+                            <input type="text" name="edit_slot_validate" th:id="edit_slot"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập số tiết học">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Học kì</label>
+                            <select th:id="edit_semester_id" class="form-control form-control-sm">
+                                <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Ngành học</label>
+                            <select th:id="edit_major_id" class="form-control select2bs4 form-control-sm">
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorName}]]</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                            class="fas fa-times"></i> Đóng
+                    </button>
+                    <button type="button" onclick="OnUpdateSubject()" class="btn btn-primary btn-sm"><i
+                            class="fas fa-plus"></i> Cập nhật
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<th:block layout:fragment="optional">
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/select2/js/select2.full.js"></script>
+    <script>
+        $(() => {
+            $("#create-form").validate({
+                rules: {
+                    create_subject_code_validate: {
+                        required: true
+                    },
+                    create_subject_name_validate: {
+                        required: true
+                    },
+                    create_fee_validate: {
+                        required: true
+                    },
+                    create_slot_validate: {
+                        required: true
+                    }
+                },
+                messages: {
+                    create_subject_code_validate: {
+                        required: "Vui lòng nhập mã môn học"
+                    },
+                    create_subject_name_validate: {
+                        required: "Vui lòng nhập tên môn học"
+                    },
+                    create_fee_validate: {
+                        required: "Vui lòng nhập học phí"
+                    },
+                    create_slot_validate: {
+                        required: "Vui lòng nhập số tiết học"
+                    }
+                },
+            });
+
+            $("#edit-form").validate({
+                rules: {
+                    edit_subject_code_validate: {
+                        required: true
+                    },
+                    edit_subject_name_validate: {
+                        required: true
+                    },
+                    edit_fee_validate: {
+                        required: true
+                    },
+                    edit_slot_validate: {
+                        required: true
+                    }
+                },
+                messages: {
+                    edit_subject_code_validate: {
+                        required: "Vui lòng nhập mã môn học"
+                    },
+                    edit_subject_name_validate: {
+                        required: "Vui lòng nhập tên môn học"
+                    },
+                    edit_fee_validate: {
+                        required: "Vui lòng nhập học phí"
+                    },
+                    edit_slot_validate: {
+                        required: "Vui lòng nhập số tiết học"
+                    }
+                },
+            });
+            $("#subject-table").dataTable();
+            // $('#subject-table').dataTable({
+            //     columnDefs: [{
+            //         orderable: false,
+            //         className: 'select-checkbox select-checkbox-all',
+            //         targets: 0
+            //     }],
+            //     select: {
+            //         style: 'multi',
+            //         selector: 'td:first-child'
+            //     }
+            // });
+        });
+        var OnEditSubject = (id) => {
+            $.ajax({
+                url: "/subject/findOne/" + id,
+                dataType: "json",
+                method: "GET",
+                success: (data) => {
+                    $("#edit_id").val(data.id);
+                    $("#edit_subject_code").val(data.subjectCode);
+                    $("#edit_subject_name").val(data.subjectName);
+                    $("#edit_fee").val(data.fee);
+                    $("#edit_slot").val(data.slot);
+                    $("#edit_semester_id option[value='" + data.semesterId + "']").prop("selected", true);
+                    $("#edit_major_id option[value='" + data.majorId + "']").prop("selected", true);
+                    $("#subject-edit-modal").modal("show");
+                }
+            });
+        }
+
+        var OnCreateSubject = () => {
+            if ($("#create-form").valid()) {
+                var subject_code = $("#create_subject_code").val();
+                var subject_name = $("#create_subject_name").val();
+                var fee = $("#create_fee").val();
+                var slot = $("#create_slot").val();
+                var semester_id = $("#create_semester_id").val();
+                var major_id = $("#create_major_id").val();
+                var formData = {
+                    "subjectCode": subject_code,
+                    "subjectName": subject_name,
+                    "fee": fee,
+                    "slot":slot,
+                    "semesterId": semester_id,
+                    "majorId": major_id
+                }
+                $.ajax({
+                    url: "/subject/post",
+                    contentType: "application/json",
+                    method: "POST",
+                    data: JSON.stringify(formData),
+                    success: (data) => {
+                        console.log(data);
+                    }
+                });
+            }
+        }
+
+        var OnUpdateSubject = () => {
+            if($("#edit-form").valid()){
+                var id = $("#edit_id").val();
+                var subject_code = $("#edit_subject_code").val();
+                var subject_name = $("#edit_subject_name").val();
+                var fee = $("#edit_fee").val();
+                var slot = $("#edit_slot").val();
+                var semester_id = $("#edit_semester_id").val();
+                var major_id = $("#edit_major_id").val();
+                var formData = {
+                    "id": id,
+                    "subjectCode": subject_code,
+                    "subjectName": subject_name,
+                    "fee": fee,
+                    "slot":slot,
+                    "semesterId": semester_id,
+                    "majorId": major_id
+                };
+                $.ajax({
+                    url: "/subject/update",
+                    dataType: "json",
+                    contentType: "application/json",
+                    method: "post",
+                    data: JSON.stringify(formData)
+                    , success: (data) => {
+                        console.log(data);
+                    }
+                });
+            }
+        }
+    </script>
+</th:block>
+</body>
+</html>
