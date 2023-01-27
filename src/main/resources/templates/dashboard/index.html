@@ -36,6 +36,7 @@
     <section layout:fragment="content">
         <p>Content</p>
     </section>
+    <div th:text="${#authentication.getAuthorities()}"></div>
     <th:block layout:fragment="optional"></th:block>
 </div>
 <!-- jQuery -->

@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -30,6 +31,7 @@ public class WebConfig {
         return new JwtAuthenticationFilter();
     }
 
+
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
         AuthenticationManagerBuilder builder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
@@ -42,12 +44,29 @@ public class WebConfig {
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/accounts/findOne/{id}","/api/major/**","/api/subject/**","/api/provinces/**","/api/districts/**").permitAll()
-                .requestMatchers("/api/accounts/get/{id}","/api/profiles","/api/profiles/{id}").permitAll()
-                .requestMatchers("/api/accounts/changePassword/{id}").hasAuthority("STUDENT")
-                .requestMatchers("/api/accounts/**","/**").permitAll()
-                .requestMatchers("/css/**","/js/**","/plugins/**").permitAll()
+                .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**","/api/districts/**","/api/accounts/login","/api/wards/**").permitAll()
+                .requestMatchers("/dashboard/login").permitAll()
+                .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
+                .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
+                .requestMatchers("/api/accounts/changePassword/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF")
+                .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**","/api/students-subject/**","/api/student-major/**").hasAnyAuthority("ADMIN","STAFF")
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().accessDeniedPage("/access-denied")
+//                .and()
+//                .formLogin()
+//                .loginPage("/dashboard/login").permitAll()
+//                .defaultSuccessUrl("/dashboard", true)
+//                .usernameParameter("username")
+//                .passwordParameter("password")
+//                .failureUrl("/dashboard/login?error=true")
+                .and()
+                .logout()
+                .logoutUrl("/dashboard/logout")
+                .logoutSuccessUrl("/dashboard/login")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID","_token")
                 .and().addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

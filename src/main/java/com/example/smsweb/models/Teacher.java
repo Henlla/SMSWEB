@@ -12,7 +12,7 @@ public class Teacher {
     @Basic
     @Column(name = "profile_id")
     private Integer profileId;
-    @ManyToOne
+    @OneToOne
     @JsonBackReference
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Profile profileByProfileId;

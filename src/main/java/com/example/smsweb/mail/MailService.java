@@ -1,7 +1,12 @@
 package com.example.smsweb.mail;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
@@ -11,47 +16,33 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import java.util.Properties;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import java.nio.charset.StandardCharsets;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class MailService {
-    private static final String CONTENT_TYPE_TEXT_HTML = "text/html;charset=\"utf-8\"";
 
-    @Value("${config.mail.host}")
-    private String host;
-    @Value("${config.mail.port}")
-    private String port;
-    @Value("${config.mail.username}")
-    private String email;
-    @Value("${config.mail.password}")
-    private String password;
+    private final JavaMailSender emailSender;
+    private final SpringTemplateEngine templateEngine;
+    @Value("$spring.mail.username")
+    private String fromMail;
 
-    @Autowired
-    ThymeleafService thymeleafService;
-
-    public void sendMail(String toMail,String accountName,String passwordAccount) {
-        Properties props = new Properties();
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.port", port);
-
-        Session session = Session.getInstance(props,
-                new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(email, password);
-                    }
-                });
-        Message message = new MimeMessage(session);
-        try {
-            message.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(toMail)});
-            message.setFrom(new InternetAddress(email));
-            message.setSubject("Student account");
-            message.setContent(thymeleafService.getContent(accountName,passwordAccount), CONTENT_TYPE_TEXT_HTML);
-            Transport.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+    public void sendHtmlMessage(Mail mail) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        Context context = new Context();
+        context.setVariables(mail.getProps());
+        helper.setFrom(fromMail);
+        helper.setTo(mail.getToMail());
+        helper.setSubject(mail.getSubject());
+        String html = templateEngine.process("mail/mail-template.html", context);
+        helper.setText(html, true);
+        log.info("Sending email: {} with html body: {}", mail, html);
+        emailSender.send(message);
     }
 }
+
