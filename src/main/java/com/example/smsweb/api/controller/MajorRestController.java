@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/major")
-public class MajorRestController extends GenericController<Major> {    @Autowired
+public class MajorRestController extends GenericController<Major> {
+    @Autowired
     private IMajor dao;
 
     @PostMapping("/save")

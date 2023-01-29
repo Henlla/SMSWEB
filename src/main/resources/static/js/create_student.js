@@ -230,8 +230,9 @@ $(()=>{
                         cache : false,
                         processData: false,
                         contentType: false,
-                        success:()=>{
-
+                        success:(data)=>{
+                            console.log(data)
+                            toastr.success('Tạo sinh viên thành công')
                         }
                     })
             }
