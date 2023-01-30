@@ -60,4 +60,9 @@ public class ProfileRestController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDateTime.now().toString(),null));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProfile(@PathVariable("id")Integer id) {
+       Profile profile= service.findOne(id);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDateTime.now().toString(),profile));
+    }
 }

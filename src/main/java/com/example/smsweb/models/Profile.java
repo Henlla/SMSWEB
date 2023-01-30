@@ -14,6 +14,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -72,10 +73,13 @@ public class Profile {
     @JoinColumn(name = "account_id", referencedColumnName = "id",insertable = false,updatable = false)
     @JsonBackReference("account_profile")
     private Account accountByAccountId;
-    @OneToMany(mappedBy = "profileByProfileId")
-    private List<Staff> staffById;
-    @OneToMany(mappedBy = "profileByProfileId")
-    private List<Teacher> teachersById;
+
+    @OneToOne(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
+    private Staff staffById;
+    @OneToOne(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
+    private Teacher teachersById;
+    @OneToOne(mappedBy = "studentByProfile",fetch=FetchType.EAGER)
+    private Student studentsById;
 
 
 }

@@ -22,8 +22,8 @@ public class Role {
     @Basic
     @Column(name = "role_name")
     private String roleName;
-    @OneToMany(mappedBy = "roleByRoleId")
-    @JsonManagedReference("account_role")
-    private List<Account> accountsById;
+
+    @OneToOne(mappedBy = "roleByRoleId")
+    private Account accountsById;
 
 }

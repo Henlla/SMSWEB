@@ -17,7 +17,6 @@ import java.time.LocalTime;
 public class MajorRestController extends GenericController<Major> {
     @Autowired
     private IMajor service;
-
     @PostMapping("/save")
     public ResponseEntity<?> save(@ModelAttribute Major major) {
         try {
