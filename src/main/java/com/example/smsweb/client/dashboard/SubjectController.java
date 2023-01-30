@@ -1,10 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
-import com.example.smsweb.models.Major;
-import com.example.smsweb.models.Semester;
+import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Subject;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +9,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Controller
 @RequestMapping("subject")
@@ -26,37 +19,31 @@ public class SubjectController {
     private String SEMESTER_URL = "http://localhost:8080/api/semester/";
 
     private RestTemplate restTemplate;
-    List<Subject> listSubject;
-    List<Major> listMajor;
-    List<Semester> listSemester;
+    ResponseModel listSubject;
+    ResponseModel listMajor;
+    ResponseModel listSemester;
 
     @GetMapping("/index")
     public String index(Model model) {
-        listSubject = new ArrayList<>();
-        listMajor = new ArrayList<>();
-        listSemester = new ArrayList<>();
+        listSubject = new ResponseModel();
+        listMajor = new ResponseModel();
+        listSemester = new ResponseModel();
         restTemplate = new RestTemplate();
 
-        ResponseEntity<List<Subject>> responseSubject = restTemplate.exchange(SUBJECT_URL + "list", HttpMethod.GET, null, new ParameterizedTypeReference<List<Subject>>() {
-        });
-        listSubject = responseSubject.getBody();
-        ResponseEntity<List<Major>> responseMajor = restTemplate.exchange(MAJOR_URL + "list", HttpMethod.GET, null, new ParameterizedTypeReference<List<Major>>() {
-        });
-        listMajor = responseMajor.getBody();
-        ResponseEntity<List<Semester>> responseSemester = restTemplate.exchange(SEMESTER_URL + "list", HttpMethod.GET, null, new ParameterizedTypeReference<List<Semester>>() {
-        });
-        listSemester = responseSemester.getBody();
+        listSubject = restTemplate.getForObject(SUBJECT_URL + "list", ResponseModel.class);
+        listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
+        listSemester = restTemplate.getForObject(SEMESTER_URL + "list",ResponseModel.class);
 
-        model.addAttribute("listSubject", listSubject);
-        model.addAttribute("listMajor", listMajor);
-        model.addAttribute("listSemester", listSemester);
+        model.addAttribute("listSubject", listSubject.getData());
+        model.addAttribute("listMajor", listMajor.getData());
+        model.addAttribute("listSemester", listSemester.getData());
         model.addAttribute("subject", new Subject());
         return "dashboard/subject/subject_index";
     }
 
     @PostMapping(value = "/post")
     @ResponseBody
-    public String post(@RequestBody Subject subject) {
+    public Object post(@RequestBody Subject subject) {
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -67,16 +54,16 @@ public class SubjectController {
             content.add("semesterId",String.valueOf(subject.getSemesterId()));
             content.add("majorId",String.valueOf(subject.getMajorId()));
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
-            ResponseEntity<String> response = restTemplate.exchange(SUBJECT_URL + "save", HttpMethod.POST, request, String.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "save", HttpMethod.POST, request, ResponseModel.class);
             if(response.getStatusCode().is2xxSuccessful()){
-                return "redirect:/subject/index";
+                return response;
             }else{
-                return "dashboard/subject/subject_index";
+                return response;
             }
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id, Model model){
+    public String delete(@PathVariable("id") Integer id){
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         MultiValueMap<String,String> content = new LinkedMultiValueMap<>();
@@ -86,14 +73,13 @@ public class SubjectController {
         if(response.getStatusCode().is2xxSuccessful()){
             return "redirect:/subject/index";
         }else{
-            model.addAttribute("msg",response.getBody());
-            return "dashboard/subject/subject_index";
+            return "redirect:/subject/index";
         }
     }
 
     @PostMapping("/update")
     @ResponseBody
-    public String update(@RequestBody Subject subject){
+    public Object update(@RequestBody Subject subject){
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
@@ -105,26 +91,26 @@ public class SubjectController {
         content.add("semesterId",String.valueOf(subject.getSemesterId()));
         content.add("majorId",String.valueOf(subject.getMajorId()));
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
-        ResponseEntity<String> response = restTemplate.exchange(SUBJECT_URL + "save", HttpMethod.POST, request, String.class);
+        ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "save", HttpMethod.POST, request, ResponseModel.class);
         if(response.getStatusCode().is2xxSuccessful()){
-            return "success";
+            return response;
         }else{
-            return response.getBody();
+            return response;
         }
     }
     @GetMapping("/findOne/{id}")
     @ResponseBody
-    public String findOne(@PathVariable("id") int id) {
+    public Object findOne(@PathVariable("id") int id) {
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         MultiValueMap<String,String> content = new LinkedMultiValueMap<>();
         content.add("id",String.valueOf(id));
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<MultiValueMap<String,String>>(content,headers);
-        ResponseEntity<String> response = restTemplate.exchange(SUBJECT_URL+"findOne/"+id,HttpMethod.GET,request,String.class);
+        ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL+"findOne/"+id,HttpMethod.GET,request,ResponseModel.class);
         if(response.getStatusCode().is2xxSuccessful()){
-            return response.getBody();
+            return response.getBody().getData();
         }else{
-            return response.getBody();
+            return response;
         }
     }
 }
