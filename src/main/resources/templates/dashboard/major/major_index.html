@@ -36,7 +36,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <input type="button" data-toggle="modal" data-target="#major-modal"
+                            <input type="button" data-toggle="modal" data-target="#create-major-modal"
                                    class="btn btn-info btn-sm"
                                    value="Thêm mới">
                         </div>
@@ -56,8 +56,10 @@
                                     <td>[[${item.majorCode}]]</td>
                                     <td>[[${item.majorName}]]</td>
                                     <td class="text-center">
-                                        <a class="mr-3"><i class="fas fa-eye indigo-text"></i></a>
-                                        <a methods="delete" th:href="@{'/major/delete/' + ${item.id}}"><i
+                                        <a class="mr-3" th:data-name="${item.id}"
+                                           onclick="OnEditMajor(this.getAttribute('data-name'))"><i
+                                                class="fas fa-pen indigo-text"></i></a>
+                                        <a th:href="@{'/major/delete/' + ${item.id}}"><i
                                                 class="fas fa-trash red-text"></i></a>
                                     </td>
                                 </tr>
@@ -69,7 +71,8 @@
             </div>
         </div>
     </section>
-    <div class="modal fade" id="major-modal" data-backdrop="static" tabindex="-1"
+
+    <div class="modal fade" id="create-major-modal" data-backdrop="static" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -106,52 +109,51 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="edit-major-modal" data-backdrop="static" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cập nhật ngành học</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form th:id="edit-form">
+                        <input type="text" th:id="edit_major_id" hidden>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Mã ngành học</label>
+                            <input type="text" name="edit_major_code_validate" th:id="edit_major_code"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập mã ngành học">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Tên ngành học</label>
+                            <input type="text" name="edit_major_name_validate" th:id="edit_major_name"
+                                   class="form-control form-control-sm"
+                                   placeholder="Nhập tên ngành học">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                            class="fas fa-times"></i> Đóng
+                    </button>
+                    <button type="button" onclick="OnUpdateMajor()" class="btn btn-primary btn-sm"><i
+                            class="fas fa-plus"></i> Cập nhật
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <th:block layout:fragment="optional">
     <script src="/plugins/jquery/jquery.min.js"></script>
     <script src="/plugins/select2/js/select2.full.js"></script>
-    <script>
-        $(() => {
-            $("#create-form").validate({
-                rules: {
-                    create_major_code_validate: {
-                        required: true
-                    },
-                    create_major_name_validate: {
-                        required: true
-                    }
-                }, messages: {
-                    create_major_code_validate: {
-                        required: "Vui lòng nhập mã ngành"
-                    },
-                    create_major_name_validate: {
-                        required: "Vui lòng nhập tên ngành"
-                    }
-                }
-            })
-            $("#major-table").dataTable();
-        });
-        var OnCreateMajor = () => {
-            if ($("#create-form").valid()) {
-                var major_code = $("#create_major_code").val();
-                var major_name = $("#create_major_name").val();
-                var formData = {
-                    "majorCode": major_code,
-                    "majorName": major_name
-                }
-                $.ajax({
-                    url: "/major/post",
-                    contentType: "application/json",
-                    dataType: "json",
-                    method: "post",
-                    data: JSON.stringify(formData),
-                    success: (data) => {
-                        console.log(data);
-                    }
-                });
-            }
-        }
-    </script>
+    <script src="/js/major.js"></script>
 </th:block>
 </body>
 </html>

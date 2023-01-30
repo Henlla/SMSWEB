@@ -1,30 +1,31 @@
 package com.example.smsweb.api.generic;
 
+import com.example.smsweb.dto.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalTime;
 public class GenericController<T> {
     @Autowired
     IGenericRepository<T> dao;
 
     @GetMapping("/list")
-    public ResponseEntity<List<T>> findAll() {
+    public ResponseEntity<?> findAll() {
         try {
-            return new ResponseEntity<>(dao.findAll(), HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),dao.findAll()));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
         }
     }
 
     @GetMapping("/findOne/{id}")
-    public ResponseEntity<T> findOne(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> findOne(@PathVariable("id") Integer id) {
         try {
-            return new ResponseEntity<>(dao.findOne(id), HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalTime.now().toString(),dao.findOne(id)));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
         }
     }
 
@@ -32,9 +33,9 @@ public class GenericController<T> {
     public ResponseEntity<Object> delete(@PathVariable("id") Integer id) {
         try {
             dao.delete(id);
-            return new ResponseEntity<>("Xóa thành công", HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body("Success");
         } catch (Exception e) {
-            return new ResponseEntity<>("Xóa thất bại", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error");
         }
     }
 }
