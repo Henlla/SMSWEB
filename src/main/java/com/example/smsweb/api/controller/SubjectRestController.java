@@ -3,36 +3,38 @@ package com.example.smsweb.api.controller;
 import com.example.smsweb.api.di.irepository.ISubject;
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.api.generic.GenericController;
+import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("api/subject")
 public class SubjectRestController extends GenericController<Subject> {
     @Autowired
-    public ISubject dao;
+    public ISubject service;
 
     @PostMapping("/save")
-    public ResponseEntity<Object> post(@ModelAttribute Subject subject){
+    public ResponseEntity<?> post(@ModelAttribute Subject subject){
         try {
-            dao.save(subject);
-            return new ResponseEntity<>("Sao lưu thành công",HttpStatus.OK);
+            service.save(subject);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),null));
         }catch (Exception e){
-            return new ResponseEntity<>("Sao lưu thất bại", HttpStatus.BAD_REQUEST);
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
         }
     }
 
     @GetMapping("/findByMajorId/{id}")
-    public ResponseEntity<List<Subject>> findByMajorid(@PathVariable("id") int id){
+    public ResponseEntity<?> findByMajorId(@PathVariable("id") int id){
         try {
-            return new ResponseEntity<>(dao.findSubjectByMajorId(id),HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),service.findSubjectByMajorId(id)));
         }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalTime.now().toString(),null));
         }
     }
 }

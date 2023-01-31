@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
