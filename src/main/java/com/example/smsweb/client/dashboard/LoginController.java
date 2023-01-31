@@ -63,6 +63,7 @@ public class LoginController {
             ResponseEntity<LoginResponse> response = restTemplate.exchange(ACCOUNT_URL + "login", HttpMethod.POST, request, LoginResponse.class);
             String responseJson = new ObjectMapper().writeValueAsString(response.getBody().getData());
             String _token = response.getBody().getToken();
+
             UsernamePasswordAuthenticationToken authReq
                     = new UsernamePasswordAuthenticationToken(username, password);
             Authentication auth = authenticationManager.authenticate(authReq);
@@ -70,6 +71,7 @@ public class LoginController {
             sc.setAuthentication(auth);
             HttpSession session = requestHttp.getSession(true);
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+
             boolean hasUserRole = auth.getAuthorities().stream()
                     .anyMatch(r -> r.getAuthority().equals("ADMIN"));
             if(hasUserRole){

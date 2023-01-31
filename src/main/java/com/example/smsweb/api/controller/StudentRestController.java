@@ -14,12 +14,22 @@ import java.time.LocalTime;
 
 @RestController
 @RequestMapping("/api/students")
-public class StudentRestController extends GenericController<Student> {
+public class StudentRestController {
     @Autowired
     private IStudent iStudent;
     @PostMapping("/")
     public ResponseEntity<?> saveStudent(@ModelAttribute Student student){
         iStudent.save(student);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(),student));
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> findStudentById(@PathVariable("id") Integer id){
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), iStudent.findOne(id)));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> findAllStudent(){
+        return ResponseEntity.status(HttpStatus.OK).body(iStudent.findAll());
     }
 }

@@ -44,5 +44,18 @@ public class MailService {
         log.info("Sending email: {} with html body: {}", mail, html);
         emailSender.send(message);
     }
+    public void sendHtmlMessageResetPass(Mail mail) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        Context context = new Context();
+        context.setVariables(mail.getProps());
+        helper.setFrom(fromMail);
+        helper.setTo(mail.getToMail());
+        helper.setSubject(mail.getSubject());
+        String html = templateEngine.process("mail/rest-password_template.html", context);
+        helper.setText(html, true);
+        log.info("Sending email: {} with html body: {}", mail, html);
+        emailSender.send(message);
+    }
 }
 
