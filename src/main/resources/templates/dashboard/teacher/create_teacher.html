@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-    <link rel="stylesheet" href="/css/create_student.css">
+    <link rel="stylesheet" href="/css/create_teacher.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div layout:fragment="content">
@@ -18,12 +18,12 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Thêm mới sinh viên</h1>
+                            <h1 class="m-0">Thêm mới giáo viên</h1>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Thêm mới sinh viên</li>
+                                <li class="breadcrumb-item active">Thêm mới giáo viên</li>
                             </ol>
                         </div>
                     </div>
@@ -52,14 +52,14 @@
                                     <div class="form-group">
                                         <label for="first_name">Họ :</label>
                                         <input type="text" class="form-control" id="first_name" name="first_name"
-                                               placeholder="Nhập họ sinh viên">
+                                               placeholder="Nhập họ giáo viên">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="last_name">Tên :</label>
                                         <input type="text" class="form-control" id="last_name" name="last_name"
-                                               placeholder="Nhập tên sinh viên">
+                                               placeholder="Nhập tên giáo viên">
                                     </div>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                                     <div class="form-group">
                                         <label for="phone">Số điện thoại :</label>
                                         <input type="text" class="form-control" id="phone" name="phone"
-                                               placeholder="Nhập số điện thoại sinh viên">
+                                               placeholder="Nhập số điện thoại giáo viên">
                                     </div>
                                 </div>
                             </div>
@@ -91,24 +91,15 @@
                                     <div class="form-group">
                                         <label for="email">Email :</label>
                                         <input type="text" class="form-control" id="email" name="email"
-                                               placeholder="Nhập email sinh viên">
+                                               placeholder="Nhập email giáo viên">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="email">CMND/CCCD :</label>
                                         <input type="text" class="form-control" id="identityCard" name="identityCard"
-                                               placeholder="Nhập CMND/CCCD sinh viên">
+                                               placeholder="Nhập CMND/CCCD giáo viên">
                                     </div>
-                                </div>
-                                <div class="col-4">
-                                    <label>Nghành Học :</label>
-                                    <select id="major" class="form-control major" name="major" style="width: 100%;">
-                                        <option selected="selected" value="">----- Chọn nghành học------</option>
-                                        <th:block th:each="major : ${majors}">
-                                            <option th:value="${major.id}">[[${major.majorName}]]</option>
-                                        </th:block>
-                                    </select>
                                 </div>
                             </div>
                             <div class="row">
@@ -145,10 +136,10 @@
                             <div class="form-group">
                                 <label for="email">Địa chỉ :</label>
                                 <textarea type="text" cols="3" rows="2" style="resize: none" class="form-control"
-                                          name="address" id="address" placeholder="Nhập địa chỉ sinh viên"></textarea>
+                                          name="address" id="address" placeholder="Nhập địa chỉ giáo viên"></textarea>
                             </div>
                             <div class="form-group">
-                                <button type="submit" id="btn_create_student" class="btn btn-default">Tạo sinh viên
+                                <button type="submit" id="btn_create_student" class="btn btn-default">Tạo giáo viên
                                 </button>
                             </div>
                         </div>
@@ -182,7 +173,7 @@
             theme: 'bootstrap4'
         })
     </script>
-    <script type="text/javascript" src="/js/create_student.js"></script>
+    <script type="text/javascript" src="/js/create_teacher.js"></script>
 </th:block>
 </body>
 </html>

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Setter
@@ -19,7 +20,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Basic
     @Column(name = "student_card")
     private String studentCard;
@@ -28,16 +29,20 @@ public class Student {
     private Integer profileId;
 
     @OneToMany(mappedBy = "studentByStudentId")
-    @JsonManagedReference("application_student")
-    private Collection<Application> applicationsById;
+//    @JsonManagedReference("application_student")
+    private List<Application> applicationsById;
 
     @OneToMany(mappedBy = "studentByStudentId")
-    @JsonManagedReference("student_major")
-    private Collection<MajorStudent> majorStudentsById;
+//    @JsonManagedReference("student_major")
+    private List<MajorStudent> majorStudentsById;
 
     @OneToMany(mappedBy = "studentByStudentId")
-    @JsonManagedReference("student_student_subject")
-    private Collection<StudentSubject> studentSubjectsById;
+//    @JsonManagedReference("student_student_subject")
+    private List<StudentSubject> studentSubjectsById;
+
+    @OneToMany(mappedBy = "classStudentByStudent")
+//    @JsonManagedReference("student_student_subject")
+    private List<StudentClass> studentClassById;
 
     @OneToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)

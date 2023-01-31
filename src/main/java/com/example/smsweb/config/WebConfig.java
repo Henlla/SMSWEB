@@ -44,12 +44,14 @@ public class WebConfig {
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**","/api/districts/**","/api/accounts/login","/api/wards/**").permitAll()
+                .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
+                        "/api/districts/**","/api/accounts/login","/api/wards/**").permitAll()
                 .requestMatchers("/dashboard/login").permitAll()
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/accounts/changePassword/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF")
-                .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**","/api/students-subject/**","/api/student-major/**").hasAnyAuthority("ADMIN","STAFF")
+                .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**",
+                        "/api/students-subject/**","/api/student-major/**","/api/teacher/**").hasAnyAuthority("ADMIN","STAFF")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied")
@@ -70,5 +72,4 @@ public class WebConfig {
                 .and().addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }
