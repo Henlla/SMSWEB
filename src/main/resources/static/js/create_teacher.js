@@ -72,12 +72,12 @@ $(()=>{
 
 
     // custom confirm
-   $('.icon-cancel_image').on('click',function (){
-       $('.background-choose_image').css("filter","blur(3px)")
-       Confirm('Hủy hình ảnh', 'Có chắc chắn muốn hủy hình ảnh?', 'Hủy', 'Không')
+    $('.icon-cancel_image').on('click',function (){
+        $('.background-choose_image').css("filter","blur(3px)")
+        Confirm('Hủy hình ảnh', 'Có chắc chắn muốn hủy hình ảnh?', 'Hủy', 'Không')
 
 
-   })
+    })
     function Confirm(title, msg, $true, $false) { /*change*/
         var $content =  "<div class='dialog-ovelay'>" +
             "<div class='dialog'><header>" +
@@ -98,9 +98,9 @@ $(()=>{
         $('body').prepend($content);
         $('.doAction').click(function () {
             $('.icon-choose_image').css("display","block")
-                $('.icon-cancel_image').css("display","none")
-                $('.background-choose_image').attr('src','/img/avatar.png')
-                $('#avatar').val("")
+            $('.icon-cancel_image').css("display","none")
+            $('.background-choose_image').attr('src','/img/avatar.png')
+            $('#avatar').val("")
             $(this).parents('.dialog-ovelay').fadeOut(500, function () {
                 $(this).remove();
             })
@@ -125,7 +125,6 @@ $(()=>{
         var phone = $('#phone').val()
         var address = $('#address').val()
         var email = $('#email').val()
-        var majorId = $('#major').val()
         var avatarUrl = document.getElementById("avatar")
         let formData = new FormData();
         var identityCard = $('#identityCard').val()
@@ -146,8 +145,6 @@ $(()=>{
         }
         formData.append('file', avatarUrl.files[0]);
         formData.append('profile',JSON.stringify(profile))
-        formData.append('majorId',majorId)
-
         $('#form-create').validate({
             rules: {
                 first_name: {
@@ -182,7 +179,7 @@ $(()=>{
                 //     required:true
                 //
                 // }
-                },
+            },
             messages:{
                 first_name : {
                     required:"Vui lòng nhập họ sinh viên"
@@ -217,45 +214,45 @@ $(()=>{
                 // }
             },
         })
-            if(avatarUrl.files.length===0){
-                $('.errorAvatar').css("display","block")
-            }else{
-                if($('#form-create').valid()){
-                    $('#spinner-div').show()
-                    $.ajax({
-                        url:"/dashboard/create-student",
-                        method:"POST",
-                        enctype: 'multipart/form-data',
-                        data:formData,
-                        cache : false,
-                        processData: false,
-                        contentType: false,
-                        success:(result)=>{
-                            console.log(result)
-                        },
-                        error:(e)=>{
-                            console.log(e)
-                        },
-                        complete:()=>{
-                            $('#province').val("").change()
-                            $('#district').val("").change()
-                            $('#ward').val("").change()
-                            $('#first_name').val("")
-                            $('#last_name').val("")
-                            $('#dob').val("")
-                            $('#phone').val("")
-                            $('#address').val("")
-                            $('#email').val("")
-                            $('#major').val("").change()
-                            $('#avatar').val("")
-                            $('#identityCard').val("")
-                            $('.icon-cancel_image').css("display","none")
-                            $('.icon-choose_image').css("display","block")
-                            $('.background-choose_image').attr('src','/img/avatar.png').css("filter","blur(3px)")
-                            toastr.success('Tạo sinh viên thành công')
-                            $('#spinner-div').hide();
-                        }
-                    })
+        if(avatarUrl.files.length===0){
+            $('.errorAvatar').css("display","block")
+        }else{
+            if($('#form-create').valid()){
+                $('#spinner-div').show()
+                $.ajax({
+                    url:"/dashboard/create-teacher",
+                    method:"POST",
+                    enctype: 'multipart/form-data',
+                    data:formData,
+                    cache : false,
+                    processData: false,
+                    contentType: false,
+                    success:(result)=>{
+                        console.log(result)
+                    },
+                    error:(e)=>{
+                        console.log(e)
+                    },
+                    complete:()=>{
+                        $('#province').val("").change()
+                        $('#district').val("").change()
+                        $('#ward').val("").change()
+                        $('#first_name').val("")
+                        $('#last_name').val("")
+                        $('#dob').val("")
+                        $('#phone').val("")
+                        $('#address').val("")
+                        $('#email').val("")
+                        $('#major').val("").change()
+                        $('#avatar').val("")
+                        $('#identityCard').val("")
+                        $('.icon-cancel_image').css("display","none")
+                        $('.icon-choose_image').css("display","block")
+                        $('.background-choose_image').attr('src','/img/avatar.png').css("filter","blur(3px)")
+                        toastr.success('Tạo giáo viên thành công')
+                        $('#spinner-div').hide();
+                    }
+                })
             }
 
         }

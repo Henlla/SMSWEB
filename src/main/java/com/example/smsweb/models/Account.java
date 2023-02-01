@@ -32,7 +32,8 @@ public class Account implements UserDetails {
     @JoinColumn(name = "role_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Role roleByRoleId;
     @OneToOne(mappedBy = "accountByAccountId",fetch=FetchType.EAGER)
-    @JsonManagedReference("account_profile")
+//    @JsonManagedReference("account_profile")
+    @JsonIgnore
     private Profile accountProfile;
 
     public Account(String username, String password, Integer roleId) {

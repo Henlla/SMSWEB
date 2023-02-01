@@ -1,7 +1,7 @@
 package com.example.smsweb.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,10 +27,11 @@ public class MajorStudent {
     private Integer studentId;
     @ManyToOne
     @JoinColumn(name = "major_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonBackReference("major_major_student")
+//    @JsonBackReference("major_major_student")
     private Major majorByMajorId;
     @ManyToOne
-    @JsonBackReference("student_major")
+//    @JsonBackReference("student_major")
+    @JsonIgnore
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Student studentByStudentId;
 

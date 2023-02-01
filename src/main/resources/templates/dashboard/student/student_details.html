@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sinh viên</title>
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="/css/student_details.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <section>
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h5 class="m-0">Chi tiết sinh viên</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3">
+                            <img th:src="${student.getStudentByProfile().getAvartarUrl()}" width="200" height="200">
+                        </div>
+                        <div class="col-9">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label>Họ và tên : </label>&nbsp;<span
+                                        th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <label>Mã số sinh viên : </label>&nbsp;<span
+                                        th:text="${student.studentCard}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <label>Ngày sinh : </label>&nbsp;<span
+                                        th:text="${student.studentByProfile.dob}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <label>Số điện thoại : </label>&nbsp;<span
+                                        th:text="${student.studentByProfile.phone}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <label>Email : </label>&nbsp;<span
+                                        th:text="${student.studentByProfile.email}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <label>CCCD/CMND : </label>&nbsp;<span
+                                        th:text="${student.studentByProfile.identityCard}"></span>
+                                </div>
+                                <div class="col-8">
+                                    <label>Địa chỉ : </label>&nbsp;<span
+                                        th:text="${student.studentByProfile.address+' , '+student.studentByProfile.wardByWardId.name+' , '+student.studentByProfile.districtByDistrictId.name+' , '+student.studentByProfile.profileProvince.name}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <label>Nghành học : </label>&nbsp;<th:block
+                                        th:each="major :${student.majorStudentsById}"><span
+                                        th:text="${major.majorByMajorId.majorName}"></span></th:block>
+                                </div>
+                                <div class="col-4">
+                                    <label>Lớp học : </label>&nbsp;
+                                    <th:block th:if="${student.studentClassById.isEmpty()}">
+                                        <span>Chưa có</span>
+                                    </th:block>
+                                    <th:block th:unless="${student.studentClassById.isEmpty()}">
+                                        <span th:each="class :${student.studentClassById}">
+                                             <span th:text="${class.classStudentByClass.classCode}"></span>
+                                        </span>
+                                    </th:block>
+                                </div>
+                                <div class="col-12">
+                                    <div id="spinner-div" class="pt-5">
+                                        <div class="spinner-border text-primary" role="status">
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="accountId" th:value="${student.studentByProfile.accountByAccountId.id}">
+                                    <input type="hidden" id="email" th:value="${student.studentByProfile.email}">
+                                    <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật khẩu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<th:block layout:fragment="optional">
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/toastr/toastr.min.js"></script>
+    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="/js/student_details.js"></script>
+</th:block>
+</body>
+</html>

@@ -14,7 +14,6 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -63,7 +62,6 @@ public class Profile {
     @JoinColumn(name = "province_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Province profileProvince;
     @ManyToOne
-    @JsonBackReference("district_profile")
     @JoinColumn(name = "district_id", referencedColumnName = "id",insertable = false,updatable = false)
     private District districtByDistrictId;
     @ManyToOne
@@ -71,12 +69,13 @@ public class Profile {
     private Ward wardByWardId;
     @OneToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonBackReference("account_profile")
+//    @JsonBackReference("account_profile")
     private Account accountByAccountId;
 
     @OneToOne(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
     private Staff staffById;
     @OneToOne(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
+    @JsonIgnore
     private Teacher teachersById;
     @OneToOne(mappedBy = "studentByProfile",fetch=FetchType.EAGER)
     private Student studentsById;
