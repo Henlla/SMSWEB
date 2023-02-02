@@ -36,4 +36,10 @@ public class Classses {
     @OneToMany(mappedBy = "classsesByClassId")
     @JsonManagedReference("class_schedule")
     private List<Schedule> schedulesById;
+
+    @OneToMany(mappedBy = "classStudentByClass")
+//    @JsonManagedReference("student_student_subject")
+    private List<StudentClass> studentClassById;
+
+
 }

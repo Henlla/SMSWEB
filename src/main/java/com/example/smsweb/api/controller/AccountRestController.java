@@ -85,4 +85,20 @@ public class AccountRestController extends GenericController<Account> {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel(e.getMessage(), LocalTime.now().toString(), null));
         }
     }
+
+    @PutMapping("reset_password/{id}")
+    public ResponseEntity<?> reset_password(@PathVariable("id") Integer id,
+                                                   @RequestParam("password") String password) {
+        try {
+            log.info("START method reset_password width params id= {},password ={}",id,password);
+            Account account = iAccount.findOne(id);
+            account.setPassword(password);
+            iAccount.save(account);
+            log.info("FINISH method changePasswordAccount :::::::::");
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), account));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel(e.getMessage(), LocalTime.now().toString(), null));
+        }
+    }
 }

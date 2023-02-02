@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
 @Builder(toBuilder = true)
 @Getter
@@ -33,10 +32,10 @@ public class Application {
     private Integer applicationTypeId;
     @ManyToOne
     @JsonBackReference("application_student")
-    @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JoinColumn(name = "student_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Student studentByStudentId;
     @ManyToOne
     @JsonBackReference("application_application_type")
-    @JoinColumn(name = "application_type_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JoinColumn(name = "application_type_id", referencedColumnName = "id", insertable = false, updatable = false)
     private ApplicationType applicationTypeByApplicationTypeId;
 }
