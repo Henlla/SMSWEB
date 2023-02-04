@@ -26,6 +26,7 @@ public class MajorService implements IMajor {
     List<Major> listMajor;
     XSSFWorkbook workbook;
     XSSFSheet sheet;
+
     @Override
     public void save(Major major) {
         try {
@@ -106,7 +107,7 @@ public class MajorService implements IMajor {
         }
     }
 
-    public void writeHeaders(){
+    public void writeHeaders() {
         workbook = new XSSFWorkbook();
         sheet = workbook.createSheet("Major");
         Row row = sheet.createRow(0);
@@ -115,9 +116,9 @@ public class MajorService implements IMajor {
         font.setBold(true);
         font.setFontHeight(13);
         style.setFont(font);
-        createCell(row,0,"STT",style);
-        createCell(row,1,"Major Code",style);
-        createCell(row,2,"Major Name",style);
+        createCell(row, 0, "STT", style);
+        createCell(row, 1, "Major Code", style);
+        createCell(row, 2, "Major Name", style);
     }
 
     private void createCell(Row row, int columnCount, Object valueOfCell, CellStyle style) {
@@ -143,10 +144,10 @@ public class MajorService implements IMajor {
         XSSFFont font = workbook.createFont();
         font.setFontHeight(14);
         style.setFont(font);
-        for (Major record: listMajor) {
+        for (Major record : listMajor) {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
-            createCell(row, columnCount++,rowCount - 1, style);
+            createCell(row, columnCount++, rowCount - 1, style);
             createCell(row, columnCount++, record.getMajorCode(), style);
             createCell(row, columnCount++, record.getMajorName(), style);
         }
