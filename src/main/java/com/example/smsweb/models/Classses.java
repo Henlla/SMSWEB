@@ -1,22 +1,23 @@
 package com.example.smsweb.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Collection;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Classses {
+    public Classses() {
+        setDefaultValues();
+    }
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -30,16 +31,44 @@ public class Classses {
     @Basic
     @Column(name = "teacher_id")
     private Integer teacherId;
+
     @Basic
     @Column(name = "major_id")
     private Integer majorId;
+
+    @Basic
+    @Column(name = "start_date")
+    private String startDate;
+    @Basic
+    @Column(name = "end_date")
+    private String endDate;
+    @Basic
+    @Column(name = "on_deleted")
+    private boolean onDeleted;
+    @Basic
+    @Column(name = "class_status")
+    private String classStatus;
+
     @OneToMany(mappedBy = "classsesByClassId")
-    @JsonManagedReference("class_schedule")
     private List<Schedule> schedulesById;
 
     @OneToMany(mappedBy = "classStudentByClass")
-//    @JsonManagedReference("student_student_subject")
     private List<StudentClass> studentClassById;
+
+    @ManyToOne
+    @JoinColumn(name = "major_id" , insertable = false, updatable = false)
+    private Major major;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id" , insertable = false, updatable = false)
+    private Teacher teacher;
+
+
+    public void setDefaultValues() {
+        this.startDate = LocalDate.now().toString();
+        this.onDeleted = false;
+        this.classStatus = "active";
+    }
 
 
 }
