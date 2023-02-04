@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -44,7 +44,7 @@ public class Student {
 //    @JsonManagedReference("student_student_subject")
     private List<StudentClass> studentClassById;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Profile studentByProfile;
 

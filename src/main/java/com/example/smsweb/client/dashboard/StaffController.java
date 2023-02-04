@@ -17,36 +17,41 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @MultipartConfig
-public class TeacherController {
+public class StaffController {
     private final String PROVINCE_URL = "http://localhost:8080/api/provinces/";
     private final String PROFILE_URL = "http://localhost:8080/api/profiles/";
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
-    private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
+    private final String STAFF_URL = "http://localhost:8080/api/staffs/";
+    private final String ROLE_URL = "http://localhost:8080/api/roles/";
 
     @Autowired
     private MailService mailService;
 
-    @GetMapping("dashboard/create-teacher")
-    public String create_teacher(Model model){
+    @GetMapping("dashboard/create-staff")
+    public String create_teacher(Model model) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
-        List<Province> provinces = restTemplate.getForObject(PROVINCE_URL ,ArrayList.class);
+        List<Province> provinces = restTemplate.getForObject(PROVINCE_URL , ArrayList.class);
+        String rolesResponse = restTemplate.getForObject(ROLE_URL+"list" ,String.class);
+        List<Role> roles = new ObjectMapper().readValue(rolesResponse,new TypeReference<>(){});
         model.addAttribute("provinces",provinces);
-        return "dashboard/teacher/create_teacher";
+        model.addAttribute("roles",roles.stream().filter(role -> !role.getRoleName().equals("ADMIN") && !role.getRoleName().equals("STUDENT")&& !role.getRoleName().equals("TEACHER")).toList());
+        return "dashboard/staff/create_staff";
     }
 
-    @PostMapping("dashboard/create-teacher")
+    @PostMapping("dashboard/create-staff")
     public String create_teacher(@RequestParam("profile")String profile,
+                                 @RequestParam("roleId")Integer roleId,
                                  @RequestParam("file") MultipartFile file,
                                  @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException, MessagingException {
 
@@ -63,7 +68,7 @@ public class TeacherController {
         String password = RandomStringUtils.random(8,0,combinedChars.length(),true,true,combinedChars.toCharArray());
 
         //Save Account
-        Account account = new Account(accountName,password,3);
+        Account account = new Account(accountName,password,roleId);
         String jsonAccount = new ObjectMapper().writeValueAsString(account);
         HttpHeaders headersAccount = new HttpHeaders();
         headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -108,76 +113,12 @@ public class TeacherController {
         MultiValueMap<String, String> paramsTeacher = new LinkedMultiValueMap<>();
         paramsTeacher.add("profileId",String.valueOf(profileResponse.getId()));
         HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsTeacher,headerTeacher);
-        ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(TEACHER_URL, HttpMethod.POST,requestEntityStudent,ResponseModel.class);
+        ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(STAFF_URL, HttpMethod.POST,requestEntityStudent,ResponseModel.class);
         String teacherResponseToJson = new ObjectMapper().writeValueAsString(responseModelStudent.getBody().getData());
         Teacher teacherResponse = new ObjectMapper().readValue(teacherResponseToJson,Teacher.class);
         //----------------------
 
 
         return "dashboard/teacher/create_teacher";
-    }
-    @GetMapping("/dashboard/index-teacher")
-    public String index(Model model,@CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
-        if (_token.equals("")) {
-            return "redirect:/dashboard/login";
-        }
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers= new HttpHeaders();
-        headers.set("Authorization","Bearer "+_token);
-        HttpEntity<Object> request = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(TEACHER_URL+"list",HttpMethod.GET,request,String.class);
-        List<Teacher> listTeacher = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Teacher>>(){});
-        model.addAttribute("teachers",listTeacher.stream().sorted((s1,s2)-> s1.getId().compareTo(s2.getId())).toList());
-        return "dashboard/teacher/teacher_index";
-    }
-
-    @GetMapping("/dashboard/teacher_details/{id}")
-    @ResponseBody
-    public Object teacher_details(@CookieValue(name = "_token", defaultValue = "") String _token,@PathVariable("id")Integer id) throws JsonProcessingException {
-        if (_token.equals("")) {
-            return "error";
-        }
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers= new HttpHeaders();
-        headers.set("Authorization","Bearer "+_token);
-        HttpEntity<Object> request = new HttpEntity<>(headers);
-        ObjectMapper objectMapper = new ObjectMapper();
-        ResponseEntity<String> response = restTemplate.exchange(TEACHER_URL+"get/"+id,HttpMethod.GET,request,String.class);
-        ResponseModel responseModel = objectMapper.readValue(response.getBody(),new TypeReference<ResponseModel>(){});
-        String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
-        Teacher teacher = objectMapper.readValue(convertToJson,Teacher.class);
-        return teacher;
-    }
-
-    @PostMapping("/dashboard/teacher/reset_password")
-    @ResponseBody
-    public String reset_password(@RequestParam("id")Integer id,@RequestParam("email")String email,@CookieValue(name = "_token", defaultValue = "") String _token) throws MessagingException {
-        String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
-        String numbers = "1234567890";
-        String combinedChars = capitalCaseLetters + lowerCaseLetters  + numbers;
-        String password = RandomStringUtils.random(8,0,combinedChars.length(),true,true,combinedChars.toCharArray());
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders header = new HttpHeaders();
-        header.set("Authorization","Bearer "+_token);
-        header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.add("password",password);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params,header);
-        ResponseEntity<String> response =  restTemplate.exchange(ACCOUNT_URL+"reset_password/"+id,HttpMethod.PUT,request,String.class);
-
-
-        //Send mail
-        Mail mail = new Mail();
-        mail.setToMail(email);
-        mail.setSubject("Account student HKT SYSTEM");
-        Map<String,Object> props = new HashMap<>();
-        props.put("password",password);
-        mail.setProps(props);
-        mailService.sendHtmlMessageResetPass(mail);
-        //-----------------------------
-
-        return "success";
     }
 }

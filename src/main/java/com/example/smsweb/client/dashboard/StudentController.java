@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.*;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -45,13 +46,16 @@ public class StudentController {
 
 
     @GetMapping("/dashboard/create-student")
-    public String createStudent(Model model,@CookieValue(name = "_token", defaultValue = "") String _token){
+    public String createStudent(Model model,@CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
         if (_token.equals("")) {
             return "redirect:/dashboard/login";
         }
         RestTemplate restTemplate = new RestTemplate();
-        List<Major> majors = restTemplate.getForObject(MAJOR_URL + "list",ArrayList.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ResponseModel responseMajor = restTemplate.getForObject(MAJOR_URL + "list",ResponseModel.class);
         List<Province> provinces = restTemplate.getForObject(PROVINCE_URL ,ArrayList.class);
+        String convertMajorToJson = objectMapper.writeValueAsString(responseMajor.getData());
+        List<Major> majors = objectMapper.readValue(convertMajorToJson,new TypeReference<>(){});
         model.addAttribute("majors",majors);
         model.addAttribute("provinces",provinces);
         return "dashboard/student/create_student";
@@ -135,8 +139,8 @@ public class StudentController {
 
         //Save student-Subject
         List<StudentSubject> studentSubjectList = new ArrayList<>();
-        List<Subject> subjectsByMajor = restTemplate.getForObject(SUBJECT_URL+"findByMajorId/"+majorId,List.class);
-        String jsonSubjectMajor = new ObjectMapper().writeValueAsString(subjectsByMajor);
+        ResponseModel subjectsByMajor = restTemplate.getForObject(SUBJECT_URL+"findByMajorId/"+majorId,ResponseModel.class);
+        String jsonSubjectMajor = new ObjectMapper().writeValueAsString(subjectsByMajor.getData());
         List<Subject> convertJsonSubject = new ObjectMapper().readValue(jsonSubjectMajor, new TypeReference<List<Subject>>() {
         });
         for(Subject subject : convertJsonSubject){
@@ -184,10 +188,8 @@ public class StudentController {
     }
 
     @GetMapping("/dashboard/student_details/{id}")
-    public String student_details(Model model,@CookieValue(name = "_token", defaultValue = "") String _token,@PathVariable("id")Integer id) throws JsonProcessingException {
-        if (_token.equals("")) {
-            return "redirect:/dashboard/login";
-        }
+    @ResponseBody
+    public Object student_details(@CookieValue(name = "_token", defaultValue = "") String _token,@PathVariable("id")Integer id) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers= new HttpHeaders();
         headers.set("Authorization","Bearer "+_token);
@@ -197,8 +199,7 @@ public class StudentController {
         ResponseModel responseModel = objectMapper.readValue(response.getBody(),new TypeReference<ResponseModel>(){});
         String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
         Student student = objectMapper.readValue(convertToJson,Student.class);
-        model.addAttribute("student",student);
-        return "dashboard/student/student_details";
+        return student;
     }
 
     @PostMapping("/dashboard/student/reset_password")
