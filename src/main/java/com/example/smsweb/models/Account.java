@@ -13,7 +13,6 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Account implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -28,13 +27,13 @@ public class Account implements UserDetails {
     @Basic
     @Column(name = "role_id")
     private Integer roleId;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Role roleByRoleId;
-    @OneToOne(mappedBy = "accountByAccountId",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "accountByAccountId",fetch=FetchType.EAGER)
 //    @JsonManagedReference("account_profile")
     @JsonIgnore
-    private Profile accountProfile;
+    private List<Profile> accountProfile;
 
     public Account(String username, String password, Integer roleId) {
         this.username = username;
