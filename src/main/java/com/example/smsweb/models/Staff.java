@@ -12,7 +12,7 @@ public class Staff {
     @Basic
     @Column(name = "profile_id")
     private Integer profileId;
-    @OneToOne
+    @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Profile profileByProfileId;

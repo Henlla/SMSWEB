@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -20,8 +23,11 @@ public class Teacher {
     @Basic
     @Column(name = "profile_id")
     private Integer profileId;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Profile profileByProfileId;
+
+    @OneToMany(mappedBy = "classTeacher")
+    private List<Classses> teacherClass= new ArrayList<>();
 
 }
