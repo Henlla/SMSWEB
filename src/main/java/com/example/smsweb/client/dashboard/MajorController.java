@@ -14,8 +14,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
 @Controller
-@RequestMapping("major")
+@RequestMapping("dashboard/major")
 public class MajorController {
     @Autowired
     public MajorRepository dao;
@@ -24,7 +25,10 @@ public class MajorController {
     RestTemplate restTemplate;
 
     @GetMapping("/index")
-    public String index(Model model) {
+    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) {
+        if (_token.equals("")) {
+            return "redirect:dashboard/login";
+        }
         restTemplate = new RestTemplate();
         listMajor = new ResponseModel();
         HttpHeaders headers = new HttpHeaders();
@@ -68,12 +72,12 @@ public class MajorController {
     @GetMapping("/findOne/{id}")
     @ResponseBody
     public Object findOne(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") int id) {
-//        if (_token.isEmpty()) {
-//            return "redirect:/";
-//        } else {
+        if (_token.isEmpty()) {
+            return "redirect:/dashboard/login";
+        } else {
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-//            headers.set("Authorization", "Bearer " + _token);
+            headers.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
             content.add("id", String.valueOf(id));
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
@@ -83,37 +87,38 @@ public class MajorController {
             } else {
                 return response;
             }
-//        }
+        }
     }
 
     @PostMapping("/update")
     @ResponseBody
-    public Object update(@RequestBody Major major){
+    public Object update(@RequestBody Major major) {
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        MultiValueMap<String,String> content = new LinkedMultiValueMap<>();
-        content.add("id",String.valueOf(major.getId()));
-        content.add("majorCode",major.getMajorCode());
+        MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+        content.add("id", String.valueOf(major.getId()));
+        content.add("majorCode", major.getMajorCode());
         content.add("majorName", major.getMajorName());
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<MultiValueMap<String,String>>(content,headers);
-        ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL+"save",HttpMethod.POST,request,ResponseModel.class);
-        if(response.getStatusCode().is2xxSuccessful()){
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
+        ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
             return response;
-        }else{
+        } else {
             return response;
         }
     }
+
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") int id){
+    public String delete(@PathVariable("id") int id) {
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        MultiValueMap<String,String> content = new LinkedMultiValueMap<>();
-        content.add("id",String.valueOf(id));
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(content,headers);
-        ResponseEntity<String> response = restTemplate.exchange(MAJOR_URL+"delete/"+id,HttpMethod.DELETE,request,String.class);
-        if(response.getStatusCode().is2xxSuccessful()){
+        MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+        content.add("id", String.valueOf(id));
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+        ResponseEntity<String> response = restTemplate.exchange(MAJOR_URL + "delete/" + id, HttpMethod.DELETE, request, String.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
             return "redirect:/major/index";
-        }else{
+        } else {
             return "redirect:/major/index";
         }
     }

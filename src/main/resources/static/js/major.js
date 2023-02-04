@@ -59,7 +59,7 @@ var OnCreateMajor = () => {
 
 var OnEditMajor = (id) => {
     $.ajax({
-        url: "/major/findOne/" + id,
+        url: "/dashboard/major/findOne/" + id,
         dataType: "json",
         contentType: "application/json",
         method: "GET",

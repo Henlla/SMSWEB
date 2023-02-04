@@ -62,7 +62,7 @@
                                         <a th:data-name="${item.id}"
                                            onclick="OnEditSubject(this.getAttribute('data-name'))" class="mr-3"><i
                                                 class="fas fa-pen indigo-text"></i></a>
-                                        <a th:href="@{'/subject/delete/' + ${item.id}}"><i
+                                        <a th:href="@{'dashboard/subject/delete/' + ${item.id}}"><i
                                                 class="fas fa-trash red-text"></i></a>
                                     </td>
                                 </tr>
@@ -74,6 +74,7 @@
             </div>
         </div>
     </section>
+
     <div class="modal fade" id="subject-modal" data-backdrop="static" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

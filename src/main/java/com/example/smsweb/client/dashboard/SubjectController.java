@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
-@RequestMapping("subject")
+@RequestMapping("dashboard/subject")
 public class SubjectController {
 
     private String SUBJECT_URL = "http://localhost:8080/api/subject/";
@@ -24,7 +24,10 @@ public class SubjectController {
     ResponseModel listSemester;
 
     @GetMapping("/index")
-    public String index(Model model) {
+    public String index(@CookieValue(name = "_token",defaultValue = "") String _token, Model model) {
+        if(_token.equals("")){
+            return "redirect:dashboard/login";
+        }
         listSubject = new ResponseModel();
         listMajor = new ResponseModel();
         listSemester = new ResponseModel();
@@ -63,7 +66,7 @@ public class SubjectController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id){
+    public String delete(@CookieValue(name = "_token",defaultValue = "") String _token,@PathVariable("id") Integer id){
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         MultiValueMap<String,String> content = new LinkedMultiValueMap<>();
@@ -79,9 +82,13 @@ public class SubjectController {
 
     @PostMapping("/update")
     @ResponseBody
-    public Object update(@RequestBody Subject subject){
+    public Object update(@CookieValue(name = "_token",defaultValue = "") String _token, @RequestBody Subject subject){
+        if(_token.equals("")){
+            return "redirect:/dashboard/login";
+        }
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization","Bearer " + _token);
         MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
         content.add("id",String.valueOf(subject.getId()));
         content.add("subjectCode",subject.getSubjectCode());
