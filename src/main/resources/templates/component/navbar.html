@@ -1,7 +1,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <a th:href="@{'/dashboard'}" class="brand-link">
-    <img src="/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+    <img src="/img/hkt_logo_2.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
     <span class="brand-text font-weight-light">HKT System</span>
   </a>
 
@@ -27,13 +27,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a th:href="@{'/dashboard/index-student'}" class="nav-link active">
+              <a th:href="@{'/dashboard/student/index-student'}" class="nav-link active">
                 <i class="fas fa-list"></i>
                 <p>Danh sách sinh viên</p>
               </a>
             </li>
             <li class="nav-item">
-              <a th:href="@{'/dashboard/create-student'}" class="nav-link active">
+              <a th:href="@{'/dashboard/student/create-student'}" class="nav-link active">
                 <i class="fas fa-plus"></i>
                 <p>Thêm mới sinh viên</p>
               </a>
@@ -50,20 +50,20 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a th:href="@{'/dashboard/index-teacher'}" class="nav-link active">
+              <a th:href="@{'/dashboard/teacher/index-teacher'}" class="nav-link active">
                 <i class="fas fa-list"></i>
                 <p>Danh sách giáo viên</p>
               </a>
             </li>
             <li class="nav-item">
-              <a th:href="@{'/dashboard/create-teacher'}" class="nav-link active">
+              <a th:href="@{'/dashboard/teacher/create-teacher'}" class="nav-link active">
                 <i class="fas fa-plus"></i>
                 <p>Thêm mới giáo viên</p>
               </a>
             </li>
           </ul>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
           <a href="#" class="nav-link active">
             <i class="fas fa-user"></i>
             <p>
@@ -73,20 +73,20 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a th:href="@{'/dashboard/index-staff'}" class="nav-link active">
+              <a th:href="@{'/dashboard/staff/index-staff'}" class="nav-link active">
                 <i class="fas fa-list"></i>
                 <p>Danh sách nhân viên</p>
               </a>
             </li>
             <li class="nav-item">
-              <a th:href="@{'/dashboard/create-staff'}" class="nav-link active">
+              <a th:href="@{'/dashboard/staff/create-staff'}" class="nav-link active">
                 <i class="fas fa-plus"></i>
                 <p>Thêm mới nhân viên</p>
               </a>
             </li>
           </ul>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
           <a href="#" class="nav-link active">
             <i class="fas fa-user"></i>
             <p>Ngành học<i class="right fas fa-angle-left"></i></p>
@@ -100,7 +100,7 @@
             </li>
           </ul>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
           <a href="#" class="nav-link active">
             <i class="fas fa-user"></i>
             <p>Môn học<i class="right fas fa-angle-left"></i></p>

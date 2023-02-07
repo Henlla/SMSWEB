@@ -73,7 +73,8 @@ public class LoginController {
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
 
             boolean hasUserRole = auth.getAuthorities().stream()
-                    .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+                    .anyMatch(r -> r.getAuthority().equals("ADMIN") || r.getAuthority().equals("STAFF"));
+
             if(hasUserRole){
                 Cookie jwtTokenCookie = new Cookie("_token", _token);
                 DecodedJWT jwtDecode = JWT.decode(_token);

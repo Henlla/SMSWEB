@@ -78,24 +78,18 @@ public class ProfileService{
     }
 
     //check path is exists in firebase bucket
-    public boolean checkAndDeletePathInBucket(String path){
-        Bucket bucket = StorageClient.getInstance().bucket();
-        boolean isFind = bucket.get(path).delete();
-        if(isFind){
-            return true;
-        }else {
-            return false;
-        }
-    }
 
     public Profile changeImageProfile(Integer id,MultipartFile file) throws IOException {
         Profile profile = repository.findById(id).orElseThrow(()->new ErrorHandler("Not found with profile id = "+id));
-        boolean isCheck = checkAndDeletePathInBucket(profile.getAvatarPath());
-        if(isCheck){
-          String imagePath = saveFile(file);
-            profile.setAvatarPath(imagePath);
-            String imageUrl = getURLFile(imagePath);
+        Bucket bucket = StorageClient.getInstance().bucket();
+        boolean isFind = bucket.get(profile.getAvatarPath()).delete();
+        if(isFind){
+            String pathFile = PATH_SAVE + fileUtils.generateFileName(file.getOriginalFilename());
+            profile.setAvatarPath(pathFile);
+            bucket.create(pathFile,file.getBytes(),file.getContentType());
+            String imageUrl = getURLFile(pathFile);
             profile.setAvartarUrl(imageUrl);
+            repository.save(profile);
             return profile;
         }
         return null;

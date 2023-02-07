@@ -5,17 +5,31 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
-    <!-- use the font -->
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            font-size: 48px;
-            color:red;
+            font-family: 'Inria Serif';font-size: 22px;
         }
     </style>
 </head>
 <body>
-<p style="color: red" th:text="${'Hello Dear ' + accountName}"></p>
-<p th:text="${'Password is :' +password}">
+<div style="font-family: 'Inria Serif';">Dear <i style="font-family: 'Inria Serif';" th:text="${fullname}"></i>,</div>
+<div style="font-family: 'Inria Serif';">Admin HKT Academy xin gửi thông tin tài khoản:</div>
+<ul style="list-style-type:none;background-color: #bfbfbf;width: 400px;" >
+    <li style="font-family: 'Inria Serif';">Tên đăng nhập : <b th:text="${accountName}"></b></li>
+    <li style="font-family: 'Inria Serif';">Mật khẩu : <b th:text="${password}"></b></li>
+</ul>
+<div style="font-family: 'Inria Serif';">Lưu ý , xin vui lòng đổi mật khẩu ngay sau khi nhận được tài khoản để tránh bị mất</div>
+<br>
+<br>
+<div style="font-family: 'Comic Sans MS';
+    color: #00b0f0;">Thanks & Best Regards,</div>
+<div><span style="color: #bfbfbf">-----------------------------------</span></div>
+<div style="font-family: 'Comic Sans MS';
+    color:#00b050">Admin</div>
+<div style="font-family: 'Comic Sans MS';
+    color: #00b0f0;">Academic Department</div>
+<div style="font-family: 'Comic Sans MS';
+    color: #00b0f0;">590 Cách Mạng Tháng 8 , Quận 3 , Tp.HCM</div>
+<div style="font-family: 'Comic Sans MS';">Tel: 0388628807, Email:  htkacademy@fe.edu.vn</div>
 </body>
 </html>

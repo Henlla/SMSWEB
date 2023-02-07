@@ -56,6 +56,9 @@ public class Profile {
     @Column(name = "identity_card")
     private String identityCard;
     @Basic
+    @Column(name = "sex")
+    private String sex;
+    @Basic
     @Column(name = "account_id")
     private Integer accountId;
     @ManyToOne
