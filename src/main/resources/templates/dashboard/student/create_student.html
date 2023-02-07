@@ -48,18 +48,33 @@
                         </div>
                         <div class="col-9">
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <div class="form-group">
                                         <label for="first_name">Họ :</label>
                                         <input type="text" class="form-control" id="first_name" name="first_name"
                                                placeholder="Nhập họ sinh viên">
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <div class="form-group">
                                         <label for="last_name">Tên :</label>
                                         <input type="text" class="form-control" id="last_name" name="last_name"
                                                placeholder="Nhập tên sinh viên">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group" style="margin-top: 10px">
+                                        <label for="last_name">Giới tính :</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" value="Nam" type="radio" name="sex" id="flexRadioDefault1" checked>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Nam
+                                            </label>
+                                            <input class="form-check-input" value="Nữ" type="radio" name="sex" style="margin-left: 15px;" id="flexRadioDefault2" >
+                                            <label class="form-check-label"  style="margin-left: 36px;" for="flexRadioDefault2">
+                                                Nữ
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -103,8 +118,8 @@
                                 </div>
                                 <div class="col-4">
                                     <label>Nghành Học :</label>
-                                    <select id="major" class="form-control major" name="major" style="width: 100%;">
-                                        <option selected="selected" value="">----- Chọn nghành học------</option>
+                                    <select id="major" onchange="selectMajor()" class="form-control major" name="major" style="width: 100%;">
+                                        <option selected="selected"  value="">----- Chọn nghành học------</option>
                                         <th:block th:each="major : ${majors}">
                                             <option th:value="${major.id}">[[${major.majorName}]]</option>
                                         </th:block>
@@ -114,8 +129,8 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label>Tỉnh/Thành Phố :</label>
-                                        <select id="province" class="form-control province" name="province"
+                                        <label>Tỉnh/TP :</label>
+                                        <select id="province" onchange="selectProvince()" class="form-control province" name="province"
                                                 style="width: 100%;">
                                             <option selected="selected" value="">----- Chọn Tỉnh/Thành Phố------</option>
                                             <th:block th:each="province : ${provinces}">
@@ -127,7 +142,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label>Quận/Huyện :</label>
-                                        <select id="district" class="form-control district" name="district"
+                                        <select id="district"  onchange="selectDistrict()" class="form-control district" name="district"
                                                 style="width: 100%;">
                                             <option selected="selected" value="">----- Chọn Quận/Huyện------</option>
                                         </select>
@@ -135,8 +150,8 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label>Xã/Thị trấn :</label>
-                                        <select id="ward" class="form-control ward" name="ward" style="width: 100%;">
+                                        <label>Xã/Thị trấn :&nbsp;&nbsp;</label>
+                                        <select id="ward" onchange="selectWard()" class="form-control ward" name="ward" style="width: 100%;">
                                             <option selected="selected" value="">----- Chọn Xã/Thị Trấn------</option>
                                         </select>
                                     </div>
@@ -160,7 +175,7 @@
     </section>
 </div>
 <th:block layout:fragment="optional">
-    <script  src="/plugins/jquery/jquery.js"></script>
+    <script src="/plugins/jquery/jquery.js"></script>
     <script src="/plugins/moment/moment.min.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>

@@ -3,6 +3,7 @@ package com.example.smsweb.api.controller;
 import com.example.smsweb.api.service.ProfileService;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Profile;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +41,11 @@ public class ProfileRestController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<?> putProfile(@RequestBody Profile profile) {
-        log.info("START method saveProfile :::::::::");
-            service.update(profile);
-        log.info("FINISH method saveProfile :::::::::");
+    public ResponseEntity<?> putProfile(@RequestParam("profile") String profile) throws JsonProcessingException {
+        log.info("START method putProfile :::::::::");
+        Profile profileConvert = new ObjectMapper().readValue(profile, Profile.class);
+            service.update(profileConvert);
+        log.info("FINISH method putProfile :::::::::");
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDateTime.now().toString(),profile));
 
     }
@@ -62,7 +64,9 @@ public class ProfileRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProfile(@PathVariable("id")Integer id) {
+        log.info("START method getProfile id = {} :::::::::",id);
        Profile profile= service.findOne(id);
+        log.info("FINISH method getProfile :::::::::");
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDateTime.now().toString(),profile));
     }
 }

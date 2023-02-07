@@ -26,7 +26,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/create-teacher'}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:href="@{'/dashboard/teacher/create-teacher'}" class="btn btn-info btn-sm">Thêm mới</a>
                         </div>
                     </div>
                     <div class="row">
@@ -41,14 +41,19 @@
                                 </thead>
                                 <tbody>
                                 <tr class="text-center" th:each="teacher:${teachers}">
-                                    <td><img th:src="${teacher.getProfileByProfileId().getAvartarUrl()}" alt="" width="100"
+                                    <td><img th:src="${teacher.getProfileByProfileId().getAvartarUrl()}" alt=""
+                                             width="100"
                                              height="100"></td>
                                     <td><span
                                             th:text="${teacher.profileByProfileId.firstName +' '+teacher.profileByProfileId.lastName}"></span>
                                     </td>
                                     <td class="text-center">
-                                        <a class="mr-3" th:data-name="${teacher.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:href="@{'/dashboard/teacher_update/' + ${teacher.id}}"><i class="fas fa-pencil-alt"></i></a>
+                                        <a class="mr-3" th:data-name="${teacher.id}"
+                                           onclick="OnDetails(this.getAttribute('data-name'))"><i
+                                                class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3" th:data-name="${teacher.id}"
+                                           onclick="OnUpdate(this.getAttribute('data-name'))"><i
+                                                class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -57,6 +62,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="modal fade" id="teacher_details" tabindex="-1"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -71,13 +77,17 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-3">
-                                        <img id="tc_image" width="200" height="200">
+                                        <img id="tc_image" style="width: 100%;height: 100%">
                                     </div>
                                     <div class="col-9">
                                         <div class="row">
                                             <div class="col-6">
                                                 <label>Họ và tên : </label>&nbsp;<span
                                                     id="tc_fullName"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Giới tính : </label>&nbsp;<span
+                                                    id="tc_sex"></span>
                                             </div>
                                             <div class="col-6">
                                                 <label>Ngày sinh : </label>&nbsp;<span
@@ -110,7 +120,9 @@
                                                 </div>
                                                 <input type="hidden" id="accountId" value="">
                                                 <input type="hidden" id="email" value="">
-                                                <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật khẩu</button>
+                                                <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật
+                                                    khẩu
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -125,16 +137,187 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="teacher_update" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Cập nhật giáo viên</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="spinner-divT" class="pt-5">
+                                <div class="spinner-border text-primary" role="status">
+                                </div>
+                            </div>
+                            <div class="container">
+                                <input type="hidden" id="profileId_u">
+                                <input type="hidden" id="accountId_u">
+                                <input type="hidden" id="img">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img id="st_image_u" style="width: 100%;height: 50%">
+                                        <input type="file" hidden id="fileAvatar" name="fileAvatar"
+                                               onchange="previewImage()">
+                                        <button type="button" id="btn-updateImg" onclick="selectFile()"
+                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Cập nhật
+                                            hình ảnh
+                                        </button>
+                                        <div id="btn-function" style="display: none">
+                                            <button type="button" onclick="OnUpdateImg()"
+                                                    class="btn btn-success btn-sm"><i class="fas fa-check"></i>
+                                            </button>
+                                            <button type="button" onclick="CancelUpdateImg()"
+                                                    class="btn btn-danger btn-sm"><i
+                                                    class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Họ :</label>
+                                                    <input type="text" id="firstName_u"
+                                                           class="form-control form-control-sm"
+                                                    >
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Tên :</label>
+                                                    <input type="text" id="lastName_u"
+                                                           class="form-control form-control-sm"
+                                                    >
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6" style="margin-top: -10px;">
+                                                <label style="font-size: 13px">Ngày sinh:</label>
+                                                <div class="input-group date" id="reservationdate_u"
+                                                     data-target-input="nearest">
+                                                    <input type="text"
+                                                           class="form-control form-control-sm datetimepicker-input"
+                                                           data-target="#reservationdate_u" id="dob_u" name="dob"
+                                                           placeholder="Chọn ngày sinh"/>
+                                                    <div class="input-group-append" data-target="#reservationdate_u"
+                                                         data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label style="font-size: 13px">Giới tính :</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" value="Nam" type="radio"
+                                                               name="sex" id="flexRadioDefault1" checked>
+                                                        <label class="form-check-label" for="flexRadioDefault1">
+                                                            Nam
+                                                        </label>
+                                                        <input class="form-check-input" value="Nữ" type="radio"
+                                                               name="sex" style="margin-left: 15px;"
+                                                               id="flexRadioDefault2">
+                                                        <label class="form-check-label" style="margin-left: 36px;"
+                                                               for="flexRadioDefault2">
+                                                            Nữ
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="m-0" style="font-size: 13px">Số điện thoại :</label>
+                                                <input type="text" id="phone_u"
+                                                       class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="m-0" style="font-size: 13px">CCCD/CMND :</label>
+                                                <input type="text" id="identityCard_u"
+                                                       class="form-control form-control-sm"
+                                                       >
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="m-0" style="font-size: 13px">Email :</label>
+                                                <input type="text" id="email_u"
+                                                       class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Tỉnh/TP:</label>
+                                                    <select id="province_u" class="form-control select2 form-control-sm"
+                                                            name="province_u"
+                                                            style="width: 100%;">
+                                                        <option selected="selected" value="">-Chọn Tỉnh/TP-</option>
+                                                        <option th:each="province : ${provinces}"
+                                                                th:value="${province.id}">[[${province.name}]]
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Quận/Huyện:</label>
+                                                    <select id="district_u" class="form-control select2 form-control-sm"
+                                                            name="district_u"
+                                                            style="width: 100%;">
+                                                        <option selected="selected" value="">-Chọn Quận/Huyện-</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Xã/Thị trấn:</label>
+                                                    <select id="ward_u" class="form-control select2 form-control-sm"
+                                                            name="ward_u"
+                                                            style="width: 100%;">
+                                                        <option selected="selected" value="">-Chọn Xã/Thị trấn-</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="m-0" style="font-size: 13px">Địa chỉ :</label>
+                                                <input type="text" id="address_u"
+                                                       class="form-control form-control-sm"
+                                                       placeholder="Nhập địa chỉ ">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" onclick="OnUpdateSubmit()" class="btn btn-primary btn-sm"><i
+                                    class="fas fa-plus"></i> Cập nhật
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
 <th:block layout:fragment="optional">
     <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
     <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
     <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $('#reservationdate_u').datetimepicker({
+            format: 'DD/MM/YYYY'
+        })
 
+        $('.select2').select2({
+            theme: 'bootstrap4'
+        })
+    </script>
     <script>
         $(document).ready(function () {
             $('#student-table').DataTable({
@@ -145,14 +328,15 @@
             })
 
             $('.dataTables_filter input[type="search"]').css(
-                {'width':'350px','display':'inline-block'}
+                {'width': '350px', 'display': 'inline-block'}
             );
 
-            $('#reset_password').on('click',()=>{
+            $('#reset_password').on('click', () => {
                 Confirm('Đặt lại mật khẩu', 'Có chắc chắn muốn đặt lại mật khẩu?', 'Có', 'Không')
             })
+
             function Confirm(title, msg, $true, $false) { /*change*/
-                var $content =  "<div class='dialog-ovelay'>" +
+                var $content = "<div class='dialog-ovelay'>" +
                     "<div class='dialog'><header>" +
                     " <h3> " + title + " </h3> " +
                     "<i class='fa fa-close'></i>" +
@@ -171,20 +355,20 @@
                 $('body').prepend($content);
                 $('.doAction').click(function () {
                     var data = new FormData();
-                    data.append("id",$('#accountId').val());
-                    data.append("email",$('#email').val());
+                    data.append("id", $('#accountId').val());
+                    data.append("email", $('#email').val());
                     $('#spinner-div').show()
                     $.ajax({
-                        url:"/dashboard/teacher/reset_password",
-                        method:"POST",
-                        cache : false,
+                        url: "/dashboard/teacher/reset_password",
+                        method: "POST",
+                        cache: false,
                         processData: false,
                         contentType: false,
-                        data:data,
-                        success:(data)=>{
+                        data: data,
+                        success: (data) => {
                             console.log(data)
                         },
-                        complete:()=>{
+                        complete: () => {
                             toastr.success('Đặt lại mật khẩu thành công')
                             $('#spinner-div').hide()
                         }
@@ -200,29 +384,75 @@
                 });
 
             }
+            const province = document.getElementById("province_u")
+            const district = document.getElementById("district_u")
+            const wards = document.getElementById("ward_u")
+
+            province.onchange = function (){
+                var provinceId = this.value;
+                district.length = 1;
+                wards.length = 1;
+                if(provinceId!=""){
+                    console.log(this.value)
+                    $.ajax({
+                        url:"http://localhost:8080/api/districts/",
+                        method:"GET",
+                        contentType: "application/json",
+                        data: {province : provinceId},
+                        success : (res)=>{
+                            for(var dis of res){
+                                // var districtOption = document.createElement("option");
+                                // districtOption.value = dis.id;
+                                // districtOption.text =dis.name;
+                                // district.appendChild(districtOption);
+                                district.options[district.options.length] = new Option(dis.name, dis.id);
+                            }
+                            district.onchange = function () {
+                                wards.length = 1;
+                                console.log(this.value)
+                                if (this.value != "") {
+                                    $.ajax({
+                                        url:"http://localhost:8080/api/wards/",
+                                        method:"GET",
+                                        contentType: "application/json",
+                                        data: {province : provinceId,district : this.value},
+                                        success: (res)=>{
+                                            for (const ward of res) {
+                                                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+                                            }
+                                        }
+                                    })
+                                }
+                            };
+                        }
+                    })
+                }
+
+            }
         });
         var OnDetails = (id) => {
             $.ajax({
-                url: "/dashboard/teacher_details/" + id,
+                url: "/dashboard/teacher/teacher_details/" + id,
                 dataType: "json",
                 contentType: "application/json",
                 method: "GET",
                 success: (data) => {
                     console.log(data)
-                    $('#tc_image').attr('src',data.profileByProfileId.avartarUrl)
-                    $('#tc_fullName').html(data.profileByProfileId.firstName+' '+data.profileByProfileId.lastName)
+                    $('#tc_image').attr('src', data.profileByProfileId.avartarUrl)
+                    $('#tc_fullName').html(data.profileByProfileId.firstName + ' ' + data.profileByProfileId.lastName)
                     $('#tc_dob').html(data.profileByProfileId.dob)
                     $('#tc_phone').html(data.profileByProfileId.phone)
                     $('#tc_email').html(data.profileByProfileId.email)
+                    $('#tc_sex').html(data.profileByProfileId.sex)
                     $('#tc_identityId').html(data.profileByProfileId.identityCard)
-                    if(data.teacherClass.length === 0){
+                    if (data.teacherClass.length === 0) {
                         $('#tc_class').html("Chưa có")
-                    }else{
-                        for(var classes of data.teacherClass){
+                    } else {
+                        for (var classes of data.teacherClass) {
                             $('#tc_class').html(classes.classCode)
                         }
                     }
-                    $('#tc_address').html(data.profileByProfileId.address+' , '+data.profileByProfileId.wardByWardId.name+' , '+data.profileByProfileId.districtByDistrictId.name+' , '+data.profileByProfileId.profileProvince.name)
+                    $('#tc_address').html(data.profileByProfileId.address + ' , ' + data.profileByProfileId.wardByWardId.name + ' , ' + data.profileByProfileId.districtByDistrictId.name + ' , ' + data.profileByProfileId.profileProvince.name)
                     $('#accountId').val(data.profileByProfileId.accountByAccountId.id)
                     $('#email').val(data.profileByProfileId.email)
                     $("#teacher_details").modal("show");
@@ -230,6 +460,202 @@
                     console.log(data);
                 }
             });
+        }
+        var OnUpdate = (id) => {
+            const province = document.getElementById("province_u")
+            const district = document.getElementById("district_u")
+            const wards = document.getElementById("ward_u")
+            $.ajax({
+                url: "/dashboard/teacher/teacher_details/" + id,
+                dataType: "json",
+                contentType: "application/json",
+                method: "GET",
+                success: (data) => {
+                    console.log(data)
+                    $('#st_image_u').attr('src', data.profileByProfileId.avartarUrl)
+                    $('#img').val(data.profileByProfileId.avartarUrl)
+                    $('#firstName_u').val(data.profileByProfileId.firstName)
+                    $('#lastName_u').val(data.profileByProfileId.lastName)
+                    $('#dob_u').val(data.profileByProfileId.dob)
+                    $('#phone_u').val(data.profileByProfileId.phone)
+                    $('#email_u').val(data.profileByProfileId.email)
+                    $('#address_u').val(data.profileByProfileId.address)
+                    $('#identityCard_u').val(data.profileByProfileId.identityCard)
+                    $('#profileId_u').val(data.profileByProfileId.id)
+                    $('#accountId_u').val(data.profileByProfileId.accountId)
+
+                    const province_id = data.profileByProfileId.profileProvince.id
+
+                    const district_id = data.profileByProfileId.districtByDistrictId.id
+
+                    const ward_id = data.profileByProfileId.wardByWardId.id
+
+                    console.log(province_id, district_id, ward_id)
+
+                    $("#province_u").val(province_id).trigger('change');
+
+                    $.ajax({
+                        url: "http://localhost:8080/api/districts/",
+                        method: "GET",
+                        contentType: "application/json",
+                        data: {province: province_id},
+                        success: (res) => {
+                            for (var dis of res) {
+                                district.options[district.options.length] = new Option(dis.name, dis.id);
+                            }
+                            $("#district_u option[value='" + district_id + "']").prop("selected", true);
+                            $.ajax({
+                                url: "http://localhost:8080/api/wards/",
+                                method: "GET",
+                                contentType: "application/json",
+                                data: {province: province_id, district: district_id},
+                                success: (res) => {
+                                    for (const ward of res) {
+                                        wards.options[wards.options.length] = new Option(ward.name, ward.id);
+                                    }
+                                    $("#ward_u option[value='" + ward_id + "']").prop("selected", true);
+                                }
+                            })
+                        }
+                    })
+
+                    $("input[name=sex][value=" + data.profileByProfileId.sex + "]").prop('checked', true);
+
+                    $("#teacher_update").modal("show");
+                }, error: (data) => {
+                    console.log(data);
+                }
+            });
+        }
+        var OnUpdateSubmit = () =>{
+            const sex = document.getElementsByName("sex")
+            var profileId = $('#profileId_u').val()
+            var accountId = $('#accountId_u').val()
+            var provinceId = $('#province_u').val()
+            var districtId = $('#district_u').val()
+            var wardId = $('#ward_u').val()
+            var firstName = $('#firstName_u').val()
+            var lastName = $('#lastName_u').val()
+            var dob = $('#dob_u').val()
+            var phone = $('#phone_u').val()
+            var address = $('#address_u').val()
+            var email = $('#email_u').val()
+            var identityCard = $('#identityCard_u').val()
+            let formData = new FormData();
+            var sexValue = ""
+            for(i = 0; i < sex.length; i++) {
+                if(sex[i].checked){
+                    sexValue = sex[i].value
+                }
+            }
+            var profile = {
+                "id":profileId,
+                "firstName" : firstName,
+                "lastName" : lastName,
+                "dob" : dob,
+                "provinceId":provinceId,
+                "districtId":districtId,
+                "wardId":wardId,
+                "address":address,
+                "phone":phone,
+                "email":email,
+                "identityCard" : identityCard,
+                "sex":sexValue,
+                "accountId" : accountId
+            }
+            formData.append('profile',JSON.stringify(profile))
+            $('#spinner-divT').show();
+            $.ajax({
+                url:"/dashboard/teacher/teacher_update",
+                method:"POST",
+                data:formData,
+                cache : false,
+                processData: false,
+                contentType: false,
+                success:(result)=>{
+                    console.log(result)
+                    $("#student_update").modal("hide");
+                    $('#spinner-divT').hide();
+                    location.reload();
+                    toastr.success('Cập nhật giáo viên thành công')
+                },
+                error:(e)=>{
+                    toastr.error('Thất bại')
+                    $('#spinner-divT').hide();
+                }
+            })
+        }
+        const imageProfile = document.getElementById('st_image_u')
+        function selectFile(){
+            // alert("click")
+            $('#fileAvatar').trigger('click');
+        }
+        function previewImage(){
+            imageProfile.src=URL.createObjectURL(event.target.files[0]);
+            $('#btn-function').show()
+            $('#btn-updateImg').hide()
+        }
+
+        var CancelUpdateImg = () =>{
+            $('#btn-function').hide()
+            $('#btn-updateImg').show()
+            $('#st_image_u').attr('src',$('#img').val())
+        }
+
+        var OnUpdateImg = () => {
+
+            ConfirmImg('Thay đổi hình ảnh', 'Có chắc chắn muốn thay đổi hình ảnh?', 'Có', 'Không')
+        }
+        function ConfirmImg(title, msg, $true, $false) { /*change*/
+            var $content =  "<div class='dialog-ovelay'>" +
+                "<div class='dialog'><header>" +
+                " <h3> " + title + " </h3> " +
+                "<i class='fa fa-close'></i>" +
+                "</header>" +
+                "<div class='dialog-msg'>" +
+                " <p> " + msg + " </p> " +
+                "</div>" +
+                "<footer>" +
+                "<div class='controls'>" +
+                " <button class='button button-danger doAction'>" + $true + "</button> " +
+                " <button class='button button-default cancelAction'>" + $false + "</button> " +
+                "</div>" +
+                "</footer>" +
+                "</div>" +
+                "</div>";
+            $('body').prepend($content);
+            $('.doAction').click(function () {
+                var avatarUrl = document.getElementById("fileAvatar")
+                var profileId = $('#profileId_u').val()
+                let formData = new FormData();
+                formData.append('file', avatarUrl.files[0]);
+                formData.append('id', profileId)
+                $('#spinner-divT').show()
+                $.ajax({
+                    url:"/dashboard/teacher/changeImg",
+                    method:"POST",
+                    enctype: 'multipart/form-data',
+                    data:formData,
+                    cache : false,
+                    processData: false,
+                    contentType: false,
+                    success : (data)=>{
+                        $('#spinner-divT').hide()
+                        location.reload();
+                        toastr.success('Thay đổi hình ảnh thành công')
+                    }
+                })
+                $(this).parents('.dialog-ovelay').fadeOut(500, function () {
+                    $(this).remove();
+                })
+            });
+            $('.cancelAction, .fa-close').click(function () {
+                $(this).parents('.dialog-ovelay').fadeOut(500, function () {
+                    $(this).remove();
+                });
+            });
+
+
         }
     </script>
 </th:block>

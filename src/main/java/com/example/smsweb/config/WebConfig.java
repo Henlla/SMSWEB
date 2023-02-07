@@ -47,6 +47,8 @@ public class WebConfig {
                 .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
                         "/api/districts/**","/api/accounts/login","/api/wards/**","/api/semester/**","/api/roles/**").permitAll()
                 .requestMatchers("/dashboard/login").permitAll()
+                .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
+                .requestMatchers("/dashboard/teacher/**","/dashboard/student/**").hasAnyAuthority("STAFF","ADMIN")
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/accounts/changePassword/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF")

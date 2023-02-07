@@ -5,6 +5,8 @@ $(()=>{
     const district = document.getElementById("district")
     const wards = document.getElementById("ward")
 
+    const sex = document.getElementsByName("sex")
+
 
     province.onchange = function (){
         var provinceId = this.value;
@@ -128,6 +130,12 @@ $(()=>{
         var avatarUrl = document.getElementById("avatar")
         let formData = new FormData();
         var identityCard = $('#identityCard').val()
+        var sexValue = ""
+        for(i = 0; i < sex.length; i++) {
+            if(sex[i].checked){
+                sexValue = sex[i].value
+            }
+        }
         var profile = {
             "firstName" : firstName,
             "lastName" : lastName,
@@ -141,10 +149,16 @@ $(()=>{
             "avartarUrl":"",
             "avatarPath" : "",
             "identityCard" : identityCard,
+            "sex":sexValue,
             "accountId" : ""
         }
         formData.append('file', avatarUrl.files[0]);
         formData.append('profile',JSON.stringify(profile))
+
+        $.validator.addMethod("valueNotEquals", function(value, element, arg){
+            return arg !== value;
+        }, "Value must not equal arg.");
+
         $('#form-create').validate({
             rules: {
                 first_name: {
@@ -163,22 +177,19 @@ $(()=>{
                 identityCard: {
                     required: true
                 },
-                // province: {
-                //     required: true
-                // },
-                // district: {
-                //     required: true
-                // },
-                // ward: {
-                //     required: true
-                // },
+                province: {
+                    valueNotEquals: ""
+                },
+                district: {
+                    valueNotEquals: ""
+                },
+                ward: {
+                    valueNotEquals: ""
+                },
                 address:{
                     required: true
                 },
-                // major:{
-                //     required:true
-                //
-                // }
+
             },
             messages:{
                 first_name : {
@@ -197,30 +208,31 @@ $(()=>{
                 identityCard: {
                     required: "Vui lòng nhập CMND/CCCD "
                 },
-                // province: {
-                //     required: "Vui lòng chọn tỉnh/thành phố "
-                // },
-                // district: {
-                //     required: "Vui lòng chọn quận/huyện "
-                // },
-                // ward: {
-                //     required: "Vui lòng chọn xã/thị trấn "
-                // },
+                province: {
+                    valueNotEquals: "Vui lòng chọn tỉnh/thành phố "
+                },
+                district: {
+                    valueNotEquals: "Vui lòng chọn quận/huyện "
+                },
+                ward: {
+                    valueNotEquals: "Vui lòng chọn xã/thị trấn "
+                },
                 address:{
                     required: "Vui lòng nhập địa chỉ"
                 },
-                // major: {
-                //     required: "Vui lòng chọn nghành học "
-                // }
+
             },
         })
+
+
+
         if(avatarUrl.files.length===0){
             $('.errorAvatar').css("display","block")
         }else{
             if($('#form-create').valid()){
                 $('#spinner-div').show()
                 $.ajax({
-                    url:"/dashboard/create-teacher",
+                    url:"/dashboard/teacher/create-teacher",
                     method:"POST",
                     enctype: 'multipart/form-data',
                     data:formData,
@@ -229,11 +241,6 @@ $(()=>{
                     contentType: false,
                     success:(result)=>{
                         console.log(result)
-                    },
-                    error:(e)=>{
-                        console.log(e)
-                    },
-                    complete:()=>{
                         $('#province').val("").change()
                         $('#district').val("").change()
                         $('#ward').val("").change()
@@ -251,27 +258,36 @@ $(()=>{
                         $('.background-choose_image').attr('src','/img/avatar.png').css("filter","blur(3px)")
                         toastr.success('Tạo giáo viên thành công')
                         $('#spinner-div').hide();
+                    },
+                    error:(e)=>{
+                        console.log(e)
+                        toastr.error('Thất bại')
+                        $('#spinner-div').hide();
                     }
                 })
             }
 
         }
-
-
-
-
-
-        console.log("provinceId "+provinceId)
-        console.log("districtId "+districtId)
-        console.log("wardId "+wardId)
-        console.log("firstName "+firstName)
-        console.log("lastName "+lastName)
-        console.log("dob "+dob)
-        console.log("phone "+phone)
-        console.log("address "+address)
-        console.log("email "+email)
-        console.log("majorId "+majorId)
-        console.log("avatarUrl "+formData)
     })
-
 })
+function selectProvince(){
+    console.log($('#province').val())
+    if($('#province').val() != ""){
+        $('#province-error').html("")
+    }
+}
+
+function selectDistrict(){
+    console.log($('#district').val())
+    if($('#district').val() != ""){
+        $('#district-error').html("")
+    }
+}
+
+function selectWard() {
+    console.log($('#ward').val())
+    if ($('#ward').val() != "") {
+        $('#ward-error').html("")
+    }
+}
+
