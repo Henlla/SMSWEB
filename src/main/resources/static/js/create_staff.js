@@ -5,8 +5,6 @@ $(()=>{
     const district = document.getElementById("district")
     const wards = document.getElementById("ward")
 
-
-
     const sex = document.getElementsByName("sex")
 
 
@@ -77,12 +75,12 @@ $(()=>{
 
 
     // custom confirm
-   $('.icon-cancel_image').on('click',function (){
-       $('.background-choose_image').css("filter","blur(3px)")
-       Confirm('Hủy hình ảnh', 'Có chắc chắn muốn hủy hình ảnh?', 'Hủy', 'Không')
+    $('.icon-cancel_image').on('click',function (){
+        $('.background-choose_image').css("filter","blur(3px)")
+        Confirm('Hủy hình ảnh', 'Có chắc chắn muốn hủy hình ảnh?', 'Hủy', 'Không')
 
 
-   })
+    })
     function Confirm(title, msg, $true, $false) { /*change*/
         var $content =  "<div class='dialog-ovelay'>" +
             "<div class='dialog'><header>" +
@@ -103,9 +101,9 @@ $(()=>{
         $('body').prepend($content);
         $('.doAction').click(function () {
             $('.icon-choose_image').css("display","block")
-                $('.icon-cancel_image').css("display","none")
-                $('.background-choose_image').attr('src','/img/avatar.png')
-                $('#avatar').val("")
+            $('.icon-cancel_image').css("display","none")
+            $('.background-choose_image').attr('src','/img/avatar.png')
+            $('#avatar').val("")
             $(this).parents('.dialog-ovelay').fadeOut(500, function () {
                 $(this).remove();
             })
@@ -119,7 +117,6 @@ $(()=>{
     }
 
 
-
     $('#btn_create_student').on('click',function (e){
         e.preventDefault()
         var provinceId = $('#province').val()
@@ -131,7 +128,6 @@ $(()=>{
         var phone = $('#phone').val()
         var address = $('#address').val()
         var email = $('#email').val()
-        var majorId = $('#major').val()
         var avatarUrl = document.getElementById("avatar")
         let formData = new FormData();
         var identityCard = $('#identityCard').val()
@@ -157,15 +153,13 @@ $(()=>{
             "sex":sexValue,
             "accountId" : ""
         }
+
         formData.append('file', avatarUrl.files[0]);
         formData.append('profile',JSON.stringify(profile))
-        formData.append('majorId',majorId)
-
-        //method rule
+        formData.append('roleId', $('#role').val())
         $.validator.addMethod("valueNotEquals", function(value, element, arg){
             return arg !== value;
         }, "Value must not equal arg.");
-
         $('#form-create').validate({
             rules: {
                 first_name: {
@@ -175,9 +169,6 @@ $(()=>{
                     required: true
                 },
                 phone: {
-                    required: true
-                }
-                ,dob: {
                     required: true
                 },
                 email: {
@@ -199,11 +190,11 @@ $(()=>{
                 address:{
                     required: true
                 },
-                major:{
+                role:{
                     valueNotEquals: ""
-
                 }
-                },
+
+            },
             messages:{
                 first_name : {
                     required:"Vui lòng nhập họ sinh viên"
@@ -213,8 +204,6 @@ $(()=>{
                 },
                 phone: {
                     required: "Vui lòng nhập số điện thoại "
-                }, dob: {
-                    required: "Vui lòng chọn ngày sinh "
                 },
                 email: {
                     required: "Vui lòng nhập email ",
@@ -235,62 +224,63 @@ $(()=>{
                 address:{
                     required: "Vui lòng nhập địa chỉ"
                 },
-                major: {
-                    valueNotEquals: "Vui lòng chọn nghành học "
-                }
+                role: {
+                    valueNotEquals: "Vui lòng chọn chức vụ "
+                },
             },
         })
-            if(avatarUrl.files.length===0){
-                $('.errorAvatar').css("display","block")
-            }else{
-                if($('#form-create').valid()){
-                    $('#spinner-div').show()
-                    $.ajax({
-                        url:"/dashboard/student/create-student",
-                        method:"POST",
-                        enctype: 'multipart/form-data',
-                        data:formData,
-                        cache : false,
-                        processData: false,
-                        contentType: false,
-                        success:(result)=>{
-                            console.log(result)
-                            $('#province').val("").change()
-                            $('#district').val("").change()
-                            $('#ward').val("").change()
-                            $('#first_name').val("")
-                            $('#last_name').val("")
-                            $('#dob').val("")
-                            $('#phone').val("")
-                            $('#address').val("")
-                            $('#email').val("")
-                            $('#major').val("").change()
-                            $('#avatar').val("")
-                            $('#identityCard').val("")
-                            $('.icon-cancel_image').css("display","none")
-                            $('.icon-choose_image').css("display","block")
-                            $('.background-choose_image').attr('src','/img/avatar.png').css("filter","blur(3px)")
-                            toastr.success('Tạo sinh viên thành công')
-                            $('#spinner-div').hide();
-                        },
-                        error:(e)=>{
-                            toastr.error('Thất bại')
-                            $('#spinner-div').hide();
-                        }
-                    })
+        if(avatarUrl.files.length===0){
+            $('.errorAvatar').css("display","block")
+        }else{
+            if($('#form-create').valid()){
+                $('#spinner-div').show()
+                $.ajax({
+                    url:"/dashboard/staff/create-staff",
+                    method:"POST",
+                    enctype: 'multipart/form-data',
+                    data:formData,
+                    cache : false,
+                    processData: false,
+                    contentType: false,
+                    success:(result)=>{
+                        console.log(result)
+                        $('#province').val("").change()
+                        $('#district').val("").change()
+                        $('#ward').val("").change()
+                        $('#first_name').val("")
+                        $('#role').val("")
+                        $('#last_name').val("")
+                        $('#dob').val("")
+                        $('#phone').val("")
+                        $('#address').val("")
+                        $('#email').val("")
+                        $('#major').val("").change()
+                        $('#avatar').val("")
+                        $('#identityCard').val("")
+                        $('.icon-cancel_image').css("display","none")
+                        $('.icon-choose_image').css("display","block")
+                        $('.background-choose_image').attr('src','/img/avatar.png').css("filter","blur(3px)")
+                        toastr.success('Tạo nhân viên thành công')
+                        $('#spinner-div').hide();
+                    },
+                    error:(e)=>{
+                        console.log(e)
+                        toastr.error('Thất bại !')
+                        $('#spinner-div').hide();
+                    }
+                })
             }
 
         }
     })
-
 })
-function selectMajor(){
-    console.log($('#major').val())
-   if($('#major').val() != ""){
-       $('#major-error').html("")
-   }
-}
 
+function selectRole(){
+    console.log($('#role').val())
+    if($('#role').val() != ""){
+        $('#role-error').html("")
+    }
+}
 function selectProvince(){
     console.log($('#province').val())
     if($('#province').val() != ""){

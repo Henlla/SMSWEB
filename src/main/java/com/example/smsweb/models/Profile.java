@@ -56,6 +56,9 @@ public class Profile {
     @Column(name = "identity_card")
     private String identityCard;
     @Basic
+    @Column(name = "sex")
+    private String sex;
+    @Basic
     @Column(name = "account_id")
     private Integer accountId;
     @ManyToOne
@@ -67,18 +70,19 @@ public class Profile {
     @ManyToOne
     @JoinColumn(name = "ward_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Ward wardByWardId;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id",insertable = false,updatable = false)
 //    @JsonBackReference("account_profile")
     private Account accountByAccountId;
 
-    @OneToOne(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
-    private Staff staffById;
-    @OneToOne(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
     @JsonIgnore
-    private Teacher teachersById;
-    @OneToOne(mappedBy = "studentByProfile",fetch=FetchType.EAGER)
-    private Student studentsById;
-
+    private List<Staff> staffById;
+    @OneToMany(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)
+    @JsonIgnore
+    private List<Teacher> teachersById;
+    @OneToMany(mappedBy = "studentByProfile",fetch=FetchType.EAGER)
+    @JsonIgnore
+    private List<Student> studentsById;
 
 }

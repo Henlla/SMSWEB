@@ -37,7 +37,7 @@ public class TeacherController {
     @Autowired
     private MailService mailService;
 
-    @GetMapping("dashboard/create-teacher")
+    @GetMapping("dashboard/teacher/create-teacher")
     public String create_teacher(Model model){
         RestTemplate restTemplate = new RestTemplate();
         List<Province> provinces = restTemplate.getForObject(PROVINCE_URL ,ArrayList.class);
@@ -45,7 +45,7 @@ public class TeacherController {
         return "dashboard/teacher/create_teacher";
     }
 
-    @PostMapping("dashboard/create-teacher")
+    @PostMapping("dashboard/teacher/create-teacher")
     public String create_teacher(@RequestParam("profile")String profile,
                                  @RequestParam("file") MultipartFile file,
                                  @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException, MessagingException {
@@ -76,17 +76,6 @@ public class TeacherController {
         Account accountResponse = new ObjectMapper().readValue(accountResponseToJson,Account.class);
         //----------------------------
 
-        //Send mail
-        Mail mail = new Mail();
-        mail.setToMail(parseProfile.getEmail());
-        mail.setSubject("Account student HKT SYSTEM");
-        Map<String,Object> props = new HashMap<>();
-        props.put("accountName",accountName);
-        props.put("password",password);
-        mail.setProps(props);
-        mailService.sendHtmlMessage(mail);
-        //-----------------------------
-
         //save profile
         HttpHeaders headersProfile = new HttpHeaders();
         headersProfile.set("Content-Type", "multipart/form-data");
@@ -102,6 +91,19 @@ public class TeacherController {
         Profile profileResponse = new ObjectMapper().readValue(profileResponseToJson,Profile.class);
         //------------------------------
 
+        //Send mail
+        Mail mail = new Mail();
+        mail.setToMail(parseProfile.getEmail());
+        mail.setSubject("Account student HKT SYSTEM");
+        String name = profileResponse.getFirstName()+" "+profileResponse.getLastName();
+        Map<String,Object> props = new HashMap<>();
+        props.put("accountName",accountName);
+        props.put("password",password);
+        props.put("fullname",name);
+        mail.setProps(props);
+        mailService.sendHtmlMessage(mail);
+        //-----------------------------
+
         //Save teacher
         HttpHeaders headerTeacher = new HttpHeaders();
         headerTeacher.set("Authorization","Bearer "+_token);
@@ -116,7 +118,7 @@ public class TeacherController {
 
         return "dashboard/teacher/create_teacher";
     }
-    @GetMapping("/dashboard/index-teacher")
+    @GetMapping("/dashboard/teacher/index-teacher")
     public String index(Model model,@CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
         if (_token.equals("")) {
             return "redirect:/dashboard/login";
@@ -127,14 +129,17 @@ public class TeacherController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(TEACHER_URL+"list",HttpMethod.GET,request,String.class);
         List<Teacher> listTeacher = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Teacher>>(){});
+        List<Province> provinces = restTemplate.getForObject(PROVINCE_URL ,ArrayList.class);
+        model.addAttribute("provinces",provinces);
         model.addAttribute("teachers",listTeacher.stream().sorted((s1,s2)-> s1.getId().compareTo(s2.getId())).toList());
         return "dashboard/teacher/teacher_index";
     }
 
-    @GetMapping("/dashboard/teacher_details/{id}")
-    public String student_details(Model model,@CookieValue(name = "_token", defaultValue = "") String _token,@PathVariable("id")Integer id) throws JsonProcessingException {
+    @GetMapping("/dashboard/teacher/teacher_details/{id}")
+    @ResponseBody
+    public Object teacher_details(@CookieValue(name = "_token", defaultValue = "") String _token,@PathVariable("id")Integer id) throws JsonProcessingException {
         if (_token.equals("")) {
-            return "redirect:/dashboard/login";
+            return "error";
         }
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers= new HttpHeaders();
@@ -145,8 +150,7 @@ public class TeacherController {
         ResponseModel responseModel = objectMapper.readValue(response.getBody(),new TypeReference<ResponseModel>(){});
         String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
         Teacher teacher = objectMapper.readValue(convertToJson,Teacher.class);
-        model.addAttribute("teacher",teacher);
-        return "dashboard/teacher/teacher_details";
+        return teacher;
     }
 
     @PostMapping("/dashboard/teacher/reset_password")
@@ -179,5 +183,60 @@ public class TeacherController {
         //-----------------------------
 
         return "success";
+    }
+
+    @PostMapping("/dashboard/teacher/teacher_update")
+    @ResponseBody
+    public String teacher_update(@CookieValue(name = "_token", defaultValue = "") String _token,@RequestParam("profile")String profile) throws JsonProcessingException {
+        if (_token.equals("")) {
+            return "failed";
+        }
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Profile profileConvert = objectMapper.readValue(profile,Profile.class);
+        HttpHeaders headersGet = new HttpHeaders();
+        headersGet.set("Authorization", "Bearer " + _token);
+        HttpEntity<Object> requestGet = new HttpEntity<>(headersGet);
+        ResponseEntity<ResponseModel> responseModel = restTemplate.exchange(PROFILE_URL+profileConvert.getId(),HttpMethod.GET,requestGet,ResponseModel.class);
+        String convertModelToJson = objectMapper.writeValueAsString(responseModel.getBody().getData());
+        Profile convertJsonToProfile = objectMapper.readValue(convertModelToJson, new TypeReference<Profile>() {});
+        profileConvert.setAvatarPath(convertJsonToProfile.getAvatarPath());
+        profileConvert.setAvartarUrl(convertJsonToProfile.getAvartarUrl());
+
+        String paramsJson = objectMapper.writeValueAsString(profileConvert);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + _token);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("profile", paramsJson);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        ResponseEntity<ResponseModel> response = restTemplate.exchange(PROFILE_URL, HttpMethod.PUT, request, ResponseModel.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return "success";
+        } else {
+            return "failed";
+        }
+    }
+
+    @PostMapping("/dashboard/teacher/changeImg")
+    @ResponseBody
+    public String change_image(@CookieValue(name = "_token", defaultValue = "") String _token,
+                               @RequestParam("file") MultipartFile file,@RequestParam("id") Integer id){
+        if (_token.equals("")) {
+            return "failed";
+        }
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "multipart/form-data");
+        headers.set("Authorization","Bearer "+_token);
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("file", file.getResource());
+        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+        ResponseEntity<ResponseModel> response = restTemplate.exchange(PROFILE_URL+id, HttpMethod.PUT, request, ResponseModel.class);
+        if(response.getStatusCode().is2xxSuccessful()){
+            return "success";
+        }else{
+            return "failed";
+        }
     }
 }

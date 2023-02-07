@@ -99,8 +99,13 @@
 }
 
 .error{
-    font-size: 14px;
+    font-size: 12px;
     color: red;
+}
+
+#dob-error{
+    position: absolute;
+    top: 45px;
 }
 
 .errorAvatar{

@@ -27,6 +27,10 @@ public class TeacherRestController {
     }
     @GetMapping("/get/{id}")
     public ResponseEntity<?> findStudentById(@PathVariable("id") Integer id){
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), iTeacher.findOne(id)));
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), iTeacher.findOne(id)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("error", LocalTime.now().toString(), e.getMessage()));
+        }
     }
 }

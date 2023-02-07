@@ -4,7 +4,9 @@ import com.example.smsweb.api.di.irepository.ITeacher;
 import com.example.smsweb.api.di.repository.TeacherRepository;
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.models.Teacher;
+import org.hibernate.DuplicateMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

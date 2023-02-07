@@ -38,5 +38,8 @@ public class Classses {
 //    @JsonManagedReference("student_student_subject")
     private List<StudentClass> studentClassById;
 
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id",insertable = false,updatable = false)
+    private Teacher classTeacher;
 
 }
