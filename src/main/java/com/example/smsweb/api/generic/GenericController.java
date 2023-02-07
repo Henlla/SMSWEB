@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
+
 public class GenericController<T> {
     @Autowired
     IGenericRepository<T> dao;
@@ -14,7 +15,7 @@ public class GenericController<T> {
     @GetMapping("/list")
     public ResponseEntity<?> findAll() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),dao.findAll()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), dao.findAll()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
         }
@@ -23,7 +24,7 @@ public class GenericController<T> {
     @GetMapping("/findOne/{id}")
     public ResponseEntity<?> findOne(@PathVariable("id") Integer id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalTime.now().toString(),dao.findOne(id)));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), dao.findOne(id)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
         }

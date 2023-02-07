@@ -19,7 +19,7 @@ public class SemesterService implements ISemester {
         try {
             dao.save(semester);
         } catch (Exception e) {
-            throw new ErrorHandler("Save fail");
+            throw new ErrorHandler("Sao lưu thất bại");
         }
     }
 
@@ -28,7 +28,7 @@ public class SemesterService implements ISemester {
         try {
             dao.deleteById(id);
         } catch (Exception e) {
-            throw new ErrorHandler("Can't find id: " + id + " to delete");
+            throw new ErrorHandler("Không tìm thấy id : " + id + " để xóa");
         }
     }
 
@@ -37,7 +37,7 @@ public class SemesterService implements ISemester {
         try {
             return dao.findAll();
         } catch (Exception e) {
-            throw new ErrorHandler("Don't have any records");
+            throw new ErrorHandler("Không có dữ liệu");
         }
     }
 
@@ -46,7 +46,7 @@ public class SemesterService implements ISemester {
         try {
             return dao.findById(id).get();
         } catch (Exception e) {
-            throw new ErrorHandler("Can't find records have id: " + id);
+            throw new ErrorHandler("Không tìm thấy dữ liệu có id : " + id);
         }
     }
 }

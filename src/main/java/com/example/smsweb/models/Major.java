@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 public class Major {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

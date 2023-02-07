@@ -27,10 +27,8 @@ public class MajorStudent {
     private Integer studentId;
     @ManyToOne
     @JoinColumn(name = "major_id", referencedColumnName = "id",insertable = false,updatable = false)
-//    @JsonBackReference("major_major_student")
     private Major majorByMajorId;
     @ManyToOne
-//    @JsonBackReference("student_major")
     @JsonIgnore
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Student studentByStudentId;

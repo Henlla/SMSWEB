@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "class_subject", schema = "smdb", catalog = "")
-@Setter
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@Table(name = "class_subject", schema = "smdb", catalog = "")
 public class ClassSubject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -29,5 +29,10 @@ public class ClassSubject {
     @Basic
     @Column(name = "end_date")
     private String endDate;
-
+    @ManyToOne
+    @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
+    private Subject subjectBySubjectId;
+    @ManyToOne
+    @JoinColumn(name = "class_id", referencedColumnName = "id",insertable = false,updatable = false)
+    private Classses classsesByClassId;
 }

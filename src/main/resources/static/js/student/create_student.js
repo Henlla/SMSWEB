@@ -6,6 +6,11 @@ $(()=>{
     const wards = document.getElementById("ward")
 
 
+
+    const sex = document.getElementsByName("sex")
+
+
+
     province.onchange = function (){
         var provinceId = this.value;
         district.length = 1;
@@ -114,6 +119,7 @@ $(()=>{
     }
 
 
+
     $('#btn_create_student').on('click',function (e){
         e.preventDefault()
         var provinceId = $('#province').val()
@@ -129,6 +135,12 @@ $(()=>{
         var avatarUrl = document.getElementById("avatar")
         let formData = new FormData();
         var identityCard = $('#identityCard').val()
+        var sexValue = ""
+        for(i = 0; i < sex.length; i++) {
+            if(sex[i].checked){
+                sexValue = sex[i].value
+            }
+        }
         var profile = {
             "firstName" : firstName,
             "lastName" : lastName,
@@ -142,11 +154,17 @@ $(()=>{
             "avartarUrl":"",
             "avatarPath" : "",
             "identityCard" : identityCard,
+            "sex":sexValue,
             "accountId" : ""
         }
         formData.append('file', avatarUrl.files[0]);
         formData.append('profile',JSON.stringify(profile))
         formData.append('majorId',majorId)
+
+        //method rule
+        $.validator.addMethod("valueNotEquals", function(value, element, arg){
+            return arg !== value;
+        }, "Value must not equal arg.");
 
         $('#form-create').validate({
             rules: {
@@ -158,6 +176,9 @@ $(()=>{
                 },
                 phone: {
                     required: true
+                }
+                ,dob: {
+                    required: true
                 },
                 email: {
                     required: true,
@@ -166,22 +187,22 @@ $(()=>{
                 identityCard: {
                     required: true
                 },
-                // province: {
-                //     required: true
-                // },
-                // district: {
-                //     required: true
-                // },
-                // ward: {
-                //     required: true
-                // },
+                province: {
+                    valueNotEquals: ""
+                },
+                district: {
+                    valueNotEquals: ""
+                },
+                ward: {
+                    valueNotEquals: ""
+                },
                 address:{
                     required: true
                 },
-                // major:{
-                //     required:true
-                //
-                // }
+                major:{
+                    valueNotEquals: ""
+
+                }
                 },
             messages:{
                 first_name : {
@@ -192,6 +213,8 @@ $(()=>{
                 },
                 phone: {
                     required: "Vui lòng nhập số điện thoại "
+                }, dob: {
+                    required: "Vui lòng chọn ngày sinh "
                 },
                 email: {
                     required: "Vui lòng nhập email ",
@@ -200,21 +223,21 @@ $(()=>{
                 identityCard: {
                     required: "Vui lòng nhập CMND/CCCD "
                 },
-                // province: {
-                //     required: "Vui lòng chọn tỉnh/thành phố "
-                // },
-                // district: {
-                //     required: "Vui lòng chọn quận/huyện "
-                // },
-                // ward: {
-                //     required: "Vui lòng chọn xã/thị trấn "
-                // },
+                province: {
+                    valueNotEquals: "Vui lòng chọn tỉnh/thành phố "
+                },
+                district: {
+                    valueNotEquals: "Vui lòng chọn quận/huyện "
+                },
+                ward: {
+                    valueNotEquals: "Vui lòng chọn xã/thị trấn "
+                },
                 address:{
                     required: "Vui lòng nhập địa chỉ"
                 },
-                // major: {
-                //     required: "Vui lòng chọn nghành học "
-                // }
+                major: {
+                    valueNotEquals: "Vui lòng chọn nghành học "
+                }
             },
         })
             if(avatarUrl.files.length===0){
@@ -223,7 +246,7 @@ $(()=>{
                 if($('#form-create').valid()){
                     $('#spinner-div').show()
                     $.ajax({
-                        url:"/dashboard/create-student",
+                        url:"/dashboard/student/create-student",
                         method:"POST",
                         enctype: 'multipart/form-data',
                         data:formData,
@@ -258,22 +281,33 @@ $(()=>{
             }
 
         }
-
-
-
-
-
-        console.log("provinceId "+provinceId)
-        console.log("districtId "+districtId)
-        console.log("wardId "+wardId)
-        console.log("firstName "+firstName)
-        console.log("lastName "+lastName)
-        console.log("dob "+dob)
-        console.log("phone "+phone)
-        console.log("address "+address)
-        console.log("email "+email)
-        console.log("majorId "+majorId)
-        console.log("avatarUrl "+formData)
     })
 
 })
+function selectMajor(){
+    console.log($('#major').val())
+   if($('#major').val() != ""){
+       $('#major-error').html("")
+   }
+}
+
+function selectProvince(){
+    console.log($('#province').val())
+    if($('#province').val() != ""){
+        $('#province-error').html("")
+    }
+}
+
+function selectDistrict(){
+    console.log($('#district').val())
+    if($('#district').val() != ""){
+        $('#district-error').html("")
+    }
+}
+
+function selectWard(){
+    console.log($('#ward').val())
+    if($('#ward').val() != ""){
+        $('#ward-error').html("")
+    }
+}

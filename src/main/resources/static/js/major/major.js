@@ -1,4 +1,22 @@
 $(() => {
+    // console.log($.cookie("_token"));
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "3000",
+        "extendedTimeOut": "600",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
     $("#create-form").validate({
         rules: {
             create_major_code_validate: {
@@ -33,7 +51,37 @@ $(() => {
             }
         }
     })
-    $("#major-table").dataTable();
+    $("#major-table").dataTable({
+        pageLength:5,
+        lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
+        scrollY: '350px',
+        scrollCollapse: true,
+        // pagingType:"full_numbers",
+        "language": {
+            "decimal":        "",
+            "emptyTable":     "Không có dữ liệu",
+            "info":           "",
+            "infoEmpty":      "",
+            "infoFiltered":   "",
+            "infoPostFix":    "",
+            "thousands":      ",",
+            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
+            "loadingRecords": "Đang tìm...",
+            "processing":     "",
+            "search":         "Tìm kiếm:",
+            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "paginate": {
+                "first":      "Trang đầu",
+                "last":       "Trang cuối",
+                "next":       "Trang kế tiếp",
+                "previous":   "Trang trước"
+            },
+            "aria": {
+                "sortAscending":  ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
 });
 
 var OnCreateMajor = () => {
@@ -45,7 +93,7 @@ var OnCreateMajor = () => {
             "majorName": major_name
         }
         $.ajax({
-            url: "/major/post",
+            url: "/dashboard/major/post",
             contentType: "application/json",
             dataType: "json",
             method: "post",
@@ -59,7 +107,7 @@ var OnCreateMajor = () => {
 
 var OnEditMajor = (id) => {
     $.ajax({
-        url: "/major/findOne/" + id,
+        url: "/dashboard/major/findOne/" + id,
         dataType: "json",
         contentType: "application/json",
         method: "GET",
@@ -88,6 +136,29 @@ var OnUpdateMajor = () => {
         data:JSON.stringify(formData),
         success: () => {
             location.reload();
+        }
+    });
+}
+
+var OnClickImport = () =>{
+    $("#fileUpload").trigger("click");
+}
+var OnSaveExcelData = () =>{
+    var file = $("#fileUpload").get(0).files[0];
+    var formData = new FormData();
+    formData.append("file",file);
+    $.ajax({
+        url:"/dashboard/major/import-excel",
+        data:formData,
+        method:"POST",
+        processData:false,
+        contentType:false,
+        enctype:"multipart/form-data",
+        success:()=>{
+            toastr.success("Đỗ dữ liệu thành công");
+            setTimeout(()=>{
+                location.reload();
+            },1500);
         }
     });
 }

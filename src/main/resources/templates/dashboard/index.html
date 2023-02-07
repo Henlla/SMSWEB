@@ -24,9 +24,15 @@
     <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
     <link rel="stylesheet" href="/css/mdb/mdb.min.css">
 <!--    Data Table-->
-    <link rel="stylesheet" href="/css/mdb/addons/datatables2.min.css">
-    <link rel="stylesheet" href="/css/mdb/addons/datatables-select2.min.css">
+    <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <!--<link rel="stylesheet" href="/css/mdb/addons/datatables2.min.css">-->
+<!--<link rel="stylesheet" href="/css/mdb/addons/datatables-select2.min.css">-->
     <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <style>
+        body{
+            font-family: 'Inria Serif';
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -35,7 +41,7 @@
     <section layout:fragment="content">
         <p>Content</p>
     </section>
-    <div th:text="${#authentication.getAuthorities()}"></div>
+    <div th:text="${#authentication.getAuthorities()}" hidden></div>
     <th:block layout:fragment="optional"></th:block>
 </div>
 <!-- jQuery -->
@@ -72,8 +78,10 @@
 <!-- AdminLTE for demo purposes -->
 <script src="/js/demo.js"></script>
 <!--DataTable-->
-<script src="/js/mdb/addons/datatables2.min.js"></script>
-<script src="/js/mdb/addons/datatables-select2.min.js"></script>
+<script src="/plugins/datatables/jquery.dataTables.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+<!--<script src="/js/mdb/addons/datatables2.min.js"></script>-->
+<!--<script src="/js/mdb/addons/datatables-select2.min.js"></script>-->
 <script src="/plugins/select2/js/select2.full.min.js"></script>
 </body>
 </html>
