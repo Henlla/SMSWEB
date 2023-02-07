@@ -12,10 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "class_subject", schema = "smdb", catalog = "")
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ClassSubject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
