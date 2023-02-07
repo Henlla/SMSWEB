@@ -36,7 +36,10 @@ public class StaffController {
     private MailService mailService;
 
     @GetMapping("dashboard/staff/create-staff")
-    public String create_teacher(Model model) throws JsonProcessingException {
+    public String create_teacher(Model model, @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
+        if (_token.equals("")) {
+            return "redirect:/dashboard/login";
+        }
         RestTemplate restTemplate = new RestTemplate();
         List<Province> provinces = restTemplate.getForObject(PROVINCE_URL , ArrayList.class);
         String rolesResponse = restTemplate.getForObject(ROLE_URL+"list" ,String.class);
