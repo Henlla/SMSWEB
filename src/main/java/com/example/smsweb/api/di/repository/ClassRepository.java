@@ -5,6 +5,10 @@ import com.example.smsweb.models.Classses;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ClassRepository extends GenericRepository<Classses, Integer> {
+    @Query("SELECT c FROM Classses c WHERE c.classCode = :classCode")
+    Optional<Classses> findClasssesByClassCode(String classCode);
 }

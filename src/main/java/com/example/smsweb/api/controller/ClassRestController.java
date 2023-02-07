@@ -3,7 +3,9 @@ package com.example.smsweb.api.controller;
 import com.example.smsweb.api.di.irepository.IClass;
 import com.example.smsweb.api.generic.GenericController;
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.models.Account;
 import com.example.smsweb.models.Classses;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,22 +26,23 @@ public class ClassRestController extends GenericController<Classses> {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> post(@ModelAttribute Classses newclass){
+    public ResponseEntity<?> post(@RequestParam("newClass") String newclass){
         try {
-            service.save(newclass);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),null));
+            Classses classses = new ObjectMapper().readValue(newclass, Classses.class);
+            service.save(classses);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),newclass));
         }catch (Exception e){
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
         }
     }
 
 
-    @GetMapping("/findClassId/{id}")
-    public ResponseEntity<?> findByMajorId(@PathVariable("id") int id){
+    @PostMapping("/findClassCode")
+    public ResponseEntity<?> findClassCode(@RequestParam("classCode") String classCode){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),service.findOne(id)));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),service.findByClassCode(classCode)));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalTime.now().toString(),null));
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
         }
     }
 

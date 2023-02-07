@@ -61,6 +61,7 @@ public class Classses {
 
     @ManyToOne
     @JoinColumn(name = "teacher_id" , insertable = false, updatable = false)
+    //@JsonManagedReference("teacherClass")
     private Teacher teacher;
 
 

@@ -38,4 +38,9 @@ public class ClassService implements IClass {
         return repository.findById(id).orElseThrow(() -> new ErrorHandler("Cannot find class with id := "+id));
     }
 
+    @Override
+    public Classses findByClassCode(String classCode) {
+        return repository.findClasssesByClassCode(classCode).orElseThrow(
+                () -> new ErrorHandler("Cannot find class with class code := "+classCode));
+    }
 }

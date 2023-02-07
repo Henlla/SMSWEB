@@ -1,34 +1,44 @@
 
 $(()=>{
-
     $('#majorId').change(function (){
         if ($('#majorId').val()!= ""){
-
+            var classList;
             const d = new Date();
-            let day = d.getDate();
-            if (day < 10){
-                day = "0"+day;
-            }
-            let month = d.getMonth();
-            if (month < 10){
-                day = "0"+month;
-            }
-
-            let year = d.getFullYear().toString().slice(2,4);
+            var day = d.getDate();
+            if (day.toString().length < 2){day = "0"+day;}
+            var month = d.getMonth();
+            if (month.toString().length < 2){month = "0"+month;}
+            var year = d.getFullYear().toString().slice(2,4);
 
             var major = $('#majorId option[value='+$('#majorId').val()+']').text();;
             const regex = /[^A-Z]/g;
-            var classCode =major.replace(regex, '')+"."+day+"."+month+"."+year+".";
-            $('#class_code_first').val(classCode)
+
+            fetch("http://localhost:8080/dashboard/classList")
+                .then(response =>
+                    response.json()
+                        .then(data => ({
+                        data: data,
+                        status: response.status
+                    })
+                ).then(async res => {
+                    for(var increaseNumber = 1;increaseNumber < 20;increaseNumber++){
+                        if (increaseNumber.toString().length < 2){
+                            increaseNumber = "0"+increaseNumber;
+                        }
+                        var classCode =major.replace(regex, '')+"."+day+"."+month+"."+year+"."+increaseNumber;
+                        if (res.data.filter( c => c.classCode == classCode).length == 0){
+                            $("#classCode").val(classCode);
+                            break;
+                        }
+                    }
+                }));
         }
     });
 
     $('#btn_create_class').on('click',function (e){
-        e.preventDefault()
-        classNumber = $('#classCode').val();
-        if ( classNumber < 10) classNumber = "0"+classNumber;
+        e.preventDefault();
 
-        var classCode = $('#class_code_first').val() + classNumber;
+        var classCode = $('#classCode').val();
         var majorId = $('#majorId').val()
         var teacherId = $('#teacherId').val()
         var limitStudent = $('#limitStudent').val()
@@ -66,35 +76,29 @@ $(()=>{
                 }
             },
         })
-            if($('#form-create').valid()){
-                $('#spinner-div').show()
-                $.ajax({
-                    url:"/dashboard/class-create",
-                    method:"POST",
-                    data:formData,
-                    cache : false,
-                    processData: false,
-                    contentType: false,
-                    success:(result)=>{
-                        console.log(result)
-                        console.log("success")
-
-                        $('#teacherId').val("").change()
-                        $('#majorId').val("").change()
-                        $('#classCode').val("")
-                        $('#class_code_first').val("")
-                        toastr.success('Tạo lớp học thành công')
-                        $('#spinner-div').hide();
-                    },
-                    error:(e)=>{
-                        console.log(e)
-                        console.log("failed")
-                        toastr.success('Tạo lớp học thất bại')
-                        $('#spinner-div').hide();
-                    },
-                })
-            }
+        if($('#form-create').valid()){
+            $('#spinner-div').show()
+            $.ajax({
+                url:"/dashboard/class-create",
+                method:"POST",
+                data:formData,
+                cache : false,
+                processData: false,
+                contentType: false,
+                success:(result)=>{
+                    $('#teacherId').val("").change()
+                    $('#majorId').val("").change()
+                    $('#classCode').val("")
+                    $('#class_code_first').val("")
+                    toastr.success('Tạo lớp học thành công')
+                    $('#spinner-div').hide();
+                },
+                error:(e)=>{
+                    toastr.error('Tạo lớp học thất bại')
+                    $('#spinner-div').hide();
+                },
+            })
+        }
 
     })
-
 })
