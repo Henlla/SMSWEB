@@ -72,6 +72,12 @@ $(() => {
     //         selector: 'td:first-child'
     //     }
     // });
+    $(".select2-single").select2({
+        theme:"bootstrap4",
+        width:"100%",
+        dropdownCssClass: "f-13"
+        // containerCssClass:":all:"
+    });
 });
 var OnEditSubject = (id) => {
     $.ajax({
@@ -87,8 +93,8 @@ var OnEditSubject = (id) => {
             $("#edit_subject_name").val(obj.subjectName);
             $("#edit_fee").val(formatFee);
             $("#edit_slot").val(obj.slot);
-            $("#edit_semester_id option[value='" + obj.semesterId + "']").prop("selected", true);
-            $("#edit_major_id option[value='" + obj.majorId + "']").prop("selected", true);
+            $("#edit_semester_id").val(obj.semesterId).trigger("change");
+            $("#edit_major_id").val(obj.majorId).trigger("change");
             $("#subject-edit-modal").modal("show");
         }
     });

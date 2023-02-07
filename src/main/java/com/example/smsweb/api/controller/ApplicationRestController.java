@@ -4,7 +4,6 @@ import com.example.smsweb.api.di.irepository.IApplication;
 import com.example.smsweb.api.generic.GenericController;
 import com.example.smsweb.models.Application;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,8 +12,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApplicationRestController extends GenericController<Application> {
     @Autowired
     public IApplication service;
-    @PostMapping("/post")
-    public Object post(){
-        return "";
-    }
 }

@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -41,14 +40,13 @@ public class WebConfig {
 
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
-        http
-                .cors().and().csrf().disable()
+        http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
                         "/api/districts/**","/api/accounts/login","/api/wards/**", "/api/semester/**").permitAll()
                 .requestMatchers("/dashboard/login").permitAll()
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
-                .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
+                .requestMatchers("/css/**","/js/**","/plugins/**","/img/**","/TempExcel/**").permitAll()
                 .requestMatchers("/api/accounts/**" ,"/api/accounts/changePassword/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF")
                 .requestMatchers("/api/profiles/**","/api/students/**",
                         "/api/students-subject/**","/api/student-major/**","/api/teacher/**").hasAnyAuthority("ADMIN","STAFF")
@@ -57,7 +55,7 @@ public class WebConfig {
                 .exceptionHandling().accessDeniedPage("/access-denied")
 //                .and()
 //                .formLogin()
-//                .loginPage("/dashboard/login").permitAll()
+//                .loginPage("/dashboard/login")
 //                .defaultSuccessUrl("/dashboard", true)
 //                .usernameParameter("username")
 //                .passwordParameter("password")

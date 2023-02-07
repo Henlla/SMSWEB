@@ -26,7 +26,7 @@ public class SubjectController {
     @GetMapping("/index")
     public String index(@CookieValue(name = "_token",defaultValue = "") String _token, Model model) {
         if(_token.equals("")){
-            return "redirect:dashboard/login";
+            return "redirect:/dashboard/login";
         }
         listSubject = new ResponseModel();
         listMajor = new ResponseModel();
@@ -74,9 +74,9 @@ public class SubjectController {
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<MultiValueMap<String,String>>(content,headers);
         ResponseEntity<String> response = restTemplate.exchange(SUBJECT_URL+"delete/" + id,HttpMethod.DELETE,request,String.class);
         if(response.getStatusCode().is2xxSuccessful()){
-            return "redirect:/subject/index";
+            return "redirect:/dashboard/subject/index";
         }else{
-            return "redirect:/subject/index";
+            return "redirect:/dashboard/subject/index";
         }
     }
 

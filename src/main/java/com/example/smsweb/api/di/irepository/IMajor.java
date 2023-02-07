@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface IMajor extends IGenericRepository<Major> {
     public void importDataToDb(MultipartFile file);
-    public void exportDataToExcel(HttpServletResponse response);
+    public void exportDataToExcel(HttpServletResponse response,List<Major> list,String fileName);
 }

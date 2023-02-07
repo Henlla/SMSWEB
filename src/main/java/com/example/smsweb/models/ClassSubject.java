@@ -30,9 +30,9 @@ public class ClassSubject {
     @Column(name = "end_date")
     private String endDate;
     @ManyToOne
-    @JoinColumn(name = "subject_id", referencedColumnName = "id")
+    @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Subject subjectBySubjectId;
     @ManyToOne
-    @JoinColumn(name = "class_id", referencedColumnName = "id")
+    @JoinColumn(name = "class_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Classses classsesByClassId;
 }
