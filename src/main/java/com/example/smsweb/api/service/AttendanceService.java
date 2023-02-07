@@ -1,23 +1,23 @@
 package com.example.smsweb.api.service;
 
-import com.example.smsweb.api.di.irepository.ISemester;
-import com.example.smsweb.api.di.repository.SemesterRepository;
+import com.example.smsweb.api.di.irepository.IAttendance;
+import com.example.smsweb.api.di.repository.AttendanceRepository;
 import com.example.smsweb.api.exception.ErrorHandler;
-import com.example.smsweb.models.Semester;
+import com.example.smsweb.models.Attendance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class SemesterService implements ISemester {
+public class AttendanceService implements IAttendance {
     @Autowired
-    private SemesterRepository dao;
+    private AttendanceRepository dao;
 
     @Override
-    public void save(Semester semester) {
+    public void save(Attendance attendance) {
         try {
-            dao.save(semester);
+            dao.save(attendance);
         } catch (Exception e) {
             throw new ErrorHandler("Sao lưu thất bại");
         }
@@ -28,25 +28,25 @@ public class SemesterService implements ISemester {
         try {
             dao.deleteById(id);
         } catch (Exception e) {
-            throw new ErrorHandler("Không tìm thấy id : " + id + " để xóa");
+            throw new ErrorHandler("Xóa thất bại");
         }
     }
 
     @Override
-    public List<Semester> findAll() {
+    public List<Attendance> findAll() {
         try {
             return dao.findAll();
         } catch (Exception e) {
-            throw new ErrorHandler("Không có dữ liệu");
+            throw new ErrorHandler("Không tìm thấy dữ liệu Attendance");
         }
     }
 
     @Override
-    public Semester findOne(int id) {
+    public Attendance findOne(int id) {
         try {
             return dao.findById(id).get();
         } catch (Exception e) {
-            throw new ErrorHandler("Không tìm thấy dữ liệu có id : " + id);
+            throw new ErrorHandler("Không tìm thấy id Attendance " + id);
         }
     }
 }

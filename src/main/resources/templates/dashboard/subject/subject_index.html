@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
+    <link rel="stylesheet" href="/css/custom.css">
     <title>Subject Index</title>
     <style>
         .font-13 {
@@ -54,15 +55,18 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="text-center" th:each="item:${listSubject}" >
+                                <tr class="text-center" th:each="item:${listSubject}">
                                     <td>[[${item.subjectCode}]]</td>
                                     <td>[[${item.subjectName}]]</td>
-                                    <td>[[${#strings.replace(#strings.replace(#numbers.formatCurrency(item.fee),'.00',''),'$','')}]] vnd</td>
+                                    <td>
+                                        [[${#strings.replace(#strings.replace(#numbers.formatCurrency(item.fee),'.00',''),'$','')}]]
+                                        vnd
+                                    </td>
                                     <td class="text-center">
                                         <a th:data-name="${item.id}"
                                            onclick="OnEditSubject(this.getAttribute('data-name'))" class="mr-3"><i
                                                 class="fas fa-pen indigo-text"></i></a>
-                                        <a th:href="@{'/subject/delete/' + ${item.id}}"><i
+                                        <a th:href="@{'dashboard/subject/delete/' + ${item.id}}"><i
                                                 class="fas fa-trash red-text"></i></a>
                                     </td>
                                 </tr>
@@ -74,7 +78,8 @@
             </div>
         </div>
     </section>
-    <div class="modal fade" id="subject-modal" data-backdrop="static" tabindex="-1"
+
+    <div class="modal fade" id="subject-modal" data-backdrop="static"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -100,7 +105,8 @@
                         </div>
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Học phí</label>
-                            <input type="text" onkeyup="OnFormatCurrency(this)" name="create_fee_validate" th:id="create_fee"
+                            <input type="text" onkeyup="OnFormatCurrency(this)" name="create_fee_validate"
+                                   th:id="create_fee"
                                    class="form-control form-control-sm"
                                    placeholder="Nhập học phí">
                         </div>
@@ -112,23 +118,20 @@
                         </div>
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Học kì</label>
-                            <select th:id="create_semester_id" class="form-control form-control-sm">
+                            <select th:id="create_semester_id" class="form-control select2-single form-control-sm">
                                 <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]
                                 </option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Ngành học</label>
-                            <select th:id="create_major_id" class="form-control select2bs4 form-control-sm">
+                            <select th:id="create_major_id" class="form-control select2-single form-control-sm">
                                 <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorName}]]</option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                            class="fas fa-times"></i> Đóng
-                    </button>
                     <button type="button" onclick="OnCreateSubject()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Tạo
                     </button>
@@ -137,7 +140,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="subject-edit-modal" data-backdrop="static" tabindex="-1"
+    <div class="modal fade" id="subject-edit-modal" data-backdrop="static"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -177,23 +180,21 @@
                         </div>
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Học kì</label>
-                            <select th:id="edit_semester_id" class="form-control form-control-sm">
+                            <select id="edit_semester_id" class="form-control select2-single">
+                                <option>----Chọn học kì----</option>
                                 <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]
                                 </option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Ngành học</label>
-                            <select th:id="edit_major_id" class="form-control select2bs4 form-control-sm">
+                            <select th:id="edit_major_id" class="form-control select2-single">
                                 <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorName}]]</option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                            class="fas fa-times"></i> Đóng
-                    </button>
                     <button type="button" onclick="OnUpdateSubject()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Cập nhật
                     </button>

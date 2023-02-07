@@ -72,14 +72,19 @@ $(() => {
     //         selector: 'td:first-child'
     //     }
     // });
+    $(".select2-single").select2({
+        theme:"bootstrap4",
+        width:"100%",
+        dropdownCssClass: "f-13"
+        // containerCssClass:":all:"
+    });
 });
 var OnEditSubject = (id) => {
     $.ajax({
-        url: "/subject/findOne/" + id,
+        url: "/dashboard/subject/findOne/" + id,
         dataType: "json",
         method: "GET",
         success: (obj) => {
-            console.log(obj);
             var formatFee = obj.fee.toLocaleString('en-US', {
                 valute: "currency"
             });
@@ -88,8 +93,8 @@ var OnEditSubject = (id) => {
             $("#edit_subject_name").val(obj.subjectName);
             $("#edit_fee").val(formatFee);
             $("#edit_slot").val(obj.slot);
-            $("#edit_semester_id option[value='" + obj.semesterId + "']").prop("selected", true);
-            $("#edit_major_id option[value='" + obj.majorId + "']").prop("selected", true);
+            $("#edit_semester_id").val(obj.semesterId).trigger("change");
+            $("#edit_major_id").val(obj.majorId).trigger("change");
             $("#subject-edit-modal").modal("show");
         }
     });
@@ -112,7 +117,7 @@ var OnCreateSubject = () => {
             "majorId": major_id
         }
         $.ajax({
-            url: "/subject/post",
+            url: "/dashboard/subject/post",
             contentType: "application/json",
             method: "POST",
             data: JSON.stringify(formData),
@@ -128,7 +133,8 @@ var OnUpdateSubject = () => {
         var id = $("#edit_id").val();
         var subject_code = $("#edit_subject_code").val();
         var subject_name = $("#edit_subject_name").val();
-        var fee = $("#edit_fee").val();
+        var fee = $("#edit_fee").val().replace(/,/g,'');
+        console.log(fee);
         var slot = $("#edit_slot").val();
         var semester_id = $("#edit_semester_id").val();
         var major_id = $("#edit_major_id").val();
@@ -142,13 +148,13 @@ var OnUpdateSubject = () => {
             "majorId": major_id
         };
         $.ajax({
-            url: "/subject/update",
+            url: "/dashboard/subject/update",
             dataType: "json",
             contentType: "application/json",
             method: "post",
             data: JSON.stringify(formData)
             , success: (data) => {
-                console.log(data);
+                location.reload();
             }, error: (data) => {
                 console.log("error");
             }

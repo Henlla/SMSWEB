@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "class_subject", schema = "smdb", catalog = "")
 @Setter
 @Getter
@@ -29,5 +33,10 @@ public class ClassSubject {
     @Basic
     @Column(name = "end_date")
     private String endDate;
-
+    @ManyToOne
+    @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
+    private Subject subjectBySubjectId;
+    @ManyToOne
+    @JoinColumn(name = "class_id", referencedColumnName = "id",insertable = false,updatable = false)
+    private Classses classsesByClassId;
 }

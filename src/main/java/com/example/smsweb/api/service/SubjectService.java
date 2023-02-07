@@ -20,7 +20,7 @@ public class SubjectService implements ISubject {
         try {
             dao.save(subject);
         } catch (Exception e) {
-            throw new ErrorHandler("Save fail");
+            throw new ErrorHandler("Sao lưu thất bại");
         }
     }
 
@@ -29,7 +29,7 @@ public class SubjectService implements ISubject {
         try {
             dao.deleteById(id);
         } catch (Exception e) {
-            throw new ErrorHandler("Delete fail");
+            throw new ErrorHandler("Xóa thất bại");
         }
     }
 
@@ -38,7 +38,7 @@ public class SubjectService implements ISubject {
         try {
             return dao.findAll();
         } catch (Exception e) {
-            throw new ErrorHandler("Don't find any records");
+            throw new ErrorHandler("Không tìm thấy dữ liệu");
         }
     }
 
@@ -47,7 +47,7 @@ public class SubjectService implements ISubject {
         try {
             return dao.findById(id).get();
         } catch (Exception e) {
-            throw new ErrorHandler("Can't find subject with id: " + id);
+            throw new ErrorHandler("Không tìm thấy dữ liệu với id : " + id);
         }
     }
 
@@ -56,7 +56,7 @@ public class SubjectService implements ISubject {
         try {
             return dao.findAllByMajorId(majorId);
         }catch (Exception e){
-            throw new ErrorHandler("Not found");
+            throw new ErrorHandler("Không tìm thấy dữ liệu với majorId " + majorId);
         }
     }
 }

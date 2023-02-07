@@ -5,71 +5,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Major Index</title>
-    <style>
-        .font-13 {
-            font-size: 13px;
-        }
-
-        .error {
-            color: red;
-            font-weight: normal !important;
-            font-size: 13px;
-            margin: 0 !important;
-        }
-
-    </style>
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
 <div layout:fragment="content">
-    <section>
-        <div class="content-wrapper">
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý ngành học</h5>
-                        </div>
+    <section class="content-wrapper">
+        <section class="content-header">
+            <h5 class="m-0">Quản lý ngành học</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row">
+                    <div class="col-12">
+                        <input type="button" data-toggle="modal" data-target="#create-major-modal"
+                               class="btn btn-info btn-sm"
+                               value="Thêm mới">
+                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
+                        <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>
+                        <a onclick="OnClickImport()" class="btn btn-primary btn-sm">Đổ dữ liệu</a>
+                        <a href="" class="btn btn-info btn-sm">Tải mẫu đơn</a>
                     </div>
-                </div>
-            </div>
-            <div class="content-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <input type="button" data-toggle="modal" data-target="#create-major-modal"
-                                   class="btn btn-info btn-sm"
-                                   value="Thêm mới">
-                        </div>
+                </section>
+                <section class="row">
+                    <div class="col-12">
+                        <table th:id="major-table" class="table table-bordered table-striped">
+                            <thead>
+                            <tr class="text-center">
+                                <th></th>
+                                <th>Mã ngành học</th>
+                                <th>Tên ngành học</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="text-center" th:each="item:${listMajor}">
+                                <td></td>
+                                <td>[[${item.majorCode}]]</td>
+                                <td>[[${item.majorName}]]</td>
+                                <td class="text-center">
+                                    <a class="mr-3" th:data-name="${item.id}"
+                                       onclick="OnEditMajor(this.getAttribute('data-name'))"><i
+                                            class="fas fa-pen indigo-text"></i></a>
+                                    <a th:href="@{'/dashboard/major/delete/' + ${item.id}}"><i
+                                            class="fas fa-trash red-text"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <table th:id="major-table" class="table table-bordered">
-                                <thead>
-                                <tr class="text-center">
-                                    <th>Mã ngành học</th>
-                                    <th>Tên ngành học</th>
-                                    <th>Hành động</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr class="text-center" th:each="item:${listMajor}">
-                                    <td>[[${item.majorCode}]]</td>
-                                    <td>[[${item.majorName}]]</td>
-                                    <td class="text-center">
-                                        <a class="mr-3" th:data-name="${item.id}"
-                                           onclick="OnEditMajor(this.getAttribute('data-name'))"><i
-                                                class="fas fa-pen indigo-text"></i></a>
-                                        <a th:href="@{'/major/delete/' + ${item.id}}"><i
-                                                class="fas fa-trash red-text"></i></a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                </section>
+            </section>
+        </section>
     </section>
 
     <div class="modal fade" id="create-major-modal" data-backdrop="static" tabindex="-1"
@@ -99,9 +86,6 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                            class="fas fa-times"></i> Đóng
-                    </button>
                     <button type="button" onclick="OnCreateMajor()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Tạo
                     </button>
@@ -138,9 +122,6 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                            class="fas fa-times"></i> Đóng
-                    </button>
                     <button type="button" onclick="OnUpdateMajor()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Cập nhật
                     </button>
@@ -153,6 +134,8 @@
 <th:block layout:fragment="optional">
     <script src="/plugins/jquery/jquery.min.js"></script>
     <script src="/plugins/select2/js/select2.full.js"></script>
+    <script src="/plugins/toastr/toastr.min.js"></script>
+
     <script src="/js/major.js"></script>
 </th:block>
 </body>
