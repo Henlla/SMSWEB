@@ -25,7 +25,6 @@ public class StudentClass {
     @Column(name = "class_id")
     private Integer classId;
 
-
     @ManyToOne
     @JoinColumn(name = "student_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Student classStudentByStudent;

@@ -7,8 +7,6 @@ $(()=>{
 
     const sex = document.getElementsByName("sex")
 
-
-
     province.onchange = function (){
         var provinceId = this.value;
         district.length = 1;
