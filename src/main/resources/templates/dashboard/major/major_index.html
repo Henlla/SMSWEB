@@ -32,7 +32,6 @@
                         <table th:id="major-table" class="table table-bordered table-striped">
                             <thead>
                             <tr class="text-center">
-                                <th></th>
                                 <th>Mã ngành học</th>
                                 <th>Tên ngành học</th>
                                 <th>Hành động</th>
@@ -40,7 +39,6 @@
                             </thead>
                             <tbody>
                             <tr class="text-center" th:each="item:${listMajor}">
-                                <td></td>
                                 <td>[[${item.majorCode}]]</td>
                                 <td>[[${item.majorName}]]</td>
                                 <td class="text-center">
@@ -135,8 +133,7 @@
     <script src="/plugins/jquery/jquery.min.js"></script>
     <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
-
-    <script src="/js/major.js"></script>
+    <script src="/js/major/major.js"></script>
 </th:block>
 </body>
 </html>

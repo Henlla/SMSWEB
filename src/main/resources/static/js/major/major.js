@@ -1,4 +1,5 @@
 $(() => {
+    // console.log($.cookie("_token"));
     toastr.options = {
         "closeButton": false,
         "debug": false,
@@ -50,27 +51,18 @@ $(() => {
             }
         }
     })
-    $("#major-table").DataTable({
+    $("#major-table").dataTable({
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
         scrollY: '350px',
         scrollCollapse: true,
         // pagingType:"full_numbers",
-        columnDefs: [{
-            orderable: false,
-            className: 'select-checkbox',
-            targets: 0
-        }],
-        select: {
-            style: 'os',
-            selector: 'td:first-child'
-        },
         "language": {
             "decimal":        "",
             "emptyTable":     "Không có dữ liệu",
             "info":           "",
             "infoEmpty":      "",
-            "infoFiltered":   "(filtered from _MAX_ total entries)",
+            "infoFiltered":   "",
             "infoPostFix":    "",
             "thousands":      ",",
             "lengthMenu":     "Hiển thị _MENU_ dữ liệu",

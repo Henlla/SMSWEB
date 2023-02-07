@@ -64,6 +64,9 @@ public class MajorController {
     @GetMapping("/edit/{id}")
     @ResponseBody
     public Object edit(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") int id) {
+        if (_token.equals("")) {
+            return "redirect:/dashboard/login";
+        }
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + _token);
