@@ -24,6 +24,7 @@ public class Major {
     @Basic
     @Column(name = "major_name")
     private String majorName;
+
     @OneToMany(mappedBy = "majorByMajorId")
 //    @JsonManagedReference("major_major_student")
     @JsonIgnore
@@ -32,4 +33,9 @@ public class Major {
 //    @JsonManagedReference("subject_major")
     @JsonIgnore
     private List<Subject> subjectsById;
+
+    @OneToMany(mappedBy = "major")
+    @JsonIgnore
+    private List<Classses> classesByMajorId;
+
 }
