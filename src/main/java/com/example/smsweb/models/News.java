@@ -21,18 +21,18 @@ public class News {
     private String title;
     @Basic
     @Column(name = "sub_title")
-    private String subTitle;
+    private String sub_title;
     @Basic
     @Column(name = "content")
     private String content;
     @Basic
     @Column(name = "post_date")
-    private String postDate;
+    private String post_date;
     @Basic
-    @Column(name = "thumbnailUrl")
+    @Column(name = "thumbnail_url")
     private String thumbnailUrl;
     @Basic
-    @Column(name = "thumbnailPath")
+    @Column(name = "thumbnail_path")
     private String thumbnailPath;
     @Basic
     @Column(name = "isActive")

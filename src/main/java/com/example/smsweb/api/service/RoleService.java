@@ -23,6 +23,7 @@ public class RoleService implements IRole {
         }
     }
 
+
     @Override
     public void delete(int id) {
         try {
@@ -45,5 +46,14 @@ public class RoleService implements IRole {
     @Override
     public Role findOne(int id) {
         return repository.findById(id).orElseThrow(()->new ErrorHandler("Cannot find role with id = "+id));
+    }
+
+    public Role findByRoleName(String roleName){
+        return repository.findRoleByRoleName(roleName).orElseThrow(()->new ErrorHandler("Cannot find role with name = "+roleName));
+    }
+
+    @Override
+    public Role findRoleByRoleName(String roleName) {
+        return repository.findRoleByRoleName(roleName).orElseThrow(()->new ErrorHandler("Cannot find role with name = "+roleName));
     }
 }

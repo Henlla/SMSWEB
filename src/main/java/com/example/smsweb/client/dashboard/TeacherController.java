@@ -33,6 +33,7 @@ public class TeacherController {
     private final String PROFILE_URL = "http://localhost:8080/api/profiles/";
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
+    private final String ROLE_URL = "http://localhost:8080/api/roles/";
 
     @Autowired
     private MailService mailService;
@@ -62,8 +63,18 @@ public class TeacherController {
                 +parseProfile.getDob().replace("/","");
         String password = RandomStringUtils.random(8,0,combinedChars.length(),true,true,combinedChars.toCharArray());
 
+        //Select role
+        HttpHeaders headersRole = new HttpHeaders();
+        headersRole.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> paramRole = new LinkedMultiValueMap<>();
+        String roleName = "TEACHER";
+        paramRole.add("role", roleName);
+        HttpEntity<MultiValueMap<String, String>> requestRole = new HttpEntity<>(paramRole,headersRole);
+        ResponseEntity<String> responseRole = restTemplate.exchange(ROLE_URL+"get", HttpMethod.POST, requestRole, String.class);
+        Role role = new ObjectMapper().readValue(responseRole.getBody(),Role.class);
+
         //Save Account
-        Account account = new Account(accountName,password,3);
+        Account account = new Account(accountName,password,role.getId());
         String jsonAccount = new ObjectMapper().writeValueAsString(account);
         HttpHeaders headersAccount = new HttpHeaders();
         headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

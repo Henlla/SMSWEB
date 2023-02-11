@@ -4,6 +4,7 @@ import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.mail.Mail;
 import com.example.smsweb.mail.MailService;
 import com.example.smsweb.models.*;
+import com.example.smsweb.utils.ExcelExport.StudentExport;
 import com.example.smsweb.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -24,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -40,6 +44,7 @@ public class StudentController {
     private final String SUBJECT_URL = "http://localhost:8080/api/subject/";
     private final String STUDENT_SUBJECT_URL = "http://localhost:8080/api/student-subject/";
     private final String STUDENT_MAJOR_URL = "http://localhost:8080/api/student-major/";
+    private final String ROLE_URL = "http://localhost:8080/api/roles/";
 
     @Autowired
     private MailService mailService;
@@ -83,8 +88,19 @@ public class StudentController {
         String accountName = StringUtils.removeAccent(parseProfile.getFirstName()+parseProfile.getLastName()).toLowerCase().replace(" ","")
                 +parseProfile.getDob().replace("/","");
         String password = RandomStringUtils.random(8,0,combinedChars.length(),true,true,combinedChars.toCharArray());
+
+        //Select role
+        HttpHeaders headersRole = new HttpHeaders();
+        headersRole.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> paramRole = new LinkedMultiValueMap<>();
+        String roleName = "STUDENT";
+        paramRole.add("role", roleName);
+        HttpEntity<MultiValueMap<String, String>> requestRole = new HttpEntity<>(paramRole,headersRole);
+        ResponseEntity<String> responseRole = restTemplate.exchange(ROLE_URL+"get", HttpMethod.POST, requestRole, String.class);
+        Role role = new ObjectMapper().readValue(responseRole.getBody(),Role.class);
+
         //Save Account
-        Account account = new Account(accountName,password,2);
+        Account account = new Account(accountName,password,role.getId());
         String jsonAccount = new ObjectMapper().writeValueAsString(account);
         HttpHeaders headersAccount = new HttpHeaders();
         headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -292,5 +308,24 @@ public class StudentController {
         }else{
             return "failed";
         }
+    }
+
+    @GetMapping("/dashboard/student/export-excel")
+    public void exportExcel(@CookieValue(name = "_token", defaultValue = "") String _token,
+                            HttpServletResponse responses) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers= new HttpHeaders();
+        headers.set("Authorization","Bearer "+_token);
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"list",HttpMethod.GET,request,String.class);
+        List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>(){});
+        responses.setContentType("application/octet-stream");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDate = dateFormat.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Danh_sach_sinh_vien_" + currentDate + ".xlsx"; // file *.xlsx
+        responses.setHeader(headerKey, headerValue);
+        StudentExport generateFeedbackExcel = new StudentExport(listStudent);
+        generateFeedbackExcel.generateExcelFile(responses);
     }
 }

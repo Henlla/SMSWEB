@@ -5,6 +5,8 @@ import com.example.smsweb.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-public interface RoleRepository extends GenericRepository<Role,Integer> {
+import java.util.Optional;
 
+public interface RoleRepository extends GenericRepository<Role,Integer> {
+    public Optional<Role> findRoleByRoleName(String roleName);
 }

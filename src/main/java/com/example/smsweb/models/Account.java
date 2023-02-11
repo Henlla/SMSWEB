@@ -31,7 +31,6 @@ public class Account implements UserDetails {
     @JoinColumn(name = "role_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Role roleByRoleId;
     @OneToMany(mappedBy = "accountByAccountId",fetch=FetchType.EAGER)
-//    @JsonManagedReference("account_profile")
     @JsonIgnore
     private List<Profile> accountProfile;
 
