@@ -118,7 +118,10 @@ public class MajorController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") int id) {
+    public String delete(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") int id) {
+        if(_token.equals("")){
+            return "redirect:/dashboard/login";
+        }
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
@@ -133,7 +136,10 @@ public class MajorController {
     }
 
     @GetMapping("/export-excel")
-    public void exportExcel(HttpServletResponse responses) throws IOException {
+    public String exportExcel(@CookieValue(name = "_token", defaultValue = "")String _token, HttpServletResponse responses) throws IOException {
+        if(_token.equals("")){
+            return "redirect:/dashboard/login";
+        }
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<Object> request = new HttpEntity<>(headers);
@@ -142,6 +148,9 @@ public class MajorController {
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             List<Major> listMajors = new ObjectMapper().readValue(json, new TypeReference<>() {});
             service.exportDataToExcel(responses,listMajors,"major_export");
+            return "Xuất dữ liệu thành công";
+        }else{
+            return "Xuất dữ liệu thất bại";
         }
     }
 

@@ -77,11 +77,11 @@ public class LoginController {
 
             if(hasUserRole){
                 Cookie jwtTokenCookie = new Cookie("_token", _token);
-                DecodedJWT jwtDecode = JWT.decode(_token);
-                Date timeJWT = jwtDecode.getExpiresAt();
-                Date now = new Date();
-                long time = (timeJWT.getTime() - now.getTime()) / 1000;
-                jwtTokenCookie.setMaxAge(Integer.parseInt(Long.toString(time)));
+//                DecodedJWT jwtDecode = JWT.decode(_token);
+//                Date timeJWT = jwtDecode.getExpiresAt();
+//                Date now = new Date();
+//                long time = (timeJWT.getTime() - now.getTime()) / 1000;
+//                jwtTokenCookie.setMaxAge(Integer.parseInt(Long.toString(time)));
                 jwtTokenCookie.setSecure(true);
                 jwtTokenCookie.setHttpOnly(true);
                 jwtTokenCookie.setPath("/");

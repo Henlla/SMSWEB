@@ -183,6 +183,7 @@ var OnUpdate = (id) => {
 
             $("#staff_update").modal("show");
         }, error: (data) => {
+            toastr.error("Thất bại")
             console.log(data);
         }
     });

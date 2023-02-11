@@ -34,6 +34,7 @@
                             <table id="student-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
+                                    <th>STT</th>
                                     <th>Hình ảnh</th>
                                     <th>Tên nhân viên</th>
                                     <th>Chức vụ</th>
@@ -42,6 +43,9 @@
                                 </thead>
                                 <tbody>
                                 <tr class="text-center" th:each="staff:${staffs}">
+                                    <td><span
+                                            th:text="${staffs.indexOf(staff)+1}"></span>
+                                    </td>
                                     <td><img th:src="${staff.getProfileByProfileId().getAvartarUrl()}" alt="" width="100"
                                              height="100"></td>
                                     <td><span
