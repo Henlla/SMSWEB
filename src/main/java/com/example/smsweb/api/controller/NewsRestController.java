@@ -74,4 +74,16 @@ public class NewsRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Cập nhật thất bại", LocalTime.now().toString(), null));
         }
     }
+
+    @PutMapping("/put/{id}")
+    public ResponseEntity<?> put(@PathVariable("id")Integer id,@RequestParam("isActive") boolean isActive) {
+        try {
+            News news = service.findOne(id);
+            news.setIsActive(isActive);
+            service.save(news);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Cập nhật thành công", LocalTime.now().toString(), news));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Cập nhật thất bại", LocalTime.now().toString(), null));
+        }
+    }
 }
