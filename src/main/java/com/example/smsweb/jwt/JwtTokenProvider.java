@@ -16,7 +16,6 @@ public class JwtTokenProvider {
     private String JWT_KEY;
     private final Long JWT_EXPIRATION = 6000L;
 
-
     public String generateTokenFromAccount(Account account){
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
