@@ -54,7 +54,8 @@ public class WebConfig {
                 .requestMatchers("/api/news/list","/api/news/get/{id}").permitAll()
                 .requestMatchers("/api/accounts/changePassword/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF")
                 .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**",
-                        "/api/students-subject/**","/api/student-major/**","/api/teachers/**","/api/staffs/**","/api/news/**").hasAnyAuthority("ADMIN","STAFF")
+                 "/api/students-subject/**","/api/student-major/**","/api/teachers/**","/api/staffs/**","/api/news/**","/api/classes/**").hasAnyAuthority("ADMIN","STAFF")
+
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied")
