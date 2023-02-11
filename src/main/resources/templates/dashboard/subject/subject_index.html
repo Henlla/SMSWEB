@@ -7,45 +7,27 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
     <link rel="stylesheet" href="/css/custom.css">
-    <title>Subject Index</title>
-    <style>
-        .font-13 {
-            font-size: 13px;
-        }
-
-        .error {
-            color: red;
-            font-weight: normal !important;
-            margin: 0 !important;
-            font-size: 13px;
-        }
-
-    </style>
+    <title>Môn học</title>
 </head>
 <body>
-<div layout:fragment="content">
+<section layout:fragment="content">
     <section>
-        <div class="content-wrapper">
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý môn học</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="content-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <input type="button" class="btn btn-info btn-sm" data-target="#subject-modal"
-                                   data-toggle="modal" value="Thêm mới">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <table id="subject-table" class="table table-bordered">
+        <section class="content-wrapper">
+            <section class="content-header">
+                <h5 class="m-0">Quản lý môn học</h5>
+            </section>
+            <section class="content-body">
+                <section class="container-fluid">
+                    <section class="row mb-3">
+                        <section class="col-12">
+                            <button data-toggle="modal" data-target="#subject-modal" class="btn btn-info btn-sm">
+                                <i class="fas fa-plus"></i> Thêm mới
+                            </button>
+                        </section>
+                    </section>
+                    <section class="row">
+                        <section class="col-12">
+                            <table id="subject-table" class="table table-bordered table-striped">
                                 <thead>
                                 <tr class="text-center">
                                     <th class="th-sm">Mã môn học</th>
@@ -72,11 +54,11 @@
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+        </section>
     </section>
 
     <div class="modal fade" id="subject-modal" data-backdrop="static"
@@ -203,7 +185,7 @@
         </div>
     </div>
 
-</div>
+</section>
 <th:block layout:fragment="optional">
     <script src="/plugins/jquery/jquery.min.js"></script>
     <script src="/plugins/select2/js/select2.full.js"></script>

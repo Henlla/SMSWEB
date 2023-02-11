@@ -43,11 +43,12 @@ public class WebConfig {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
-                 "/api/districts/**","/api/accounts/login","/api/wards/**","/api/semester/**","/api/roles/**").permitAll()
+                 "/api/districts/**","/api/accounts/login","/api/wards/**"
+                        ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**").permitAll()
                 .requestMatchers("/dashboard/login").permitAll()
                 .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
                 .requestMatchers("/dashboard/teacher/**","/dashboard/student/**"
-                        ,"/dashboard/major/**","/dashboard/application/**").hasAnyAuthority("STAFF","ADMIN")
+                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**").hasAnyAuthority("STAFF","ADMIN")
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/accounts/changePassword/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF")

@@ -1,5 +1,4 @@
 $(() => {
-    // console.log($.cookie("_token"));
     toastr.options = {
         "closeButton": false,
         "debug": false,
@@ -17,6 +16,7 @@ $(() => {
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
+
     $("#create-form").validate({
         rules: {
             create_major_code_validate: {
@@ -34,6 +34,7 @@ $(() => {
             }
         }
     });
+
     $("#edit-form").validate({
         rules: {
             edit_major_code_validate: {
@@ -50,12 +51,13 @@ $(() => {
                 required: "Vui lòng nhập tên ngành"
             }
         }
-    })
-    $("#major-table").dataTable({
+    });
+
+    $("#major-table").DataTable({
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
-        scrollY: '350px',
         scrollCollapse: true,
+        scrollY: '300px',
         // pagingType:"full_numbers",
         "language": {
             "decimal":        "",
@@ -143,6 +145,7 @@ var OnUpdateMajor = () => {
 var OnClickImport = () =>{
     $("#fileUpload").trigger("click");
 }
+
 var OnSaveExcelData = () =>{
     var file = $("#fileUpload").get(0).files[0];
     var formData = new FormData();
