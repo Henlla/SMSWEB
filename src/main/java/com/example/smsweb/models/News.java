@@ -34,7 +34,6 @@ public class News {
     @Basic
     @Column(name = "thumbnail_path")
     private String thumbnailPath;
-
     @Basic
     @Column(name = "isActive")
     private Boolean isActive;
