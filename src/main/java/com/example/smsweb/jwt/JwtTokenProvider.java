@@ -14,7 +14,7 @@ import java.util.Date;
 public class JwtTokenProvider {
     @Value("{spring.jwt.key}")
     private String JWT_KEY;
-    private final Long JWT_EXPIRATION = 600000L;
+    private final Long JWT_EXPIRATION = 6000L;
 
     public String generateTokenFromAccount(Account account){
         Date now = new Date();

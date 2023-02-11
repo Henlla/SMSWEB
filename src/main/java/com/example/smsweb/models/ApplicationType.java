@@ -2,10 +2,8 @@ package com.example.smsweb.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.List;
 
 @Entity
@@ -13,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder(toBuilder = true)
 @Table(name = "application_type", schema = "smdb", catalog = "")
 public class ApplicationType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +21,9 @@ public class ApplicationType {
     @Basic
     @Column(name = "name")
     private String name;
+    @Basic
+    @Column(name = "url")
+    private String url;
     @OneToMany(mappedBy = "applicationTypeByApplicationTypeId")
     @JsonManagedReference("application_application_type")
     private List<Application> applicationsById;

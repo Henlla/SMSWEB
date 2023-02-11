@@ -31,7 +31,7 @@ public class MajorService implements IMajor {
         try {
             dao.save(major);
         } catch (Exception e) {
-            throw new ErrorHandler("Lưu thành công");
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ public class MajorService implements IMajor {
         try {
             dao.deleteById(id);
         } catch (Exception e) {
-            throw new ErrorHandler("Xóa thất bại");
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ public class MajorService implements IMajor {
         try {
             return dao.findAll();
         } catch (Exception e) {
-            throw new ErrorHandler("Không tìm thấy dữ liệu");
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -58,7 +58,7 @@ public class MajorService implements IMajor {
         try {
             return dao.findById(id).get();
         } catch (Exception e) {
-            throw new ErrorHandler("Không tìm thấy major với id : " + id);
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -82,7 +82,7 @@ public class MajorService implements IMajor {
                     }
                 }
             } catch (Exception e) {
-                throw new ErrorHandler("Đỗ dữ liệu thất bại");
+                throw new ErrorHandler(e.getMessage());
             }
             if (!listMajor.isEmpty()) {
                 dao.saveAll(listMajor);

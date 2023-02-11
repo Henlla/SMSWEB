@@ -2,7 +2,6 @@ package com.example.smsweb.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 @Entity
@@ -22,6 +21,9 @@ public class Application {
     @Basic
     @Column(name = "status")
     private String status;
+    @Basic
+    @Column(name = "note")
+    private String note;
     @Basic
     @Column(name = "file")
     private String file;

@@ -25,9 +25,9 @@ public class MajorRestController extends GenericController<Major> {
     public ResponseEntity<?> save(@ModelAttribute Major major) {
         try {
             service.save(major);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), "Sao lưu thành công"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Fail", LocalTime.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), e.getMessage()));
         }
     }
 }

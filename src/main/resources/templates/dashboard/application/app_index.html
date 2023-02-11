@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Đơn đăng ký</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <section class="content-wrapper">
+        <section class="content-header">
+            <h5 class="m-0">Quản lý đơn đăng ký</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row mb-3">
+                    <section class="col-12">
+                        <button data-toggle="modal" data-target="#app-modal" class="btn btn-info btn-sm">
+                            <i class="fas fa-plus"></i> Thêm mới đơn đăng ký
+                        </button>
+                    </section>
+                </section>
+                <section class="row">
+                    <section class="col-12">
+                        <table th:id="app-table" class="table table-bordered table-stripped">
+                            <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Ngày gửi</td>
+                                <td>Trạng thái</td>
+                                <td>Hành động</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item:${listApplication}">
+                                <td>[[${listApplication.indexOf(item)+1}]]</td>
+                                <td>[[${item.sendDate}]]</td>
+                                <td>[[${item.status}]]</td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+    <section class="modal fade" id="app-modal" data-backdrop="static"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <section class="modal-dialog">
+            <section class="modal-content">
+                <section class="modal-header">
+                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Thêm mới đơn đăng ký</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </section>
+                <section class="modal-body">
+                    <form id="appForm">
+
+                        <section class="row mb-3">
+                            <section class="col-12 mb-3">
+                                <label class="font-weight-normal f-13">Loại đơn
+                                    <span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" name="appType" onchange="OnChangeAppType()" id="appType">
+                                    <option value="">----Chọn loại đơn----</option>
+                                    <option th:each="item:${listAppType}" th:value="${item.id}">[[${item.name}]]
+                                    </option>
+                                </select>
+                                <a href="" class="d-none f-13" id="downloadButton">Download</a>
+                            </section>
+                            <section class="col-12 mb-3">
+                                <label class="font-weight-normal f-13">Ghi chú
+                                    <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="note" name="note" placeholder="Nhập ghi chú" style="resize: none" cols="30" rows="3"></textarea>
+                            </section>
+                            <section class="form-group form-control-sm col-12 mb-5">
+                                <label class="font-weight-normal f-13">Chọn tệp mẫu
+                                    <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control-file border mb-2" onchange="OnValidate(this)" id="app-type-file">
+                                <span id="error-file"></span>
+                                <span class="text-danger mb-3">Vui lòng gửi đúng biểu mẫu kèm thông tin trên phần download</span>
+                            </section>
+                        </section>
+                    </form>
+                </section>
+                <section class="modal-footer">
+                    <button type="button" onclick="OnCreateApplication()" class="btn btn-primary btn-sm"><i
+                            class="fas fa-plus"></i> Tạo
+                    </button>
+                </section>
+            </section>
+        </section>
+    </section>
+</div>
+<section layout:fragment="optional">
+    <script src="/plugins/jquery/jquery.js"></script>
+    <script src="/js/application/application.js"></script>
+</section>
+</body>
+</html>

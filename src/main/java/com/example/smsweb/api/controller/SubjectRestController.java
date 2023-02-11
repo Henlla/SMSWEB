@@ -1,7 +1,6 @@
 package com.example.smsweb.api.controller;
 
 import com.example.smsweb.api.di.irepository.ISubject;
-import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.api.generic.GenericController;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Subject;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/subject")
@@ -23,9 +21,9 @@ public class SubjectRestController extends GenericController<Subject> {
     public ResponseEntity<?> post(@ModelAttribute Subject subject){
         try {
             service.save(subject);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),"Sao lưu thành công"));
         }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(),e.getMessage()));
         }
     }
 
@@ -34,7 +32,7 @@ public class SubjectRestController extends GenericController<Subject> {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),service.findSubjectByMajorId(id)));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalTime.now().toString(),null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalTime.now().toString(),e.getMessage()));
         }
     }
 }
