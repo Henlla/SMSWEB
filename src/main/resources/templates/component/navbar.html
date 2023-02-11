@@ -114,6 +114,20 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-user"></i>
+            <p>Chức vụ<i class="right fas fa-angle-left"></i></p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a th:href="@{/dashboard/role/index-role}" class="nav-link active">
+                <i class="fas fa-list"></i>
+                <p>Danh sách chức vụ</p>
+              </a>
+            </li>
+          </ul>
+        </li>
         <li class="nav-item">
           <a href="#" class="nav-link active">
             <i class="fas fa-user"></i>
@@ -124,6 +138,28 @@
               <a th:href="@{/dashboard/application/index}" class="nav-link active">
                 <i class="fas fa-list"></i>
                 <p>Danh sách đơn đăng ký</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-user"></i>
+            <p>Tin tức<i class="right fas fa-angle-left"></i></p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a th:href="@{/dashboard/news/index-news}" class="nav-link active">
+                <i class="fas fa-list"></i>
+                <p>Danh sách tin tức</p>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a th:href="@{/dashboard/news/create_new}" class="nav-link active">
+                <i class="fas fa-plus"></i>
+                <p>Thêm tin tức</p>
               </a>
             </li>
           </ul>

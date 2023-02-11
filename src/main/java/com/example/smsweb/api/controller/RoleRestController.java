@@ -28,4 +28,9 @@ public class RoleRestController {
     public ResponseEntity<?> findAllStudent(){
         return ResponseEntity.status(HttpStatus.OK).body(iRole.findAll());
     }
+
+    @PostMapping("/get")
+    public ResponseEntity<?> getOneRole(@RequestParam("role")String role){
+        return ResponseEntity.status(HttpStatus.OK).body(iRole.findRoleByRoleName(role));
+    }
 }
