@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thêm sinh viên</title>
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="/css/create_teacher.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div layout:fragment="content">
+
+    <section>
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0">Thêm lớp học mới</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active">Thêm lớp học mới</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <form id="form-create" action="/dashboard/class-create" method="post">
+                    <div id="spinner-div" class="pt-5">
+                        <div class="spinner-border text-primary" role="status">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Mã lớp học :</label>
+                            <input type="text" class="form-control classCode" id="classCode" name="classCode" readonly="">
+                        </div>
+                        <div class="col-6">
+                            <label>Nghành Học :</label>
+                            <select id="majorId" class="form-control major" name="majorId" style="width: 100%;">
+                                <option selected="selected" value="">----- Chọn nghành học------</option>
+                                <th:block th:each="major : ${majors}">
+                                    <option th:value="${major.id}">[[${major.majorName}]]</option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label>Giáo viên chủ nhiệm :</label>
+                            <select id="teacherId" class="form-control teacher" name="teacherId" style="width: 100%;">
+                                <option selected="selected" value="">----- Chọn giáo viên------</option>
+                                <th:block th:each="teacher : ${teachers}">
+                                    <option th:value="${teacher.id}">[[${teacher.profileByProfileId.firstName + " " + teacher.profileByProfileId.lastName}]]</option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="limitStudent">Số Sinh viên tối đa</label>
+                                <input type="number" value="22" class="form-control" id="limitStudent" name="limitStudent"
+                                       placeholder="Số Sinh viên tối đa">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" id="btn_create_class" class="btn btn-default">Tạo lớp
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+<th:block layout:fragment="optional">
+    <script  src="/plugins/jquery/jquery.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
+    <script src="/plugins/toastr/toastr.min.js"></script>
+    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="/plugins/select2/js/select2.full.min.js"></script>
+    <script type="text/javascript" src="/js/class_create.js"></script>
+</th:block>
+</body>
+</html>

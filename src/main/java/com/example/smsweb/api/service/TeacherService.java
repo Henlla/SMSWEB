@@ -36,4 +36,9 @@ public class TeacherService implements ITeacher {
     public Teacher findOne(int id) {
         return repository.findById(id).orElseThrow(()->new ErrorHandler("Cannot find teacher with id := "+id));
     }
+
+    @Override
+    public Teacher findTeacherByProfileId(Integer id) {
+        return repository.findTeacherByProfileId(id).orElseThrow(()->new ErrorHandler("Cannot find teacher with profileId := "+id));
+    }
 }

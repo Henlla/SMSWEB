@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sinh viên</title>
+    <style>
+
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <section>
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h5 class="m-0">Danh sách lớp học</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <a th:href="@{'/dashboard/class-create'}" class="btn btn-info btn-sm">Thêm mới</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label>Tìm kiếm theo nghành học :</label>
+                            <div id="select-major"></div>
+                            <table id="student-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>Mã lớp học</th>
+                                    <th>Giáo viên phụ trách</th>
+                                    <th>Nghành học</th>
+                                    <th>Sỉ số lớp</th>
+                                    <th>Sỉ số lớp tối đa</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="class:${classes}">
+                                    <td><span th:text="${class.getClassCode()}"></span></td>
+                                    <td><span th:text="${class.teacher.profileByProfileId.getFirstName()+' '+class.teacher.profileByProfileId.getLastName()}"/></td>
+                                    <td><span th:text="${class.major.getMajorName()}"></span></td>
+                                    <td><span th:text="${class.studentClassById.size()}"></span></td>
+                                    <td><span th:text="${class.getLimitStudent()}"></span></td>
+                                    <td class="text-center">
+                                        <a class="mr-3" th:data-name="${class.getId()}" onclick="OnDetails(this.getAttribute('data-name'))" ><i class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3" th:href="@{'/dashboard/student_update/' + ${class.getId()}}"><i class="fas fa-pencil-alt"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="class_details" tabindex="-1"
+                 aria-labelledby="studentModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title font-weight-bold text-primary" id="studentModalLabel">Chi tiết lớp học</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-6 form-group">
+                                                <label>Mã lớp học</label>&nbsp;
+                                                <input class="form-control" id="class_code" value="" readonly>
+                                            </div>
+                                            <div class="col-6 form-group">
+                                                <label>Giáo viên chủ nhiệm</label>&nbsp;
+                                                <input class="form-control" id="class_teacher" value="" readonly>
+                                            </div>
+                                            <div class="col-6 form-group">
+                                                <label>Nghành học</label>&nbsp;
+                                                <input class="form-control" id="class_major" value="" readonly>
+                                            </div>
+                                            <div class="col-6 form-group">
+                                                <label>Sỉ xố hiện tại</label>&nbsp;
+                                                <input class="form-control" id="class_student_count" value="" readonly>
+                                            </div>
+                                            <div class="col-6 form-group">
+                                                <label>Sỉ xố tối đa</label>&nbsp;
+                                                <input class="form-control" id="class_student_limit" value="" readonly>
+                                            </div>
+                                            <div class="col-6 form-group">
+                                                <label>Ngày tạo lớp</label>
+                                                <input class="form-control" id="class_create_date" value="" readonly>
+                                            </div>
+                                            <div class="col-6 form-group">
+                                                <label>Tình trạng</label>
+                                                <input class="form-control" id="class_status" value="" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<th:block layout:fragment="optional">
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/select2/js/select2.full.js"></script>
+    <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#student-table').DataTable({
+                "oLanguage": {
+                    "sSearch": "Tìm kiếm :"
+                },
+                "lengthMenu": [5, 10, 25, 50, 75, 100],
+                initComplete: function () {
+                    count = 0;
+                    this.api().columns([2]).every(function (i) {
+                        var title = this.header();
+                        //replace spaces with dashes
+                        title = $(title).html().replace(/[\W]/g, '');
+                        var column = this;
+                        var select = $('<select id="' + title + '" class="form-control form-control-sm select2" style="width: 50%" ></select>')
+                            .appendTo($('#select-major'))
+                            .on('change', function () {
+                                //Get the "text" property from each selected data
+                                //regex escape the value and store in array
+                                var data = $.map($(this).select2('data'),
+                                    function (value, key) {
+                                        return value.text ? '^' + $.fn.dataTable.util.escapeRegex(value.text) + '$' : null;
+                                    });
+                                //if no data selected use ""
+                                if (data.length === 0) {
+                                    data = [""];
+                                }
+                                //join array into string with regex or (|)
+                                var val = data.join('|');
+                                //search for the option(s) selected
+                                column
+                                    .search(val ? val : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>');
+                        });
+                        //use column title as selector and placeholder
+                        $('#' + title).select2({
+                            closeOnSelect: true,
+                            placeholder: "- All -",
+                            allowClear: true,
+                            width: 'resolve'
+                        });
+
+                        //initially clear select otherwise first option is selected
+                        $('.select2').val(null).trigger('change');
+                    });
+                },
+            })
+
+            $('.dataTables_filter input[type="search"]').css(
+                {'width':'350px','display':'inline-block'}
+            );
+        });
+
+        var OnDetails = (id) => {
+            $.ajax({
+                url: "/dashboard/class-details/" + id,
+                dataType: "json",
+                contentType: "application/json",
+                method: "GET",
+                success: (data) => {
+                    console.log(data)
+                    $('#class_code').val(data.classCode)
+                    $('#class_teacher').val(data.teacher.profileByProfileId.firstName+' '+data.teacher.profileByProfileId.lastName)
+                    $('#class_major').val(data.major.majorName)
+                    $('#class_student_count').val(data.studentClassById.length)
+                    $('#class_student_limit').val(data.limitStudent)
+                    $('#class_create_date').val(data.startDate)
+                    $('#class_status').val(data.classStatus)
+
+                    $("#class_details").modal("show");
+                },
+                error: (data) => {
+                    console.log(data);
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

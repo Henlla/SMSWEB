@@ -145,7 +145,7 @@ var OnUpdate = (id)=>{
 
 var OnUpdateSubmit = () =>{
     var isActive = false
-    if($('#isActive').prop('checked') ===true){
+    if($('#isActive'+$('#news_id').val()).prop('checked') ===true){
         isActive =true
     }else{
         isActive =false
