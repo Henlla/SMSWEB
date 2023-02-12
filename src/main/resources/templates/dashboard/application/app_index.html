@@ -26,19 +26,25 @@
                     <section class="col-12">
                         <table th:id="app-table" class="table table-bordered table-stripped">
                             <thead>
-                            <tr>
+                            <tr class="text-center">
                                 <td>STT</td>
                                 <td>Ngày gửi</td>
+                                <td>Ghi chú</td>
                                 <td>Trạng thái</td>
                                 <td>Hành động</td>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="item:${listApplication}">
+                            <tr class="text-center" th:each="item:${listApplication}">
                                 <td>[[${listApplication.indexOf(item)+1}]]</td>
                                 <td>[[${item.sendDate}]]</td>
+                                <td>[[${item.note}]]</td>
                                 <td>[[${item.status}]]</td>
-                                <td></td>
+                                <td>
+                                    <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
+                                    <button th:data-name="${item.id}" onclick="OnAppDownload(this.getAttribute('data-name'))" class="btn btn-success btn-sm"><i class="fas fa-download"></i></button>
+                                    <button data-toggle="modal" data-targets="app-edit-modal" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i></button>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -59,7 +65,6 @@
                 </section>
                 <section class="modal-body">
                     <form id="appForm">
-
                         <section class="row mb-3">
                             <section class="col-12 mb-3">
                                 <label class="font-weight-normal f-13">Loại đơn
@@ -69,7 +74,7 @@
                                     <option th:each="item:${listAppType}" th:value="${item.id}">[[${item.name}]]
                                     </option>
                                 </select>
-                                <a href="" class="d-none f-13" id="downloadButton">Download</a>
+                                <a href="" class="d-none f-13" download id="appTypeDownload">Download</a>
                             </section>
                             <section class="col-12 mb-3">
                                 <label class="font-weight-normal f-13">Ghi chú
@@ -80,7 +85,6 @@
                                 <label class="font-weight-normal f-13">Chọn tệp mẫu
                                     <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control-file border mb-2" onchange="OnValidate(this)" id="app-type-file">
-                                <span id="error-file"></span>
                                 <span class="text-danger mb-3">Vui lòng gửi đúng biểu mẫu kèm thông tin trên phần download</span>
                             </section>
                         </section>
