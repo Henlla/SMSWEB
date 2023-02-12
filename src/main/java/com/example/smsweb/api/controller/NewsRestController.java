@@ -50,7 +50,7 @@ public class NewsRestController {
     @GetMapping("/list")
     public ResponseEntity<?> list() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Lấy dữ liệu thành công", LocalTime.now().toString(), service.findAll()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Lấy dữ liệu thành công", LocalTime.now().toString(), service.findAll().stream().sorted((s1,s2)->s2.getId().compareTo(s1.getId())).toList()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Lấy dữ liệu thất bại", LocalTime.now().toString(), null));
         }

@@ -108,4 +108,9 @@ public class ProfileService{
     public Profile findOne(int id) {
         return repository.findById(id).orElseThrow(()->new ErrorHandler("Not found with profile id = "+id));
     }
+
+    public Profile findProfileByAccountId(int id) {
+        return repository.findProfileByAccountId(id).orElseThrow(()->new ErrorHandler("Cannot find profile with accountId = "+id));
+    }
+
 }

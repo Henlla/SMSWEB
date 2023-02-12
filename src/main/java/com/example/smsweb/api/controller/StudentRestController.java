@@ -32,4 +32,9 @@ public class StudentRestController {
     public ResponseEntity<?> findAllStudent(){
         return ResponseEntity.status(HttpStatus.OK).body(iStudent.findAll());
     }
+
+    @GetMapping("/getByProfile/{id}")
+    public ResponseEntity<?> findStudentByProfileId(@PathVariable("id")Integer id){
+        return ResponseEntity.status(HttpStatus.OK).body(iStudent.getByProfileId(id));
+    }
 }
