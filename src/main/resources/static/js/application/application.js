@@ -69,12 +69,59 @@ $(() => {
 
 });
 
-var OnCreateApplicationType = () => {
+var OnAppDownload = (id) => {
+    $.ajax({
+        url: "/dashboard/application/get_one_app/" + id,
+        method: "GET",
+        contentType: "application/json",
+        success: async (data) => {
+            console.log(data);
+            var downloadLink = document.createElement("a");
+            downloadLink.href = (await base64ToWord(data.file)).url;
+            $.ajax({
+                url: "/dashboard/application/get_one_app_type/" + data.applicationTypeId,
+                method: "GET",
+                contentType:"application/json",
+                success: (data) => {
+                    console.log(data);
+                    downloadLink.download = data.name;
+                    console.log(downloadLink);
+                    downloadLink.click();
+                },
+                error: (data) => {
+                    if (data.toLowerCase() === "token expired") {
+                        alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                        setTimeout(() => {
+                            location.href = "/dashboard/login";
+                        }, 2000);
+                    } else {
+                        alert("Thất bại");
+                        $("#appType").val("").trigger("change");
+                    }
+                }
+            });
+        },
+        error: (data) => {
+            if (data.toLowerCase() === "token expired") {
+                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                setTimeout(() => {
+                    location.href = "/dashboard/login";
+                }, 2000);
+            } else {
+                alert("Thất bại");
+            }
+        }
+    });
+}
+
+var OnCreateApplicationType = async () => {
     var appTypeName = $("#app-type-name").val();
     var appTypeFile = $("#app-type-file").get(0).files[0];
     var formData = new FormData();
+    var base64String = await toBase64(appTypeFile);
     formData.append("name", appTypeName);
     formData.append("file", appTypeFile);
+    formData.append("base64String", base64String);
     $.ajax({
         url: "/dashboard/application/save_app_type",
         data: formData,
@@ -83,35 +130,74 @@ var OnCreateApplicationType = () => {
         processData: false,
         enctype: "multipart/form-data",
         success: (data) => {
-            console.log(data);
-            // if(data.toLowerCase() === "token expired"){
-            //     alert("Token đã hết hạn vui lòng đăng nhập lại")
-            //     setTimeout(()=>{
-            //         location.href = "/dashboard/login";
-            //     },2000);
-            // }else{
-            //     $("#create-app-type-modal").modal("hide");
-            //     alert("Tạo thành công");
-            //     setTimeout(() => {
-            //         location.reload();
-            //     }, 2000)
-            // }
+            switch (data.status.toLowerCase()) {
+                case "success":
+                    $("#create-app-type-modal").modal("hide");
+                    alert("Tạo thành công");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                    break;
+                case "wrongtype":
+                    $("#error-file").html(data.data);
+                    break;
+            }
         },
-        error:(data)=>{
-            console.log('Fail');
+        error: (data) => {
+            if (data.toLowerCase() === "token expired") {
+                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                setTimeout(() => {
+                    location.href = "/dashboard/login";
+                }, 2000);
+            } else {
+                alert("Thất bại");
+            }
         }
     });
 }
 
-var OnCreateApplication = () => {
-
+var OnCreateApplication = async () => {
+    var app_type = $("#appType").val();
+    var student_id = 1;
+    var note = $("#note").val();
+    var app_type_file = $("#app-type-file").get(0).files[0];
+    var send_date = new Date();
+    var formData = {
+        "sendDate": send_date.getDate() + "/" + ((send_date.getMonth() + 1) < 10 ? "0" + (send_date.getMonth() + 1) : (send_date.getMonth() + 1)) + "/" + send_date.getFullYear(),
+        "note": note,
+        "file": await toBase64(app_type_file),
+        "status": "pending",
+        "studentId": student_id,
+        "applicationTypeId": app_type
+    }
+    $.ajax({
+        url: "/dashboard/application/save_app",
+        contentType: "application/json",
+        processData: false,
+        method: "POST",
+        data: JSON.stringify(formData),
+        success: () => {
+            alert("Tạo thành công");
+            setTimeout(()=>{
+                location.reload();
+            },2000);
+        },
+        error: (data) => {
+            if (data.toLowerCase() === "token expired") {
+                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                setTimeout(() => {
+                    location.href = "/dashboard/login";
+                }, 2000);
+            } else {
+                alert("Thất bại");
+            }
+        }
+    });
 }
 
 var OnValidate = (obj) => {
-    console.log(document);
     switch (obj.id) {
         case "app-type-file":
-            console.log($("#"+obj.id).val());
             break;
         default:
             alert("Không tìm thấy case cho id " + obj.id);
@@ -122,18 +208,50 @@ var OnValidate = (obj) => {
 var OnChangeAppType = () => {
     var appType = $("#appType").val();
     if (appType !== "") {
-        $("#downloadButton").removeClass("d-none");
+        $("#appTypeDownload").removeClass("d-none");
         $.ajax({
             url: "/dashboard/application/get_one_app_type/" + appType,
             method: "GET",
-            success: (data) => {
-                $("#downloadButton").attr("href", data.data.url);
-            },
-            error: () => {
-                $("#appType").val("").trigger("change");
+            contentType:"application/json",
+            success: async (data) => {
+                $("#appTypeDownload").attr("href", (await base64ToWord(data.file)).url);
+                $("#appTypeDownload").attr("download", data.name);
+            }
+            ,
+            error: (data) => {
+                if (data.toLowerCase() === "token expired") {
+                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                    setTimeout(() => {
+                        location.href = "/dashboard/login";
+                    }, 2000);
+                } else {
+                    alert("Thất bại");
+                    $("#appType").val("").trigger("change");
+                }
             }
         });
     } else {
-        $("#downloadButton").addClass("d-none");
+        $("#appTypeDownload").addClass("d-none");
     }
+}
+
+
+// 1. Chuyển đổi image sang base64 string
+var toBase64 = (file) => new Promise((resolve, reject) => {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.replace("data:", "").replace(/^.+,/, ""));
+    reader.onerror = error => reject(error);
+});
+
+// 2. Chuyển đổi base64 string sang image
+async function base64ToImage(base64String) {
+    var base64Response = await fetch(`data:image/png;base64,${base64String}`);
+    return base64Response;
+}
+
+// Chuyển đổi base64 sang word
+async function base64ToWord(base64String) {
+    var base64Response = await fetch(`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${base64String}`);
+    return base64Response;
 }

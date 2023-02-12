@@ -95,7 +95,7 @@ var OnCreateMajor = () => {
             "majorName": major_name
         }
         $.ajax({
-            url: "/dashboard/major/post",
+            url: "/dashboard/major/save",
             contentType: "application/json",
             dataType: "json",
             method: "post",
@@ -119,7 +119,7 @@ var OnEditMajor = (id) => {
             $("#edit_major_name").val(data.majorName);
             $("#edit-major-modal").modal("show");
         }, error: (data) => {
-            console.log(data);
+            alert("Thất bại");
         }
     });
 }
@@ -137,7 +137,10 @@ var OnUpdateMajor = () => {
         method:"POST",
         data:JSON.stringify(formData),
         success: () => {
-            location.reload();
+            alert("Tạo thành công");
+            setTimeout(()=>{
+                location.reload();
+            },2000);
         }
     });
 }

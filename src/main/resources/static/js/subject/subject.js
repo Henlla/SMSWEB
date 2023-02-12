@@ -152,7 +152,13 @@ var OnCreateSubject = () => {
             method: "POST",
             data: JSON.stringify(formData),
             success: (data) => {
-                location.reload();
+                alert("Tạo thành công");
+                setTimeout(()=>{
+                    location.reload();
+                },2000);
+            },
+            error:()=>{
+                alert("Thất bại");
             }
         });
     }
