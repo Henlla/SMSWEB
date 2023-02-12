@@ -31,4 +31,9 @@ public class StudentService implements IStudent {
     public Student findOne(int id) {
         return repository.findById(id).orElseThrow(()->new ErrorHandler("Cannot find student with id := "+id));
     }
+
+    @Override
+    public Student getByProfileId(Integer id) {
+        return repository.findStudentByProfileId(id).orElseThrow(()->new ErrorHandler("Cannot find student with profile id := "+id));
+    }
 }

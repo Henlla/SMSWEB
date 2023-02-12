@@ -33,7 +33,6 @@ public class Classses {
     @Column(name = "major_id")
     private Integer majorId;
 
-
     @Basic
     @Column(name = "start_date")
     private String startDate;

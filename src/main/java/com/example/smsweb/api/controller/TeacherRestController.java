@@ -17,18 +17,27 @@ public class TeacherRestController {
     @Autowired
     private ITeacher iTeacher;
     @PostMapping("/")
-    public ResponseEntity<?> saveStudent(@ModelAttribute Teacher teacher){
+    public ResponseEntity<?> saveTeacher(@ModelAttribute Teacher teacher){
         iTeacher.save(teacher);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(),teacher));
     }
     @GetMapping("/list")
-    public ResponseEntity<?> findAllStudent(){
+    public ResponseEntity<?> findAllTeacher(){
         return ResponseEntity.status(HttpStatus.OK).body(iTeacher.findAll());
     }
     @GetMapping("/get/{id}")
-    public ResponseEntity<?> findStudentById(@PathVariable("id") Integer id){
+    public ResponseEntity<?> findTeacherById(@PathVariable("id") Integer id){
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), iTeacher.findOne(id)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("error", LocalTime.now().toString(), e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getByProfile/{id}")
+    public ResponseEntity<?> findTeacherByProfileId(@PathVariable("id") Integer id){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(iTeacher.findTeacherByProfileId(id));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("error", LocalTime.now().toString(), e.getMessage()));
         }
