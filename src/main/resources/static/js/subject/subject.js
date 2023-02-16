@@ -63,8 +63,8 @@ $(() => {
     $("#subject-table").dataTable({
         pageLength: 5,
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
-        scrollY: '350px',
         scrollCollapse: true,
+        scrollY: '300px',
         // pagingType:"full_numbers",
         "language": {
             "decimal": "",
@@ -152,7 +152,13 @@ var OnCreateSubject = () => {
             method: "POST",
             data: JSON.stringify(formData),
             success: (data) => {
-                location.reload();
+                alert("Tạo thành công");
+                setTimeout(()=>{
+                    location.reload();
+                },2000);
+            },
+            error:()=>{
+                alert("Thất bại");
             }
         });
     }

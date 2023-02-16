@@ -72,7 +72,6 @@ public class Profile {
     private Ward wardByWardId;
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id",insertable = false,updatable = false)
-//    @JsonBackReference("account_profile")
     private Account accountByAccountId;
 
     @OneToMany(mappedBy = "profileByProfileId",fetch=FetchType.EAGER)

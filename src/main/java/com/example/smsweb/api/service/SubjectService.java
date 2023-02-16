@@ -7,7 +7,6 @@ import com.example.smsweb.models.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,7 +19,7 @@ public class SubjectService implements ISubject {
         try {
             dao.save(subject);
         } catch (Exception e) {
-            throw new ErrorHandler("Sao lưu thất bại");
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -29,7 +28,7 @@ public class SubjectService implements ISubject {
         try {
             dao.deleteById(id);
         } catch (Exception e) {
-            throw new ErrorHandler("Xóa thất bại");
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -38,7 +37,7 @@ public class SubjectService implements ISubject {
         try {
             return dao.findAll();
         } catch (Exception e) {
-            throw new ErrorHandler("Không tìm thấy dữ liệu");
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -47,7 +46,7 @@ public class SubjectService implements ISubject {
         try {
             return dao.findById(id).get();
         } catch (Exception e) {
-            throw new ErrorHandler("Không tìm thấy dữ liệu với id : " + id);
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -56,7 +55,7 @@ public class SubjectService implements ISubject {
         try {
             return dao.findAllByMajorId(majorId);
         }catch (Exception e){
-            throw new ErrorHandler("Không tìm thấy dữ liệu với majorId " + majorId);
+            throw new ErrorHandler(e.getMessage());
         }
     }
 }

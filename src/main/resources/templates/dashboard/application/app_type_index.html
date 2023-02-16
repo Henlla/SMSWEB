@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đơn đăng ký</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <section class="content-wrapper">
+        <section class="content-header">
+            <h5 class="m-0">Quản lý mẫu đơn</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row">
+                    <section class="col-12">
+                        <button data-toggle="modal" data-target="#create-app-type-modal" class="btn btn-info btn-sm">
+                            <i class="fas fa-plus"></i> Thêm mới mẫu đơn
+                        </button>
+                    </section>
+                </section>
+                <section class="row">
+                    <section class="col-12">
+                        <table th:id="app-type-table" class="table table-bordered table-striped">
+                            <thead>
+                            <tr class="text-center">
+                                <th>STT</th>
+                                <th>Tên mẫu đơn</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="text-center" th:each="item:${listAppType}">
+                                <td>[[${listAppType.indexOf(item)+1}]]</td>
+                                <td>[[${item.name}]]</td>
+                                <td>
+                                    <a href="" class="btn btn-info btn-sm" hidden><i class="fas fa-eye"></i></a>
+                                    <a th:href="${item.url}" class="btn btn-success btn-sm" download><i class="fas fa-download"></i></a>
+                                    <a th:href="@{'/dashboard/application/deleteAppType/'+${item.id}}" onclick="return confirm('Bạn có muốn xóa ? ')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+    <section class="modal fade" id="create-app-type-modal" data-backdrop="static"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <section class="modal-dialog">
+            <section class="modal-content">
+                <section class="modal-header h-auto">
+                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Thêm mới mẫu đơn</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </section>
+                <section class="modal-body">
+                    <section class="row mb-3">
+                        <section class="col-12">
+                            <label class="font-weight-normal f-13">Tên mẫu đơn</label>
+                            <input type="text" id="app-type-name" placeholder="Nhập tên mẫu đơn" class="form-control form-control-sm">
+                        </section>
+                    </section>
+                    <section class="row mb-3">
+                        <section class="form-group form-control-sm col-12">
+                            <label class="font-weight-normal f-13">Chọn tệp mẫu</label>
+                            <input type="file" class="form-control-file border" id="app-type-file">
+                            <span class="text-danger" id="error-file"></span>
+                        </section>
+                    </section>
+                </section>
+                <section class="modal-footer h-auto">
+                    <button type="button" onclick="OnCreateApplicationType()" class="btn btn-primary btn-sm"><i
+                            class="fas fa-plus"></i> Tạo
+                    </button>
+                </section>
+            </section>
+        </section>
+    </section>
+</div>
+
+<th:block layout:fragment="optional">
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/docx-preview/jszip.js"></script>
+    <script src="/plugins/docx-preview/docx-preview.js"></script>
+    <script src="/js/application/application.js"></script>
+</th:block>
+</body>
+</html>

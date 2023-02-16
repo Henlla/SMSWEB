@@ -28,6 +28,8 @@
                     <div class="row">
                         <div class="col-12">
                             <a th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
+                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu mẫu</a>
                         </div>
                     </div>
                     <div class="row">
@@ -37,6 +39,7 @@
                             <table id="student-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
+                                    <th>STT</th>
                                     <th>Hình ảnh</th>
                                     <th>Mã sinh viên</th>
                                     <th>Tên sinh viên</th>
@@ -46,6 +49,9 @@
                                 </thead>
                                 <tbody>
                                 <tr class="text-center" th:each="student:${students}">
+                                    <td><span
+                                            th:text="${students.indexOf(student)+1}"></span>
+                                    </td>
                                     <td><img th:src="${student.studentByProfile.getAvartarUrl()}" alt="" width="100"
                                              height="100"></td>
                                     <td>
@@ -120,8 +126,7 @@
                                                     id="st_address"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Nghành học : </label>&nbsp;<span
-                                                    id="st_major"></span>
+                                                <label>Nghành học : </label>&nbsp;<span id="st_major"></span>
                                             </div>
                                             <div class="col-6">
                                                 <label>Lớp học : </label>&nbsp;
@@ -129,7 +134,7 @@
                                                         id="st_class"></span>
                                             </div>
                                             <div class="col-12">
-                                                <div id="spinner-div" class="pt-5">
+                                                <div id="spinner-divI" class="pt-5">
                                                     <div class="spinner-border text-primary" role="status">
                                                     </div>
                                                 </div>
@@ -164,10 +169,6 @@
                         </div>
                         <div class="modal-body">
                             <div class="container">
-                                <div id="spinner-divI" class="pt-5">
-                                    <div class="spinner-border text-primary" role="status">
-                                    </div>
-                                </div>
                                 <input type="hidden" id="profileId_u">
                                 <input type="hidden" id="accountId_u">
                                 <input type="hidden" id="img">

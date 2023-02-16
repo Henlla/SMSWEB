@@ -12,16 +12,11 @@ $(()=>{
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
         scrollY: '350px',
         scrollCollapse: true,
-        // pagingType:"full_numbers",
+        pagingType:"full_numbers",
         columnDefs: [{
             orderable: false,
-            className: 'select-checkbox',
-            targets: 0
+            targets: 1
         }],
-        select: {
-            style: 'os',
-            selector: 'td:first-child'
-        },
         "language": {
             "decimal":        "",
             "emptyTable":     "Không có dữ liệu",
@@ -48,7 +43,7 @@ $(()=>{
         },
         initComplete: function () {
             count = 0;
-            this.api().columns([3]).every(function (i) {
+            this.api().columns([4]).every(function (i) {
                 var title = this.header();
                 //replace spaces with dashes
                 title = $(title).html().replace(/[\W]/g, '');
@@ -80,7 +75,7 @@ $(()=>{
                 //use column title as selector and placeholder
                 $('#' + title).select2({
                     closeOnSelect: true,
-                    placeholder: "- All -",
+                    placeholder: "- Tất cả -",
                     allowClear: true,
                     width: 'resolve',
                 });

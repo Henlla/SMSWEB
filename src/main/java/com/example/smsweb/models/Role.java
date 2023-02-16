@@ -23,6 +23,10 @@ public class Role {
     @Column(name = "role_name")
     private String roleName;
 
+    @Basic
+    @Column(name = "role_description")
+    private String roleDescription;
+
     @OneToMany(mappedBy = "roleByRoleId")
     @JsonIgnore
     private List<Account> accountsById;

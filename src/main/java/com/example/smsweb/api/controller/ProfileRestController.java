@@ -69,4 +69,12 @@ public class ProfileRestController {
         log.info("FINISH method getProfile :::::::::");
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDateTime.now().toString(),profile));
     }
+
+    @GetMapping("get/{id}")
+    public ResponseEntity<?> getProfileByAccountId(@PathVariable("id")Integer id) {
+        log.info("START method getProfileByAccountId id = {} :::::::::",id);
+        Profile profile= service.findProfileByAccountId(id);
+        log.info("FINISH method getProfileByAccountId :::::::::");
+        return ResponseEntity.status(HttpStatus.OK).body(profile);
+    }
 }

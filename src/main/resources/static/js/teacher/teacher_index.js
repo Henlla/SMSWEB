@@ -11,16 +11,11 @@ $(()=>{
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
         scrollY: '350px',
         scrollCollapse: true,
-        // pagingType:"full_numbers",
-        // columnDefs: [{
-        //     orderable: false,
-        //     className: 'select-checkbox',
-        //     targets: 0
-        // }],
-        // select: {
-        //     style: 'os',
-        //     selector: 'td:first-child'
-        // },
+        pagingType:"full_numbers",
+        columnDefs: [{
+            orderable: false,
+            targets: 1
+        }],
         "language": {
             "decimal":        "",
             "emptyTable":     "Không có dữ liệu",
