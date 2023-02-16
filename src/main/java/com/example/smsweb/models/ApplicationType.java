@@ -24,6 +24,9 @@ public class ApplicationType {
     @Basic
     @Column(name = "url")
     private String url;
+    @Basic
+    @Column(name = "file")
+    private String file;
     @OneToMany(mappedBy = "applicationTypeByApplicationTypeId")
     @JsonManagedReference("application_application_type")
     private List<Application> applicationsById;

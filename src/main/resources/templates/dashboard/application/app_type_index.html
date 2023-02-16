@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý đơn đăng ký</title>
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
@@ -70,6 +71,7 @@
                         <section class="form-group form-control-sm col-12">
                             <label class="font-weight-normal f-13">Chọn tệp mẫu</label>
                             <input type="file" class="form-control-file border" id="app-type-file">
+                            <span class="text-danger" id="error-file"></span>
                         </section>
                     </section>
                 </section>
@@ -85,8 +87,10 @@
 
 <th:block layout:fragment="optional">
     <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/docx-preview/jszip.js"></script>
     <script src="/plugins/docx-preview/docx-preview.js"></script>
+    <script src="/js/HelperJs.js"></script>
     <script src="/js/application/application.js"></script>
 </th:block>
 </body>
