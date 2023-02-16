@@ -1,11 +1,4 @@
 $(()=>{
-    $('#reservationdate_u').datetimepicker({
-        format: 'DD/MM/YYYY'
-    })
-
-    $('.select2').select2({
-        theme: 'bootstrap4'
-    })
     $('#student-table').DataTable({
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
