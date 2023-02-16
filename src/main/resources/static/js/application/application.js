@@ -122,38 +122,36 @@ var OnCreateApplicationType = async () => {
     formData.append("name", appTypeName);
     formData.append("file", appTypeFile);
     formData.append("base64String", base64String);
-    $.ajax({
-        url: "/dashboard/application/save_app_type",
-        data: formData,
-        method: "POST",
-        contentType: false,
-        processData: false,
-        enctype: "multipart/form-data",
-        success: (data) => {
-            switch (data.status.toLowerCase()) {
-                case "success":
-                    $("#create-app-type-modal").modal("hide");
-                    alert("Tạo thành công");
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                    break;
-                case "wrongtype":
-                    $("#error-file").html(data.data);
-                    break;
-            }
-        },
-        error: (data) => {
-            if (data.toLowerCase() === "token expired") {
-                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+    var fileExtension = GetExtension(appTypeFile.name);
+    if (fileExtension === "docx") {
+        $.ajax({
+            url: "/dashboard/application/save_app_type",
+            data: formData,
+            method: "POST",
+            contentType: false,
+            processData: false,
+            enctype: "multipart/form-data",
+            success: (data) => {
+                $("#create-app-type-modal").modal("hide");
+                alert("Tạo thành công");
                 setTimeout(() => {
-                    location.href = "/dashboard/login";
+                    location.reload();
                 }, 2000);
-            } else {
-                alert("Tạo mới thất bại");
+            },
+            error: (data) => {
+                if (data.toLowerCase() === "token expired") {
+                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                    setTimeout(() => {
+                        location.href = "/dashboard/login";
+                    }, 2000);
+                } else {
+                    alert("Tạo mới thất bại");
+                }
             }
-        }
-    });
+        });
+    } else {
+        $("#error-file").html("Vui lòng chọn file .docx");
+    }
 }
 
 var OnCreateApplication = async () => {
@@ -237,7 +235,7 @@ var OnChangeAppType = () => {
 
 var OnViewApplication = async (base64String) => {
     var fileUrl = (await base64ToWord(base64String)).url;
-    var file = await urltoFile(fileUrl ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    var file = await urltoFile(fileUrl, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     PreviewWordDoc(file);
     $("#show-document").modal("show");
 }
@@ -272,9 +270,13 @@ async function base64ToWord(base64String) {
     return base64Response;
 }
 
-var urltoFile = (url, mimeType) =>{
+var urltoFile = (url, mimeType) => {
     return (fetch(url)
-            .then(function(res){return res.arrayBuffer();})
-            .then(function(buf){return new File([buf],{type:mimeType});})
+            .then(function (res) {
+                return res.arrayBuffer();
+            })
+            .then(function (buf) {
+                return new File([buf], {type: mimeType});
+            })
     );
 }
