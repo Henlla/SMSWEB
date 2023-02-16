@@ -90,7 +90,7 @@ var OnCreateMajor = () => {
     if ($("#create-form").valid()) {
         var major_code = $("#create_major_code").val();
         var major_name = $("#create_major_name").val();
-        var formData = {
+        var major = {
             "majorCode": major_code,
             "majorName": major_name
         }
@@ -99,9 +99,22 @@ var OnCreateMajor = () => {
             contentType: "application/json",
             dataType: "json",
             method: "post",
-            data: JSON.stringify(formData),
+            data: JSON.stringify(major),
             success: (data) => {
-                location.reload();
+                alert("Tạo mới thành công");
+                setTimeout(()=>{
+                    location.reload();
+                },2000);
+            },
+            error : (data) =>{
+                if (data.toLowerCase() === "token expired") {
+                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                    setTimeout(() => {
+                        location.href = "/dashboard/login";
+                    }, 2000);
+                }else{
+                    alert("Tạo mới thất bại");
+                }
             }
         });
     }
@@ -119,28 +132,44 @@ var OnEditMajor = (id) => {
             $("#edit_major_name").val(data.majorName);
             $("#edit-major-modal").modal("show");
         }, error: (data) => {
-            alert("Thất bại");
+            if (data.toLowerCase() === "token expired") {
+                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                setTimeout(() => {
+                    location.href = "/dashboard/login";
+                }, 2000);
+            }else{
+                alert("Không tìm thấy dữ liệu");
+            }
         }
     });
 }
 
 var OnUpdateMajor = () => {
-    var formData = {
+    var major = {
         "id": $("#edit_major_id").val(),
         "majorCode": $("#edit_major_code").val(),
         "majorName": $("#edit_major_name").val(),
     }
     $.ajax({
-        url: "/major/update",
-        dataType: "json",
+        url: "/dashboard/major/update",
         contentType:"application/json",
         method:"POST",
-        data:JSON.stringify(formData),
+        data:JSON.stringify(major),
         success: () => {
-            alert("Tạo thành công");
+            alert("Cập nhật thành công");
             setTimeout(()=>{
                 location.reload();
             },2000);
+        },
+        error:(data)=>{
+            if (data.toLowerCase() === "token expired") {
+                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                setTimeout(() => {
+                    location.href = "/dashboard/login";
+                }, 2000);
+            }else{
+                alert("Cập nhật thất bại");
+            }
         }
     });
 }
@@ -165,6 +194,16 @@ var OnSaveExcelData = () =>{
             setTimeout(()=>{
                 location.reload();
             },1500);
+        },
+        error:(data)=>{
+            if (data.toLowerCase() === "token expired") {
+                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                setTimeout(() => {
+                    location.href = "/dashboard/login";
+                }, 2000);
+            }else{
+                alert("Đỗ dữ liệu thất bại");
+            }
         }
     });
 }

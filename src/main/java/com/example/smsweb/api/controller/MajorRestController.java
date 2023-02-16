@@ -4,15 +4,13 @@ import com.example.smsweb.api.di.irepository.IMajor;
 import com.example.smsweb.api.generic.GenericController;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Major;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
 
 
 @RestController
@@ -22,12 +20,23 @@ public class MajorRestController extends GenericController<Major> {
     private IMajor service;
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@ModelAttribute Major major) {
+    public ResponseEntity<?> save(@RequestParam("major") String jsonMajor) {
         try {
+            Major major = new ObjectMapper().readValue(jsonMajor,Major.class);
             service.save(major);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), "Sao lưu thành công"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Sao lưu thành công"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
+        }
+    }
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@RequestParam("major") String jsonMajor){
+        try {
+            Major major = new ObjectMapper().readValue(jsonMajor, Major.class);
+            service.save(major);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Cập nhật thành công"));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
         }
     }
 }
