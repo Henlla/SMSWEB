@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.time.LocalDate;
 
 @Controller
 @RequestMapping("dashboard/application")
@@ -61,7 +60,7 @@ public class ApplicationController {
             HttpEntity<String> request = new HttpEntity<>(headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
             return response.getBody().getData();
-        }catch (Exception e){
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
@@ -82,10 +81,9 @@ public class ApplicationController {
             model.addAttribute("listAppType", responseAppType.getBody().getData());
             return "dashboard/application/app_index";
         } catch (Exception e) {
-            if(e.getMessage().toLowerCase().equals("token expired")){
+            if (e.getMessage().toLowerCase().equals("token expired")) {
                 return "redirect:/dashboard/login";
-            }
-            else {
+            } else {
                 return "/error/error";
             }
         }
@@ -100,22 +98,18 @@ public class ApplicationController {
             JWTUtils.checkExpired(_token);
             String extension = FileNameUtils.getExtension(file.getOriginalFilename());
             restTemplate = new RestTemplate();
-            if (extension.equals("docx")) {
-                String fileName = name + "." + extension;
-                String url = "/application/ApplicationTemplate/" + fileName;
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", "Bearer " + _token);
-                MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-                content.add("name", fileName);
-                content.add("url", url);
-                content.add("file", base64);
-                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_TYPE_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-                uploadFile(fileName, file);
-                return response;
-            } else {
-                return new ResponseModel("wrongType", LocalDate.now().toString(), "Vui lòng chọn file word .docx");
-            }
+            String fileName = name + "." + extension;
+            String url = "/application/ApplicationTemplate/" + fileName;
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+            content.add("name", fileName);
+            content.add("url", url);
+            content.add("file", base64);
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_TYPE_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+            uploadFile(fileName, file);
+            return response;
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -178,7 +172,7 @@ public class ApplicationController {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, Application> content = new LinkedMultiValueMap<>();
-            content.add("application",application);
+            content.add("application", application);
             HttpEntity<MultiValueMap<String, Application>> request = new HttpEntity<MultiValueMap<String, Application>>(content, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "save", HttpMethod.POST, request, ResponseModel.class);
             return response;
