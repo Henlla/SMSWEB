@@ -28,11 +28,9 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm">Xuất dữ
-                                liệu</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu
-                                mẫu</a>
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
+                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu mẫu</a>
                         </div>
                     </div>
                     <div class="row">
@@ -68,7 +66,7 @@
                                     </td>
                                     <td class="text-center">
                                         <a class="mr-3" th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:data-name="${student.id}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>
+                                        <a class="mr-3" th:data-name="${student.id}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
