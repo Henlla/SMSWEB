@@ -65,7 +65,6 @@ $(() => {
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
         scrollCollapse: true,
         scrollY: '300px',
-        // pagingType:"full_numbers",
         "language": {
             "decimal": "",
             "emptyTable": "Không có dữ liệu",
@@ -91,22 +90,10 @@ $(() => {
             }
         }
     });
-    // $('#subject-table').dataTable({
-    //     columnDefs: [{
-    //         orderable: false,
-    //         className: 'select-checkbox select-checkbox-all',
-    //         targets: 0
-    //     }],
-    //     select: {
-    //         style: 'multi',
-    //         selector: 'td:first-child'
-    //     }
-    // });
     $(".select2-single").select2({
         theme:"bootstrap4",
         width:"100%",
         dropdownCssClass: "f-13"
-        // containerCssClass:":all:"
     });
 });
 var OnEditSubject = (id) => {
@@ -115,6 +102,7 @@ var OnEditSubject = (id) => {
         dataType: "json",
         method: "GET",
         success: (obj) => {
+            console.log(obj);
             var formatFee = obj.fee.toLocaleString('en-US', {
                 valute: "currency"
             });
@@ -126,6 +114,16 @@ var OnEditSubject = (id) => {
             $("#edit_semester_id").val(obj.semesterId).trigger("change");
             $("#edit_major_id").val(obj.majorId).trigger("change");
             $("#subject-edit-modal").modal("show");
+        },
+        error : (data) =>{
+            if (data.toLowerCase() === "token expired") {
+                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                setTimeout(() => {
+                    location.href = "/dashboard/login";
+                }, 2000);
+            }else{
+                alert("Tìm thất bại");
+            }
         }
     });
 }
@@ -138,7 +136,7 @@ var OnCreateSubject = () => {
         var slot = $("#create_slot").val();
         var semester_id = $("#create_semester_id").val();
         var major_id = $("#create_major_id").val();
-        var formData = {
+        var subject = {
             "subjectCode": subject_code,
             "subjectName": subject_name,
             "fee": fee,
@@ -147,18 +145,25 @@ var OnCreateSubject = () => {
             "majorId": major_id
         }
         $.ajax({
-            url: "/dashboard/subject/post",
+            url: "/dashboard/subject/save",
             contentType: "application/json",
             method: "POST",
-            data: JSON.stringify(formData),
+            data: JSON.stringify(subject),
             success: (data) => {
                 alert("Tạo thành công");
                 setTimeout(()=>{
                     location.reload();
                 },2000);
             },
-            error:()=>{
-                alert("Thất bại");
+            error:(data)=>{
+                if (data.toLowerCase() === "token expired") {
+                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                    setTimeout(() => {
+                        location.href = "/dashboard/login";
+                    }, 2000);
+                }else{
+                    alert("Tạo mới thất bại");
+                }
             }
         });
     }
@@ -170,11 +175,10 @@ var OnUpdateSubject = () => {
         var subject_code = $("#edit_subject_code").val();
         var subject_name = $("#edit_subject_name").val();
         var fee = $("#edit_fee").val().replace(/,/g,'');
-        console.log(fee);
         var slot = $("#edit_slot").val();
         var semester_id = $("#edit_semester_id").val();
         var major_id = $("#edit_major_id").val();
-        var formData = {
+        var subject = {
             "id": id,
             "subjectCode": subject_code,
             "subjectName": subject_name,
@@ -188,11 +192,21 @@ var OnUpdateSubject = () => {
             dataType: "json",
             contentType: "application/json",
             method: "post",
-            data: JSON.stringify(formData)
+            data: JSON.stringify(subject)
             , success: (data) => {
-                location.reload();
+                alert("Cập nhật thành công");
+                setTimeout(()=>{
+                    location.reload();
+                },2000);
             }, error: (data) => {
-                console.log("error");
+                if (data.toLowerCase() === "token expired") {
+                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                    setTimeout(() => {
+                        location.href = "/dashboard/login";
+                    }, 2000);
+                }else{
+                    alert("Cập nhật thất bại");
+                }
             }
         });
     }

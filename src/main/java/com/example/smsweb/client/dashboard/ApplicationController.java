@@ -100,7 +100,7 @@ public class ApplicationController {
             JWTUtils.checkExpired(_token);
             String extension = FileNameUtils.getExtension(file.getOriginalFilename());
             restTemplate = new RestTemplate();
-            if (extension.equals("docx") || extension.equals("doc")) {
+            if (extension.equals("docx")) {
                 String fileName = name + "." + extension;
                 String url = "/application/ApplicationTemplate/" + fileName;
                 HttpHeaders headers = new HttpHeaders();
@@ -177,14 +177,9 @@ public class ApplicationController {
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + _token);
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            content.add("sendDate", application.getSendDate());
-            content.add("note", application.getNote());
-            content.add("file", application.getFile());
-            content.add("status", application.getStatus());
-            content.add("studentId", String.valueOf(application.getStudentId()));
-            content.add("applicationTypeId", String.valueOf(application.getApplicationTypeId()));
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
+            MultiValueMap<String, Application> content = new LinkedMultiValueMap<>();
+            content.add("application",application);
+            HttpEntity<MultiValueMap<String, Application>> request = new HttpEntity<MultiValueMap<String, Application>>(content, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "save", HttpMethod.POST, request, ResponseModel.class);
             return response;
         } catch (Exception e) {
