@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
     <link rel="stylesheet" href="/css/student_details.css">
 </head>
 <body>
@@ -27,7 +28,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
                             <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
                             <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu mẫu</a>
                         </div>
@@ -65,7 +66,7 @@
                                     </td>
                                     <td class="text-center">
                                         <a class="mr-3" th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:data-name="${student.id}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>
+                                        <a class="mr-3" th:data-name="${student.id}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>

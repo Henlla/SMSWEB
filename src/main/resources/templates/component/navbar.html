@@ -33,8 +33,8 @@
               </a>
             </li>
           </ul>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
+          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+            <li  class="nav-item">
               <a th:href="@{'/dashboard/student/create-student'}" class="nav-link active">
                 <i class="fas fa-plus"></i>
                 <p>Thêm mới sinh viên</p>
@@ -58,7 +58,7 @@
               </a>
             </li>
           </ul>
-          <ul class="nav nav-treeview">
+          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
             <li class="nav-item">
               <a th:href="@{'/dashboard/teacher/create-teacher'}" class="nav-link active">
                 <i class="fas fa-plus"></i>
@@ -106,7 +106,7 @@
             </li>
           </ul>
         </li>
-        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
+        <li class="nav-item">
           <a href="#" class="nav-link active">
             <i class="fas fa-hashtag"></i>
             <p>Môn học<i class="right fas fa-angle-left"></i></p>
@@ -169,7 +169,7 @@
               </a>
             </li>
           </ul>
-          <ul class="nav nav-treeview">
+          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
             <li class="nav-item">
               <a th:href="@{/dashboard/news/create_new}" class="nav-link active">
                 <i class="fas fa-plus"></i>
@@ -191,7 +191,7 @@
               </a>
             </li>
           </ul>
-          <ul class="nav nav-treeview">
+          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
             <li class="nav-item">
               <a th:href="@{'/dashboard/class-create'}" class="nav-link active">
                 <i class="fas fa-plus"></i>
