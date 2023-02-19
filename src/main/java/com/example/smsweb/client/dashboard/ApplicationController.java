@@ -102,11 +102,10 @@ public class ApplicationController {
             String url = "/application/ApplicationTemplate/" + fileName;
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + _token);
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            content.add("name", fileName);
-            content.add("url", url);
-            content.add("file", base64);
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
+            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+            ApplicationType appType = ApplicationType.builder().url(url).name(fileName).file(base64).build();
+            content.add("applicationType", appType);
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_TYPE_URL + "save", HttpMethod.POST, request, ResponseModel.class);
             uploadFile(fileName, file);
             return response;
