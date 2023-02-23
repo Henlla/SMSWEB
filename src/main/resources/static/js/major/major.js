@@ -132,13 +132,13 @@ var OnEditMajor = (id) => {
             $("#edit_major_name").val(data.majorName);
             $("#edit-major-modal").modal("show");
         }, error: (data) => {
-            if (data.toLowerCase() === "token expired") {
+            if (data.responseText.toLowerCase() === "token expired") {
                 alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
                 setTimeout(() => {
                     location.href = "/dashboard/login";
                 }, 2000);
             }else{
-                alert("Không tìm thấy dữ liệu");
+                toastr.error("Không tìm thấy dữ liệu");
             }
         }
     });
@@ -202,7 +202,7 @@ var OnSaveExcelData = () =>{
                     location.href = "/dashboard/login";
                 }, 2000);
             }else{
-                alert("Đỗ dữ liệu thất bại");
+                toastr.error("Đỗ dữ liệu thất bại");
             }
         }
     });

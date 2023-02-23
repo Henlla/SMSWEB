@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class ApplicationTypeService implements IApplicationType {
     @Autowired
@@ -17,7 +18,7 @@ public class ApplicationTypeService implements IApplicationType {
     public void save(ApplicationType applicationType) {
         try {
             dao.save(applicationType);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ErrorHandler(e.getMessage());
         }
     }
@@ -26,7 +27,7 @@ public class ApplicationTypeService implements IApplicationType {
     public void delete(int id) {
         try {
             dao.deleteById(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ErrorHandler(e.getMessage());
         }
     }
@@ -35,17 +36,13 @@ public class ApplicationTypeService implements IApplicationType {
     public List<ApplicationType> findAll() {
         try {
             return dao.findAll();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ErrorHandler(e.getMessage());
         }
     }
 
     @Override
     public ApplicationType findOne(int id) {
-        try {
-            return dao.findById(id).get();
-        }catch (Exception e){
-            throw new ErrorHandler(e.getMessage());
-        }
+        return dao.findById(id).orElseThrow(()-> new ErrorHandler("Không tìm thấy dữ liệu"));
     }
 }
