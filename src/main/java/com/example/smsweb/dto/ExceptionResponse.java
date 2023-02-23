@@ -13,4 +13,5 @@ import lombok.Setter;
 public class ExceptionResponse {
     private String status;
     private String timestamp;
+    private Object message;
 }
