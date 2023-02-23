@@ -26,7 +26,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/class-create'}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:href="@{'/dashboard/class/class-create'}" class="btn btn-info btn-sm">Thêm mới</a>
                         </div>
                     </div>
                     <div class="row">
@@ -53,7 +53,7 @@
                                     <td><span th:text="${class.getLimitStudent()}"></span></td>
                                     <td class="text-center">
                                         <a class="mr-3" th:data-name="${class.getId()}" onclick="OnDetails(this.getAttribute('data-name'))" ><i class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:href="@{'/dashboard/student_update/' + ${class.getId()}}"><i class="fas fa-pencil-alt"></i></a>
+                                        <a class="mr-3" th:href="${'/dashboard/class/class_update/'+ class.getId()}"><i class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -78,7 +78,7 @@
                                     <div class="col">
                                         <div class="row">
                                             <div class="col-6 form-group">
-                                                <label>Mã lớp học</label>&nbsp;
+                                                <label>Mã lớp học</label>
                                                 <input class="form-control" id="class_code" value="" readonly>
                                             </div>
                                             <div class="col-6 form-group">
@@ -185,7 +185,7 @@
 
         var OnDetails = (id) => {
             $.ajax({
-                url: "/dashboard/class-details/" + id,
+                url: "/dashboard/class/class-details/" + id,
                 dataType: "json",
                 contentType: "application/json",
                 method: "GET",

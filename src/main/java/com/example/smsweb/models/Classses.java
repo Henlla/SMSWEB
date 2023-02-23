@@ -46,6 +46,10 @@ public class Classses {
     @Column(name = "class_status")
     private String classStatus;
 
+    @Basic
+    @Column(name = "shift")
+    private String shift;
+
     @OneToMany(mappedBy = "classsesByClassId")
     @JsonManagedReference("class_schedule")
     private List<Schedule> schedulesById;

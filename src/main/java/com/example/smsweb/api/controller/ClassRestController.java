@@ -5,6 +5,8 @@ import com.example.smsweb.api.generic.GenericController;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Account;
 import com.example.smsweb.models.Classses;
+import com.example.smsweb.models.Student;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,12 @@ public class ClassRestController extends GenericController<Classses> {
         }catch (Exception e){
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
         }
+    }
+
+    @GetMapping("/searchClasssesByClassCode/{classCode}")
+    public List<String> searchClasssesByClassCode(@PathVariable("classCode") String classCode){
+        classCode = "%"+classCode+"%";
+        return service.searchClasssesByClassCode(classCode);
     }
 
 }

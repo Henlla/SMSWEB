@@ -7,7 +7,10 @@ import com.example.smsweb.models.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class StudentService implements IStudent {
     @Autowired
@@ -36,4 +39,18 @@ public class StudentService implements IStudent {
     public Student getByProfileId(Integer id) {
         return repository.findStudentByProfileId(id).orElseThrow(()->new ErrorHandler("Cannot find student with profile id := "+id));
     }
+
+    @Override
+    public List<Student> findStudentIdByRangeStudentCard(List<String> listStudentCard) {
+        List<Student> listResult= new ArrayList<>();
+        for (String stringCard: listStudentCard) {
+            Optional<Student> student = repository.findStudentByStudentCard(stringCard);
+            if (student.isPresent())
+                listResult.add(student.get());
+            else throw new ErrorHandler("student is not existed: "+stringCard);
+        }
+        return listResult;
+    }
+
+
 }
