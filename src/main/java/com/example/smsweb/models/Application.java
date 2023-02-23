@@ -28,6 +28,9 @@ public class Application {
     @Column(name = "file")
     private String file;
     @Basic
+    @Column(name = "response_note")
+    private String responseNote;
+    @Basic
     @Column(name = "student_id")
     private Integer studentId;
     @Basic

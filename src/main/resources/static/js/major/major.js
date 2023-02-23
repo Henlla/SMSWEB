@@ -178,6 +178,32 @@ var OnClickImport = () =>{
     $("#fileUpload").trigger("click");
 }
 
+var OnDeleteMajor = (id) =>{
+    var isConfirm = confirm("Bạn muốn xóa dữ liệu này");
+    if(isConfirm){
+        $.ajax({
+            url: "/dashboard/major/delete/" + id,
+            method: "GET",
+            success: () => {
+                alert("Xóa thành công");
+                setTimeout(() => {
+                    location.reload();
+                },2000);
+            },
+            error: (data) => {
+                if (data.responseText.toLowerCase() === "token expired") {
+                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                    setTimeout(() => {
+                        location.href = "/dashboard/login";
+                    }, 2000)
+                } else {
+                    alert("Xóa thất bại");
+                }
+            }
+        });
+    }
+}
+
 var OnSaveExcelData = () =>{
     var file = $("#fileUpload").get(0).files[0];
     var formData = new FormData();

@@ -51,7 +51,7 @@
                                         <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:data-name="${item.id}"
                                            onclick="OnEditSubject(this.getAttribute('data-name'))" class="mr-3"><i
                                                 class="fas fa-pen indigo-text"></i></a>
-                                        <a th:href="@{'dashboard/subject/delete/' + ${item.id}}"><i
+                                        <a th:data-name="${item.id}" onclick="OnDeleteSubject(this.getAttribute('data-name'))"><i
                                                 class="fas fa-trash red-text"></i></a>
                                     </td>
                                 </tr>

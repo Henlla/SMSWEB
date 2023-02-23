@@ -44,7 +44,7 @@
                                 <td>
                                     <button th:data-name="${item.file}" onclick="OnViewApplication(this.getAttribute('data-name'))" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
                                     <button th:data-name="${item.id}" onclick="OnAppDownload(this.getAttribute('data-name'))" class="btn btn-success btn-sm"><i class="fas fa-download"></i></button>
-                                    <button data-toggle="modal" data-targets="app-edit-modal" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i></button>
+                                    <button th:data-name="${item.id}" onclick="OnEditApplication(this.getAttribute('data-name'))" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i></button>
                                 </td>
                             </tr>
                             </tbody>
@@ -120,12 +120,47 @@
             </section>
         </section>
     </section>
+    <section class="modal fade" id="app-edit-modal" data-backdrop="static"
+             aria-labelledby="editModalLabel" aria-hidden="true">
+        <section class="modal-dialog modal-lg">
+            <section class="modal-content">
+                <section class="modal-header">
+                    <h5 class="modal-title font-weight-bold" id="editModalLabel">Cập nhật trạng thái</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </section>
+                <section class="modal-body">
+                    <form id="app-edit-form">
+                        <section class="form-group">
+                            <label>Trạng thái</label>
+                            <select id="edit-status" class="select2bs4 form-control form-control-sm">
+                                <option value="1">Approved</option>
+                                <option value="2">Discard</option>
+                            </select>
+                        </section>
+                        <section class="form-group">
+                            <label>Ghi chú</label>
+                            <textarea placeholder="Nhập ghi chú..." id="edit-note" class="form-control form-control-sm" cols="70" rows="5" style="resize: none"></textarea>
+                        </section>
+                    </form>
+                </section>
+                <section class="modal-footer">
+                    <button type="button" onclick="OnUpdateApplication()" class="btn btn-primary btn-sm"><i
+                            class="fas fa-save"></i> Cập nhật
+                    </button>
+                </section>
+            </section>
+        </section>
+    </section>
+
 </div>
 <section layout:fragment="optional">
     <script src="/plugins/jquery/jquery.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/docx-preview/jszip.js"></script>
     <script src="/plugins/docx-preview/docx-preview.js"></script>
+    <script src="/js/HelperJs.js"></script>
     <script src="/js/application/application.js"></script>
 </section>
 </body>
