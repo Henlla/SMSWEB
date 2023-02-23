@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface StudentRepository extends GenericRepository<Student,Integer> {
     Optional<Student> findStudentByProfileId(Integer integer);
-
+    Optional<Student> findStudentByStudentCard(String card);
 }

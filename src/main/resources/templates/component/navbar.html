@@ -185,7 +185,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a th:href="@{'/dashboard/class-index'}" class="nav-link active">
+              <a th:href="@{'/dashboard/class/class-index'}" class="nav-link active">
                 <i class="fas fa-list"></i>
                 <p>Danh sách lớp học</p>
               </a>
@@ -193,7 +193,7 @@
           </ul>
           <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
             <li class="nav-item">
-              <a th:href="@{'/dashboard/class-create'}" class="nav-link active">
+              <a th:href="@{'/dashboard/class/class-create'}" class="nav-link active">
                 <i class="fas fa-plus"></i>
                 <p>Thêm lớp học mới</p>
               </a>

@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 public class ExceptionController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ErrorHandler.class)
     public ResponseEntity<?> handlerSaveData(Exception e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse("error ", LocalDateTime.now().toString(),e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse("error ", LocalDateTime.now().toString(), e.getMessage()));
     }
 }
