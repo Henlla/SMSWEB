@@ -94,42 +94,48 @@ public class ClassController {
                                 @RequestParam("newClass")String newClass,
                                 @RequestParam(name = "file", required = false) MultipartFile file
     ) throws JsonProcessingException {
-        if (_token.equals("")) {
-            return "redirect:/dashboard/login";
-        }
+        try{
+            RestTemplate restTemplate = new RestTemplate();
 
-        RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization","Bearer "+_token);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization","Bearer "+_token);
+            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            content.add("newClass", newClass);
 
-        MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        content.add("newClass", newClass);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-        ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Classses classModel = objectMapper.readValue(newClass, Classses.class);
-            Object data = response.getBody().getData();
-            if(file != null){
-                try{
-                    Boolean addStudent = UpdateClassIdForStudentClass(_token, file, classModel.getClassCode());
-                    if (addStudent){
-                        return new responModelForClass("success","Thêm sinh viên thành công").toString();
-                    }else {
-                        return new responModelForClass("success","Thêm sinh viên thất bại").toString();
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Classses classModel = objectMapper.readValue(newClass, Classses.class);
+                Object data = response.getBody().getData();
+                if(file != null){
+                    try{
+                        Boolean addStudent = UpdateClassIdForStudentClass(_token, file, classModel.getClassCode());
+                        if (addStudent){
+                            return new responModelForClass("success","Thêm sinh viên thành công").toString();
+                        }else {
+                            return new responModelForClass("success","Thêm sinh viên thất bại").toString();
+                        }
+                    } catch (Exception e) {
+                        String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
+                        return new responModelForClass("success","Can not import student. "+message).toString();
                     }
-                } catch (Exception e) {
-                    String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
-                    return new responModelForClass("success","Can not import student. "+message).toString();
+                }else {
+                    return new responModelForClass("success","").toString();
                 }
-            }else {
-                return new responModelForClass("success","").toString();
+            } else {
+                return new responModelForClass("fail","").toString();
             }
-        } else {
-            return new responModelForClass("fail","").toString();
+        } catch (HttpClientErrorException ex){
+            log.error(ex.getMessage());
+            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                return ex.getMessage();
+            }else {
+                return ex.getMessage();
+            }
+
         }
 
     }
