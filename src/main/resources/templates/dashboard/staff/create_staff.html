@@ -108,7 +108,7 @@
                                                 style="width: 100%;">
                                             <option selected="selected" value="">----- Chọn Chức vụ ------</option>
                                             <th:block th:each="role : ${roles}">
-                                                <option th:value="${role.id}">[[${role.roleName}]]</option>
+                                                <option th:value="${role.id}">[[${role.roleDescription}]]</option>
                                             </th:block>
                                         </select>
                                     </div>

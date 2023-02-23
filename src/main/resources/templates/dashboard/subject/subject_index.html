@@ -21,8 +21,8 @@
                 <section class="container-fluid">
                     <section class="row mb-3">
                         <section class="col-12">
-                            <button data-toggle="modal" data-target="#subject-modal" class="btn btn-info btn-sm">
-                                <i class="fas fa-plus" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"></i> Thêm mới
+                            <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" data-target="#subject-modal" class="btn btn-info btn-sm">
+                                <i class="fas fa-plus" ></i> Thêm mới
                             </button>
                             <a onclick="OnClickImport()" class="btn btn-primary btn-sm">Đỗ dữ liệu</a>
                             <input type="file" onchange="OnSaveExcelData()" id="fileUpload" hidden>
@@ -48,7 +48,7 @@
                                         vnd
                                     </td>
                                     <td class="text-center">
-                                        <a th:data-name="${item.id}"
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:data-name="${item.id}"
                                            onclick="OnEditSubject(this.getAttribute('data-name'))" class="mr-3"><i
                                                 class="fas fa-pen indigo-text"></i></a>
                                         <a th:href="@{'dashboard/subject/delete/' + ${item.id}}"><i

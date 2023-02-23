@@ -57,12 +57,12 @@ $(()=>{
         if (input.files && input.files[0]) {
             if(GetExtension(input.files[0].name) === "png" ||
                 GetExtension(input.files[0].name) ==="jpg" ||
-                GetExtension(input.files[0].name) ==="jpeg"){
+                GetExtension(input.files[0].name) ==="jpeg") {
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     $('.background-choose_image').attr('src', e.target.result);
-                    reader.readAsDataURL(input.files[0]);
                 }
+                reader.readAsDataURL(input.files[0]);
                 return true;
             }else{
                 return false;
@@ -80,8 +80,6 @@ $(()=>{
             $('.errorAvatar').css("display","block")
             $('.errorAvatar').html("Vui lòng chọn file hình ảnh (png,jpg,jpeg)")
         }
-        console.log(this.value)
-        ;
     });
 
 
@@ -238,7 +236,7 @@ $(()=>{
 
 
 
-        if(avatarUrl.files.length===0 || avatarUrl.files.name!=="png" || avatarUrl.files.name!=="jpg" || avatarUrl.files.name!=="jpeg"){
+        if(avatarUrl.files.length===0){
             $('.errorAvatar').css("display","block")
             $('.errorAvatar').html("Vui lòng chọn ảnh")
         }else{
