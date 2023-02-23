@@ -55,7 +55,6 @@ public class SubjectController {
             JWTUtils.checkExpired(_token);
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
             content.add("subject", subject);
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
@@ -66,17 +65,16 @@ public class SubjectController {
         }
     }
 
-    @GetMapping("/delete/{id}")
-    public String delete(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") Integer id) {
+    @GetMapping(value = "/delete/{id}")
+    @ResponseBody
+    public Object delete(@CookieValue(name = "_token") String _token, @PathVariable("id") String id) {
         try {
             JWTUtils.checkExpired(_token);
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            content.add("id", String.valueOf(id));
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
-            ResponseEntity<String> response = restTemplate.exchange(SUBJECT_URL + "delete/" + id, HttpMethod.DELETE, request, String.class);
-            return response.getBody().toString();
+            HttpEntity<String> request = new HttpEntity<String>(headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "delete/" + id, HttpMethod.DELETE, request, ResponseModel.class);
+            return response;
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -112,14 +110,14 @@ public class SubjectController {
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
             return response.getBody().getData();
-        }catch (Exception e){
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
 
     @PostMapping("/importExcelData")
     @ResponseBody
-    public Object importExcelData(@RequestParam("file")MultipartFile file){
+    public Object importExcelData(@RequestParam("file") MultipartFile file) {
         return "";
     }
 }

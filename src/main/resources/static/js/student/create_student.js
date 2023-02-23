@@ -299,7 +299,7 @@ $(()=>{
                                     }
                                 })
                             }else{
-                                toastr.success('Tạo sinh viên thành công')
+                                toastr.error('Tạo sinh viên thất bại')
                             }
                         }
                     })

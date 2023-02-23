@@ -238,6 +238,32 @@ var OnUpdateSubject = () => {
     }
 }
 
+var OnDeleteSubject = (id) =>{
+    var isConfirm = confirm("Bạn muốn xóa dữ liệu ?");
+    if(isConfirm){
+        $.ajax({
+            url: "/dashboard/subject/delete/" + id,
+            method:"GET",
+            success : ()=>{
+                alert("Xóa thành công");
+                setTimeout(()=>{
+                    location.reload();
+                },2000)
+            },
+            error : (data) =>{
+                if(data.responseText.toLowerCase() === "token expired"){
+                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
+                    setTimeout(()=>{
+                        location.href = "/dashboard/login";
+                    })
+                }else{
+                    alert("Xóa thất bại");
+                }
+            }
+        });
+    }
+}
+
 var OnFormatCurrency = (obj) => {
     if (obj.id === "create_fee") {
         var fee = $("#create_fee").val();

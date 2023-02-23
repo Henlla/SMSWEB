@@ -97,7 +97,8 @@ public class MajorController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") int id) {
+    @ResponseBody
+    public Object delete(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") String id) {
         try {
             JWTUtils.checkExpired(_token);
             restTemplate = new RestTemplate();
@@ -105,10 +106,10 @@ public class MajorController {
             MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
             content.add("id", String.valueOf(id));
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-            ResponseEntity<String> response = restTemplate.exchange(MAJOR_URL + "delete/" + id, HttpMethod.DELETE, request, String.class);
-            return "redirect:/dashboard/major/index";
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "delete/" + id, HttpMethod.DELETE, request, ResponseModel.class);
+            return response.getBody().getData();
         } catch (Exception e) {
-            return "redirect:/dashboard/login";
+            return e.getMessage();
         }
     }
 

@@ -66,7 +66,9 @@ $(() => {
     $("#app-modal").on("hidden.bs.modal", () => {
         $("#appType").val("").trigger("change");
     });
-
+    $("#select2bs4").select2({
+        theme: "bootstrap4"
+    });
 });
 
 var OnAppDownload = (id) => {
@@ -112,6 +114,43 @@ var OnAppDownload = (id) => {
             }
         }
     });
+}
+
+var OnEditApplication = (id) => {
+    $("#app-edit-modal").modal("show");
+}
+
+var OnUpdateApplication = () => {
+    var status = $("#edit-status").val();
+    var note = $("#edit-note").val();
+    var response_date = FormatHelper("DATE",new Date(),"dd/mm/yyyy");
+    var application = {
+        "status":status,
+        "note":note
+    }
+    $.ajax({
+        url:"/dashboard/application/update",
+        method:"POST",
+        contentType:"application/json",
+        success: () =>{
+
+        },
+        error : (data) =>{
+            if(data.responseText.toLowerCase() === "token expired"){
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                })
+            }
+        }
+    })
+
 }
 
 var OnCreateApplicationType = async () => {
