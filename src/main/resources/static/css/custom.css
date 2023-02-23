@@ -1,0 +1,45 @@
+.select2-selection__rendered {
+    line-height: 30px !important;
+    font-size: .875rem !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 30px !important;
+}
+
+.select2-search__field {
+    height: 30px !important;
+}
+
+.dataTables_paginate {
+    width: 100%;
+    text-align: center;
+}
+
+.f-13 {
+    font-size: .875rem;
+}
+
+.close:hover {
+    color: red;
+}
+
+.error {
+    color: red;
+    font-weight: normal !important;
+    font-size: 13px;
+    margin: 0 !important;
+}
+
+.dataTables_scrollHeadInner{
+    width: 100% !important;
+}
+.dataTables_scrollHeadInner table{
+    width: 100% !important;
+}
+.dataTables_scrollBody::-webkit-scrollbar{
+    width: 0 !important;
+}
+.dataTables_scrollBody::-webkit-scrollbar-thumb{
+    width: 0 !important;
+}

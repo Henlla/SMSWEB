@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách tin tức</title>
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="/css/student_details.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <section>
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h5 class="m-0">Quản lý tin tức</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/news/create_new'}" class="btn btn-info btn-sm">Thêm mới</a>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="select-major"></div>
+                            <table id="new-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>STT</th>
+                                    <th>Thumbnail</th>
+                                    <th>Tiêu đề</th>
+                                    <th>Tiêu đề con</th>
+                                    <th>Ngày đăng</th>
+                                    <th>Hiển thị</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="n:${news}">
+                                    <td>
+                                        <span th:text="${news.indexOf(n)}"></span>
+                                    </td>
+                                    <td><img th:src="${n.getThumbnailUrl()}" alt="" width="100"
+                                             height="100"></td>
+                                    <td>
+                                        <span th:text="${n.title}"></span>
+                                    </td>
+                                    <td><span th:text="${n.sub_title}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${n.post_date}"></span></td>
+                                    <td>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" th:id="isActive+${n.id}"
+                                                   th:checked="${n.isActive == true ? '' : checked}" th:onclick="'OnActive('+${n.id}+','+${n.isActive}+')'">
+                                            <label class="custom-control-label" th:for="isActive+${n.id}"></label>
+                                        </div>
+                                    <td class="text-center">
+                                        <a class="mr-3" th:data-name="${n.id}"
+                                           onclick="OnDetails(this.getAttribute('data-name'))"><i
+                                                class="fas fa-eye indigo-text"></i></a>
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="mr-3" th:data-name="${n.id}"
+                                           onclick="OnUpdate(this.getAttribute('data-name'))"><i
+                                                class="fas fa-pencil-alt"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="news_details" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết tin tức</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <img id="thumbnail" style="display: block;width: 50%;margin: 0 auto;">
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <label>Tiêu đề : </label>&nbsp;<span
+                                                    id="title"></span>
+                                            </div>
+                                            <div class="col-12">
+                                                <label>Tiêu đề con: </label>&nbsp;<span
+                                                    id="sub_title"></span>
+                                            </div>
+                                            <div class="col-12">
+                                                <label>Ngày đăng: </label>&nbsp;<span
+                                                    id="post_date"></span>
+                                            </div>
+                                            <div class="col-12">
+                                                <label>Nội dung: </label>&nbsp;<div
+                                                    id="content" style="height: 200px;overflow-y: scroll"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="news_update" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Cập nhật tin tức</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <input type="hidden" id="news_id">
+                                <input type="hidden" id="img">
+                                <input type="hidden" id="img_path">
+                                <div class="row">
+                                    <div class="col-12" style="display: flex;flex-direction: column;">
+                                        <label>Thumbnail :</label>
+                                        <img id="thumbnail_u"  style="display: block;width: 50%;margin: 0 auto;">
+                                        <input type="file" hidden id="fileAvatar" name="fileAvatar"
+                                               onchange="previewImage()">
+                                        <button type="button" style="  width: 30%;display: block;margin: 0 auto;margin-top: 10px;" id="btn-updateImg" onclick="selectFile()"
+                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Cập nhật
+                                            hình ảnh
+                                        </button>
+                                        <div id="btn-function" style="display: none">
+                                            <button type="button" onclick="OnUpdateImg()"
+                                                    class="btn btn-success btn-sm"><i class="fas fa-check"></i>
+                                            </button>
+                                            <button type="button" onclick="CancelUpdateImg()"
+                                                    class="btn btn-danger btn-sm"><i
+                                                    class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Tiêu đề :</label>
+                                                    <input type="text" id="title_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Nhập mã môn học">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Tiêu đề con:</label>
+                                                    <input type="text" id="sub_title_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Nhập mã môn học">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Hiển thị:</label>
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input" id="isActive_u" disabled>
+                                                        <label class="custom-control-label" for="isActive_u"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Ngày đăng:</label>
+                                                    <input type="text" id="post_date_u"
+                                                           class="form-control form-control-sm" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Nội dung:</label>
+                                                    <div id="editor">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" onclick="OnUpdateSubmit()" class="btn btn-primary btn-sm"><i
+                                    class="fas fa-plus"></i> Cập nhật
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<th:block layout:fragment="optional">
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/toastr/toastr.min.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
+    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="/plugins/select2/js/select2.full.js"></script>
+    <script src="/plugins/ckeditor/ckeditor.js"></script>
+    <script src="/js/news/index_new.js"></script>
+</th:block>
+</body>
+</html>
