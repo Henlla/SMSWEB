@@ -54,11 +54,11 @@ var OnCreateRole = () => {
         var role_code = $("#role_code_create").val();
         var role_description = $("#role_description_create").val();
         var formData = {
-            "role_code": role_code,
-            "role_description": role_description,
+            "roleName": role_code,
+            "roleDescription": role_description,
         }
         $.ajax({
-            url: "/dashboard/roles/create_role",
+            url: "/dashboard/role/create_role",
             contentType: "application/json",
             method: "POST",
             data: JSON.stringify(formData),

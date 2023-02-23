@@ -253,3 +253,78 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
         });
     });
 }
+
+var OnCreateFileTemplate = ()=>{
+    $('#create_file').modal("show")
+}
+
+var OnCreateFileTemplateSubmit = ()=>{
+    let data = new FormData();
+    data.append("file",$("#file_template").get(0).files[0])
+    $.ajax({
+        url: "/dashboard/news/createFileTemplate",
+        enctype: 'multipart/form-data',
+        method: "POST",
+        cache: false,
+        processData: false,
+        contentType: false,
+        data: data,
+        success: () => {
+            alert("Upload success");
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }, error:(xhr, status, error)=>{
+            var err = eval("(" + xhr.responseText + ")");
+            if (err.message.toLowerCase() === "token expired") {
+                $('#spinner-divI').hide()
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                })
+            }else{
+                alert("Tạo mới thất bại");
+            }
+        }
+    });
+}
+var OnDownLoadTemplate = ()=>{
+    var downloadLink = document.createElement("a");
+    $.ajax({
+        url: "/dashboard/news/downloadFileTemplate",
+        method: "GET",
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: (data) => {
+            console.log(data);
+            downloadLink.href = data;
+            downloadLink.download = data;
+            console.log(downloadLink);
+            downloadLink.click();
+        }, error:(xhr, status, error)=>{
+            var err = eval("(" + xhr.responseText + ")");
+            if (err.message.toLowerCase() === "token expired") {
+                $('#spinner-divI').hide()
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                })
+            }else{
+                alert("Tạo mới thất bại");
+            }
+        }
+    });
+}

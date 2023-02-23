@@ -55,7 +55,6 @@ public class SubjectController {
             JWTUtils.checkExpired(_token);
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
             content.add("subject", subject);
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
