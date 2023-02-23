@@ -28,7 +28,8 @@
                     <div class="row">
                         <div class="col-12">
                             <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/news/create_new'}" class="btn btn-info btn-sm">Thêm mới</a>
-
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}" onclick="OnCreateFileTemplate()" class="btn btn-success btn-sm">Tạo biểu mẫu</a>
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'',''STAFF'')')}" onclick="OnDownLoadTemplate()" class="btn btn-primary btn-sm">Lấy biểu mẫu</a>
                         </div>
                     </div>
                     <div class="row">
@@ -220,6 +221,38 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="create_file" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Tạo biểu mẫu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <section class="row mb-3">
+                                    <section class="form-group form-control-sm col-12">
+                                        <label class="font-weight-normal f-13">Chọn tệp mẫu</label>
+                                        <input type="file" class="form-control-file border" id="file_template">
+                                        <span class="text-danger mb-3" id="error-file"></span>
+                                    </section>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" onclick="OnCreateFileTemplateSubmit()" class="btn btn-primary btn-sm"><i
+                                    class="fas fa-plus"></i> Tạo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -230,6 +263,7 @@
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
     <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/plugins/ckeditor/ckeditor.js"></script>
+    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
     <script src="/js/news/index_new.js"></script>
 </th:block>
 </body>

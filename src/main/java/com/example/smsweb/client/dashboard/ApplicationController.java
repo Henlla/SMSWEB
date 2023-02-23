@@ -4,6 +4,7 @@ import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.Application;
 import com.example.smsweb.models.ApplicationType;
+import com.example.smsweb.utils.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -107,7 +108,7 @@ public class ApplicationController {
             content.add("applicationType", appType);
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_TYPE_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-            uploadFile(fileName, file);
+            FileUtils.uploadFile(fileName,APP_TYPE_STORE_URL ,file);
             return response;
         } catch (Exception e) {
             return e.getMessage();
@@ -180,23 +181,5 @@ public class ApplicationController {
         }
     }
 
-    public void uploadFile(String fileName, MultipartFile file) {
-        InputStream is;
-        OutputStream ot;
-        String rootPath = System.getProperty("user.dir");
-        File uploadDir = new File(rootPath + APP_TYPE_STORE_URL);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-        try {
-            ot = new FileOutputStream(uploadDir + File.separator + fileName);
-            is = file.getInputStream();
-            byte[] data = new byte[is.available()];
-            is.read(data);
-            ot.write(data);
-            ot.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }

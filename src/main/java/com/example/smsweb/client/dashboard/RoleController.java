@@ -50,11 +50,11 @@ public class RoleController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            content.add("role_name",role.getRoleName());
-            content.add("role_description",role.getRoleDescription());
+            content.add("roleName",role.getRoleName());
+            content.add("roleDescription",role.getRoleDescription());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(ROLE_URL, HttpMethod.POST, request, ResponseModel.class);
-                return response;
+            return response;
         }catch (Exception ex){
             log.error(ex.getMessage());
             return ex.getMessage();

@@ -77,10 +77,42 @@
                     <div class="form-group">
                         <button type="submit" id="btn_create_news" class="btn btn-default">Tạo tin tức
                         </button>
+                        <a id="import_file" onclick="OnImportFile()" class="btn btn-primary">Đỗ dữ liệu (.docx)</a>
                     </div>
                 </form>
             </div>
-
+            <div class="modal fade" id="modal_import_file" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Đỗ dữ liệu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <section class="row mb-3">
+                                    <section class="form-group form-control-sm col-12">
+                                        <label class="font-weight-normal f-13">Chọn tệp mẫu</label>
+                                        <input type="file" class="form-control-file border" id="file_import">
+                                        <span class="text-danger mb-3" id="error-file"></span>
+                                    </section>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" onclick="OnImportFileSubmit()" class="btn btn-primary btn-sm"><i
+                                    class="fas fa-plus"></i> Thêm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -92,6 +124,7 @@
     <script src="/plugins/select2/js/select2.full.min.js"></script>
     <script src="/plugins/ckeditor/ckeditor.js"></script>
     <script src="/js/HelperJs.js"></script>
+    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
     <script src="/js/news/create_news.js"></script>
 </th:block>
 </body>

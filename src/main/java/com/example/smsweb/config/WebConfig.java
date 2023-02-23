@@ -57,7 +57,6 @@ public class WebConfig {
                 .requestMatchers("/api/teachers/getByProfile/{id}").hasAnyAuthority("TEACHER")
                 .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**",
                  "/api/students-subject/**","/api/student-major/**","/api/teachers/**","/api/staffs/**","/api/news/**","/api/classes/**").hasAnyAuthority("ADMIN","STAFF")
-
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied")

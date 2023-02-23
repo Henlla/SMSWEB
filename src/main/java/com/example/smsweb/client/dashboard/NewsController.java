@@ -1,15 +1,17 @@
 package com.example.smsweb.client.dashboard;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.News;
+import com.example.smsweb.utils.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.MultipartConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +37,7 @@ import java.util.List;
 public class NewsController {
 
     private final String NEWS_URL = "http://localhost:8080/api/news/";
+    private final String NEW_STORE_URL = "/src/main/resources/static/application/NewsTemplate/";
 
     @GetMapping("create_new")
     public String create_new(@CookieValue(name = "_token", defaultValue = "") String _token) {
@@ -176,6 +181,51 @@ public class NewsController {
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return ex.getMessage();
+        }
+    }
+
+    @PostMapping("createFileTemplate")
+    @ResponseBody
+    public String createFileTemplate(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                     @RequestParam("file") MultipartFile file){
+        try {
+            JWTUtils.checkExpired(_token);
+            String fileName = FileUtils.getFileName(file)+LocalDate.now().toString() +"."+FileNameUtils.getExtension(file.getOriginalFilename());
+            FileUtils.uploadFile(fileName, NEW_STORE_URL,file);
+            return "success";
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @GetMapping("downloadFileTemplate")
+    @ResponseBody
+    public Object downloadFileTemplate(@CookieValue(name = "_token", defaultValue = "") String _token){
+        try {
+            JWTUtils.checkExpired(_token);
+            String rootPath = System.getProperty("user.dir");
+           File file = FileUtils.listFilesForFolder(rootPath+NEW_STORE_URL);
+            return "/application/NewsTemplate/"+file.getName();
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @PostMapping("import_file_excel")
+    @ResponseBody
+    public Object import_file_excel(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                     @RequestParam("file") MultipartFile file){
+        try {
+            FileInputStream fis = new FileInputStream(file.getOriginalFilename());
+            XWPFDocument document = new XWPFDocument(fis);
+            List<XWPFParagraph> paragraphs = document.getParagraphs();
+            for(int i=0;i<paragraphs.size();i++){
+                System.out.println(paragraphs.get(i).getParagraphText());
+            }
+            fis.close();
+            return "success";
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
