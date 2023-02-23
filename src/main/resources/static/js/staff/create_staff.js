@@ -239,7 +239,7 @@ $(()=>{
                 },
             },
         })
-        if(avatarUrl.files.length===0 || avatarUrl.files.name!=="png" || avatarUrl.files.name!=="jpg" || avatarUrl.files.name!=="jpeg"){
+        if(avatarUrl.files.length===0){
             $('.errorAvatar').css("display","block")
             $('.errorAvatar').html("Vui lòng chọn ảnh")
         }else{

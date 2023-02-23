@@ -10,6 +10,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("dashboard/subject")
@@ -114,5 +115,11 @@ public class SubjectController {
         }catch (Exception e){
             return e.getMessage();
         }
+    }
+
+    @PostMapping("/importExcelData")
+    @ResponseBody
+    public Object importExcelData(@RequestParam("file")MultipartFile file){
+        return "";
     }
 }

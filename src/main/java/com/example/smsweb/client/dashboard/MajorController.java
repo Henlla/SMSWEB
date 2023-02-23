@@ -40,7 +40,6 @@ public class MajorController {
             HttpHeaders headers = new HttpHeaders();
             listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
             model.addAttribute("listMajor", listMajor.getData());
-            model.addAttribute("major", new Major());
             return "dashboard/major/major_index";
         } catch (Exception e) {
             return "redirect:/dashboard/login";
@@ -138,7 +137,13 @@ public class MajorController {
 
     @PostMapping(value = "/import-excel")
     @ResponseBody
-    public void importExcel(@RequestParam("file") MultipartFile file) {
-        service.importDataToDb(file);
+    public Object importExcel(@CookieValue(name = "_token") String _token, @RequestParam("file") MultipartFile file) {
+        try {
+            JWTUtils.checkExpired(_token);
+            service.importDataToDb(file);
+            return "";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 }

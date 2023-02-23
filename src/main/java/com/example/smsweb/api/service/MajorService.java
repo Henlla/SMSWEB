@@ -55,11 +55,7 @@ public class MajorService implements IMajor {
 
     @Override
     public Major findOne(int id) {
-        try {
-            return dao.findById(id).get();
-        } catch (Exception e) {
-            throw new ErrorHandler(e.getMessage());
-        }
+        return dao.findById(id).orElseThrow(() -> new ErrorHandler("Không tìm thấy dữ liệu"));
     }
 
     @Override
@@ -68,6 +64,13 @@ public class MajorService implements IMajor {
             listMajor = new ArrayList<>();
             try {
                 workbook = new XSSFWorkbook(file.getInputStream());
+//                XSSFDrawing dp = workbook.getSheetAt(1).createDrawingPatriarch();
+//                List<XSSFShape> pics = dp.getShapes();
+//                XSSFPicture inpPic = (XSSFPicture)pics.get(0);
+//
+//                XSSFClientAnchor clientAnchor = inpPic.getClientAnchor();
+//                inpPic.getShapeName(); // узнаю название картинки
+//                PictureData pict = inpPic.getPictureData();
                 sheet = workbook.getSheetAt(0);
                 for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
                     XSSFRow row = sheet.getRow(rowIndex);
@@ -75,7 +78,7 @@ public class MajorService implements IMajor {
                         continue;
                     }
                     String major_code = ExcelHelper.getValue(row.getCell(0)).toString();
-                    String major_name = ExcelHelper.getValue(row.getCell(0)).toString();
+                    String major_name = ExcelHelper.getValue(row.getCell(1)).toString() == null? "" : ExcelHelper.getValue(row.getCell(1)).toString();
                     if (!major_code.isEmpty() && !major_name.isEmpty()) {
                         Major major = Major.builder().majorCode(major_code).majorName(major_name).build();
                         listMajor.add(major);
@@ -96,7 +99,7 @@ public class MajorService implements IMajor {
     public void exportDataToExcel(HttpServletResponse response, List<Major> list, String fileName) {
         try {
             MajorExport export = new MajorExport();
-            export.exportToExcel(response,list, fileName);
+            export.exportToExcel(response, list, fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

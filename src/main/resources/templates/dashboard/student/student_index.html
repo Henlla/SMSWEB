@@ -5,10 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Danh sách sinh viên</title>
-    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+<!--    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">-->
     <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
+    <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/student_details.css">
 </head>
 <body>
@@ -53,8 +54,8 @@
                                     <td><span
                                             th:text="${students.indexOf(student)+1}"></span>
                                     </td>
-                                    <td><img th:src="${student.studentByProfile.getAvartarUrl()}" alt="" width="100"
-                                             height="100"></td>
+                                    <td><img th:src="${student.studentByProfile.getAvartarUrl()}" alt="" width="50"
+                                             height=50></td>
                                     <td>
                                         <span th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
                                     </td>
@@ -330,16 +331,12 @@
     <script src="/plugins/moment/moment.min.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
     <script type="text/javascript">
         $('#reservationdate_u').datetimepicker({
             format: 'DD/MM/YYYY'
         });
-
-        $('.select2').select2({
-            theme: 'bootstrap4'
-        })
     </script>
+    <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/js/student/student_index.js"></script>
 </th:block>
 </body>

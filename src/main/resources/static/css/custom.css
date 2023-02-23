@@ -37,3 +37,9 @@
 .dataTables_scrollHeadInner table{
     width: 100% !important;
 }
+.dataTables_scrollBody::-webkit-scrollbar{
+    width: 0 !important;
+}
+.dataTables_scrollBody::-webkit-scrollbar-thumb{
+    width: 0 !important;
+}
