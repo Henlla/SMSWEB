@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -191,9 +192,14 @@ public class StudentController {
             //---------
             log.info("FINISH create-student");
             return "success";
-        }catch (Exception ex){
+        }catch (HttpClientErrorException ex){
             log.error(ex.getMessage());
-            return ex.getMessage();
+            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                return ex.getMessage();
+            }else {
+                return ex.getMessage();
+            }
+
         }
     }
 
@@ -222,6 +228,7 @@ public class StudentController {
     public Object student_details(@CookieValue(name = "_token", defaultValue = "") String _token,@PathVariable("id")Integer id) throws JsonProcessingException {
         try {
             RestTemplate restTemplate = new RestTemplate();
+            JWTUtils.checkExpired(_token);
             HttpHeaders headers= new HttpHeaders();
             headers.set("Authorization","Bearer "+_token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
@@ -231,9 +238,14 @@ public class StudentController {
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
             Student student = objectMapper.readValue(convertToJson,Student.class);
             return student;
-        }catch (Exception ex){
+        }catch (HttpClientErrorException ex){
             log.error(ex.getMessage());
-            return ex.getMessage();
+            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                return ex.getMessage();
+            }else {
+                return ex.getMessage();
+            }
+
         }
     }
 
@@ -269,9 +281,14 @@ public class StudentController {
             //-----------------------------
 
             return "success";
-        }catch (Exception ex){
+        }catch (HttpClientErrorException ex){
             log.error(ex.getMessage());
-            return ex.getMessage();
+            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                return ex.getMessage();
+            }else {
+                return ex.getMessage();
+            }
+
         }
     }
 
@@ -302,9 +319,14 @@ public class StudentController {
 
             ResponseEntity<ResponseModel> response = restTemplate.exchange(PROFILE_URL, HttpMethod.PUT, request, ResponseModel.class);
             return "success";
-        } catch (Exception ex) {
+        } catch (HttpClientErrorException ex){
             log.error(ex.getMessage());
-            return ex.getMessage();
+            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                return ex.getMessage();
+            }else {
+                return ex.getMessage();
+            }
+
         }
     }
 
@@ -323,9 +345,13 @@ public class StudentController {
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(PROFILE_URL+id, HttpMethod.PUT, request, ResponseModel.class);
             return "success";
-        }catch (Exception ex){
+        }catch (HttpClientErrorException ex){
             log.error(ex.getMessage());
-            return ex.getMessage();
+            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                return ex.getMessage();
+            }else {
+                return ex.getMessage();
+            }
         }
     }
 

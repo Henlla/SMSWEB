@@ -40,7 +40,6 @@ public class MajorController {
             HttpHeaders headers = new HttpHeaders();
             listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
             model.addAttribute("listMajor", listMajor.getData());
-            model.addAttribute("major", new Major());
             return "dashboard/major/major_index";
         } catch (Exception e) {
             return "redirect:/dashboard/login";
@@ -54,10 +53,9 @@ public class MajorController {
             JWTUtils.checkExpired(_token);
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            content.add("majorCode", major.getMajorCode());
-            content.add("majorName", major.getMajorName());
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+            content.add("major", major);
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "save", HttpMethod.POST, request, ResponseModel.class);
             return response;
         } catch (Exception e) {
@@ -88,12 +86,10 @@ public class MajorController {
             JWTUtils.checkExpired(_token);
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            content.add("id", String.valueOf(major.getId()));
-            content.add("majorCode", major.getMajorCode());
-            content.add("majorName", major.getMajorName());
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+            content.add("major", major);
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "update", HttpMethod.PUT, request, ResponseModel.class);
             return response;
         } catch (Exception e) {
             return e.getMessage();
@@ -141,7 +137,13 @@ public class MajorController {
 
     @PostMapping(value = "/import-excel")
     @ResponseBody
-    public void importExcel(@RequestParam("file") MultipartFile file) {
-        service.importDataToDb(file);
+    public Object importExcel(@CookieValue(name = "_token") String _token, @RequestParam("file") MultipartFile file) {
+        try {
+            JWTUtils.checkExpired(_token);
+            service.importDataToDb(file);
+            return "";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 }

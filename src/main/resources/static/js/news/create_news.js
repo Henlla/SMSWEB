@@ -72,20 +72,31 @@ $(() => {
 
     function readURL(input) {
         if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('.background-choose_image').attr('src', e.target.result);
+            if(GetExtension(input.files[0].name) === "png" ||
+                GetExtension(input.files[0].name) ==="jpg" ||
+                GetExtension(input.files[0].name) ==="jpeg") {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('.background-choose_image').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+                return true;
+            }else{
+                return false;
             }
-            reader.readAsDataURL(input.files[0]);
         }
     }
 
-    $("#avatar").change(function () {
-        $('.icon-choose_image').css("display", "none")
-        $('.icon-cancel_image').css("display", "block")
-        $('.errorAvatar').css("display", "none")
-        console.log(this.value)
-        readURL(this);
+    $("#avatar").change(function(){
+        if(readURL(this)){
+            $('.icon-choose_image').css("display","none")
+            $('.icon-cancel_image').css("display","block")
+            $('.background-choose_image').css("filter","blur(0px)")
+            $('.errorAvatar').css("display","none")
+        }else{
+            $('.errorAvatar').css("display","block")
+            $('.errorAvatar').html("Vui lòng chọn file hình ảnh (png,jpg,jpeg)")
+        }
     });
 
 
@@ -117,7 +128,7 @@ $(() => {
         $('.doAction').click(function () {
             $('.icon-choose_image').css("display","block")
             $('.icon-cancel_image').css("display","none")
-            $('.background-choose_image').attr('src','/img/avatar.png')
+            $('.background-choose_image').attr('src','/img/blank.png')
             $('#avatar').val("")
             $(this).parents('.dialog-ovelay').fadeOut(500, function () {
                 $(this).remove();

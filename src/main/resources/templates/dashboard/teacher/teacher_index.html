@@ -7,6 +7,7 @@
     <title>Danh sách giáo viên</title>
     <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
     <link rel="stylesheet" href="/css/teacher_details.css">
 </head>
 <body>
@@ -26,7 +27,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/teacher/create-teacher'}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:href="@{'/dashboard/teacher/create-teacher'}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-info btn-sm">Thêm mới</a>
                         </div>
                     </div>
                     <div class="row">
@@ -55,7 +56,7 @@
                                         <a class="mr-3" th:data-name="${teacher.id}"
                                            onclick="OnDetails(this.getAttribute('data-name'))"><i
                                                 class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:data-name="${teacher.id}"
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="mr-3" th:data-name="${teacher.id}"
                                            onclick="OnUpdate(this.getAttribute('data-name'))"><i
                                                 class="fas fa-pencil-alt"></i></a>
                                     </td>
@@ -308,7 +309,15 @@
     <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $('#reservationdate_u').datetimepicker({
+            format: 'DD/MM/YYYY'
+        })
+
+        $('.select2').select2({
+            theme: 'bootstrap4'
+        });
+    </script>
     <script src="/js/teacher/teacher_index.js"></script>
 </th:block>
 </body>

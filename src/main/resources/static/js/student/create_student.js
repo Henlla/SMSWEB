@@ -1,4 +1,3 @@
-
 $(()=>{
 
     const province = document.getElementById("province")
@@ -58,21 +57,31 @@ $(()=>{
 
     function readURL(input) {
         if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('.background-choose_image').attr('src', e.target.result);
+            if(GetExtension(input.files[0].name) === "png" ||
+                        GetExtension(input.files[0].name) ==="jpg" ||
+                        GetExtension(input.files[0].name) ==="jpeg") {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('.background-choose_image').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+                return true;
+            }else{
+                return false;
             }
-            reader.readAsDataURL(input.files[0]);
         }
     }
 
     $("#avatar").change(function(){
-        $('.icon-choose_image').css("display","none")
-        $('.icon-cancel_image').css("display","block")
-        $('.background-choose_image').css("filter","blur(0px)")
-        $('.errorAvatar').css("display","none")
-        console.log(this.value)
-        readURL(this);
+        if(readURL(this)){
+            $('.icon-choose_image').css("display","none")
+            $('.icon-cancel_image').css("display","block")
+            $('.background-choose_image').css("filter","blur(0px)")
+            $('.errorAvatar').css("display","none")
+        }else{
+            $('.errorAvatar').css("display","block")
+            $('.errorAvatar').html("Vui lòng chọn file hình ảnh (png,jpg,jpeg)")
+        }
     });
 
 
@@ -242,6 +251,7 @@ $(()=>{
         })
             if(avatarUrl.files.length===0){
                 $('.errorAvatar').css("display","block")
+                $('.errorAvatar').html("Vui lòng chọn ảnh")
             }else{
                 if($('#form-create').valid()){
                     $('#spinner-div').show()
@@ -273,9 +283,24 @@ $(()=>{
                             toastr.success('Tạo sinh viên thành công')
                             $('#spinner-div').hide();
                         },
-                        error:(e)=>{
-                            toastr.error('Thất bại')
-                            $('#spinner-div').hide();
+                        error:(xhr, status, error)=>{
+                            var err = eval("(" + xhr.responseText + ")");
+                            console.log(err)
+                            if (err.message.toLowerCase() === "token expired") {
+                                $('#spinner-div').hide();
+                                Swal.fire({
+                                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                                    showDenyButton: false,
+                                    showCancelButton: false,
+                                    confirmButtonText: 'Đồng ý',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.href = "/dashboard/login";
+                                    }
+                                })
+                            }else{
+                                toastr.success('Tạo sinh viên thành công')
+                            }
                         }
                     })
             }

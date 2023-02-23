@@ -1,22 +1,14 @@
 $(()=>{
-    $('#reservationdate_u').datetimepicker({
-        format: 'DD/MM/YYYY'
-    })
 
     $('.select2').select2({
         theme: 'bootstrap4'
     })
-
     $("#student-table").DataTable({
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
-        scrollY: '350px',
         scrollCollapse: true,
-        pagingType:"full_numbers",
-        columnDefs: [{
-            orderable: false,
-            targets: 1
-        }],
+        scrollY: '600px',
+        // pagingType:"full_numbers",
         "language": {
             "decimal":        "",
             "emptyTable":     "Không có dữ liệu",
@@ -40,8 +32,7 @@ $(()=>{
                 "sortAscending":  ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
-        },
-        initComplete: function () {
+        },initComplete: function () {
             count = 0;
             this.api().columns([4]).every(function (i) {
                 var title = this.header();
@@ -128,6 +119,23 @@ $(()=>{
                     toastr.success('Đặt lại mật khẩu thành công')
                     $("#student_details").modal("hide");
                     $('#spinner-div').hide()
+                },error:(xhr, status, error)=>{
+                    var err = eval("(" + xhr.responseText + ")");
+                    console.log(err)
+                    if (err.message.toLowerCase() === "token expired") {
+                        Swal.fire({
+                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: 'Đồng ý',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/dashboard/login";
+                            }
+                        })
+                    }else{
+                        alert("Tạo mới thất bại");
+                    }
                 }
             })
             $(this).parents('.dialog-ovelay').fadeOut(500, function () {
@@ -187,7 +195,6 @@ $(()=>{
         }
 
     }
-
 });
 var OnDetails = (id) => {
     $.ajax({
@@ -220,8 +227,24 @@ var OnDetails = (id) => {
             $('#accountId').val(data.studentByProfile.accountByAccountId.id)
             $('#email').val(data.studentByProfile.email)
             $("#student_details").modal("show");
-        }, error: (data) => {
-            console.log(data);
+        },  error:(xhr, status, error)=>{
+            var err = eval("(" + xhr.responseText + ")");
+            $("#student_details").modal("hide");
+            console.log(err)
+            if (err.message.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                })
+            }else{
+                toastr.success('Xem thông tin thất bại')
+            }
         }
     });
 }
@@ -257,7 +280,8 @@ var OnUpdate = (id) => {
 
             console.log(province_id, district_id, ward_id)
 
-            $("#province_u").val(province_id).trigger('change');
+            // $("#province_u").val(province_id).trigger('change');
+            $("#province_u option[value='" + province_id + "']").prop("selected", true);
 
             $.ajax({
                 url: "http://localhost:8080/api/districts/",
@@ -269,6 +293,7 @@ var OnUpdate = (id) => {
                         district.options[district.options.length] = new Option(dis.name, dis.id);
                     }
                     $("#district_u option[value='" + district_id + "']").prop("selected", true);
+                    // $("#district_u").val(district_id).trigger('change');
                     $.ajax({
                         url: "http://localhost:8080/api/wards/",
                         method: "GET",
@@ -279,6 +304,7 @@ var OnUpdate = (id) => {
                                 wards.options[wards.options.length] = new Option(ward.name, ward.id);
                             }
                             $("#ward_u option[value='" + ward_id + "']").prop("selected", true);
+                            // $("#ward_u").val(ward_id).trigger('change');
                         }
                     })
                 }
@@ -287,8 +313,24 @@ var OnUpdate = (id) => {
             $("input[name=sex][value=" + data.studentByProfile.sex + "]").prop('checked', true);
 
             $("#student_update").modal("show");
-        }, error: (data) => {
-            console.log(data);
+        },  error:(xhr, status, error)=>{
+            var err = eval("(" + xhr.responseText + ")");
+            $("#student_update").modal("hide");
+            console.log(err)
+            if (err.message.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                })
+            }else{
+                toastr.success('Xem thông tin thất bại')
+            }
         }
     });
 }
@@ -345,9 +387,24 @@ var OnUpdateSubmit = () => {
             location.reload();
             toastr.success('Cập nhật sinh viên thành công')
         },
-        error: (e) => {
-            toastr.error('Thất bại')
-            $('#spinner-divI').hide();
+        error:(xhr, status, error)=>{
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err)
+            if (err.message.toLowerCase() === "token expired") {
+                $('#spinner-divI').hide();
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                })
+            }else{
+                toastr.success('Cập nhật thất bại')
+            }
         }
     })
 }
@@ -412,6 +469,24 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
                 $('#spinner-divI').hide()
                 location.reload();
                 toastr.success('Thay đổi hình ảnh thành công')
+            }, error:(xhr, status, error)=>{
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err)
+                if (err.message.toLowerCase() === "token expired") {
+                    $('#spinner-divI').hide()
+                    Swal.fire({
+                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Đồng ý',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    })
+                }else{
+                    alert("Tạo mới thất bại");
+                }
             }
         })
         $(this).parents('.dialog-ovelay').fadeOut(500, function () {

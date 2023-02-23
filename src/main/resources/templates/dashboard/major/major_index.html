@@ -18,12 +18,12 @@
             <section class="container-fluid">
                 <section class="row mb-3">
                     <div class="col-12">
-                        <button data-toggle="modal" data-target="#create-major-modal" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus"></i> Thêm mới
+                        <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"  data-target="#create-major-modal" class="btn btn-info btn-sm">
+                            <i class="fas fa-plus" ></i> Thêm mới
                         </button>
                         <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
                         <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>
-                        <a onclick="OnClickImport()" class="btn btn-primary btn-sm">Đổ dữ liệu</a>
+                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-primary btn-sm">Đổ dữ liệu</a>
                         <a href="" class="btn btn-info btn-sm">Tải mẫu đơn</a>
                     </div>
                 </section>
@@ -45,7 +45,7 @@
                                     <a class="mr-3" th:data-name="${item.id}"
                                        onclick="OnEditMajor(this.getAttribute('data-name'))"><i
                                             class="fas fa-pen indigo-text"></i></a>
-                                    <a th:href="@{'/dashboard/major/delete/' + ${item.id}}"><i
+                                    <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/major/delete/' + ${item.id}}"><i
                                             class="fas fa-trash red-text"></i></a>
                                 </td>
                             </tr>
