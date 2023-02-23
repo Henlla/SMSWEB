@@ -91,11 +91,37 @@ $(() => {
         }
     });
     $(".select2-single").select2({
-        theme:"bootstrap4",
-        width:"100%",
+        theme: "bootstrap4",
+        width: "100%",
         dropdownCssClass: "f-13"
     });
 });
+
+var OnClickImport = () => {
+    $("#fileUpload").trigger("click");
+}
+
+var OnSaveExcelData = () => {
+    var file = $("#fileUpload").get(0).files[0];
+    var formData = new FormData();
+    formData.append("file", file);
+    $.ajax({
+        url: "/dashboard/subject/importExcelData",
+        data: formData,
+        enctype: "multipart/form-data",
+        method: "POST",
+        contentType: false,
+        processData: false,
+        success: () => {
+
+        },
+        error: () => {
+
+        }
+    });
+    alert("ok");
+}
+
 var OnEditSubject = (id) => {
     $.ajax({
         url: "/dashboard/subject/findOne/" + id,
@@ -115,13 +141,13 @@ var OnEditSubject = (id) => {
             $("#edit_major_id").val(obj.majorId).trigger("change");
             $("#subject-edit-modal").modal("show");
         },
-        error : (data) =>{
+        error: (data) => {
             if (data.toLowerCase() === "token expired") {
                 alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
                 setTimeout(() => {
                     location.href = "/dashboard/login";
                 }, 2000);
-            }else{
+            } else {
                 alert("Tìm thất bại");
             }
         }
@@ -151,17 +177,17 @@ var OnCreateSubject = () => {
             data: JSON.stringify(subject),
             success: (data) => {
                 alert("Tạo thành công");
-                setTimeout(()=>{
+                setTimeout(() => {
                     location.reload();
-                },2000);
+                }, 2000);
             },
-            error:(data)=>{
+            error: (data) => {
                 if (data.toLowerCase() === "token expired") {
                     alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
                     setTimeout(() => {
                         location.href = "/dashboard/login";
                     }, 2000);
-                }else{
+                } else {
                     alert("Tạo mới thất bại");
                 }
             }
@@ -174,7 +200,7 @@ var OnUpdateSubject = () => {
         var id = $("#edit_id").val();
         var subject_code = $("#edit_subject_code").val();
         var subject_name = $("#edit_subject_name").val();
-        var fee = $("#edit_fee").val().replace(/,/g,'');
+        var fee = $("#edit_fee").val().replace(/,/g, '');
         var slot = $("#edit_slot").val();
         var semester_id = $("#edit_semester_id").val();
         var major_id = $("#edit_major_id").val();
@@ -195,16 +221,16 @@ var OnUpdateSubject = () => {
             data: JSON.stringify(subject)
             , success: (data) => {
                 alert("Cập nhật thành công");
-                setTimeout(()=>{
+                setTimeout(() => {
                     location.reload();
-                },2000);
+                }, 2000);
             }, error: (data) => {
                 if (data.toLowerCase() === "token expired") {
                     alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
                     setTimeout(() => {
                         location.href = "/dashboard/login";
                     }, 2000);
-                }else{
+                } else {
                     alert("Cập nhật thất bại");
                 }
             }

@@ -1,14 +1,14 @@
 $(()=>{
+
+    $('.select2').select2({
+        theme: 'bootstrap4'
+    })
     $("#student-table").DataTable({
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
-        scrollY: '350px',
         scrollCollapse: true,
-        pagingType:"full_numbers",
-        columnDefs: [{
-            orderable: false,
-            targets: 1
-        }],
+        scrollY: '600px',
+        // pagingType:"full_numbers",
         "language": {
             "decimal":        "",
             "emptyTable":     "Không có dữ liệu",
@@ -32,8 +32,7 @@ $(()=>{
                 "sortAscending":  ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
-        },
-        initComplete: function () {
+        },initComplete: function () {
             count = 0;
             this.api().columns([4]).every(function (i) {
                 var title = this.header();
@@ -281,7 +280,8 @@ var OnUpdate = (id) => {
 
             console.log(province_id, district_id, ward_id)
 
-            $("#province_u").val(province_id).trigger('change');
+            // $("#province_u").val(province_id).trigger('change');
+            $("#province_u option[value='" + province_id + "']").prop("selected", true);
 
             $.ajax({
                 url: "http://localhost:8080/api/districts/",
@@ -293,6 +293,7 @@ var OnUpdate = (id) => {
                         district.options[district.options.length] = new Option(dis.name, dis.id);
                     }
                     $("#district_u option[value='" + district_id + "']").prop("selected", true);
+                    // $("#district_u").val(district_id).trigger('change');
                     $.ajax({
                         url: "http://localhost:8080/api/wards/",
                         method: "GET",
@@ -303,6 +304,7 @@ var OnUpdate = (id) => {
                                 wards.options[wards.options.length] = new Option(ward.name, ward.id);
                             }
                             $("#ward_u option[value='" + ward_id + "']").prop("selected", true);
+                            // $("#ward_u").val(ward_id).trigger('change');
                         }
                     })
                 }
