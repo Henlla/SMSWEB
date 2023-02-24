@@ -55,4 +55,9 @@ public class ClassRestController extends GenericController<Classses> {
         return service.searchClasssesByClassCode(classCode);
     }
 
+//    @Override
+//    public ResponseEntity<?> findOne(@PathVariable("id") Integer id) {
+//        System.out.println(id);
+//        return super.findOne(id);
+//    }
 }
