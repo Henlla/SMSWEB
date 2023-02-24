@@ -199,7 +199,6 @@ public class StudentController {
             }else {
                 return ex.getMessage();
             }
-
         }
     }
 

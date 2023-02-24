@@ -37,8 +37,9 @@ import java.util.List;
 @RequestMapping("/dashboard/class")
 public class ClassController {
 
-    private String MAJOR_URL = "http://localhost:8080/api/major/";
-    private String CLASS_URL = "http://localhost:8080/api/classes/";
+    private final String MAJOR_URL = "http://localhost:8080/api/major/";
+    private final String PROVINCE_URL = "http://localhost:8080/api/provinces/";
+    private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
@@ -114,13 +115,13 @@ public class ClassController {
                     try{
                         Boolean addStudent = UpdateClassIdForStudentClass(_token, file, classModel.getClassCode());
                         if (addStudent){
-                            return new responModelForClass("success","Thêm sinh viên thành công").toString();
+                            return new responModelForClass("success","Thêm danh sách sinh viên thành công").toString();
                         }else {
-                            return new responModelForClass("success","Thêm sinh viên thất bại").toString();
+                            return new responModelForClass("success","Thêm danh sách sinh viên thất bại").toString();
                         }
                     } catch (Exception e) {
                         String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
-                        return new responModelForClass("success","Can not import student. "+message).toString();
+                        return new responModelForClass("success","Thêm danh sách sinh viên thất bại. "+message).toString();
                     }
                 }else {
                     return new responModelForClass("success","").toString();
@@ -135,7 +136,6 @@ public class ClassController {
             }else {
                 return ex.getMessage();
             }
-
         }
 
     }
@@ -204,9 +204,39 @@ public class ClassController {
     }
 
     @GetMapping("/class-details/{id}")
+    public String class_details(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
+                                  @PathVariable("id")Integer id) {
+        try {
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers= new HttpHeaders();
+            headers.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"list",HttpMethod.GET,request,String.class);
+            List<Province> provinces = restTemplate.getForObject(PROVINCE_URL ,ArrayList.class);
+            List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>(){});
+            List<Student> filteredStudent = new ArrayList<>();
+            for (Student student : listStudent){
+                for (StudentClass studentClass: student.getStudentClassById()){
+                    if (studentClass.getClassId() == id){
+                        filteredStudent.add(student);
+                        break;
+                    }
+                }
+            }
+            model.addAttribute("students",filteredStudent);
+            model.addAttribute("provinces",provinces);
+            return "dashboard/class/class_details";
+        }catch (Exception ex){
+            log.error(ex.getMessage());
+            return "redirect:/dashboard/logout";
+        }
+    }
+
+    @GetMapping("/class-update/{id}")
     @ResponseBody
-    public Object class_details(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @PathVariable("id")Integer id) throws JsonProcessingException {
+    public Object class_update(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                @PathVariable("id")Integer id) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers= new HttpHeaders();
         headers.set("Authorization","Bearer "+_token);
