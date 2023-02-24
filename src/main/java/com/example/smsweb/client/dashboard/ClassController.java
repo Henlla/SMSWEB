@@ -153,9 +153,9 @@ public class ClassController {
                     if (rowIndex == 0) {
                         continue;
                     }
-                    String student_id = ExcelHelper.getValue(row.getCell(0)).toString();
-                    if (!student_id.isEmpty() && listStudentCard.indexOf(student_id) == -1) {
-                        listStudentCard.add(student_id);
+                    String student_code = ExcelHelper.getValue(row.getCell(1)).toString();
+                    if (!student_code.isEmpty() && listStudentCard.indexOf(student_code) == -1) {
+                        listStudentCard.add(student_code);
                     }
                 }
 
@@ -214,9 +214,14 @@ public class ClassController {
             headers.set("Authorization","Bearer "+_token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"list",HttpMethod.GET,request,String.class);
+
+            ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"findOne/"+id,HttpMethod.GET, request, ResponseModel.class);
             List<Province> provinces = restTemplate.getForObject(PROVINCE_URL ,ArrayList.class);
             List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>(){});
             List<Student> filteredStudent = new ArrayList<>();
+            String jsonClass = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
+            Classses classses = new ObjectMapper().readValue(jsonClass, new TypeReference<Classses>() {
+            });
             for (Student student : listStudent){
                 for (StudentClass studentClass: student.getStudentClassById()){
                     if (studentClass.getClassId() == id){
@@ -227,6 +232,7 @@ public class ClassController {
             }
             model.addAttribute("students",filteredStudent);
             model.addAttribute("provinces",provinces);
+            model.addAttribute("class",classses);
             return "dashboard/class/class_details";
         }catch (Exception ex){
             log.error(ex.getMessage());
