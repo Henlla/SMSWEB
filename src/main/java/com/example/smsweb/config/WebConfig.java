@@ -48,7 +48,7 @@ public class WebConfig {
                 .requestMatchers("/dashboard/login").permitAll()
                 .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
                 .requestMatchers("/dashboard/teacher/**","/dashboard/student/**"
-                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**","/dashboard/news/**").hasAnyAuthority("STAFF","ADMIN")
+                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**","/dashboard/news/**","/dashboard/class/**").hasAnyAuthority("STAFF","ADMIN")
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/news/list","/api/news/get/{id}").permitAll()
@@ -56,7 +56,8 @@ public class WebConfig {
                 .requestMatchers("/api/students/getByProfile/{id}").hasAnyAuthority("STUDENT")
                 .requestMatchers("/api/teachers/getByProfile/{id}").hasAnyAuthority("TEACHER")
                 .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**",
-                 "/api/students-subject/**","/api/student-major/**","/api/teachers/**","/api/staffs/**","/api/news/**","/api/classes/**").hasAnyAuthority("ADMIN","STAFF")
+                 "/api/students-subject/**","/api/student-major/**","/api/teachers/**",
+                        "/api/staffs/**","/api/news/**","/api/classes/**","/api/schedules/**","/api/schedules_detail/**").hasAnyAuthority("ADMIN","STAFF")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied")
