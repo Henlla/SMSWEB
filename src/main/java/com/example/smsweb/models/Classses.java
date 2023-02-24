@@ -13,7 +13,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Classses {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +49,10 @@ public class Classses {
     @Column(name = "shift")
     private String shift;
 
+    public Classses() {
+        setDefaultValues();
+    }
+
     @OneToMany(mappedBy = "classsesByClassId")
     @JsonManagedReference("class_schedule")
     private List<Schedule> schedulesById;
@@ -69,9 +72,7 @@ public class Classses {
 
 
     public void setDefaultValues() {
-        this.startDate = LocalDate.now().toString();
         this.onDeleted = false;
-        this.classStatus = "active";
     }
 
 }

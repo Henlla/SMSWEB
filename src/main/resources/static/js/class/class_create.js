@@ -22,13 +22,14 @@ $(()=>{
             return false;
         }, 'Must be greater than {0}.');
     let autoFillClassCode = function (){
-        if (selectMajor.val()!= "" && selectShift.val()!= "" && selectDayOfWeek.val() != ""){
-
-            var yearSlice = year.toString().slice(2,4);
+        if (selectMajor.val()!= "" && selectShift.val()!= "" && selectDayOfWeek.val() != "" && inputStartDate.val() != ""){
+            var inputDate = new Date(inputStartDate.val());
+            var day = inputDate.getDate() < 10? "0"+inputDate.getDate(): inputDate.getDate().toString();
+            var month = (inputDate.getMonth()+1) < 10? "0"+(inputDate.getMonth()+1): (inputDate.getMonth()+1).toString();
 
             var major = $('#majorId option[value='+selectMajor.val()+']').text();;
             const regex = /[^A-Z]/g;
-            var classCode =major.replace(regex, '')+"."+selectShift.val()+selectDayOfWeek.val()+"."+day+"."+month+"."+yearSlice+".";
+            var classCode =major.replace(regex, '')+"."+selectShift.val()+selectDayOfWeek.val()+"."+day+month+".";
 
             $.ajax({
                 url: "/dashboard/class/class-searchClasssesByClassCode?classCode="+classCode,
@@ -55,6 +56,7 @@ $(()=>{
     selectShift.change(autoFillClassCode);
     selectDayOfWeek.change(autoFillClassCode);
     selectMajor.change(autoFillClassCode);
+    inputStartDate.change(autoFillClassCode);
 
     $('#btn_create_class').on('click',function (e){
         e.preventDefault();
@@ -65,11 +67,13 @@ $(()=>{
         var limitStudent = $('#limitStudent').val()
 
         var newClass = {
+            "id": "",
             "classCode" : classCode,
             "majorId" : majorId,
             "teacherId" : teacherId,
             "shift" : selectShift.val()+selectDayOfWeek.val(),
             "limitStudent" : limitStudent,
+            "startDate": inputStartDate.val()
         }
         var file = $("#studentList").get(0).files[0];
         var formData = new FormData();
@@ -134,9 +138,7 @@ $(()=>{
                 enctype:"multipart/form-data",
                 success:(result)=>{
                     console.log("sussess");
-                    console.log(result);
                     result = JSON.parse(result);
-                    console.log(result);
                     if (result.status == "success"){
                         $('#teacherId').val("").change();
                         $('#majorId').val("").change();
@@ -144,20 +146,34 @@ $(()=>{
                         selectDayOfWeek.val("").change();
                         selectShift.val("").change();
                         toastr.success('Tạo lớp học thành công')
-                        if(result.message != null){
+                        if(result.message != null && result.message != ''){
                             toastr.warning(result.message)
                         }
                         $('#spinner-div').hide();
                     }else {
-                        //toastr.error('Tạo lớp học thất bại')
+                        toastr.error('Tạo lớp học thất bại')
                         $('#spinner-div').hide();
                     }
                 },
-                error:(e)=>{
-                    console.log(e)
-                    toastr.error('Tạo lớp học thất bại')
-                    $('#spinner-div').hide();
-                },
+                error:(xhr, status, error)=>{
+                    var err = eval("(" + xhr.responseText + ")");
+                    console.log(err)
+                    if (err.message.toLowerCase() === "token expired") {
+                        $('#spinner-div').hide();
+                        Swal.fire({
+                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: 'Đồng ý',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/dashboard/login";
+                            }
+                        })
+                    }else{
+                        toastr.error('Tạo sinh viên thất bại')
+                    }
+                }
             })
         }
 
