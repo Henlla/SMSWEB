@@ -52,68 +52,12 @@
                                     <td><span th:text="${class.studentClassById.size()}"></span></td>
                                     <td><span th:text="${class.getLimitStudent()}"></span></td>
                                     <td class="text-center">
-                                        <a class="mr-3" th:data-name="${class.getId()}" onclick="OnUpdate(this.getAttribute('data-name'))" ><i class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3" th:href="${'/dashboard/class/class-details/'+ class.getClassCode()}" ><i class="fas fa-eye indigo-text"></i></a>
                                         <a class="mr-3" th:href="${'/dashboard/class/class-details/'+ class.getId()}"><i class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal fade" id="class_details" tabindex="-1"
-                 aria-labelledby="studentModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title font-weight-bold text-primary" id="studentModalLabel">Chi tiết lớp học</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <i class="fas fa-times fa-sm"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col-6 form-group">
-                                                <label>Mã lớp học</label>
-                                                <input class="form-control" id="class_code" value="" readonly>
-                                            </div>
-                                            <div class="col-6 form-group">
-                                                <label>Giáo viên chủ nhiệm</label>&nbsp;
-                                                <input class="form-control" id="class_teacher" value="">
-                                            </div>
-                                            <div class="col-6 form-group">
-                                                <label>Nghành học</label>&nbsp;
-                                                <input class="form-control" id="class_major" value="" readonly>
-                                            </div>
-                                            <div class="col-6 form-group">
-                                                <label>Sỉ xố hiện tại</label>&nbsp;
-                                                <input class="form-control" id="class_student_count" value="" readonly>
-                                            </div>
-                                            <div class="col-6 form-group">
-                                                <label>Sỉ xố tối đa</label>&nbsp;
-                                                <input class="form-control" id="class_student_limit" value="">
-                                            </div>
-                                            <div class="col-6 form-group">
-                                                <label>Ngày tạo lớp</label>
-                                                <input class="form-control" id="class_create_date" value="" readonly>
-                                            </div>
-                                            <div class="col-6 form-group">
-                                                <label>Tình trạng</label>
-                                                <input class="form-control" id="class_status" value="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
-                            </button>
                         </div>
                     </div>
                 </div>
