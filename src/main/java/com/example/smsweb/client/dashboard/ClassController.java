@@ -204,34 +204,20 @@ public class ClassController {
         return false;
     }
 
-    @GetMapping("/class-details/{id}")
+    @GetMapping("/class-details/{classCode}")
     public String class_details(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @PathVariable("id")Integer id) {
+                                  @PathVariable("classCode")String classCode) {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers= new HttpHeaders();
             headers.set("Authorization","Bearer "+_token);
-            HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"list",HttpMethod.GET,request,String.class);
-
-            ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"findOne/"+id,HttpMethod.GET, request, ResponseModel.class);
-            List<Province> provinces = restTemplate.getForObject(PROVINCE_URL ,ArrayList.class);
-            List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>(){});
-            List<Student> filteredStudent = new ArrayList<>();
-            String jsonClass = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
-            Classses classses = new ObjectMapper().readValue(jsonClass, new TypeReference<Classses>() {
-            });
-            for (Student student : listStudent){
-                for (StudentClass studentClass: student.getStudentClassById()){
-                    if (studentClass.getClassId() == id){
-                        filteredStudent.add(student);
-                        break;
-                    }
-                }
-            }
-            model.addAttribute("students",filteredStudent);
-            model.addAttribute("provinces",provinces);
+            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+            params.add("classCode",classCode);
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params,headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL+"findClassCode",HttpMethod.POST,request,ResponseModel.class);
+            String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
+            Classses classses = new ObjectMapper().readValue(json,Classses.class);
             model.addAttribute("class",classses);
             return "dashboard/class/class_details";
         }catch (Exception ex){

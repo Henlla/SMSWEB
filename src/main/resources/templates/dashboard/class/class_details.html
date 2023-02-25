@@ -4,7 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sinh viên lớp ${classCode}</title>
+    <title>Danh sách sinh viên lớp [[${class.classCode}]]</title>
     <!--    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">-->
     <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -20,18 +20,23 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý sinh viên lớp : ${classCode}</h5>
+                            <h5 class="m-0">Quản lý sinh viên lớp : &nbsp;[[${class.classCode}]]</h5>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="content-body">
-                <div class="container-fluid">
+                <div class="container">
+                    <div class="text-center"><b style="font-weight: bold">Giáo viên chủ nhiệm : </b>[[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</div>
+                    <div class="text-center"><b style="font-weight: bold">Sỉ số lớp : </b> [[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]] học sinh</div>
+                    <div class="text-center"><b style="font-weight: bold">Mã lớp học : </b> [[${class.classCode}]]</div>
+                </div>
+                <div class="container" style="margin-top: 100px">
                     <div class="row">
                         <div class="col-12">
-                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/class/add-student'}" class="btn btn-info btn-sm">Thêm sinh viên</a>
-                            <a th:href="@{'/dashboard/class/import-student-excel'}" class="btn btn-primary btn-sm">Thêm nhiều sinh viên</a>
-                            <a th:href="@{'/dashboard/class/export-student-excel'}" class="btn btn-success btn-sm">Tải xuống danh sách</a>
+<!--                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/class/add-student'}" class="btn btn-info btn-sm">Thêm sinh viên</a>-->
+<!--                            <a th:href="@{'/dashboard/class/import-student-excel'}" class="btn btn-primary btn-sm">Thêm nhiều sinh viên</a>-->
+<!--                            <a th:href="@{'/dashboard/class/export-student-excel'}" class="btn btn-success btn-sm">Tải xuống danh sách</a>-->
                         </div>
                     </div>
                     <div class="row">
@@ -45,29 +50,23 @@
                                     <th>Hình ảnh</th>
                                     <th>Mã sinh viên</th>
                                     <th>Tên sinh viên</th>
-                                    <th>Nghành học</th>
                                     <th>Hành động</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="text-center" th:each="student:${students}">
+                                <tr class="text-center" th:each="student:${class.studentClassById}">
                                     <td><span
-                                            th:text="${students.indexOf(student)+1}"></span>
+                                            th:text="${class.studentClassById.indexOf(student)+1}"></span>
                                     </td>
-                                    <td><img th:src="${student.studentByProfile.getAvartarUrl()}" alt="" width="50"
+                                    <td><img th:src="${student.classStudentByStudent.studentByProfile.avartarUrl}" alt="" width="50"
                                              height=50></td>
                                     <td>
-                                        <span th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
+                                        <span th:text="${student.classStudentByStudent.studentByProfile.firstName +' '+student.classStudentByStudent.studentByProfile.lastName}"></span>
                                     </td>
-                                    <td><span th:text="${student.studentCard}"></span></td>
-                                    <td>
-                                        <th:block th:each="major :${student.majorStudentsById}">
-                                            [[${major.majorByMajorId.majorName}]]
-                                        </th:block>
-                                    </td>
+                                    <td><span th:text="${student.classStudentByStudent.studentCard}"></span></td>
                                     <td class="text-center">
-                                        <a class="mr-3" th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:data-name="${student.id}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>
+                                        <a class="mr-3" ><i class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3"><i class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>

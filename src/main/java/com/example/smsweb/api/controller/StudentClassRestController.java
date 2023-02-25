@@ -44,5 +44,4 @@ public class StudentClassRestController extends GenericController<StudentClass> 
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
         }
     }
-
 }
