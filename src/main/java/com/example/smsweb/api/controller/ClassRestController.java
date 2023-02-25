@@ -55,9 +55,8 @@ public class ClassRestController extends GenericController<Classses> {
         return service.searchClasssesByClassCode(classCode);
     }
 
-//    @Override
-//    public ResponseEntity<?> findOne(@PathVariable("id") Integer id) {
-//        System.out.println(id);
-//        return super.findOne(id);
-//    }
+    @GetMapping("/getClass/{id}")
+    public ResponseEntity<?> getClass(@PathVariable("id") Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(),service.findOne(id)));
+    }
 }

@@ -47,4 +47,9 @@ public class StudentClassService implements IStudentClass {
     public void saveAll(List<StudentClass> list) {
         repository.saveAll(list);
     }
+
+    @Override
+    public List<StudentClass> findClassIdByStudentId(Integer id) {
+        return repository.findAllByStudentId(id).orElseThrow(()->new ErrorHandler("Cannot find class id with student id = "+id));
+    }
 }

@@ -204,29 +204,31 @@ var OnDetails = (id) => {
         method: "GET",
         success: (data) => {
             console.log(data)
-            $('#st_image').attr('src', data.studentByProfile.avartarUrl)
-            $('#st_fullName').html(data.studentByProfile.firstName + ' ' + data.studentByProfile.lastName)
-            $('#st_card').html(data.studentCard)
-            $('#st_dob').html(data.studentByProfile.dob)
-            $('#st_phone').html(data.studentByProfile.phone)
-            $('#st_email').html(data.studentByProfile.email)
-            $('#st_sex').html(data.studentByProfile.sex)
-            for (var major of data.majorStudentsById) {
+            $('#st_image').attr('src', data.student.studentByProfile.avartarUrl)
+            $('#st_fullName').html(data.student.studentByProfile.firstName + ' ' + data.student.studentByProfile.lastName)
+            $('#st_card').html(data.student.studentCard)
+            $('#st_dob').html(data.student.studentByProfile.dob)
+            $('#st_phone').html(data.student.studentByProfile.phone)
+            $('#st_email').html(data.student.studentByProfile.email)
+            $('#st_sex').html(data.student.studentByProfile.sex)
+            for (var major of data.student.majorStudentsById) {
                 $('#st_major').html(major.majorByMajorId.majorName)
             }
-
-            if (data.studentClassById.length == 0) {
+            if(data.classes.length ===0){
                 $('#st_class').html('Chưa có')
-            } else {
-                for (var classes of data.studentClassById) {
-                    $('#st_class').html(classes.classStudentByClass.classCode)
+            }else {
+                for (var classes of data.classes) {
+                    $('#st_class').html(classes.classCode)
                 }
             }
-            $('#st_identityId').html(data.studentByProfile.identityCard)
-            $('#st_address').html(data.studentByProfile.address + ' , ' + data.studentByProfile.wardByWardId.name + ' , ' + data.studentByProfile.districtByDistrictId.name + ' , ' + data.studentByProfile.profileProvince.name)
-            $('#accountId').val(data.studentByProfile.accountByAccountId.id)
-            $('#email').val(data.studentByProfile.email)
+            $('#st_identityId').html(data.student.studentByProfile.identityCard)
+            $('#st_address').html(data.student.studentByProfile.address + ' , ' + data.student.studentByProfile.wardByWardId.name + ' , ' + data.student.studentByProfile.districtByDistrictId.name + ' , ' + data.student.studentByProfile.profileProvince.name)
+            $('#accountId').val(data.student.studentByProfile.accountByAccountId.id)
+            $('#email').val(data.student.studentByProfile.email)
             $("#student_details").modal("show");
+            // $.ajax({
+            //     url: "/dashboard/student/getClassByStudentId/" + id,
+            // })
         },  error:(xhr, status, error)=>{
             var err = eval("(" + xhr.responseText + ")");
             $("#student_details").modal("hide");

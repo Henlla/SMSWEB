@@ -44,4 +44,13 @@ public class StudentClassRestController extends GenericController<StudentClass> 
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
         }
     }
+
+    @GetMapping("/getStudent/{id}")
+    public ResponseEntity<?> getStudent(@PathVariable("id")Integer id) throws JsonProcessingException {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),service.findClassIdByStudentId(id)));
+        }catch (Exception e){
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.StudentClassModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.mail.Mail;
 import com.example.smsweb.mail.MailService;
@@ -48,6 +49,8 @@ public class StudentController {
     private final String STUDENT_SUBJECT_URL = "http://localhost:8080/api/student-subject/";
     private final String STUDENT_MAJOR_URL = "http://localhost:8080/api/student-major/";
     private final String ROLE_URL = "http://localhost:8080/api/roles/";
+    private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
+    private final String CLASS_URL = "http://localhost:8080/api/classes/";
 
     @Autowired
     private MailService mailService;
@@ -236,7 +239,26 @@ public class StudentController {
             ResponseModel responseModel = objectMapper.readValue(response.getBody(),new TypeReference<ResponseModel>(){});
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
             Student student = objectMapper.readValue(convertToJson,Student.class);
-            return student;
+
+            HttpHeaders headersStudentClass= new HttpHeaders();
+            headersStudentClass.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> requestStudentClass = new HttpEntity<>(headersStudentClass);
+            ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL+"getStudent/"+id,HttpMethod.GET,requestStudentClass,ResponseModel.class);
+            String json = objectMapper.writeValueAsString(responseStudentClass.getBody().getData());
+            List<StudentClass> studentClasses = objectMapper.readValue(json, new TypeReference<List<StudentClass>>() {
+            });
+            List<Classses> list = new ArrayList<>();
+
+            HttpHeaders headersClass= new HttpHeaders();
+            headersClass.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> requestClass = new HttpEntity<>(headersClass);
+            for (StudentClass studentClass : studentClasses){
+                ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"getClass/"+studentClass.getClassId(),HttpMethod.GET,requestClass,ResponseModel.class);
+                String jsonClass = objectMapper.writeValueAsString(responseClass.getBody().getData());
+                Classses classses = objectMapper.readValue(jsonClass, Classses.class);
+                list.add(classses);
+            }
+            return new StudentClassModel(student,list);
         }catch (HttpClientErrorException ex){
             log.error(ex.getMessage());
             if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
