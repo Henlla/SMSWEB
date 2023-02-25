@@ -153,9 +153,9 @@ public class ClassController {
                     if (rowIndex == 0) {
                         continue;
                     }
-                    String student_id = ExcelHelper.getValue(row.getCell(0)).toString();
-                    if (!student_id.isEmpty() && listStudentCard.indexOf(student_id) == -1) {
-                        listStudentCard.add(student_id);
+                    String student_code = ExcelHelper.getValue(row.getCell(1)).toString();
+                    if (!student_code.isEmpty() && listStudentCard.indexOf(student_code) == -1) {
+                        listStudentCard.add(student_code);
                     }
                 }
 
