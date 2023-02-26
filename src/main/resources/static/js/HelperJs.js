@@ -2,7 +2,7 @@ var FormatHelper = (type, value, formatType) => {
     switch (type.toUpperCase()) {
         case "DATE":
             var date = value.getDate() < 10 ? "0" + value.getDate() : value.getDate();
-            var month = value.getMonth() + 1 < 10 ? "0" + (parseInt(value.getMonth()) + 1): value.getMonth() + 1;
+            var month = value.getMonth() + 1 < 10 ? "0" + (parseInt(value.getMonth()) + 1) : value.getMonth() + 1;
             var year = value.getFullYear();
             if (formatType.toLowerCase() === "dd/mm/yyyy") {
                 return date + "/" + month + "/" + year;
@@ -12,6 +12,8 @@ var FormatHelper = (type, value, formatType) => {
                 return year + month + date;
             } else if (formatType.toLowerCase() === "yyyy/mm/dd") {
                 return year + "/" + month + "/" + date;
+            } else if (formatType.toLowerCase() === "dd/mm/yy") {
+                return date + "/" + month + "/" + year.toLocaleDateString('en', {year: '2-digit'})
             } else {
                 console.error("Ngày sai định dạng");
             }

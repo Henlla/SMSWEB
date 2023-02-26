@@ -5,7 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Ngành học</title>
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
@@ -21,18 +20,18 @@
                         <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" data-target="#create-major-modal" class="btn btn-info btn-sm">
                             <i class="fas fa-plus"></i> Thêm mới
                         </button>
-                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
+                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Xuất dữ liệu</a>
                         <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>
-                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-primary btn-sm">Đổ
+                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Đổ
                             dữ liệu</a>
-                        <a href="" class="btn btn-info btn-sm">Tải mẫu đơn</a>
                     </div>
                 </section>
                 <section class="row">
                     <div class="col-12">
-                        <table th:id="major-table" class="table table-bordered table-striped">
+                        <table th:id="major-table" class="table table-bordered table-hover">
                             <thead>
                             <tr class="text-center">
+                                <th class="th-sm">STT</th>
                                 <th class="th-sm">Mã ngành học</th>
                                 <th class="th-sm">Tên ngành học</th>
                                 <th class="th-sm">Hành động</th>
@@ -40,6 +39,7 @@
                             </thead>
                             <tbody>
                             <tr class="text-center" th:each="item:${listMajor}">
+                                <td>[[${listMajor.indexOf(item)+1}]]</td>
                                 <td>[[${item.majorCode}]]</td>
                                 <td>[[${item.majorName}]]</td>
                                 <td class="text-center">
@@ -131,9 +131,6 @@
 
 </div>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/js/major/major.js"></script>
 </th:block>
 </body>

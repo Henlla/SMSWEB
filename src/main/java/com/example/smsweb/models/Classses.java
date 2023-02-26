@@ -45,7 +45,6 @@ public class Classses {
     @Basic
     @Column(name = "class_status")
     private String classStatus;
-
     @Basic
     @Column(name = "shift")
     private String shift;
