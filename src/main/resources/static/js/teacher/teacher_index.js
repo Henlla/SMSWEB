@@ -153,23 +153,23 @@ var OnDetails = (id) => {
         method: "GET",
         success: (data) => {
             console.log(data)
-            $('#tc_image').attr('src', data.profileByProfileId.avartarUrl)
-            $('#tc_fullName').html(data.profileByProfileId.firstName + ' ' + data.profileByProfileId.lastName)
-            $('#tc_dob').html(data.profileByProfileId.dob)
-            $('#tc_phone').html(data.profileByProfileId.phone)
-            $('#tc_email').html(data.profileByProfileId.email)
-            $('#tc_sex').html(data.profileByProfileId.sex)
-            $('#tc_identityId').html(data.profileByProfileId.identityCard)
-            if (data.teacherClass.length === 0) {
+            $('#tc_image').attr('src', data.teacher.profileByProfileId.avartarUrl)
+            $('#tc_fullName').html(data.teacher.profileByProfileId.firstName + ' ' + data.teacher.profileByProfileId.lastName)
+            $('#tc_dob').html(data.teacher.profileByProfileId.dob)
+            $('#tc_phone').html(data.teacher.profileByProfileId.phone)
+            $('#tc_email').html(data.teacher.profileByProfileId.email)
+            $('#tc_sex').html(data.teacher.profileByProfileId.sex)
+            $('#tc_identityId').html(data.teacher.profileByProfileId.identityCard)
+            if (data.classses.length === 0) {
                 $('#tc_class').html("Chưa có")
             } else {
-                for (var classes of data.teacherClass) {
+                for (var classes of data.classses) {
                     $('#tc_class').html(classes.classCode)
                 }
             }
-            $('#tc_address').html(data.profileByProfileId.address + ' , ' + data.profileByProfileId.wardByWardId.name + ' , ' + data.profileByProfileId.districtByDistrictId.name + ' , ' + data.profileByProfileId.profileProvince.name)
-            $('#accountId').val(data.profileByProfileId.accountByAccountId.id)
-            $('#email').val(data.profileByProfileId.email)
+            $('#tc_address').html(data.teacher.profileByProfileId.address + ' , ' + data.teacher.profileByProfileId.wardByWardId.name + ' , ' + data.teacher.profileByProfileId.districtByDistrictId.name + ' , ' + data.teacher.profileByProfileId.profileProvince.name)
+            $('#accountId').val(data.teacher.profileByProfileId.accountByAccountId.id)
+            $('#email').val(data.teacher.profileByProfileId.email)
             $("#teacher_details").modal("show");
         }, error: (data) => {
             console.log(data);

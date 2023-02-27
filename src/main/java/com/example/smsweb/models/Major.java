@@ -31,7 +31,7 @@ public class Major {
     private List<MajorStudent> majorStudentsById;
     @OneToMany(mappedBy = "majorByMajorId")
 //    @JsonManagedReference("subject_major")
-    @JsonIgnore
+//    @JsonIgnore
     private List<Subject> subjectsById;
 
     @OneToMany(mappedBy = "major")

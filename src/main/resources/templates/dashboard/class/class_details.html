@@ -4,86 +4,478 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sinh viên</title>
+    <title>Danh sách sinh viên lớp [[${class.classCode}]]</title>
+    <!--    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">-->
     <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-    <link rel="stylesheet" href="/css/student_details.css">
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/class_details.css">
 </head>
 <body>
 <div layout:fragment="content">
     <section>
         <div class="content-wrapper">
             <div class="content-header">
-                <div class="container-fluid">
+                <div class="container">
                     <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h5 class="m-0">Chi tiết sinh viên</h5>
+                        <div class="col">
+                            <table style="width:100%; height:100%">
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Lớp</b>:
+                                                </h5></td>
+                                                <td><h5>&nbsp;[[${class.classCode}]]</h5></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Giáo
+                                                    viên</b>:</h5></td>
+                                                <td><h5>&nbsp;[[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Sỉ số
+                                                    lớp</b>:</h5></td>
+                                                <td><h5>&nbsp;[[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]]
+                                                    học sinh</h5></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="d-flex justify-content-end">
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           data-target="#create_schedule" data-toggle="modal"
+                                           class="btn btn-warning btn-sm">Tạo thời khoá biểu</a>
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           th:href="@{'/dashboard/class/add-student'}" class="btn btn-info btn-sm">Thêm
+                                            sinh viên</a>
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           th:href="@{'/dashboard/class/import-student-excel'}"
+                                           class="btn btn-primary btn-sm">Thêm nhiều sinh viên</a>
+                                        <a data-target="#details_schedule" data-toggle="modal"
+                                           class="btn btn-primary btn-sm">Xem thời khóa biểu</a>
+                                        <a th:href="@{'/dashboard/class/export-student-excel'}"
+                                           class="btn btn-success btn-sm">Tải xuống danh sách</a>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="content-body">
-                <div class="container">
+                <div class="container" style="margin-top: 10px">
                     <div class="row">
-                        <div class="col-3">
-                            <img th:src="${student.getStudentByProfile().getAvartarUrl()}" width="200" height="200">
+                        <div class="col-12">
+                            <!--                            <label>Tìm kiếm theo nghành học :</label>-->
+                            <!--                            <div id="select-major"></div>-->
+                            <table id="student-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>STT</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Mã sinh viên</th>
+                                    <th>Tên sinh viên</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="student:${class.studentClassById}">
+                                    <td><span
+                                            th:text="${class.studentClassById.indexOf(student)+1}"></span>
+                                    </td>
+                                    <td><img th:src="${student.classStudentByStudent.studentByProfile.avartarUrl}"
+                                             alt="" width="50"
+                                             height=50></td>
+                                    <td>
+                                        <span th:text="${student.classStudentByStudent.studentByProfile.firstName +' '+student.classStudentByStudent.studentByProfile.lastName}"></span>
+                                    </td>
+                                    <td><span th:text="${student.classStudentByStudent.studentCard}"></span></td>
+                                    <td class="text-center">
+                                        <a class="mr-3"><i class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3"><i class="fas fa-pencil-alt"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col-9">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label>Họ và tên : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Mã số sinh viên : </label>&nbsp;<span
-                                        th:text="${student.studentCard}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Ngày sinh : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.dob}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Số điện thoại : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.phone}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Email : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.email}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>CCCD/CMND : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.identityCard}"></span>
-                                </div>
-                                <div class="col-8">
-                                    <label>Địa chỉ : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.address+' , '+student.studentByProfile.wardByWardId.name+' , '+student.studentByProfile.districtByDistrictId.name+' , '+student.studentByProfile.profileProvince.name}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Nghành học : </label>&nbsp;<th:block
-                                        th:each="major :${student.majorStudentsById}"><span
-                                        th:text="${major.majorByMajorId.majorName}"></span></th:block>
-                                </div>
-                                <div class="col-4">
-                                    <label>Lớp học : </label>&nbsp;
-                                    <th:block th:if="${student.studentClassById.isEmpty()}">
-                                        <span>Chưa có</span>
-                                    </th:block>
-                                    <th:block th:unless="${student.studentClassById.isEmpty()}">
-                                        <span th:each="class :${student.studentClassById}">
-                                             <span th:text="${class.classStudentByClass.classCode}"></span>
-                                        </span>
-                                    </th:block>
-                                </div>
-                                <div class="col-12">
-                                    <div id="spinner-div" class="pt-5">
-                                        <div class="spinner-border text-primary" role="status">
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="student_details" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết sinh viên</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img id="st_image" style="width: 100%;height: 100%">
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <label>Họ và tên : </label>&nbsp;<span
+                                                    id="st_fullName"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Mã số sinh viên : </label>&nbsp;<span
+                                                    id="st_card"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Giới tính : </label>&nbsp;<span
+                                                    id="st_sex"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Ngày sinh : </label>&nbsp;<span
+                                                    id="st_dob"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Số điện thoại : </label>&nbsp;<span
+                                                    id="st_phone"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Email : </label>&nbsp;<span
+                                                    id="st_email"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>CCCD/CMND : </label>&nbsp;<span
+                                                    id="st_identityId"></span>
+                                            </div>
+                                            <div class="col-12">
+                                                <label>Địa chỉ : </label>&nbsp;<span
+                                                    id="st_address"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Nghành học : </label>&nbsp;<span id="st_major"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Lớp học : </label>&nbsp;
+                                                <span
+                                                        id="st_class"></span>
+                                            </div>
+                                            <div class="col-12">
+                                                <div id="spinner-divI" class="pt-5">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" id="accountId" value="">
+                                                <input type="hidden" id="email" value="">
+                                                <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật
+                                                    khẩu
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <input type="hidden" id="accountId" th:value="${student.studentByProfile.accountByAccountId.id}">
-                                    <input type="hidden" id="email" th:value="${student.studentByProfile.email}">
-                                    <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật khẩu</button>
                                 </div>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="student_update" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel1">Cập nhật sinh viên</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <input type="hidden" id="profileId_u">
+                                <input type="hidden" id="accountId_u">
+                                <input type="hidden" id="img">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img id="st_image_u" style="width: 100%;height: 50%">
+                                        <input type="file" hidden id="fileAvatar" name="fileAvatar"
+                                               onchange="previewImage()">
+                                        <button type="button" id="btn-updateImg" onclick="selectFile()"
+                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Cập nhật
+                                            hình ảnh
+                                        </button>
+                                        <div id="btn-function" style="display: none">
+                                            <button type="button" onclick="OnUpdateImg()"
+                                                    class="btn btn-success btn-sm"><i class="fas fa-check"></i>
+                                            </button>
+                                            <button type="button" onclick="CancelUpdateImg()"
+                                                    class="btn btn-danger btn-sm"><i
+                                                    class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Họ :</label>
+                                                    <input type="text" id="firstName_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Nhập mã môn học">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Tên :</label>
+                                                    <input type="text" id="lastName_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Nhập mã môn học">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="m-0" style="font-size: 13px">Mã sinh viên :</label>
+                                                <input type="text" id="studentCard_u" readonly
+                                                       class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label style="font-size: 13px">Giới tính :</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" value="Nam" type="radio"
+                                                               name="sex" id="flexRadioDefault1" checked>
+                                                        <label class="form-check-label" for="flexRadioDefault1">
+                                                            Nam
+                                                        </label>
+                                                        <input class="form-check-input" value="Nữ" type="radio"
+                                                               name="sex" style="margin-left: 15px;"
+                                                               id="flexRadioDefault2">
+                                                        <label class="form-check-label" style="margin-left: 36px;"
+                                                               for="flexRadioDefault2">
+                                                            Nữ
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6" style="margin-top: -10px;">
+                                                <label style="font-size: 13px">Ngày sinh:</label>
+                                                <div class="input-group date" id="reservationdate_u"
+                                                     data-target-input="nearest">
+                                                    <input type="text"
+                                                           class="form-control form-control-sm datetimepicker-input"
+                                                           data-target="#reservationdate_u" id="dob_u" name="dob"
+                                                           placeholder="Chọn ngày sinh"/>
+                                                    <div class="input-group-append" data-target="#reservationdate_u"
+                                                         data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="m-0" style="font-size: 13px">Số điện thoại :</label>
+                                                <input type="text" id="phone_u"
+                                                       class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="m-0" style="font-size: 13px">Email :</label>
+                                                <input type="text" id="email_u"
+                                                       class="form-control form-control-sm"
+                                                       placeholder="Nhập mã môn học">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="m-0" style="font-size: 13px">CCCD/CMND :</label>
+                                                <input type="text" id="identityCard_u"
+                                                       class="form-control form-control-sm"
+                                                       placeholder="Nhập mã môn học">
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Tỉnh/TP:</label>
+                                                    <select id="province_u" class="form-control select2 form-control-sm"
+                                                            name="province_u"
+                                                            style="width: 100%;">
+                                                        <option selected="selected" value="">-Chọn Tỉnh/TP-</option>
+                                                        <option th:each="province : ${provinces}"
+                                                                th:value="${province.id}">[[${province.name}]]
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Quận/Huyện:</label>
+                                                    <select id="district_u" class="form-control select2 form-control-sm"
+                                                            name="district_u"
+                                                            style="width: 100%;">
+                                                        <option selected="selected" value="">-Chọn Quận/Huyện-</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label class="m-0" style="font-size: 13px">Xã/Thị trấn:</label>
+                                                    <select id="ward_u" class="form-control select2 form-control-sm"
+                                                            name="ward_u"
+                                                            style="width: 100%;">
+                                                        <option selected="selected" value="">-Chọn Xã/Thị trấn-</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="m-0" style="font-size: 13px">Địa chỉ :</label>
+                                                <input type="text" id="address_u"
+                                                       class="form-control form-control-sm"
+                                                       placeholder="Nhập địa chỉ ">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" onclick="OnUpdateSubmit()" class="btn btn-primary btn-sm"><i
+                                    class="fas fa-plus"></i> Cập nhật
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="create_schedule" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Tạo thời khóa biểu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <form id="role_create-form">
+                                    <div class="col-6">
+                                        <label for="startDate">Ngày bắt đầu:</label>
+                                        <input type="date" class="form-control" id="startDate" name="startDate"
+                                               placeholder="chọn ngày bắt đầu học">
+                                        <input type="text" id="inputToday" style="display: none">
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="semester">Kì của nghành học:</label>
+                                            <select id="semester" class="form-control" name="semester"
+                                                    style="width: 100%;">
+                                                <option value="">-----Chọn kì------</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="spinner-div" class="pt-5">
+                            <div class="spinner-border text-primary" role="status">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" class="btn btn-info btn-sm" th:data-id="${class.getId()}"
+                                    th:data-major="${class.getMajorId()}"
+                                    th:data-shift="${class.getShift()}"
+                                    onclick="OnCreateSchedule(this.getAttribute('data-id'),
+                                    this.getAttribute('data-major'),
+                                     this.getAttribute('data-shift'))" data-dismiss="modal"><i
+                                    class="fas fa-plus"></i> Tạo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="details_schedule" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Xem thời khóa biểu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <form id="schedule_details_form">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <input type="hidden" id="classId" th:value="${class.id}">
+                                            <input type="hidden" id="shift" th:value="${class.getShift()}">
+                                            <label for="semester">Kì của nghành học:</label>
+                                            <select id="semesterSchedule" class="form-control" name="semester"
+                                                    style="width: 100%;">
+                                                <option value="">-----Chọn kì------</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="container">
+                                <div class="container">
+                                    <div class="timetable-img text-center">
+                                        <img src="img/content/timetable.png" alt="">
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table id="schedule_table" class="table table-bordered text-center">
+                                            <thead>
+                                            <tr class="bg-light-gray">
+                                                <th class="text-uppercase">Thứ hai</th>
+                                                <th class="text-uppercase">Thứ ba</th>
+                                                <th class="text-uppercase">Thứ tư</th>
+                                                <th class="text-uppercase">Thứ năm</th>
+                                                <th class="text-uppercase">Thứ sáu</th>
+                                                <th class="text-uppercase">Thứ bảy</th>
+                                                <th class="text-uppercase">Chủ nhật</th>
+                                            </tr>
+                                            </thead>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -93,9 +485,18 @@
 </div>
 <th:block layout:fragment="optional">
     <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/js/student_details.js"></script>
+    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <script type="text/javascript">
+        $('#reservationdate_u').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+    </script>
+    <script src="/plugins/select2/js/select2.full.js"></script>
+    <!--    <script src="/js/student/student_index.js"></script>-->
+    <script src="/js/class/class_details.js"></script>
 </th:block>
 </body>
 </html>

@@ -15,4 +15,6 @@ public interface ClassRepository extends GenericRepository<Classses, Integer> {
 
     @Query("SELECT c.classCode FROM Classses c WHERE c.classCode LIKE :classCode")
     List<String> searchClasssesByClassCode(String classCode);
+
+    List<Classses> findAllByTeacherId(Integer id);
 }

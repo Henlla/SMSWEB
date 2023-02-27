@@ -1,6 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.StudentClassModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.mail.Mail;
 import com.example.smsweb.mail.MailService;
@@ -10,6 +11,7 @@ import com.example.smsweb.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.lang.Classes;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -48,6 +50,8 @@ public class StudentController {
     private final String STUDENT_SUBJECT_URL = "http://localhost:8080/api/student-subject/";
     private final String STUDENT_MAJOR_URL = "http://localhost:8080/api/student-major/";
     private final String ROLE_URL = "http://localhost:8080/api/roles/";
+    private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
+    private final String CLASS_URL = "http://localhost:8080/api/classes/";
 
     @Autowired
     private MailService mailService;
@@ -199,7 +203,6 @@ public class StudentController {
             }else {
                 return ex.getMessage();
             }
-
         }
     }
 
@@ -237,7 +240,26 @@ public class StudentController {
             ResponseModel responseModel = objectMapper.readValue(response.getBody(),new TypeReference<ResponseModel>(){});
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
             Student student = objectMapper.readValue(convertToJson,Student.class);
-            return student;
+
+            HttpHeaders headersStudentClass= new HttpHeaders();
+            headersStudentClass.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> requestStudentClass = new HttpEntity<>(headersStudentClass);
+            ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL+"getStudent/"+id,HttpMethod.GET,requestStudentClass,ResponseModel.class);
+            String json = objectMapper.writeValueAsString(responseStudentClass.getBody().getData());
+            List<StudentClass> studentClasses = objectMapper.readValue(json, new TypeReference<List<StudentClass>>() {
+            });
+            List<Classses> list = new ArrayList<>();
+
+            HttpHeaders headersClass= new HttpHeaders();
+            headersClass.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> requestClass = new HttpEntity<>(headersClass);
+            for (StudentClass studentClass : studentClasses){
+                ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"getClass/"+studentClass.getClassId(),HttpMethod.GET,requestClass,ResponseModel.class);
+                String jsonClass = objectMapper.writeValueAsString(responseClass.getBody().getData());
+                Classses classses = objectMapper.readValue(jsonClass, Classses.class);
+                list.add(classses);
+            }
+            return new StudentClassModel(student,list);
         }catch (HttpClientErrorException ex){
             log.error(ex.getMessage());
             if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
@@ -364,13 +386,42 @@ public class StudentController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"list",HttpMethod.GET,request,String.class);
         List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>(){});
+
+        ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL+"get",HttpMethod.GET,request,String.class);
+        ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL+"get",HttpMethod.GET,request,ResponseModel.class);
+        String json = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
+        List<StudentClass> listStudentClass = new ObjectMapper().readValue(json, new TypeReference<List<StudentClass>>(){});
+        List<Classses> listClass = new ObjectMapper().readValue(responseClass.getBody(), new TypeReference<List<Classses>>(){});
+        Student student = new Student();
+
+        List<StudentClassModel> studentClassModels = new ArrayList<>();
+
+
+        for (Student s : listStudent){
+            List<Classses> classsesList = new ArrayList<>();
+            for (StudentClass studentClass : listStudentClass){
+                if(s.getId().equals(studentClass.getStudentId())){
+                    for (Classses classses : listClass){
+                        if(classses.getId().equals(studentClass.getClassId())){
+                            classsesList.add(classses);
+                        }
+                    }
+                }
+            }
+            StudentClassModel studentClassModel = new StudentClassModel();
+            studentClassModel.setStudent(s);
+            studentClassModel.setClasses(classsesList);
+            studentClassModels.add(studentClassModel);
+        }
+
+
         responses.setContentType("application/octet-stream");
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDate = dateFormat.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=Danh_sach_sinh_vien_" + currentDate + ".xlsx"; // file *.xlsx
         responses.setHeader(headerKey, headerValue);
-        StudentExport generateFeedbackExcel = new StudentExport(listStudent);
+        StudentExport generateFeedbackExcel = new StudentExport(studentClassModels);
         generateFeedbackExcel.generateExcelFile(responses);
     }
 }

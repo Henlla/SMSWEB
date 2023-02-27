@@ -27,6 +27,9 @@ public class Schedule {
     @Column(name = "end_date")
     private String endDate;
     @Basic
+    @Column(name = "semester")
+    private Integer semester;
+    @Basic
     @Column(name = "class_id")
     private Integer classId;
     @ManyToOne

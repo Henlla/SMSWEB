@@ -47,7 +47,7 @@ public class StudentService implements IStudent {
             Optional<Student> student = repository.findStudentByStudentCard(stringCard);
             if (student.isPresent())
                 listResult.add(student.get());
-            else throw new ErrorHandler("student is not existed: "+stringCard);
+            else throw new ErrorHandler("Không tìm thấy sinh viên mã: "+stringCard);
         }
         return listResult;
     }

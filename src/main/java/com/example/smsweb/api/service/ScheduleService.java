@@ -5,9 +5,11 @@ import com.example.smsweb.api.di.repository.ScheduleRepository;
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.models.Schedule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ScheduleService implements ISchedule {
     @Autowired
     ScheduleRepository dao;
@@ -41,5 +43,20 @@ public class ScheduleService implements ISchedule {
     @Override
     public Schedule findOne(int id) {
            return dao.findById(id).orElseThrow(()-> new ErrorHandler("Không tìm thấy dữ liệu"));
+    }
+
+    @Override
+    public Schedule saveSchedule(Schedule schedule) {
+        try {
+          Schedule scheduleSave=  dao.save(schedule);
+          return scheduleSave;
+        }catch (Exception e){
+            throw new ErrorHandler("Tạo thất bại");
+        }
+    }
+
+    @Override
+    public Schedule findScheduleByClassAndSemester(Integer classId, Integer semester) {
+        return dao.findScheduleAndByClassIdAndSemester(classId,semester).orElseThrow(()->new ErrorHandler("Cannot find schedule with classId = "+classId+" and semester = "+semester));
     }
 }

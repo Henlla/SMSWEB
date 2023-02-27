@@ -7,6 +7,7 @@ import com.example.smsweb.models.Account;
 import com.example.smsweb.models.Classses;
 import com.example.smsweb.models.Student;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,11 +31,11 @@ public class ClassRestController extends GenericController<Classses> {
     @PostMapping("/save")
     public ResponseEntity<?> post(@RequestParam("newClass") String newclass){
         try {
-            Classses classses = new ObjectMapper().readValue(newclass, Classses.class);
+            Classses classses = new ObjectMapper().readValue(newclass, new TypeReference<Classses>() {});
             service.save(classses);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),newclass));
         }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),e.getMessage()));
         }
     }
 
@@ -54,4 +55,18 @@ public class ClassRestController extends GenericController<Classses> {
         return service.searchClasssesByClassCode(classCode);
     }
 
+    @GetMapping("/getClass/{id}")
+    public ResponseEntity<?> getClass(@PathVariable("id") Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(),service.findOne(id)));
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
+    }
+
+    @GetMapping("/findClassByTeacher/{id}")
+    public ResponseEntity<?> findClassByTeacher(@PathVariable("id") Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(),service.findClassByTeacherId(id)));
+    }
 }
