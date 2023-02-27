@@ -10,4 +10,6 @@ import java.util.List;
 public interface IClass extends IGenericRepository<Classses> {
     Classses findByClassCode(String classCode);
     List<String> searchClasssesByClassCode(String listStudentCard);
+
+    List<Classses> findClassByTeacherId(Integer id);
 }

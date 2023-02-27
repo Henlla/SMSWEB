@@ -59,4 +59,11 @@ public class ClassService implements IClass {
         List<String> stringList = repository.searchClasssesByClassCode(classCode);
         return  stringList;
     }
+
+    @Override
+    public List<Classses> findClassByTeacherId(Integer id) {
+        return repository.findAllByTeacherId(id);
+    }
+
+
 }

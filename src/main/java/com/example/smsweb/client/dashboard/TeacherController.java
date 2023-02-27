@@ -1,6 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.TeacherClassModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.mail.Mail;
 import com.example.smsweb.mail.MailService;
@@ -37,6 +38,7 @@ public class TeacherController {
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
     private final String ROLE_URL = "http://localhost:8080/api/roles/";
+    private final String CLASS_URL = "http://localhost:8080/api/classes/";
 
     @Autowired
     private MailService mailService;
@@ -181,7 +183,11 @@ public class TeacherController {
             });
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
             Teacher teacher = objectMapper.readValue(convertToJson, Teacher.class);
-            return teacher;
+            ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "findClassByTeacher/" + teacher.getId(), HttpMethod.GET, request, ResponseModel.class);
+            String json = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
+            List<Classses> classsesList = new ObjectMapper().readValue(json, new TypeReference<List<Classses>>() {
+            });
+            return new TeacherClassModel(teacher,classsesList);
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return ex.getMessage();

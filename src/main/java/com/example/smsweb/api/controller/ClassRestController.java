@@ -59,4 +59,14 @@ public class ClassRestController extends GenericController<Classses> {
     public ResponseEntity<?> getClass(@PathVariable("id") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(),service.findOne(id)));
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
+    }
+
+    @GetMapping("/findClassByTeacher/{id}")
+    public ResponseEntity<?> findClassByTeacher(@PathVariable("id") Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(),service.findClassByTeacherId(id)));
+    }
 }

@@ -44,4 +44,19 @@ public class ScheduleService implements ISchedule {
     public Schedule findOne(int id) {
            return dao.findById(id).orElseThrow(()-> new ErrorHandler("Không tìm thấy dữ liệu"));
     }
+
+    @Override
+    public Schedule saveSchedule(Schedule schedule) {
+        try {
+          Schedule scheduleSave=  dao.save(schedule);
+          return scheduleSave;
+        }catch (Exception e){
+            throw new ErrorHandler("Tạo thất bại");
+        }
+    }
+
+    @Override
+    public Schedule findScheduleByClassAndSemester(Integer classId, Integer semester) {
+        return dao.findScheduleAndByClassIdAndSemester(classId,semester).orElseThrow(()->new ErrorHandler("Cannot find schedule with classId = "+classId+" and semester = "+semester));
+    }
 }

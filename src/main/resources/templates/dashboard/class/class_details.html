@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
     <link rel="stylesheet" href="/css/custom.css">
-    <link rel="stylesheet" href="/css/student_details.css">
+    <link rel="stylesheet" href="/css/class_details.css">
 </head>
 <body>
 <div layout:fragment="content">
@@ -25,7 +25,8 @@
                                     <td>
                                         <table style="width:100%; height: 100%">
                                             <tr>
-                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Lớp</b>:</h5></td>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Lớp</b>:
+                                                </h5></td>
                                                 <td><h5>&nbsp;[[${class.classCode}]]</h5></td>
                                             </tr>
                                         </table>
@@ -36,8 +37,10 @@
                                     <td>
                                         <table style="width:100%; height: 100%">
                                             <tr>
-                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Giáo viên</b>:</h5></td>
-                                                <td><h5>&nbsp;[[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5></td>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Giáo
+                                                    viên</b>:</h5></td>
+                                                <td><h5>&nbsp;[[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5>
+                                                </td>
                                             </tr>
                                         </table>
                                     </td>
@@ -47,16 +50,27 @@
                                     <td>
                                         <table style="width:100%; height: 100%">
                                             <tr>
-                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Sỉ số lớp</b>:</h5></td>
-                                                <td><h5>&nbsp;[[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]] học sinh</h5></td>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Sỉ số
+                                                    lớp</b>:</h5></td>
+                                                <td><h5>&nbsp;[[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]]
+                                                    học sinh</h5></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td class="d-flex justify-content-end">
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/class/generate-schedule'}" class="btn btn-warning btn-sm">Tạo thời khoá biểu</a>
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/class/add-student'}" class="btn btn-info btn-sm">Thêm sinh viên</a>
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/class/import-student-excel'}" class="btn btn-primary btn-sm">Thêm nhiều sinh viên</a>
-                                        <a th:href="@{'/dashboard/class/export-student-excel'}" class="btn btn-success btn-sm">Tải xuống danh sách</a>
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           data-target="#create_schedule" data-toggle="modal"
+                                           class="btn btn-warning btn-sm">Tạo thời khoá biểu</a>
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           th:href="@{'/dashboard/class/add-student'}" class="btn btn-info btn-sm">Thêm
+                                            sinh viên</a>
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           th:href="@{'/dashboard/class/import-student-excel'}"
+                                           class="btn btn-primary btn-sm">Thêm nhiều sinh viên</a>
+                                        <a data-target="#details_schedule" data-toggle="modal"
+                                           class="btn btn-primary btn-sm">Xem thời khóa biểu</a>
+                                        <a th:href="@{'/dashboard/class/export-student-excel'}"
+                                           class="btn btn-success btn-sm">Tải xuống danh sách</a>
                                     </td>
                                 </tr>
                             </table>
@@ -68,8 +82,8 @@
                 <div class="container" style="margin-top: 10px">
                     <div class="row">
                         <div class="col-12">
-<!--                            <label>Tìm kiếm theo nghành học :</label>-->
-<!--                            <div id="select-major"></div>-->
+                            <!--                            <label>Tìm kiếm theo nghành học :</label>-->
+                            <!--                            <div id="select-major"></div>-->
                             <table id="student-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
@@ -85,14 +99,15 @@
                                     <td><span
                                             th:text="${class.studentClassById.indexOf(student)+1}"></span>
                                     </td>
-                                    <td><img th:src="${student.classStudentByStudent.studentByProfile.avartarUrl}" alt="" width="50"
+                                    <td><img th:src="${student.classStudentByStudent.studentByProfile.avartarUrl}"
+                                             alt="" width="50"
                                              height=50></td>
                                     <td>
                                         <span th:text="${student.classStudentByStudent.studentByProfile.firstName +' '+student.classStudentByStudent.studentByProfile.lastName}"></span>
                                     </td>
                                     <td><span th:text="${student.classStudentByStudent.studentCard}"></span></td>
                                     <td class="text-center">
-                                        <a class="mr-3" ><i class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3"><i class="fas fa-eye indigo-text"></i></a>
                                         <a class="mr-3"><i class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
@@ -102,7 +117,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="modal fade" id="student_details" tabindex="-1"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -349,6 +363,123 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="create_schedule" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Tạo thời khóa biểu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <form id="role_create-form">
+                                    <div class="col-6">
+                                        <label for="startDate">Ngày bắt đầu:</label>
+                                        <input type="date" class="form-control" id="startDate" name="startDate"
+                                               placeholder="chọn ngày bắt đầu học">
+                                        <input type="text" id="inputToday" style="display: none">
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="semester">Kì của nghành học:</label>
+                                            <select id="semester" class="form-control" name="semester"
+                                                    style="width: 100%;">
+                                                <option value="">-----Chọn kì------</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="spinner-div" class="pt-5">
+                            <div class="spinner-border text-primary" role="status">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" class="btn btn-info btn-sm" th:data-id="${class.getId()}"
+                                    th:data-major="${class.getMajorId()}"
+                                    th:data-shift="${class.getShift()}"
+                                    onclick="OnCreateSchedule(this.getAttribute('data-id'),
+                                    this.getAttribute('data-major'),
+                                     this.getAttribute('data-shift'))" data-dismiss="modal"><i
+                                    class="fas fa-plus"></i> Tạo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="details_schedule" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Xem thời khóa biểu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <form id="schedule_details_form">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <input type="hidden" id="classId" th:value="${class.id}">
+                                            <input type="hidden" id="shift" th:value="${class.getShift()}">
+                                            <label for="semester">Kì của nghành học:</label>
+                                            <select id="semesterSchedule" class="form-control" name="semester"
+                                                    style="width: 100%;">
+                                                <option value="">-----Chọn kì------</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="container">
+                                <div class="container">
+                                    <div class="timetable-img text-center">
+                                        <img src="img/content/timetable.png" alt="">
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table id="schedule_table" class="table table-bordered text-center">
+                                            <thead>
+                                            <tr class="bg-light-gray">
+                                                <th class="text-uppercase">Thứ hai</th>
+                                                <th class="text-uppercase">Thứ ba</th>
+                                                <th class="text-uppercase">Thứ tư</th>
+                                                <th class="text-uppercase">Thứ năm</th>
+                                                <th class="text-uppercase">Thứ sáu</th>
+                                                <th class="text-uppercase">Thứ bảy</th>
+                                                <th class="text-uppercase">Chủ nhật</th>
+                                            </tr>
+                                            </thead>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -364,7 +495,8 @@
         });
     </script>
     <script src="/plugins/select2/js/select2.full.js"></script>
-    <script src="/js/student/student_index.js"></script>
+    <!--    <script src="/js/student/student_index.js"></script>-->
+    <script src="/js/class/class_details.js"></script>
 </th:block>
 </body>
 </html>

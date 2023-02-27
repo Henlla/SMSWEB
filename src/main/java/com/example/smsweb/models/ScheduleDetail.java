@@ -33,7 +33,7 @@ public class ScheduleDetail {
     private String dayOfWeek;
 
     @ManyToOne
-    @JsonBackReference("subject_schedule_detail")
+//    @JsonBackReference("subject_schedule_detail")
     @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Subject subjectBySubjectId;
     @ManyToOne
