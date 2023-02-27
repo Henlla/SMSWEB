@@ -25,8 +25,8 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm"><i class="fas fa-plus"></i> Thêm mới</a>
+                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Xuất dữ liệu</a>
                             <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu mẫu</a>
                         </div>
                     </div>
