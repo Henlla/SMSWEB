@@ -28,4 +28,12 @@ public class ScheduleDetailsService implements IScheduleDetails {
     public List<ScheduleDetail> findScheduleDetailsByScheduleId(Integer id) {
         return repository.findAllByScheduleId(id).orElseThrow(()->new ErrorHandler("Fail list schedule details by schedule id = "+id));
     }
+
+    public void putScheduleDetails(ScheduleDetail scheduleDetail){
+        try {
+            repository.save(scheduleDetail);
+        }catch (Exception ex){
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
 }

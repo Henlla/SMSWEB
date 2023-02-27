@@ -11,6 +11,7 @@ import com.example.smsweb.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.lang.Classes;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -385,13 +386,42 @@ public class StudentController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"list",HttpMethod.GET,request,String.class);
         List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>(){});
+
+        ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL+"get",HttpMethod.GET,request,String.class);
+        ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL+"get",HttpMethod.GET,request,ResponseModel.class);
+        String json = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
+        List<StudentClass> listStudentClass = new ObjectMapper().readValue(json, new TypeReference<List<StudentClass>>(){});
+        List<Classses> listClass = new ObjectMapper().readValue(responseClass.getBody(), new TypeReference<List<Classses>>(){});
+        Student student = new Student();
+
+        List<StudentClassModel> studentClassModels = new ArrayList<>();
+
+
+        for (Student s : listStudent){
+            List<Classses> classsesList = new ArrayList<>();
+            for (StudentClass studentClass : listStudentClass){
+                if(s.getId().equals(studentClass.getStudentId())){
+                    for (Classses classses : listClass){
+                        if(classses.getId().equals(studentClass.getClassId())){
+                            classsesList.add(classses);
+                        }
+                    }
+                }
+            }
+            StudentClassModel studentClassModel = new StudentClassModel();
+            studentClassModel.setStudent(s);
+            studentClassModel.setClasses(classsesList);
+            studentClassModels.add(studentClassModel);
+        }
+
+
         responses.setContentType("application/octet-stream");
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDate = dateFormat.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=Danh_sach_sinh_vien_" + currentDate + ".xlsx"; // file *.xlsx
         responses.setHeader(headerKey, headerValue);
-        StudentExport generateFeedbackExcel = new StudentExport(listStudent);
+        StudentExport generateFeedbackExcel = new StudentExport(studentClassModels);
         generateFeedbackExcel.generateExcelFile(responses);
     }
 }

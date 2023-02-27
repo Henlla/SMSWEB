@@ -39,4 +39,13 @@ public class MajorRestController extends GenericController<Major> {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
         }
     }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> findMajorById(@PathVariable("id") Integer majorId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findOne(majorId)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
+        }
+    }
 }

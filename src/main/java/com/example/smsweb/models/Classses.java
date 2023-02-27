@@ -18,7 +18,7 @@ public class Classses {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Basic
     @Column(name = "class_code")
     private String classCode;

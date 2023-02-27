@@ -47,4 +47,5 @@ public class SubjectRestController extends GenericController<Subject> {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
         }
     }
+
 }

@@ -1,5 +1,7 @@
 package com.example.smsweb.utils.ExcelExport;
 
+import com.example.smsweb.dto.StudentClassModel;
+import com.example.smsweb.models.Classses;
 import com.example.smsweb.models.MajorStudent;
 import com.example.smsweb.models.Student;
 import com.example.smsweb.models.StudentClass;
@@ -19,11 +21,11 @@ import java.util.Date;
 import java.util.List;
 
 public class StudentExport {
-    List<Student> studentList;
+    List<StudentClassModel> studentList;
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
 
-    public StudentExport(List<Student> studentList) {
+    public StudentExport(List<StudentClassModel> studentList) {
         this.studentList = studentList;
         workbook = new XSSFWorkbook();
     }
@@ -79,26 +81,26 @@ public class StudentExport {
         font.setFontHeight(13);
         style.setFont(font);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for(Student student : studentList){
+        for(StudentClassModel student : studentList){
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
             StringBuilder majorCurrent = new StringBuilder();
             StringBuilder classCurrent = new StringBuilder();
             createCell(row,columnCount++,studentList.indexOf(student)+1,style);
-            createCell(row,columnCount++,student.getStudentCard(),style);
-            createCell(row,columnCount++,student.getStudentByProfile().getFirstName(),style);
-            createCell(row,columnCount++,student.getStudentByProfile().getLastName(),style);
-            createCell(row,columnCount++,student.getStudentByProfile().getFirstName()+" "+student.getStudentByProfile().getLastName(),style);
-            createCell(row,columnCount++,student.getStudentByProfile().getEmail(),style);
-            createCell(row,columnCount++,student.getStudentByProfile().getPhone(),style);
-            createCell(row,columnCount++,student.getStudentByProfile().getSex(),style);
-            createCell(row,columnCount++,student.getStudentByProfile().getAddress()+", "+student.getStudentByProfile().getWardByWardId().getName() +", "+student.getStudentByProfile().getDistrictByDistrictId().getName() + ", "+student.getStudentByProfile().getProfileProvince().getName(),style);
-            if(student.getMajorStudentsById().isEmpty()){
+            createCell(row,columnCount++,student.getStudent().getStudentCard(),style);
+            createCell(row,columnCount++,student.getStudent().getStudentByProfile().getFirstName(),style);
+            createCell(row,columnCount++,student.getStudent().getStudentByProfile().getLastName(),style);
+            createCell(row,columnCount++,student.getStudent().getStudentByProfile().getFirstName()+" "+student.getStudent().getStudentByProfile().getLastName(),style);
+            createCell(row,columnCount++,student.getStudent().getStudentByProfile().getEmail(),style);
+            createCell(row,columnCount++,student.getStudent().getStudentByProfile().getPhone(),style);
+            createCell(row,columnCount++,student.getStudent().getStudentByProfile().getSex(),style);
+            createCell(row,columnCount++,student.getStudent().getStudentByProfile().getAddress()+", "+student.getStudent().getStudentByProfile().getWardByWardId().getName() +", "+student.getStudent().getStudentByProfile().getDistrictByDistrictId().getName() + ", "+student.getStudent().getStudentByProfile().getProfileProvince().getName(),style);
+            if(student.getStudent().getMajorStudentsById().isEmpty()){
                 majorCurrent.append("Chưa có");
                 createCell(row,columnCount++, majorCurrent.toString(),style);
             }else{
-                for (MajorStudent majorStudent : student.getMajorStudentsById()){
-                    if(student.getMajorStudentsById().get(student.getMajorStudentsById().size() - 1)!=null){
+                for (MajorStudent majorStudent : student.getStudent().getMajorStudentsById()){
+                    if(student.getStudent().getMajorStudentsById().get(student.getStudent().getMajorStudentsById().size() - 1)!=null){
                         majorCurrent.append(majorStudent.getMajorByMajorId().getMajorName());
                     }else{
                         majorCurrent.append(majorStudent.getMajorByMajorId().getMajorName()).append(",");
@@ -108,15 +110,15 @@ public class StudentExport {
                 createCell(row,columnCount++, majorCurrent.toString(),style);
             }
 
-            if(student.getStudentClassById().isEmpty()){
+            if(student.getClasses().isEmpty()){
                 classCurrent.append("Chưa có");
                 createCell(row,columnCount++, classCurrent.toString(),style);
             }else{
-                for (StudentClass studentClass : student.getStudentClassById()){
-                    if(student.getStudentClassById().get(student.getStudentClassById().size() - 1)!=null){
-                        classCurrent.append(studentClass.getClassStudentByClass().getClassCode());
+                for (Classses classses : student.getClasses()){
+                    if(student.getClasses().get(student.getClasses().size() - 1)!=null){
+                        classCurrent.append(classses.getClassCode());
                     }else{
-                        classCurrent.append(studentClass.getClassStudentByClass().getClassCode()).append(",");
+                        classCurrent.append(classses.getClassCode()).append(",");
                     }
                 }
                 createCell(row,columnCount++, classCurrent.toString(),style);
