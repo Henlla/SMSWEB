@@ -1,5 +1,8 @@
 package com.example.smsweb.utils;
 
+import com.example.smsweb.api.exception.ErrorHandler;
+import org.apache.poi.ss.usermodel.PictureData;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +20,26 @@ public class FileUtils {
 
     public static String getExtension(String originalFileName) {
         return StringUtils.getFilenameExtension(originalFileName);
+    }
+
+    public static void writeImageFromExcel(String imageName, String storeUrl, XSSFWorkbook workbook,int position) {
+        try {
+            String rootPath = System.getProperty("user.dir");
+            XSSFDrawing dp = workbook.getSheetAt(0).createDrawingPatriarch();
+            List<XSSFShape> pics = dp.getShapes();
+            XSSFPicture inpPic = (XSSFPicture) pics.get(position);
+
+            XSSFClientAnchor clientAnchor = inpPic.getClientAnchor();
+            inpPic.getShapeName();
+            PictureData pict = inpPic.getPictureData();
+            String ext = pict.suggestFileExtension();
+            byte[] data = pict.getData();
+            FileOutputStream outputStream = new FileOutputStream(rootPath + storeUrl + imageName + "." + ext);
+            outputStream.write(data);
+            outputStream.close();
+        } catch (Exception e) {
+            throw new ErrorHandler(e.getMessage());
+        }
     }
 
     public static void uploadFile(String fileName, String pathStore, MultipartFile file) {

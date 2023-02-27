@@ -5,8 +5,6 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/css/custom.css">
     <title>Môn học</title>
 </head>
@@ -22,17 +20,18 @@
                     <section class="row mb-3">
                         <section class="col-12">
                             <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" data-target="#subject-modal" class="btn btn-info btn-sm">
-                                <i class="fas fa-plus" ></i> Thêm mới
+                                <i class="fas fa-plus"></i> Thêm mới
                             </button>
-                            <a onclick="OnClickImport()" class="btn btn-primary btn-sm">Đỗ dữ liệu</a>
+                            <a onclick="OnClickImport()" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Đỗ dữ liệu</a>
                             <input type="file" onchange="OnSaveExcelData()" id="fileUpload" hidden>
                         </section>
                     </section>
                     <section class="row">
                         <section class="col-12">
-                            <table id="subject-table" class="table table-bordered table-striped">
+                            <table id="subject-table" class="table table-bordered table-hover">
                                 <thead>
                                 <tr class="text-center">
+                                    <th class="th-sm">STT</th>
                                     <th class="th-sm">Mã môn học</th>
                                     <th class="th-sm">Tên môn học</th>
                                     <th class="th-sm">Học phí</th>
@@ -41,6 +40,7 @@
                                 </thead>
                                 <tbody>
                                 <tr class="text-center" th:each="item:${listSubject}">
+                                    <td>[[${listSubject.indexOf(item)+1}]]</td>
                                     <td>[[${item.subjectCode}]]</td>
                                     <td>[[${item.subjectName}]]</td>
                                     <td>
@@ -166,7 +166,6 @@
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Học kì</label>
                             <select id="edit_semester_id" class="form-control select2-single">
-                                <option>----Chọn học kì----</option>
                                 <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]
                                 </option>
                             </select>
@@ -190,9 +189,6 @@
 
 </section>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/js/subject/subject.js"></script>
 </th:block>
 </body>

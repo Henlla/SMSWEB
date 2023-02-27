@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IMajor extends IGenericRepository<Major> {
-    public void importDataToDb(MultipartFile file);
-    public void exportDataToExcel(HttpServletResponse response,List<Major> list,String fileName);
+    void importDataToDb(MultipartFile file);
+
+    void exportDataToExcel(HttpServletResponse response, List<Major> list, String fileName);
 }

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
     <title>Đơn đăng ký</title>
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
@@ -17,15 +17,15 @@
         <section class="content-body">
             <section class="container-fluid">
                 <section class="row mb-3">
-                    <section class="col-12">
+                    <div class="col-12">
                         <button data-toggle="modal" data-target="#app-modal" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus" ></i> Thêm mới đơn đăng ký
+                            <i class="fas fa-plus pr-2"></i>Thêm mới
                         </button>
-                    </section>
+                    </div>
                 </section>
                 <section class="row">
                     <section class="col-12">
-                        <table th:id="app-table" class="table table-bordered table-stripped">
+                        <table th:id="app-table" class="table table-bordered table-hover">
                             <thead>
                             <tr class="text-center">
                                 <td>STT</td>
@@ -40,12 +40,29 @@
                                 <td>[[${listApplication.indexOf(item)+1}]]</td>
                                 <td>[[${item.sendDate}]]</td>
                                 <td>[[${item.note}]]</td>
-                                <td>[[${item.status}]]</td>
-                                <td>
-                                    <button th:data-name="${item.file}" onclick="OnViewApplication(this.getAttribute('data-name'))" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
-                                    <button th:data-name="${item.id}" onclick="OnAppDownload(this.getAttribute('data-name'))" class="btn btn-success btn-sm"><i class="fas fa-download"></i></button>
-                                    <button th:data-name="${item.id}" onclick="OnEditApplication(this.getAttribute('data-name'))" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i></button>
-                                </td>
+                                <th:block th:switch="${item.status}">
+                                    <td th:case="PENDING" class="text-warning">[[${item.status}]]</td>
+                                    <td th:case="APPROVED" class="text-success">[[${item.status}]]</td>
+                                    <td th:case="DISCARD" class="text-danger">[[${item.status}]]</td>
+                                </th:block>
+                                <th:block th:switch="${item.status}">
+                                    <td th:case="PENDING">
+                                        <button th:data-name="${item.file}" onclick="OnViewApplication(this.getAttribute('data-name'))" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i></button>
+                                        <button th:data-name="${item.id}" onclick="OnAppDownload(this.getAttribute('data-name'))" class="btn btn-success btn-sm">
+                                            <i class="fas fa-download"></i></button>
+                                        <button th:data-name="${item.id}" onclick="OnEditApplication(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-pen"></i></button>
+                                    </td>
+                                    <td th:case="*">
+                                        <button disabled th:data-name="${item.file}" onclick="OnViewApplication(this.getAttribute('data-name'))" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i></button>
+                                        <button disabled th:data-name="${item.id}" onclick="OnAppDownload(this.getAttribute('data-name'))" class="btn btn-success btn-sm">
+                                            <i class="fas fa-download"></i></button>
+                                        <button disabled th:data-name="${item.id}" onclick="OnEditApplication(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-pen"></i></button>
+                                    </td>
+                                </th:block>
                             </tr>
                             </tbody>
                         </table>
@@ -58,20 +75,20 @@
              aria-labelledby="exampleModalLabel" aria-hidden="true">
         <section class="modal-dialog modal-xl modal-dialog-scrollable">
             <section class="modal-content">
-                <section class="modal-header">
+                <div class="modal-header">
                     <h5 class="modal-title font-weight-bold" id="documentLabel">Xem trước tệp</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
-                </section>
-                <section class="modal-body">
+                </div>
+                <div class="modal-body">
                     <div id="word_container"></div>
-                </section>
-                <section class="modal-footer">
+                </div>
+                <div class="modal-footer">
                     <button type="button" onclick="OnCreateApplication()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Tạo
                     </button>
-                </section>
+                </div>
             </section>
         </section>
     </section>
@@ -88,27 +105,27 @@
                 <section class="modal-body">
                     <form id="appForm">
                         <section class="row mb-3">
-                            <section class="col-12 mb-3">
+                            <div class="col-12 mb-3">
                                 <label class="font-weight-normal f-13">Loại đơn
                                     <span class="text-danger">*</span></label>
-                                <select class="form-control form-control-sm" name="appType" onchange="OnChangeAppType()" id="appType">
-                                    <option value="">----Chọn loại đơn----</option>
+                                <select class="form-control form-control-sm select2bs4" name="appType" onchange="OnChangeAppType()" id="appType">
+                                    <option value="">----Chọn mẫu đơn----</option>
                                     <option th:each="item:${listAppType}" th:value="${item.id}">[[${item.name}]]
                                     </option>
                                 </select>
                                 <a href="" class="d-none f-13" download id="appTypeDownload">Download</a>
-                            </section>
-                            <section class="col-12 mb-3">
+                            </div>
+                            <div class="col-12 mb-3">
                                 <label class="font-weight-normal f-13">Ghi chú
                                     <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="note" name="note" placeholder="Nhập ghi chú" style="resize: none" cols="30" rows="3"></textarea>
-                            </section>
-                            <section class="form-group form-control-sm col-12 mb-5">
+                            </div>
+                            <div class="form-group form-control-sm col-12 mb-5">
                                 <label class="font-weight-normal f-13">Chọn tệp mẫu
                                     <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control-file border mb-2" onchange="OnValidate(this)" id="app-type-file">
                                 <span class="text-danger mb-3">Vui lòng gửi đúng biểu mẫu kèm thông tin trên phần download</span>
-                            </section>
+                            </div>
                         </section>
                     </form>
                 </section>
@@ -132,17 +149,19 @@
                 </section>
                 <section class="modal-body">
                     <form id="app-edit-form">
-                        <section class="form-group">
+                        <div class="form-group">
+                            <input type="text" id="app-edit-id" hidden>
                             <label>Trạng thái</label>
-                            <select id="edit-status" class="select2bs4 form-control form-control-sm">
-                                <option value="1">Approved</option>
-                                <option value="2">Discard</option>
+                            <select id="edit-status" onchange="OnChangeStatus()" class="select2bs4 form-control form-control-sm">
+                                <option value="">------ Chọn trạng thái --------</option>
+                                <option value="APPROVED">Chấp nhận</option>
+                                <option value="DISCARD">Không chấp nhận</option>
                             </select>
-                        </section>
-                        <section class="form-group">
+                        </div>
+                        <div class="form-group">
                             <label>Ghi chú</label>
                             <textarea placeholder="Nhập ghi chú..." id="edit-note" class="form-control form-control-sm" cols="70" rows="5" style="resize: none"></textarea>
-                        </section>
+                        </div>
                     </form>
                 </section>
                 <section class="modal-footer">
@@ -153,11 +172,8 @@
             </section>
         </section>
     </section>
-
 </div>
 <section layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
     <script src="/plugins/docx-preview/jszip.js"></script>
     <script src="/plugins/docx-preview/docx-preview.js"></script>
     <script src="/js/HelperJs.js"></script>

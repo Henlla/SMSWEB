@@ -1,5 +1,10 @@
 $(()=>{
-
+    $('#reservationdate').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('.select2').select2({
+        theme: 'bootstrap4'
+    });
     const province = document.getElementById("province")
     const district = document.getElementById("district")
     const wards = document.getElementById("ward")
