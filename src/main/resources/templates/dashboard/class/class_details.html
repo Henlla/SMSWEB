@@ -436,7 +436,7 @@
                                             <input type="hidden" id="classId" th:value="${class.id}">
                                             <input type="hidden" id="shift" th:value="${class.getShift()}">
                                             <label for="semester">Kì của nghành học:</label>
-                                            <select id="semesterSchedule" class="form-control" name="semester"
+                                            <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()" class="form-control" name="semester"
                                                     style="width: 100%;">
                                                 <option value="">-----Chọn kì------</option>
                                                 <option value="1">1</option>
@@ -454,6 +454,7 @@
                                         <img src="img/content/timetable.png" alt="">
                                     </div>
                                     <div class="table-responsive">
+                                        <div class="float-right"><a id="btn_update_schedule" class="btn btn-info btn-sm">Chỉnh sửa</a></div>
                                         <table id="schedule_table" class="table table-bordered text-center">
                                             <thead>
                                             <tr class="bg-light-gray">
@@ -480,6 +481,62 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="schedule_update" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Thay đổi ngày thời khóa biểu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <form >
+                                    <div class="col">
+                                        <div class="form-group" style="display: flex;justify-content: center;align-items: center">
+                                            <input type="hidden" id="schedule_details_id">
+                                            <div class="input-group date" id="day_default"
+                                                 data-target-input="nearest">
+                                                <input type="text"
+                                                       class="form-control form-control-sm day_default datetimepicker-input"
+                                                       data-target="#day_default_input" readonly/>
+                                                <div class="input-group-append" data-target="#day_default_input"
+                                                     data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <img src="/img/arrow_forward.png" alt="" width="20" height="20">
+                                            <div class="input-group date" id="newDate_input"
+                                                 data-target-input="nearest">
+                                                <input type="text"
+                                                       class="form-control form-control-sm newDate datetimepicker-input"
+                                                       data-target="#newDate_input"
+                                                       placeholder="Chọn ngày thay đổi"/>
+                                                <div class="input-group-append" data-target="#newDate_input"
+                                                     data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span style="color:red" id="msg_error" class="float-right"></span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" id="btn_submitChangeDate"><i class="fas fa-check"></i> Thay đổi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -490,12 +547,14 @@
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
     <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
     <script type="text/javascript">
-        $('#reservationdate_u').datetimepicker({
-            format: 'DD/MM/YYYY'
+        $('#newDate_input').datetimepicker({
+            format: 'DD/MM/YYYY',
+        });
+        $('#day_default_input').datetimepicker({
+            format: 'DD/MM/YYYY',
         });
     </script>
     <script src="/plugins/select2/js/select2.full.js"></script>
-    <!--    <script src="/js/student/student_index.js"></script>-->
     <script src="/js/class/class_details.js"></script>
 </th:block>
 </body>

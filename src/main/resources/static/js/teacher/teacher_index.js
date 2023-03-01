@@ -180,23 +180,23 @@ var OnUpdate = (id) => {
         method: "GET",
         success: (data) => {
             console.log(data)
-            $('#st_image_u').attr('src', data.profileByProfileId.avartarUrl)
-            $('#img').val(data.profileByProfileId.avartarUrl)
-            $('#firstName_u').val(data.profileByProfileId.firstName)
-            $('#lastName_u').val(data.profileByProfileId.lastName)
-            $('#dob_u').val(data.profileByProfileId.dob)
-            $('#phone_u').val(data.profileByProfileId.phone)
-            $('#email_u').val(data.profileByProfileId.email)
-            $('#address_u').val(data.profileByProfileId.address)
-            $('#identityCard_u').val(data.profileByProfileId.identityCard)
-            $('#profileId_u').val(data.profileByProfileId.id)
-            $('#accountId_u').val(data.profileByProfileId.accountId)
+            $('#st_image_u').attr('src', data.teacher.profileByProfileId.avartarUrl)
+            $('#img').val(data.teacher.profileByProfileId.avartarUrl)
+            $('#firstName_u').val(data.teacher.profileByProfileId.firstName)
+            $('#lastName_u').val(data.teacher.profileByProfileId.lastName)
+            $('#dob_u').val(data.teacher.profileByProfileId.dob)
+            $('#phone_u').val(data.teacher.profileByProfileId.phone)
+            $('#email_u').val(data.teacher.profileByProfileId.email)
+            $('#address_u').val(data.teacher.profileByProfileId.address)
+            $('#identityCard_u').val(data.teacher.profileByProfileId.identityCard)
+            $('#profileId_u').val(data.teacher.profileByProfileId.id)
+            $('#accountId_u').val(data.teacher.profileByProfileId.accountId)
 
-            const province_id = data.profileByProfileId.profileProvince.id
+            const province_id = data.teacher.profileByProfileId.profileProvince.id
 
-            const district_id = data.profileByProfileId.districtByDistrictId.id
+            const district_id = data.teacher.profileByProfileId.districtByDistrictId.id
 
-            const ward_id = data.profileByProfileId.wardByWardId.id
+            const ward_id = data.teacher.profileByProfileId.wardByWardId.id
 
             console.log(province_id, district_id, ward_id)
 
@@ -227,7 +227,7 @@ var OnUpdate = (id) => {
                 }
             })
 
-            $("input[name=sex][value=" + data.profileByProfileId.sex + "]").prop('checked', true);
+            $("input[name=sex][value=" + data.teacher.profileByProfileId.sex + "]").prop('checked', true);
 
             $("#teacher_update").modal("show");
         }, error: (data) => {

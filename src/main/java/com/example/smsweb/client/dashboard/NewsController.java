@@ -1,6 +1,12 @@
 package com.example.smsweb.client.dashboard;
 
+import lombok.NonNull;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFFooter;
+import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
@@ -26,9 +32,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("dashboard/news/")
@@ -214,15 +222,19 @@ public class NewsController {
     @PostMapping("import_file_excel")
     @ResponseBody
     public Object import_file_excel(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                     @RequestParam("file") MultipartFile file){
+                                    @NonNull @RequestParam("file") MultipartFile file){
+        FileInputStream fileInputStream = null;
+        XWPFDocument document = null;
         try {
-            FileInputStream fis = new FileInputStream(file.getOriginalFilename());
-            XWPFDocument document = new XWPFDocument(fis);
-            List<XWPFParagraph> paragraphs = document.getParagraphs();
-            for(int i=0;i<paragraphs.size();i++){
-                System.out.println(paragraphs.get(i).getParagraphText());
-            }
-            fis.close();
+            File file1 = new File(Objects.requireNonNull(file.getOriginalFilename()));
+            fileInputStream = new FileInputStream(file1.getAbsolutePath());
+            document = new XWPFDocument(fileInputStream);
+            XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+
+            System.out.println("The Contents of the Word File are ::");
+            System.out.println("--------------------------------------");
+
+            System.out.println(extractor.getText());
             return "success";
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
