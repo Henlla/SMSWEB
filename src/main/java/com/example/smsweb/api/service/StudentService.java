@@ -41,6 +41,11 @@ public class StudentService implements IStudent {
     }
 
     @Override
+    public Student findStudentByStudentCard(String studentCard) {
+        return repository.findStudentByStudentCard(studentCard).orElseThrow(()->new ErrorHandler("Không tìm thấy sinh viên mã: "+studentCard));
+    }
+
+    @Override
     public List<Student> findStudentIdByRangeStudentCard(List<String> listStudentCard) {
         List<Student> listResult= new ArrayList<>();
         for (String stringCard: listStudentCard) {
