@@ -16,7 +16,6 @@ public class ExcelHelper {
         String headerValue = "attachment;filename=" + fileName;
         response.setHeader(headerKey, headerValue);
     }
-
     public static void createCell(Row row, int columnCount, Object valueOfCell, XSSFSheet sheet) {
         sheet.autoSizeColumn(columnCount);
         Cell cell = row.createCell(columnCount);
@@ -51,7 +50,6 @@ public class ExcelHelper {
         }
         return null;
     }
-
     public static int getNumberOfNonEmptyCells(XSSFSheet sheet, int columnIndex) {
         int numOfNonEmptyCells = 0;
         for (int i = 0; i <= sheet.getLastRowNum(); i++) {

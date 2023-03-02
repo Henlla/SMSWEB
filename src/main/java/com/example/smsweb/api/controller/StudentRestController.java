@@ -43,6 +43,15 @@ public class StudentRestController {
         return ResponseEntity.status(HttpStatus.OK).body(iStudent.getByProfileId(id));
     }
 
+    @GetMapping("/findStudentByStudentCard/{studentCard}")
+    public ResponseEntity<?> findStudentByStudentCard(@PathVariable("studentCard") String studentCard){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(iStudent.findStudentByStudentCard(studentCard));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     //find student id by range student card
     @GetMapping("/findStudentIdByRangeStudentCard/{listStudentCard}")
     public ResponseEntity<?> findStudentIdByRangeStudentCard(@PathVariable("listStudentCard") String listStudentCard){
