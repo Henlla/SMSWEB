@@ -33,6 +33,8 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "accountByAccountId",fetch=FetchType.EAGER)
     @JsonIgnore
     private List<Profile> accountProfile;
+    @OneToMany(mappedBy = "accountDevice",fetch=FetchType.EAGER)
+    private List<Devices> accountDevices;
 
     public Account(String username, String password, Integer roleId) {
         this.username = username;

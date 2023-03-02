@@ -48,4 +48,13 @@ public class SubjectRestController extends GenericController<Subject> {
         }
     }
 
+    @PostMapping("/findSubjectByMajorIdSemester")
+    public ResponseEntity<?> findSubjectByMajorIdSemester(@RequestParam("majorId")Integer majorId,@RequestParam("semester")Integer semester){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findSubjectByMajorIdSemester(majorId,semester)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
+        }
+    }
+
 }

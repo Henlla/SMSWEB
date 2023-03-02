@@ -65,6 +65,11 @@ public class SubjectService implements ISubject {
     }
 
     @Override
+    public List<Subject> findSubjectByMajorIdSemester(Integer majorId, Integer semester) {
+        return dao.findAllByMajorIdAndSemesterId(majorId,semester).orElseThrow(()->new ErrorHandler("Cannot find subject with majorId = "+majorId+" semester "+semester));
+    }
+
+    @Override
     public boolean importExcelData(MultipartFile file) {
         listSubject = new ArrayList<>();
         try {
