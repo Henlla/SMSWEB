@@ -6,6 +6,7 @@ import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.models.Major;
 import com.example.smsweb.utils.ExcelExport.MajorExport;
 import com.example.smsweb.utils.ExcelHelper;
+import com.example.smsweb.utils.FileUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -25,6 +26,7 @@ public class MajorService implements IMajor {
     List<Major> listMajor;
     XSSFWorkbook workbook;
     XSSFSheet sheet;
+    private String STORE_URL_IMAGE = "/src/main/resources/static/img/student/";
 
     @Override
     public void save(Major major) {
@@ -64,24 +66,15 @@ public class MajorService implements IMajor {
             listMajor = new ArrayList<>();
             try {
                 workbook = new XSSFWorkbook(file.getInputStream());
-//                XSSFDrawing dp = workbook.getSheetAt(1).createDrawingPatriarch();
-//                List<XSSFShape> pics = dp.getShapes();
-//                XSSFPicture inpPic = (XSSFPicture)pics.get(0);
-//
-//                XSSFClientAnchor clientAnchor = inpPic.getClientAnchor();
-//                inpPic.getShapeName(); // узнаю название картинки
-//                PictureData pict = inpPic.getPictureData();
                 sheet = workbook.getSheetAt(0);
-                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
+                for (int rowIndex = 1; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
                     XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex == 0) {
-                        continue;
-                    }
-                    String major_code = ExcelHelper.getValue(row.getCell(0)).toString();
-                    String major_name = ExcelHelper.getValue(row.getCell(1)).toString() == null? "" : ExcelHelper.getValue(row.getCell(1)).toString();
+                    String major_code = ExcelHelper.getValue(row.getCell(0)).toString() == null ? "" : ExcelHelper.getValue(row.getCell(0)).toString();
+                    String major_name = ExcelHelper.getValue(row.getCell(1)).toString() == null ? "" : ExcelHelper.getValue(row.getCell(1)).toString();
                     if (!major_code.isEmpty() && !major_name.isEmpty()) {
                         Major major = Major.builder().majorCode(major_code).majorName(major_name).build();
                         listMajor.add(major);
+                        FileUtils.writeImageFromExcel(major_code,STORE_URL_IMAGE,workbook,rowIndex-1);
                     }
                 }
             } catch (Exception e) {
@@ -92,6 +85,8 @@ public class MajorService implements IMajor {
             } else {
                 throw new ErrorHandler("Không có dữ liệu");
             }
+        } else {
+            throw new ErrorHandler("Vui lòng chọn file");
         }
     }
 

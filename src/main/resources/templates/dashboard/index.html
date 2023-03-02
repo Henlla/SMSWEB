@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title layout:title-pattern="$CONTENT_TITLE">SMS | Dashboard</title>
+    <link rel="icon" sizes="196x196" href="/img/hkt_logo.png" type="image/png">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
@@ -21,11 +22,19 @@
     <!-- summernote -->
     <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
     <link rel="stylesheet" href="/css/mdb/mdb.min.css">
-<!--    Data Table-->
+    <!--Data Table-->
     <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/plugins/select2/css/select2.css">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
+    <!--Toast-->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+    <!--Datetime picker-->
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
+    <!--Select2-->
+    <link rel="stylesheet" href="/plugins/select2/css/select2.css">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
     <style>
-        body{
+        body {
             font-family: 'Inria Serif';
         }
     </style>
@@ -34,11 +43,8 @@
 <div class="wrapper">
     <th:block th:replace="~{component/header}"></th:block>
     <th:block th:replace="~{component/navbar}"></th:block>
-    <section layout:fragment="content">
-        <p>Content</p>
-    </section>
+    <section layout:fragment="content"></section>
     <div th:text="${#authentication.getAuthorities()}" hidden></div>
-    <th:block layout:fragment="optional"></th:block>
 </div>
 <!-- jQuery -->
 <script src="/plugins/jquery/jquery.min.js"></script>
@@ -70,10 +76,17 @@
 <script src="/js/adminlte.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/js/demo.js"></script>
+<!--Dateime Picker-->
+<script src="/plugins/moment/moment.min.js"></script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!--Toast-->
+<script src="/plugins/toastr/toastr.min.js"></script>
+<!--Sweet Alert-->
+<script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
 <!--DataTable-->
 <script src="/plugins/datatables/DataTables-1.13.2/js/jquery.dataTables.js"></script>
 <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
-<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <script src="/plugins/select2/js/select2.full.min.js"></script>
+<th:block layout:fragment="optional"></th:block>
 </body>
 </html>
