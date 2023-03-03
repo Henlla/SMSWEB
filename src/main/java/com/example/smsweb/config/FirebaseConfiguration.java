@@ -4,9 +4,11 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,8 @@ import java.io.InputStream;
 public class FirebaseConfiguration {
 
     private final FirebaseProperties firebaseProperties;
+    @Autowired
+    Environment environment;
 
     public FirebaseConfiguration(FirebaseProperties firebaseProperties) {
         this.firebaseProperties = firebaseProperties;
@@ -42,7 +46,7 @@ public class FirebaseConfiguration {
     @Bean
     FirebaseApp firebaseApp(GoogleCredentials credentials) {
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(credentials)
+                .setCredentials(credentials).setStorageBucket(environment.getProperty("firebase.bucket-name"))
                 .build();
 
         return FirebaseApp.initializeApp(options);

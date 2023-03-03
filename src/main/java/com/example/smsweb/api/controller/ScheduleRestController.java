@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/schedules/")
@@ -58,5 +59,17 @@ public class ScheduleRestController {
       }catch (Exception e){
           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDateTime.now().toString(), e.getMessage()));
       }
+    }
+
+    @PostMapping("/getScheduleByClass")
+    public ResponseEntity<?> getScheduleByClass(@RequestParam("classId")Integer classId) throws JsonProcessingException {
+        try {
+            log.debug("::::::START METHOD getScheduleByClassAndSemester ::::::");
+            List<Schedule> schedule = iSchedule.findScheduleByClassID(classId);
+            log.debug("::::::FINISH METHOD getScheduleByClassAndSemester ::::::");
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDateTime.now().toString(), schedule));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDateTime.now().toString(), e.getMessage()));
+        }
     }
 }

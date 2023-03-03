@@ -2,6 +2,9 @@ package com.example.smsweb.api.controller.fcm;
 
 import com.example.smsweb.dto.ConditionMessageRepresentation;
 import com.example.smsweb.dto.MulticastMessageRepresentation;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,10 +77,12 @@ public class FirebasePublisherController {
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<List<String>> postToClients(@RequestBody MulticastMessageRepresentation message) throws FirebaseMessagingException {
+    public ResponseEntity<List<String>> postToClients(@RequestParam("message")String messageJson ) throws FirebaseMessagingException, JsonProcessingException {
+        MulticastMessageRepresentation message = new ObjectMapper().readValue(messageJson, new TypeReference<MulticastMessageRepresentation>() {
+        });
         Notification notification = Notification
                 .builder()
-                .setTitle("Test")
+                .setTitle(message.getTitle())
                 .setBody(message.getData())
                 .build();
 

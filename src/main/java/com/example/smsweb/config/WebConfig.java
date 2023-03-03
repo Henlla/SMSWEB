@@ -44,7 +44,7 @@ public class WebConfig {
                 .authorizeRequests()
                 .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
                  "/api/districts/**","/api/accounts/login","/api/wards/**"
-                        ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**","/fcm/**").permitAll()
+                        ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**","/fcm/**","/api/device/**").permitAll()
                 .requestMatchers("/dashboard/login").permitAll()
                 .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
                 .requestMatchers("/dashboard/teacher/**","/dashboard/student/**"

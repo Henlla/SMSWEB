@@ -4,6 +4,7 @@ import java.util.List;
 
 public class MulticastMessageRepresentation {
     private String data;
+    private String title;
     private List<String> registrationTokens;
     /**
      * @return the message
@@ -11,9 +12,15 @@ public class MulticastMessageRepresentation {
     public String getData() {
         return data;
     }
-    /**
-     * @param message the message to set
-     */
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void setData(String data) {
         this.data = data;
     }
