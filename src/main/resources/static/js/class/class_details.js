@@ -35,6 +35,7 @@ $(document).ready(function () {
 
 
 
+
     let i_newDate = $('.newDate')
     let msgError =  $('#msg_error')
     msgError.css('display','none')
@@ -156,6 +157,200 @@ $(document).ready(function () {
             $('#btn_update_schedule').html('Chỉnh sửa')
             $('.btn_update_date').css('display','none')
             flag = !flag;
+        }
+    })
+
+    $("#form_add_student").submit( function(event) {
+        event.preventDefault();
+        var studentCard = $("#inputStudentCard").val();
+        if (availablePlace < 1){
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Sỉ số lớp đã đạt tối đa',
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Đồng ý',
+            })
+        }else{
+            $('#form_add_student').validate({
+                rules: {
+                    inputStudentCard:{
+                        required: true
+                    }
+                },
+                messages:{
+                    inputStudentCard : {
+                        required: "Vui lòng nhập mã sinh viên"
+                    }
+                },
+            })
+            if($('#form_add_student').valid()) {
+
+                const dataTable = $("#student-table").DataTable();
+                var listStudent = new Array()
+                const regExp = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
+                for (let index = 0; index < dataTable.rows().data().length; index++){
+                    listStudent.push(dataTable.cell(index,3).data().replace(regExp,''));
+                }
+
+                if(listStudent.filter(item => item == studentCard).length > 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Không cần thêm lại sinh viên đã có trong lớp',
+                        showDenyButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Đồng ý',
+                    })
+                }else {
+                    $.ajax({
+                        url: "/dashboard/class/get-student-by-card/"+studentCard,
+                        method: "GET",
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: (response)=>{
+                            console.log(response);
+                            if(response != null && response != ""){
+                                response = JSON.parse(response);
+                                Swal.fire({
+                                    icon: 'question',
+                                    title: 'Chú ý',
+                                    html: 'Bạn có muốn thêm sinh viên: '+response.studentByProfile.firstName + ' ' + response.studentByProfile.lastName+
+                                        '<br> ngày sinh: '+ response.studentByProfile.dob,
+                                    showCancelButton: true,
+                                    showDenyButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    cancelButtonText: 'Huỷ',
+                                    confirmButtonText: 'Đồng ý',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        let data = new FormData()
+                                        data.append("studentId" , response.id);
+                                        data.append("classId" , $("#classId").val());
+                                        $.ajax({
+                                            url: "/dashboard/class/add-student-to-class",
+                                            method: "POST",
+                                            data:data,
+                                            contentType: false,
+                                            cache: false,
+                                            processData: false,
+                                            success: (response)=>{
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Thêm thành công',
+                                                    showDenyButton: false,
+                                                    showCancelButton: false,
+                                                    confirmButtonText: 'Đồng ý',
+                                                }).then((result)=>{
+                                                    location.reload();
+                                                })
+                                            },
+                                            error: (e)=>{
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Thêm thất bại',
+                                                    showDenyButton: false,
+                                                    showCancelButton: false,
+                                                    confirmButtonText: 'Đồng ý',
+                                                })
+                                            }
+                                        });
+                                    }
+                                })
+                            }else {
+                                Swal.fire({
+                                    title: 'Lỗi',
+                                    text: 'Sinh viên không tồn tại',
+                                    icon: 'error',
+                                    showDenyButton: false,
+                                    showCancelButton:false,
+                                    confirmButtonText: 'Đồng ý',
+                                    timer: 2000
+                                })
+                            }
+                        },
+                        error: (e)=>{
+                            Swal.fire({
+                                title: 'Lỗi',
+                                text: e.messages,
+                                icon: 'error',
+                                showDenyButton: false,
+                                showCancelButton:false,
+                                confirmButtonText: 'Đồng ý',
+                                timer: 2000
+                            })
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $("#form_import_student_file").submit(function (event){
+        event.preventDefault();
+        if (availablePlace < 1){
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Sỉ số lớp đã đạt tối đa',
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Đồng ý',
+            })
+        }else {
+            $('#form_import_student_file').validate({
+                rules: {
+                    studentList:{
+                        required: true
+                    }
+                },
+                messages:{
+                    studentList : {
+                        required:"Vui lòng chọn danh sách sinh viên"
+                    },
+                },
+            })
+            if($('#form_import_student_file').valid()) {
+                var data = new FormData(document.querySelector('#form_import_student_file'))
+                data.append("classCode",classCode)
+                data.append("availablePlace",availablePlace)
+
+                $.ajax({
+                    url: "/dashboard/class/import-student-excel",
+                    method: "POST",
+                    data: data,
+                    cache : false,
+                    processData: false,
+                    contentType: false,
+                    enctype:"multipart/form-data",
+                    success: (response)=>{
+                        response = JSON.parse(response);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: response.message,
+                            showDenyButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Đồng ý',
+                        }).then((result)=>{
+                            location.reload();
+                        });
+                    },
+                    error: (error)=>{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: error.responseJSON.message,
+                            showDenyButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Đồng ý',
+                        })
+                    },
+                });
+            }
         }
     })
 });

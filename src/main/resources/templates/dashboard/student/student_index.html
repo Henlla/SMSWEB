@@ -5,10 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Danh sách sinh viên</title>
-<!--    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">-->
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
     <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/student_details.css">
 </head>
@@ -29,8 +25,8 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm"><i class="fas fa-plus"></i> Thêm mới</a>
+                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Xuất dữ liệu</a>
                             <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu mẫu</a>
                         </div>
                     </div>
@@ -327,17 +323,6 @@
     </section>
 </div>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/moment/moment.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
-    <script type="text/javascript">
-        $('#reservationdate_u').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-    </script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/js/student/student_index.js"></script>
 </th:block>
 </body>

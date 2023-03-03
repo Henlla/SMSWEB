@@ -1,14 +1,15 @@
 $(()=>{
-
+    $('#reservationdate_u').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
     $('.select2').select2({
         theme: 'bootstrap4'
-    })
+    });
     $("#student-table").DataTable({
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
         scrollCollapse: true,
         scrollY: '600px',
-        // pagingType:"full_numbers",
         "language": {
             "decimal":        "",
             "emptyTable":     "Không có dữ liệu",
@@ -281,9 +282,7 @@ var OnUpdate = (id) => {
             const ward_id = data.student.studentByProfile.wardByWardId.id
 
             console.log(province_id, district_id, ward_id)
-
-            // $("#province_u").val(province_id).trigger('change');
-            $("#province_u option[value='" + province_id + "']").prop("selected", true);
+            $("#province_u").val(province_id).trigger('change');
 
             $.ajax({
                 url: "http://localhost:8080/api/districts/",
@@ -294,8 +293,7 @@ var OnUpdate = (id) => {
                     for (var dis of res) {
                         district.options[district.options.length] = new Option(dis.name, dis.id);
                     }
-                    $("#district_u option[value='" + district_id + "']").prop("selected", true);
-                    // $("#district_u").val(district_id).trigger('change');
+                    $("#district_u").val(district_id).trigger('change');
                     $.ajax({
                         url: "http://localhost:8080/api/wards/",
                         method: "GET",
@@ -305,8 +303,7 @@ var OnUpdate = (id) => {
                             for (const ward of res) {
                                 wards.options[wards.options.length] = new Option(ward.name, ward.id);
                             }
-                            $("#ward_u option[value='" + ward_id + "']").prop("selected", true);
-                            // $("#ward_u").val(ward_id).trigger('change');
+                            $("#ward_u").val(ward_id).trigger('change');
                         }
                     })
                 }

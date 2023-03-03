@@ -1,6 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
 
+import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.*;
 import com.example.smsweb.dto.Date;
 import com.example.smsweb.jwt.JWTUtils;
@@ -9,9 +10,15 @@ import com.example.smsweb.utils.DayOfWeekSchedule;
 import com.example.smsweb.utils.ExcelHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -26,12 +33,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.temporal.WeekFields;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
+import static org.apache.poi.ss.util.CellUtil.createCell;
 
 @Controller
 @Slf4j
@@ -47,8 +54,7 @@ public class ClassController {
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
     private final String SCHEDULE_DETAIL_URL = "http://localhost:8080/api/schedules_detail/";
     private final String HOLIDAY_URL = "https://holidayapi.com/v1/holidays?pretty&key=97662a7f-e120-4e95-b3a8-7c18d1c40717&country=VN&year=2022";
-
-
+    
     @GetMapping("/class-index")
     public String index(Model model, @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
         if (_token.equals("")) {
@@ -92,123 +98,6 @@ public class ClassController {
         model.addAttribute("majors", listMajor.getData());
         model.addAttribute("teachers", teacherList);
         return "dashboard/class/class_create";
-    }
-
-    @PostMapping("/class-create")
-    @ResponseBody
-    public String createClass(Model model,
-                              @CookieValue(name = "_token", defaultValue = "") String _token,
-                              @RequestParam("newClass") String newClass,
-                              @RequestParam(name = "file", required = false) MultipartFile file
-    ) throws JsonProcessingException {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            content.add("newClass", newClass);
-
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                Classses classModel = objectMapper.readValue(newClass, Classses.class);
-                Object data = response.getBody().getData();
-                if (file != null) {
-                    try {
-                        Boolean addStudent = UpdateClassIdForStudentClass(_token, file, classModel.getClassCode());
-                        if (addStudent) {
-                            return new responModelForClass("success", "Thêm danh sách sinh viên thành công").toString();
-                        } else {
-                            return new responModelForClass("success", "Thêm danh sách sinh viên thất bại").toString();
-                        }
-                    } catch (Exception e) {
-                        String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
-                        return new responModelForClass("success", "Thêm danh sách sinh viên thất bại. " + message).toString();
-                    }
-                } else {
-                    return new responModelForClass("success", "").toString();
-                }
-            } else {
-                return new responModelForClass("fail", "").toString();
-            }
-        } catch (HttpClientErrorException ex) {
-            log.error(ex.getMessage());
-            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                return ex.getMessage();
-            } else {
-                return ex.getMessage();
-            }
-        }
-
-    }
-
-    private Boolean UpdateClassIdForStudentClass(String _token, MultipartFile file, String classCode) throws JsonProcessingException {
-        if (!file.isEmpty()) {
-            try {
-                // get list studentId form Excel file
-                List<String> listStudentCard = new ArrayList<>();
-                XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-                XSSFSheet sheet = workbook.getSheetAt(0);
-                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
-                    XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex == 0) {
-                        continue;
-                    }
-                    String student_code = ExcelHelper.getValue(row.getCell(1)).toString();
-                    if (!student_code.isEmpty() && listStudentCard.indexOf(student_code) == -1) {
-                        listStudentCard.add(student_code);
-                    }
-                }
-
-                if (!listStudentCard.isEmpty()) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    RestTemplate restTemplate = new RestTemplate();
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.set("Authorization", "Bearer " + _token);
-
-                    MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-                    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-
-                    ResponseEntity<String> responseStudent = restTemplate.exchange(STUDENT_URL + "findStudentIdByRangeStudentCard/" + new ObjectMapper().writeValueAsString(listStudentCard),
-                            HttpMethod.GET, request, String.class);
-                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(), new TypeReference<List<Student>>() {
-                    });
-
-                    content.add("classCode", classCode);
-                    request = new HttpEntity<>(content, headers);
-                    ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST, request, String.class);
-                    content.remove("classCode");
-                    ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {
-                    });
-                    String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
-                    Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
-                    List<StudentClass> studentClassList = new ArrayList<>();
-                    for (Student student : listStudent) {
-                        StudentClass studentClass = new StudentClass();
-                        studentClass.setStudentId(student.getId());
-                        studentClass.setClassId(classModel.getId());
-                        studentClassList.add(studentClass);
-                    }
-                    content.add("listStudentClass", objectMapper.writeValueAsString(studentClassList));
-                    request = new HttpEntity<>(content, headers);
-                    ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, request, ResponseModel.class);
-
-                    return true;
-                } else {
-                    return false;
-                }
-            } catch (Exception e) {
-                var s = e.getMessage();
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-        return false;
     }
 
     @GetMapping("/class-details/{classCode}")
@@ -603,20 +492,340 @@ public class ClassController {
         }
     }
 
-    class responModelForClass {
-        String status;
-        String message;
+    @GetMapping("/get-student-by-card/{studentCard}")
+    @ResponseBody
+    public String findStudent(
+            @CookieValue(name = "_token", defaultValue = "") String _token,
+            @PathVariable("studentCard")String studentCard
+    ) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            JWTUtils.checkExpired(_token);
+            HttpHeaders headers= new HttpHeaders();
+            headers.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ObjectMapper objectMapper = new ObjectMapper();
+            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"findStudentByStudentCard/"+studentCard,HttpMethod.GET,request,String.class);
+            Student student = objectMapper.readValue(response.getBody(),new TypeReference<Student>(){});
+            if (student != null){
+                String convertToJson = objectMapper.writeValueAsString(student);
+                return convertToJson;
+            }else {
+                throw new ErrorHandler("Không tìm thấy sinh viên: "+ studentCard);
+            }
+        }catch (HttpClientErrorException ex){
+            log.error(ex.getMessage());
+            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                return ex.getMessage();
+            }else {
+                return ex.getMessage();
+            }
 
-        public responModelForClass(String status, String message) {
-            this.status = status;
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return "{\"status\":\"" + status + "\"," +
-                    "\"message\":\"" + message + "\"" +
-                    "}";
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    @PostMapping("/add-student-to-class")
+    @ResponseBody
+    public String addStudentToClass(
+            @CookieValue(name = "_token", defaultValue = "") String _token,
+            @RequestParam("studentId")int studentId,
+            @RequestParam("classId")int classId
+    ) {
+        try {
+            JWTUtils.checkExpired(_token);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers= new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+
+            StudentClass studentClass = new StudentClass();
+            studentClass.setStudentId(studentId);
+            studentClass.setClassId(classId);
+
+            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+            content.add("newStudentClass",objectMapper.writeValueAsString(studentClass));
+            request = new HttpEntity<>(content, headers);
+            ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL+"save", HttpMethod.POST, request, ResponseModel.class);
+
+            if (responseStudentClass.getStatusCode().is2xxSuccessful()){
+                String convertToJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
+                return convertToJson;
+            }else {
+                throw new ErrorHandler("Thêm sinh viên thất bại");
+            }
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/import-student-excel")
+    @ResponseBody
+    public String importStudentExcel(
+            @CookieValue(name = "_token", defaultValue = "") String _token,
+            @RequestParam("classCode")String classCode,
+            @RequestParam("availablePlace") int availablePlace,
+            @RequestParam(name = "studentList", required = false) MultipartFile file
+    ) {
+        try {
+            JWTUtils.checkExpired(_token);
+            if (file != null) {
+                try {
+                    ClassResponse response = importStudentClass(_token, file, classCode, availablePlace);
+                    if (response.getStatus() == "success") {
+                        return response.toString();
+                    } else {
+                        throw new ErrorHandler(response.getMessage());
+                    }
+                } catch (Exception e) {
+                    String message = e.getMessage().substring(e.getMessage().indexOf("\"")+1, e.getMessage().lastIndexOf("\""));
+                    throw new ErrorHandler(message);                }
+            } else {
+                throw new ErrorHandler("Không thể thêm danh sách trống");
+            }
+        } catch (Exception ex) {
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
+    @PostMapping("/class-create")
+    @ResponseBody
+    public String createClass(Model model,
+                              @CookieValue(name = "_token", defaultValue = "") String _token,
+                              @RequestParam("newClass") String newClass,
+                              @RequestParam(name = "file", required = false) MultipartFile file
+    ) throws JsonProcessingException {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+
+            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            content.add("newClass", newClass);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Classses classModel = objectMapper.readValue(newClass, Classses.class);
+                Object data = response.getBody().getData();
+                if (file != null) {
+                    try {
+                        ClassResponse result = importStudentClass(_token, file, classModel.getClassCode(), classModel.getLimitStudent());
+                        if (result.getStatus() == "success") {
+                            return result.toString();
+                        } else {
+                            return new ClassResponse("success", "Thêm danh sách sinh viên thất bại. "+ result.getMessage()).toString();
+                        }
+                    } catch (Exception e) {
+                        String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
+                        return new ClassResponse("success", "Thêm danh sách sinh viên thất bại. " + message).toString();
+                    }
+                } else {
+                    return new ClassResponse("success", "").toString();
+                }
+            } else {
+                return new ClassResponse("fail", "").toString();
+            }
+        } catch (HttpClientErrorException ex) {
+            log.error(ex.getMessage());
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return ex.getMessage();
+            }
+        }
+
+    }
+
+    private ClassResponse importStudentClass(String _token, MultipartFile file, String classCode, int availablePlace) throws JsonProcessingException {
+        if (!file.isEmpty()) {
+            try {
+                // get list studentId form Excel file
+                List<String> listStudentCard = new ArrayList<>();
+                XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+                XSSFSheet sheet = workbook.getSheetAt(0);
+                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 1); rowIndex++) {
+                    XSSFRow row = sheet.getRow(rowIndex);
+                    if (rowIndex == 0) {
+                        continue;
+                    }
+                    String student_code = ExcelHelper.getValue(row.getCell(1)).toString();
+                    if (!student_code.isEmpty() && listStudentCard.indexOf(student_code) == -1) {
+                        listStudentCard.add(student_code);
+                    }
+                }
+
+                if (!listStudentCard.isEmpty()) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    RestTemplate restTemplate = new RestTemplate();
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.set("Authorization", "Bearer " + _token);
+
+                    MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+                    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+
+                    ResponseEntity<String> responseStudent = restTemplate.exchange(STUDENT_URL + "findStudentIdByRangeStudentCard/" + new ObjectMapper().writeValueAsString(listStudentCard),
+                            HttpMethod.GET, request, String.class);
+                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(), new TypeReference<List<Student>>() {});
+                    if(listStudent.size() > availablePlace){
+                        return new ClassResponse("error", "Chỉ được thêm "+ availablePlace + " vào lớp");
+                    }
+
+                    content.add("classCode", classCode);
+                    request = new HttpEntity<>(content, headers);
+                    ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST, request, String.class);
+                    content.remove("classCode");
+                    ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {
+                    });
+                    String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
+                    Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
+                    List<StudentClass> studentClassList = new ArrayList<>();
+                    for (Student student : listStudent) {
+                        StudentClass studentClass = new StudentClass();
+                        studentClass.setStudentId(student.getId());
+                        studentClass.setClassId(classModel.getId());
+                        studentClassList.add(studentClass);
+                    }
+                    content.add("listStudentClass", objectMapper.writeValueAsString(studentClassList));
+                    request = new HttpEntity<>(content, headers);
+                    ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, request, ResponseModel.class);
+                    if (responseStudentClass.getStatusCode().is2xxSuccessful()){
+                        return new ClassResponse("success","Thêm thành công "+ studentClassList.size()+ " sinh viên");
+                    }else{
+                        return new ClassResponse("error","Thêm danh sách sinh viên thất bại");
+                    }
+                } else {
+                    return new ClassResponse("error","Không thể thêm danh sách trống");
+                }
+            } catch (Exception e) {
+                var s = e.getMessage();
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+        return new ClassResponse("error","Không thể thêm danh sách trống");
+    }
+
+    @GetMapping("/export-student-excel/{ClassId}")
+    public void exportStudentList(HttpServletResponse response,
+                                  @CookieValue(name = "_token", defaultValue = "") String _token,
+                                  @PathVariable("ClassId")int classId
+    ){
+        try {
+            JWTUtils.checkExpired(_token);
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ObjectMapper objectMapper = new ObjectMapper();
+            ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId, HttpMethod.GET, request, String.class);
+            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {});
+            String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
+
+            Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
+
+            response.setContentType("application/octet-stream");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=students_" + classModel.getClassCode() + ".xlsx";
+            response.setHeader(headerKey, headerValue);
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet;
+            CellStyle style ;
+            XSSFFont font;
+            sheet = workbook.createSheet("CLASS "+ classModel.getClassCode());
+            sheet.addMergedRegion(new CellRangeAddress(0,0,0,6));
+            Row row;
+
+            //Create Title
+            row = sheet.createRow(0);
+            style = workbook.createCellStyle();
+            font = workbook.createFont();
+            font.setBold(true);
+            font.setFontHeight(20);
+            style.setFont(font);
+            style.setAlignment(HorizontalAlignment.CENTER);
+            style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+            createCell(row, 0, "STUDENTS OF CLASS "+classModel.getClassCode(), style);
+
+            //Create header for workbook
+            row = sheet.createRow(1);
+
+            style = workbook.createCellStyle();
+            font = workbook.createFont();
+            font.setItalic(true);
+            font.setFontHeight(16);
+            style.setFont(font);
+            style.setAlignment(HorizontalAlignment.CENTER);
+            style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+            createCell(row, 0, "Student Card", style);
+            createCell(row, 1, "Full Name", style);
+            createCell(row, 2, "Gender", style);
+            createCell(row, 3, "Date of birth", style);
+            createCell(row, 4, "Phone number", style);
+            createCell(row, 5, "Email", style);
+            createCell(row, 6, "Province", style);
+            
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
+            sheet.autoSizeColumn(5);
+            sheet.autoSizeColumn(6);
+
+            //Write data
+            style = workbook.createCellStyle();
+            font = workbook.createFont();
+            font.setFontHeight(12);
+            style.setFont(font);
+            int rowCount = 2;
+            for (StudentClass studentClass:classModel.getStudentClassById()) {
+                row = sheet.createRow(rowCount);
+                createCell(row, 0, studentClass.getClassStudentByStudent().getStudentCard(), style);
+                createCell(row, 1,studentClass.getClassStudentByStudent().getStudentByProfile().getFirstName()+ " "
+                        + studentClass.getClassStudentByStudent().getStudentByProfile().getLastName(),
+                        style);
+                createCell(row, 2, studentClass.getClassStudentByStudent().getStudentByProfile().getSex(), style);
+                createCell(row, 3, studentClass.getClassStudentByStudent().getStudentByProfile().getDob(), style);
+                createCell(row, 4, studentClass.getClassStudentByStudent().getStudentByProfile().getPhone(), style);
+                createCell(row, 5, studentClass.getClassStudentByStudent().getStudentByProfile().getEmail(), style);
+                createCell(row, 6, studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince().getName(), style);
+                sheet.autoSizeColumn(0);
+                sheet.autoSizeColumn(1);
+                sheet.autoSizeColumn(2);
+                sheet.autoSizeColumn(3);
+                sheet.autoSizeColumn(4);
+                sheet.autoSizeColumn(5);
+                sheet.autoSizeColumn(6);
+                rowCount++;
+            }
+
+            ServletOutputStream outputStream = response.getOutputStream();
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+
+        } catch (HttpClientErrorException e) {
+            throw new ErrorHandler("token expired");
+        } catch (JsonProcessingException e) {
+            throw new ErrorHandler(e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
 }

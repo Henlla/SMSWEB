@@ -1,16 +1,13 @@
 package com.example.smsweb.client.dashboard;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.smsweb.dto.LoginResponse;
-import com.example.smsweb.models.Account;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,8 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Date;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
@@ -77,17 +72,19 @@ public class LoginController {
 
             if(hasUserRole){
                 Cookie jwtTokenCookie = new Cookie("_token", _token);
-//                DecodedJWT jwtDecode = JWT.decode(_token);
-//                Date timeJWT = jwtDecode.getExpiresAt();
-//                Date now = new Date();
-//                long time = (timeJWT.getTime() - now.getTime()) / 1000;
-//                jwtTokenCookie.setMaxAge(Integer.parseInt(Long.toString(time)));
                 jwtTokenCookie.setSecure(true);
                 jwtTokenCookie.setHttpOnly(true);
                 jwtTokenCookie.setPath("/");
                 responseHttp.addCookie(jwtTokenCookie);
+                return "redirect:/dashboard";
+            }else{
+                Cookie jwtTokenCookie = new Cookie("_token", _token);
+                jwtTokenCookie.setSecure(true);
+                jwtTokenCookie.setHttpOnly(true);
+                jwtTokenCookie.setPath("/");
+                responseHttp.addCookie(jwtTokenCookie);
+                return "redirect:/index";
             }
-            return "redirect:/dashboard";
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 model.addAttribute("msg", "Đăng nhập thất bại");

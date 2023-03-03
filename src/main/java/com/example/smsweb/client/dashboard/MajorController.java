@@ -115,24 +115,19 @@ public class MajorController {
 
     @GetMapping("/export-excel")
     public String exportExcel(@CookieValue(name = "_token", defaultValue = "") String _token, HttpServletResponse responses) throws IOException {
-        ResponseEntity<ResponseModel> response = null;
         try {
             JWTUtils.checkExpired(_token);
             restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            response = restTemplate.exchange(MAJOR_URL + "list", HttpMethod.GET, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "list", HttpMethod.GET, request, ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             List<Major> listMajors = new ObjectMapper().readValue(json, new TypeReference<>() {
             });
             service.exportDataToExcel(responses, listMajors, "major_export");
-            return "Xuất dữ liệu thành công";
+            return "redirect:/dashboard/major/";
         } catch (Exception e) {
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return response.getBody().getData().toString();
-            } else {
-                return e.getMessage();
-            }
+            return "redirect:/dashboard/login";
         }
     }
 
@@ -142,7 +137,7 @@ public class MajorController {
         try {
             JWTUtils.checkExpired(_token);
             service.importDataToDb(file);
-            return "";
+            return "Đõ dữ liệu thành công";
         } catch (Exception e) {
             return e.getMessage();
         }

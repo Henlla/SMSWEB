@@ -1,10 +1,12 @@
 $(() => {
+    $(".select2bs4").select2({
+        theme: "bootstrap4"
+    });
     $("#app-type-table").DataTable({
         pageLength: 5,
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
         scrollCollapse: true,
         scrollY: '300px',
-        // pagingType:"full_numbers",
         "language": {
             "decimal": "",
             "emptyTable": "Không có dữ liệu",
@@ -36,7 +38,6 @@ $(() => {
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
         scrollCollapse: true,
         scrollY: '300px',
-        // pagingType:"full_numbers",
         "language": {
             "decimal": "",
             "emptyTable": "Không có dữ liệu",
@@ -66,10 +67,62 @@ $(() => {
     $("#app-modal").on("hidden.bs.modal", () => {
         $("#appType").val("").trigger("change");
     });
-    $("#select2bs4").select2({
-        theme: "bootstrap4"
-    });
+
 });
+
+var OnChangeStatus = () => {
+    var status = $("#edit-status").val();
+    if(status === "DISCARD"){
+        $("#edit-note").val("Vui lòng tải hướng dẫn và làm theo hướng dẫn");
+    }else if(status === "APPROVED"){
+        $("#edit-note").val("Sau 7 ngày đến phòng tài vụ để lấy đơn");
+    }else{
+        $("#edit-note").val("");
+    }
+}
+
+
+var OnDeleteApplicationType = (id) => {
+    Swal.fire({
+        title: 'Bạn muốn xóa dữ liệu này?',
+        text: "Sau khi đồng ý sẽ không khôi phục được!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: "Hủy",
+        confirmButtonText: 'Đồng ý!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/dashboard/deleteAppType/delete/" + id,
+                method: "POST",
+                success: () => {
+                    toastr.success("Xóa thành dữ liệu công");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                },
+                error: (data) => {
+                    if (data.responseText.toLowerCase() === "token expired") {
+                        Swal.fire({
+                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: 'Đồng ý',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/dashboard/login";
+                            }
+                        });
+                    } else {
+                        toastr.error("Xóa thất bại");
+                    }
+                }
+            });
+        }
+    });
+}
 
 var OnAppDownload = (id) => {
     $.ajax({
@@ -77,66 +130,36 @@ var OnAppDownload = (id) => {
         method: "GET",
         contentType: "application/json",
         success: async (data) => {
-            console.log(data);
             var downloadLink = document.createElement("a");
             downloadLink.href = (await base64ToWord(data.file)).url;
             $.ajax({
-                url: "/dashboard/application/get_one_app_type/" + data.applicationTypeId,
+                url: "/dashboard/applicationType/get_one_app_type/" + data.applicationTypeId,
                 method: "GET",
                 contentType: "application/json",
                 success: (data) => {
-                    console.log(data);
                     downloadLink.download = data.name;
-                    console.log(downloadLink);
                     downloadLink.click();
                 },
                 error: (data) => {
-                    if (data.toLowerCase() === "token expired") {
-                        alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                        setTimeout(() => {
-                            location.href = "/dashboard/login";
-                        }, 2000);
+                    if (data.responseText.toLowerCase() === "token expired") {
+                        Swal.fire({
+                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: 'Đồng ý',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/dashboard/login";
+                            }
+                        });
                     } else {
-                        alert("Không tìm thấy dữ liệu");
-                        $("#appType").val("").trigger("change");
+                        toastr.error("Xóa thất bại");
                     }
                 }
             });
         },
         error: (data) => {
-            if (data.toLowerCase() === "token expired") {
-                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                setTimeout(() => {
-                    location.href = "/dashboard/login";
-                }, 2000);
-            } else {
-                alert("Không tìm thấy dữ liệu");
-            }
-        }
-    });
-}
-
-var OnEditApplication = (id) => {
-    $("#app-edit-modal").modal("show");
-}
-
-var OnUpdateApplication = () => {
-    var status = $("#edit-status").val();
-    var note = $("#edit-note").val();
-    var response_date = FormatHelper("DATE",new Date(),"dd/mm/yyyy");
-    var application = {
-        "status":status,
-        "note":note
-    }
-    $.ajax({
-        url:"/dashboard/application/update",
-        method:"POST",
-        contentType:"application/json",
-        success: () =>{
-
-        },
-        error : (data) =>{
-            if(data.responseText.toLowerCase() === "token expired"){
+            if (data.responseText.toLowerCase() === "token expired") {
                 Swal.fire({
                     title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
                     showDenyButton: false,
@@ -146,11 +169,96 @@ var OnUpdateApplication = () => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
+            } else {
+                toastr.error("Xóa thất bại");
             }
         }
-    })
+    });
+}
 
+var OnEditApplication = (id) => {
+    $.ajax({
+        url: "/dashboard/application/get_one_app/" + id,
+        method: "GET",
+        contentType: "application/json",
+        success: (data) => {
+            $("#app-edit-id").val(data.id);
+            $("#app-edit-modal").modal("show");
+        },
+        error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error("Không tìm thấy dữ liệu");
+            }
+        }
+    });
+}
+
+var OnGetOneApplication = async (id) => {
+    return await fetch("/dashboard/application/get_one_app/" + id)
+        .then(res => res.json())
+        .then((data) => {
+            return data
+        });
+}
+
+var OnUpdateApplication = async () => {
+    var id = $("#app-edit-id").val();
+    var status = $("#edit-status").val();
+    var note = $("#edit-note").val();
+    var response_date = FormatHelper("DATE", new Date(), "dd/mm/yyyy");
+    let data = await OnGetOneApplication(id);
+    var application = {
+        "id": id,
+        "sendDate": data.sendDate,
+        "note": data.note,
+        "file": data.file,
+        "status": status,
+        "studentId": data.studentId,
+        "applicationTypeId": data.applicationTypeId,
+        "responseNote": note,
+        "responseDate": response_date
+    }
+    $.ajax({
+        url: "/dashboard/application/update",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(application),
+        success: (data) => {
+            toastr.success("Cập nhật thành công");
+            $("#app-edit-modal").modal("hide");
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        },
+        error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error("Cập nhật thất bại");
+            }
+        }
+    });
 }
 
 var OnCreateApplicationType = async () => {
@@ -164,7 +272,7 @@ var OnCreateApplicationType = async () => {
     var fileExtension = GetExtension(appTypeFile.name);
     if (fileExtension === "docx") {
         $.ajax({
-            url: "/dashboard/application/save_app_type",
+            url: "/dashboard/applicationType/save_app_type",
             data: formData,
             method: "POST",
             contentType: false,
@@ -172,19 +280,25 @@ var OnCreateApplicationType = async () => {
             enctype: "multipart/form-data",
             success: (data) => {
                 $("#create-app-type-modal").modal("hide");
-                alert("Tạo thành công");
+                toastr.success("Tạo thành công");
                 setTimeout(() => {
                     location.reload();
-                }, 2000);
+                }, 1500);
             },
             error: (data) => {
-                if (data.toLowerCase() === "token expired") {
-                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                    setTimeout(() => {
-                        location.href = "/dashboard/login";
-                    }, 2000);
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Đồng ý',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
                 } else {
-                    alert("Tạo mới thất bại");
+                    toastr.error("Tạo mới thất bại");
                 }
             }
         });
@@ -198,12 +312,11 @@ var OnCreateApplication = async () => {
     var student_id = 1;
     var note = $("#note").val();
     var app_type_file = $("#app-type-file").get(0).files[0];
-    var send_date = new Date();
     var application = {
-        "sendDate": send_date.getDate() + "/" + ((send_date.getMonth() + 1) < 10 ? "0" + (send_date.getMonth() + 1) : (send_date.getMonth() + 1)) + "/" + send_date.getFullYear(),
+        "sendDate": FormatHelper("date", new Date(), "dd/mm/yyyy"),
         "note": note,
         "file": await toBase64(app_type_file),
-        "status": "pending",
+        "status": "PENDING",
         "studentId": student_id,
         "applicationTypeId": app_type
     }
@@ -214,19 +327,26 @@ var OnCreateApplication = async () => {
         method: "POST",
         data: JSON.stringify(application),
         success: () => {
-            alert("Tạo mới thành công");
+            toastr.success("Tạo mới thành công");
+            $("#app-modal").modal("hide");
             setTimeout(() => {
                 location.reload();
             }, 2000);
         },
         error: (data) => {
-            if (data.toLowerCase() === "token expired") {
-                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                setTimeout(() => {
-                    location.href = "/dashboard/login";
-                }, 2000);
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
             } else {
-                alert("Tạo mới thất bại");
+                toastr.error("Tạo mới thất bại");
             }
         }
     });
@@ -247,22 +367,27 @@ var OnChangeAppType = () => {
     if (appType !== "") {
         $("#appTypeDownload").removeClass("d-none");
         $.ajax({
-            url: "/dashboard/application/get_one_app_type/" + appType,
+            url: "/dashboard/applicationType/get_one_app_type/" + appType,
             method: "GET",
             contentType: "application/json",
             success: async (data) => {
                 $("#appTypeDownload").attr("href", (await base64ToWord(data.file)).url);
                 $("#appTypeDownload").attr("download", data.name);
-            }
-            ,
+            },
             error: (data) => {
-                if (data.toLowerCase() === "token expired") {
-                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                    setTimeout(() => {
-                        location.href = "/dashboard/login";
-                    }, 2000);
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Đồng ý',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
                 } else {
-                    alert("Không tìm thấy dữ liệu");
+                    toastr.error("Không tìm thấy dữ liệu");
                     $("#appType").val("").trigger("change");
                 }
             }
