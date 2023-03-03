@@ -40,4 +40,6 @@ public class ScheduleDetail {
     @JsonBackReference
     @JoinColumn(name = "schedule_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Schedule scheduleByScheduleId;
+
+
 }

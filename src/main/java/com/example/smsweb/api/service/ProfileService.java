@@ -31,24 +31,24 @@ public class ProfileService{
     @Autowired
     private FileUtils fileUtils;
 
-    private FirebaseOptions options;
+//    private FirebaseOptions options;
 
-    @EventListener
-    public void init(ApplicationReadyEvent event) {
-        try {
-            ClassPathResource serviceAccount = new ClassPathResource("sms-project-a5152-firebase-adminsdk-k0vzt-f793c0f483.json");
-            options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
-                    .setStorageBucket(environment.getProperty("firebase.bucket-name"))
-                    .build();
-            FirebaseApp.initializeApp(options);
-
-        } catch (Exception ex) {
-
-            ex.printStackTrace();
-
-        }
-    }
+//    @EventListener
+//    public void init(ApplicationReadyEvent event) {
+//        try {
+//            ClassPathResource serviceAccount = new ClassPathResource("sms-project-a5152-firebase-adminsdk-k0vzt-f793c0f483.json");
+//            options = new FirebaseOptions.Builder()
+//                    .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
+//                    .setStorageBucket(environment.getProperty("firebase.bucket-name"))
+//                    .build();
+//            FirebaseApp.initializeApp(options);
+//
+//        } catch (Exception ex) {
+//
+//            ex.printStackTrace();
+//
+//        }
+//    }
     // save file to Firebase , params is MultipartFile
     // return : Path
     public String saveFile(MultipartFile file) throws IOException {

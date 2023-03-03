@@ -3,6 +3,7 @@ package com.example.smsweb.client.dashboard;
 
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.*;
+import com.example.smsweb.dto.Date;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
 import com.example.smsweb.utils.DayOfWeekSchedule;
@@ -21,6 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -331,31 +333,155 @@ public class ClassController {
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
                 ScheduleModel scheduleModel = new ScheduleModel();
                 List<DayInWeek> dayInWeekList = new ArrayList<>();
-                for (ScheduleDetail scheduleDetail : schedule.getScheduleDetailsById()) {
-                    WeekFields weekFields = WeekFields.of(Locale.getDefault());
-                    int weekOfMonth = LocalDate.parse(scheduleDetail.getDate()).get(weekFields.weekOfMonth());
-                    int monthOfYear = LocalDate.parse(scheduleDetail.getDate()).getMonthValue();
-                    int weekOfYear = LocalDate.parse(scheduleDetail.getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                    DayInWeek diw = new DayInWeek();
-                    diw.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                    diw.setSubject(scheduleDetail.getSubjectBySubjectId());
-                    diw.setDayOfWeek(scheduleDetail.getDayOfWeek());
-                    diw.setSubjectId(scheduleDetail.getSubjectId());
-                    diw.setWeek(weekOfMonth);
-                    diw.setMonth(monthOfYear);
-                    diw.setWeekOfYear(weekOfYear);
-                    dayInWeekList.add(diw);
-                }
+                boolean flag = false;
+                LocalDate minDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).min(LocalDate::compareTo).get();
+                LocalDate maxDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).max(LocalDate::compareTo).get();
+                List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a,b)->LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
+                for (ScheduleDetail scheduleDetail : listSortDate) {
+                    if(flag){
+                        break;
+                    }
+                    for (LocalDate date = minDate;date .isBefore(maxDate.plusDays(1));date = date.plusDays(1)){
+                        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+                        int weekOfMonth = LocalDate.parse(scheduleDetail.getDate()).get(weekFields.weekOfMonth());
+                        int monthOfYear = LocalDate.parse(scheduleDetail.getDate()).getMonthValue();
+                        int weekOfYear = LocalDate.parse(scheduleDetail.getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                        if(date.isEqual(LocalDate.parse(scheduleDetail.getDate()))){
+                            DayInWeek diw = new DayInWeek();
+                            diw.setId(scheduleDetail.getId());
+                            diw.setDate(LocalDate.parse(scheduleDetail.getDate()));
+                            diw.setSubject(scheduleDetail.getSubjectBySubjectId());
+                            diw.setDayOfWeek(scheduleDetail.getDayOfWeek());
+                            diw.setSubjectId(scheduleDetail.getSubjectId());
+                            diw.setWeek(weekOfMonth);
+                            diw.setMonth(monthOfYear);
+                            diw.setWeekOfYear(weekOfYear);
+                            dayInWeekList.add(diw);
+                            if(listSortDate.get(listSortDate.size() - 1).equals(scheduleDetail) && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))){
+                                diw.setId(scheduleDetail.getId());
+                                diw.setDate(LocalDate.parse(scheduleDetail.getDate()));
+                                diw.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                diw.setDayOfWeek(scheduleDetail.getDayOfWeek());
+                                diw.setSubjectId(scheduleDetail.getSubjectId());
+                                diw.setWeek(weekOfMonth);
+                                diw.setMonth(monthOfYear);
+                                diw.setWeekOfYear(weekOfYear);
+                                dayInWeekList.add(diw);
+                                flag=!flag;
+                                break;
+                            }
+                            minDate = date.plusDays(1);
+                            break;
+                        }else{
+                            DayInWeek diw = new DayInWeek();
+                            diw.setId(0);
+                            diw.setDate(date);
+                            diw.setSubject(null);
+                            diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
+                            diw.setSubjectId(0);
+                            diw.setWeek(date.get(weekFields.weekOfMonth()));
+                            diw.setMonth(date.getMonthValue());
+                            diw.setWeekOfYear(date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
+                            dayInWeekList.add(diw);
+                        }
+                    }
 
+                }
                 scheduleModel.setStartDate(LocalDate.parse(schedule.getStartDate()));
-                scheduleModel.setId(scheduleModel.getId());
+                scheduleModel.setId(schedule.getId());
                 scheduleModel.setEndDate(LocalDate.parse(schedule.getEndDate()));
                 scheduleModel.setSemester(schedule.getSemester());
                 scheduleModel.setDayInWeeks(dayInWeekList);
                 return scheduleModel;
-            }else{
+            } else {
                 return null;
             }
+        } catch (HttpClientErrorException ex) {
+            log.error(ex.getMessage());
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return null;
+            }
+        }
+    }
+
+
+
+    @PostMapping("/changeDateSchedule")
+    @ResponseBody
+    public Object changeDateSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                     @RequestParam("currenDate") String currenDate,
+                                     @RequestParam("classId") String classId,
+                                     @RequestParam("semester") String semester) throws JsonProcessingException {
+        try {
+            JWTUtils.checkExpired(_token);
+            HttpHeaders headers = new HttpHeaders();
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+            params.add("classId", Integer.parseInt(classId));
+            params.add("semester", Integer.parseInt(semester));
+            HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(params, headers);
+            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule, ResponseModel.class);
+            if (responseSchedule.getStatusCode().is2xxSuccessful()) {
+                String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
+                Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+                String[] splitDate = currenDate.split("/");
+                String formatDate = splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0];
+                LocalDate date = LocalDate.parse(formatDate);
+                int getDate = date.getDayOfMonth();
+                int getMonth = date.getMonthValue();
+                boolean isSameDate = schedule.getScheduleDetailsById().stream().noneMatch(dates -> LocalDate.parse(dates.getDate()).getDayOfMonth() == getDate && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth);
+                if (isSameDate) {
+                    return "success";
+                } else {
+                    return "error";
+                }
+            }
+            return "";
+        } catch (HttpClientErrorException ex) {
+            log.error(ex.getMessage());
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    @PostMapping("/updateDateChangeSchedule")
+    @ResponseBody
+    public Object updateDateChangeSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                           @RequestParam("newDate") String newDate,
+                                           @RequestParam("schedule_details_id") String schedule_details_id) throws JsonProcessingException {
+        try {
+            JWTUtils.checkExpired(_token);
+            HttpHeaders headers = new HttpHeaders();
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            String[] splitDate = newDate.split("/");
+            String formatDate = splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0];
+            HttpEntity<Object> requestScheduleDetails = new HttpEntity<>(headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(SCHEDULE_DETAIL_URL + "get/" + Integer.parseInt(schedule_details_id), HttpMethod.GET, requestScheduleDetails, ResponseModel.class);
+            String jsonScheduleDetails = objectMapper.writeValueAsString(response.getBody().getData());
+            ScheduleDetail scheduleDetail = objectMapper.readValue(jsonScheduleDetails, ScheduleDetail.class);
+            String dayOfWeek = String.valueOf(LocalDate.parse(formatDate).getDayOfWeek());
+            scheduleDetail.setDate(formatDate);
+            scheduleDetail.setDayOfWeek(dayOfWeek);
+            String convertToJson = objectMapper.writeValueAsString(scheduleDetail);
+            MultiValueMap<String, Object> paramsDetails = new LinkedMultiValueMap<>();
+            paramsDetails.add("schedule_details", convertToJson);
+            HttpEntity<MultiValueMap<String, Object>> requestScheduleDetailsPUT = new HttpEntity<>(paramsDetails, headers);
+            ResponseEntity<ResponseModel> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL + "put", HttpMethod.PUT, requestScheduleDetailsPUT, ResponseModel.class);
+            if (responseScheduleDetails.getStatusCode().is2xxSuccessful()) {
+                return "success";
+            } else {
+                return "error";
+            }
+
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
             if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
