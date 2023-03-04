@@ -19,21 +19,30 @@ public class ScheduleDetailsService implements IScheduleDetails {
     public void addScheduleList(List<ScheduleDetail> list) {
         try {
             repository.saveAll(list);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new ErrorHandler(ex.getMessage());
         }
     }
 
     @Override
     public List<ScheduleDetail> findScheduleDetailsByScheduleId(Integer id) {
-        return repository.findAllByScheduleId(id).orElseThrow(()->new ErrorHandler("Fail list schedule details by schedule id = "+id));
+        return repository.findAllByScheduleId(id).orElseThrow(() -> new ErrorHandler("Fail list schedule details by schedule id = " + id));
     }
 
-    public void putScheduleDetails(ScheduleDetail scheduleDetail){
+    @Override
+    public ScheduleDetail findScheduleDetailById(Integer id) {
+        return repository.findById(id).orElseThrow(() -> new ErrorHandler("Cannot find schedule details with id = " + id));
+    }
+
+    public void putScheduleDetails(ScheduleDetail scheduleDetail) {
         try {
             repository.save(scheduleDetail);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new ErrorHandler(ex.getMessage());
         }
+    }
+
+    public ScheduleDetail findScheduleDetailsByDate(String date) {
+        return repository.findScheduleDetailByDate(date).orElseThrow(()->new ErrorHandler("Cannot find schedule detail with date = "+date));
     }
 }

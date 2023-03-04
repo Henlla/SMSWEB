@@ -44,4 +44,25 @@ public class ScheduleDetailsRestController {
         }
 
     }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> findOneScheduleDetails(@PathVariable("id")Integer id){
+        try {
+          ScheduleDetail  scheduleDetail=  scheduleDetailsService.findScheduleDetailById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),scheduleDetail));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
+        }
+
+    }
+
+    @PostMapping("/findScheduleByDate")
+    public ResponseEntity<?> findScheduleByDate(@RequestParam("date")String date){
+        try {
+            ScheduleDetail  scheduleDetail=  scheduleDetailsService.findScheduleDetailsByDate(date);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),scheduleDetail));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
+        }
+    }
 }

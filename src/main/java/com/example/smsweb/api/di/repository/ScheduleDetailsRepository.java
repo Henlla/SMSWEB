@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface ScheduleDetailsRepository extends JpaRepository<ScheduleDetail,Integer> {
     Optional<List<ScheduleDetail>> findAllByScheduleId(Integer id);
+    Optional<ScheduleDetail> findScheduleDetailByDate(String date);
 }

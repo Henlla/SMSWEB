@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DayInWeek {
+    private Integer id;
     private LocalDate date;
     private Subject subject;
     private Integer subjectId;

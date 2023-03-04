@@ -44,19 +44,20 @@ public class WebConfig {
                 .authorizeRequests()
                 .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
                  "/api/districts/**","/api/accounts/login","/api/wards/**"
-                        ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**").permitAll()
-                .requestMatchers("/dashboard/login","/login").permitAll()
+                 ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**","/fcm/**","/api/device/**").permitAll()
+                .requestMatchers("/dashboard/login").permitAll()
                 .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
                 .requestMatchers("/dashboard/teacher/**","/dashboard/student/**"
-                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**","/dashboard/applicationType/**"
-                        ,"/dashboard/news/**","/dashboard/class/**").hasAnyAuthority("STAFF","ADMIN")
+                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**"
+                        ,"/dashboard/applicationType/**","/dashboard/news/**","/dashboard/class/**").hasAnyAuthority("STAFF","ADMIN")
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/news/list","/api/news/get/{id}").permitAll()
                 .requestMatchers("/api/accounts/changePassword/{id}","/api/profiles/get/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF","TEACHER")
                 .requestMatchers("/api/students/getByProfile/{id}").hasAnyAuthority("STUDENT")
                 .requestMatchers("/api/teachers/getByProfile/{id}").hasAnyAuthority("TEACHER")
-                .requestMatchers("/api/students-subject/**","/api/classes/**","/api/schedules/**","/api/schedules_detail/**").hasAnyAuthority("ADMIN","STUDENT","TEACHER","STAFF")
+                .requestMatchers("/api/students-subject/**","/api/classes/**","/api/schedules/**",
+                        "/api/schedules_detail/**").hasAnyAuthority("ADMIN","STUDENT","TEACHER","STAFF")
                 .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**",
                  "/api/student-major/**","/api/teachers/**",
                         "/api/staffs/**","/api/news/**").hasAnyAuthority("ADMIN","STAFF")

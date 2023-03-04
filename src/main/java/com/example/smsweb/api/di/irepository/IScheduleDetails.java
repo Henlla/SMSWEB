@@ -8,4 +8,5 @@ public interface IScheduleDetails {
 
     public void addScheduleList(List<ScheduleDetail> list);
     List<ScheduleDetail> findScheduleDetailsByScheduleId(Integer id);
+    ScheduleDetail findScheduleDetailById(Integer id);
 }
