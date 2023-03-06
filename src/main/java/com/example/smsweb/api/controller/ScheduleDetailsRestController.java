@@ -52,7 +52,8 @@ public class ScheduleDetailsRestController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetail(date, scheduleId)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
-
+        }
+    }
     @GetMapping("/get/{id}")
     public ResponseEntity<?> findOneScheduleDetails(@PathVariable("id")Integer id){
         try {

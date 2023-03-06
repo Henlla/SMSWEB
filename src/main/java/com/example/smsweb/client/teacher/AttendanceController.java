@@ -100,7 +100,7 @@ public class AttendanceController {
                         attendanceView = new AttendanceView();
                         // Lấy schedule theo class
                         HttpEntity<String> requestSchedule = new HttpEntity<>(headers);
-                        ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass/" + classes.getId(), HttpMethod.GET, requestSchedule, ResponseModel.class);
+                        ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classes.getId(), HttpMethod.GET, requestSchedule, ResponseModel.class);
                         String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
                         Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
                         String dateSchedule = FormatDate.dateFormat(LocalDate.now(), "yyyy-mm-dd");

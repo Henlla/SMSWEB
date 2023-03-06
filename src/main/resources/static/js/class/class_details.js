@@ -29,8 +29,8 @@ var OnCreateSchedule = (classId, majorId, shift) => {
 
 $(document).ready(function () {
     $('#newDate_input').datetimepicker({
-            format: 'DD/MM/YYYY',
-        });
+        format: 'DD/MM/YYYY',
+    });
     $('#day_default_input').datetimepicker({
         format: 'DD/MM/YYYY',
     });
@@ -764,4 +764,3 @@ var OnChangeTeacher = (teacherName, id) => {
     $('#teacherId').val(id)
     $('#change_teacher').modal('show')
 }
-

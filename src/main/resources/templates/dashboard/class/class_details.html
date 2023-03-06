@@ -387,9 +387,9 @@
         <input type="hidden" id="shift" th:value="${class.getShift()}">
         <input type="hidden" id="availablePlace" th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
     </section>
-    <th:block layout:fragment="optional">
-        <script src="/js/class/class_details.js"></script>
-    </th:block>
 </div>
+<th:block layout:fragment="optional">
+    <script src="/js/class/class_details.js"></script>
+</th:block>
 </body>
 </html>
