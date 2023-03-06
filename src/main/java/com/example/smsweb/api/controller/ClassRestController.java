@@ -69,4 +69,11 @@ public class ClassRestController extends GenericController<Classses> {
     public ResponseEntity<?> findClassByTeacher(@PathVariable("id") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(),service.findClassByTeacherId(id)));
     }
+
+    @PutMapping("/updateClass")
+    public ResponseEntity<?> updateClass(@RequestParam("class")String classes) throws JsonProcessingException {
+        Classses classses = new ObjectMapper().readValue(classes, Classses.class);
+        service.save(classses);
+        return ResponseEntity.status(HttpStatus.OK).body("success");
+    }
 }

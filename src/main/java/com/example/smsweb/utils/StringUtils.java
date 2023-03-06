@@ -16,4 +16,9 @@ public class StringUtils {
         String studentCard = "Student"+ RandomStringUtils.random(7,0,numbers.length(),true,true,numbers.toCharArray());
         return studentCard;
     }
+
+    public static String randomTeacherCard(String numbers){
+        String teacherCard = "Teacher"+ RandomStringUtils.random(7,0,numbers.length(),true,true,numbers.toCharArray());
+        return teacherCard;
+    }
 }

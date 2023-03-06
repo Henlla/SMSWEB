@@ -22,6 +22,9 @@ public class Teacher {
     @Basic
     @Column(name = "profile_id")
     private Integer profileId;
+    @Basic
+    @Column(name = "teacher_card")
+    private String teacherCard;
     @ManyToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Profile profileByProfileId;

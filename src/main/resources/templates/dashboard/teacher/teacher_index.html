@@ -36,6 +36,7 @@
                                     <th>STT</th>
                                     <th>Hình ảnh</th>
                                     <th>Tên giáo viên</th>
+                                    <th>Mã giáo viên</th>
                                     <th>Hành động</th>
                                 </tr>
                                 </thead>
@@ -49,6 +50,9 @@
                                              height="50"></td>
                                     <td><span
                                             th:text="${teacher.profileByProfileId.firstName +' '+teacher.profileByProfileId.lastName}"></span>
+                                    </td>
+                                    <td><span
+                                            th:text="${teacher.teacherCard}"></span>
                                     </td>
                                     <td class="text-center">
                                         <a class="mr-3" th:data-name="${teacher.id}"

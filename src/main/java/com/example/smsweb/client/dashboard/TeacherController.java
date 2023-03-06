@@ -133,6 +133,7 @@ public class TeacherController {
             headerTeacher.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, String> paramsTeacher = new LinkedMultiValueMap<>();
             paramsTeacher.add("profileId", String.valueOf(profileResponse.getId()));
+            paramsTeacher.add("teacherCard", StringUtils.randomTeacherCard(numbers));
             HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsTeacher, headerTeacher);
             ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(TEACHER_URL, HttpMethod.POST, requestEntityStudent, ResponseModel.class);
             String teacherResponseToJson = new ObjectMapper().writeValueAsString(responseModelStudent.getBody().getData());

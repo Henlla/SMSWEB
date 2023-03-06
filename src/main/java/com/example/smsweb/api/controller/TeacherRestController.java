@@ -42,4 +42,13 @@ public class TeacherRestController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("error", LocalTime.now().toString(), e.getMessage()));
         }
     }
+
+    @GetMapping("/getByCard/{card}")
+    public ResponseEntity<?> findTeacherByCard(@PathVariable("card") String card){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(iTeacher.findTeacherByCard(card));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("error", LocalTime.now().toString(), e.getMessage()));
+        }
+    }
 }
