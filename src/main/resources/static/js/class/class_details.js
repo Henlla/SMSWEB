@@ -315,9 +315,8 @@ $(document).ready(function () {
             })
             if($('#form_import_student_file').valid()) {
                 var data = new FormData(document.querySelector('#form_import_student_file'))
-                data.append("classCode",classCode)
-                data.append("availablePlace",availablePlace)
-
+                data.append("classCode",$("#classCode").val())
+                data.append("availablePlace",$("#availablePlace").val())
                 $.ajax({
                     url: "/dashboard/class/import-student-excel",
                     method: "POST",
@@ -340,6 +339,7 @@ $(document).ready(function () {
                         });
                     },
                     error: (error)=>{
+                        console.log(error)
                         Swal.fire({
                             icon: 'error',
                             title: 'Thất bại',

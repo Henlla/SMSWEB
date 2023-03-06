@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{teacherDashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Ngành học</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <section class="content-wrapper">
+        <section class="content-header">
+            <h5 class="m-0">Quản lý ngành học</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row mb-3">
+                    <div class="col-12 d-flex align-items-center">
+                        <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" data-target="#create-major-modal" class="btn btn-info btn-sm">
+                            <i class="fas fa-plus"></i> Thêm mới
+                        </button>
+                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Xuất dữ liệu</a>
+                        <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>
+                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Đổ
+                            dữ liệu</a>
+                    </div>
+                </section>
+                <section class="row">
+                    <div class="col-12">
+                        <table th:id="major-table" class="table table-bordered table-hover">
+                            <thead>
+                            <tr class="text-center">
+                                <th class="th-sm">STT</th>
+                                <th class="th-sm">Mã ngành học</th>
+                                <th class="th-sm">Tên ngành học</th>
+                                <th class="th-sm">Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="text-center" th:each="item:${listMajor}">
+                                <td>[[${listMajor.indexOf(item)+1}]]</td>
+                                <td>[[${item.majorCode}]]</td>
+                                <td>[[${item.majorName}]]</td>
+                                <td class="text-center">
+                                    <a class="mr-3" th:data-name="${item.id}"
+                                       onclick="OnEditMajor(this.getAttribute('data-name'))"><i
+                                            class="fas fa-pen indigo-text"></i></a>
+                                    <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:data-name="${item.id}" onclick="OnDeleteMajor(this.getAttribute('data-name'))"><i
+                                            class="fas fa-trash red-text"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </section>
+        </section>
+    </section>
+</div>
+<th:block layout:fragment="optional">
+    <script src="/js/major/major.js"></script>
+</th:block>
+</body>
+</html>

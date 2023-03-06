@@ -36,6 +36,7 @@
                             <table id="class-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
+                                    <th>STT</th>
                                     <th>Mã lớp học</th>
                                     <th>Giáo viên phụ trách</th>
                                     <th>Nghành học</th>
@@ -46,6 +47,7 @@
                                 </thead>
                                 <tbody>
                                 <tr class="text-center" th:each="class:${classes}">
+                                    <td><span th:text="${classes.indexOf(class)+1}"></span></td>
                                     <td><span th:text="${class.getClassCode()}"></span></td>
                                     <td><span th:text="${class.teacher.profileByProfileId.getFirstName()+' '+class.teacher.profileByProfileId.getLastName()}"/></td>
                                     <td><span th:text="${class.major.getMajorName()}"></span></td>

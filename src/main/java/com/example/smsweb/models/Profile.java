@@ -84,4 +84,7 @@ public class Profile {
     @JsonIgnore
     private List<Student> studentsById;
 
+    public String getFullName(){
+        return this.getFirstName()+" "+this.getLastName();
+    }
 }
