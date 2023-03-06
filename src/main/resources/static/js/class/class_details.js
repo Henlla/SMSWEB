@@ -28,6 +28,12 @@ var OnCreateSchedule = (classId, majorId, shift) => {
 }
 
 $(document).ready(function () {
+    $('#newDate_input').datetimepicker({
+            format: 'DD/MM/YYYY',
+        });
+    $('#day_default_input').datetimepicker({
+        format: 'DD/MM/YYYY',
+    });
     $('#btn_update_schedule').css('display', 'none')
     $('#btnDownSchedule').hide()
     $("#student-table").DataTable({

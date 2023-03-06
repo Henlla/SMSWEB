@@ -5,13 +5,13 @@ import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Schedule;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.Http;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -60,6 +60,13 @@ public class ScheduleRestController {
           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDateTime.now().toString(), e.getMessage()));
       }
     }
+
+    @GetMapping("/getScheduleByClassId/{id}")
+    public ResponseEntity<?> getScheduleByClass(@PathVariable("id")Integer classId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),iSchedule.findScheduleByClass(classId)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
 
     @PostMapping("/getScheduleByClass")
     public ResponseEntity<?> getScheduleByClass(@RequestParam("classId")Integer classId) throws JsonProcessingException {

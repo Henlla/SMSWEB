@@ -387,17 +387,9 @@
         <input type="hidden" id="shift" th:value="${class.getShift()}">
         <input type="hidden" id="availablePlace" th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
     </section>
+    <th:block layout:fragment="optional">
+        <script src="/js/class/class_details.js"></script>
+    </th:block>
 </div>
-<th:block layout:fragment="optional">
-    <script type="text/javascript">
-        $('#newDate_input').datetimepicker({
-            format: 'DD/MM/YYYY',
-        });
-        $('#day_default_input').datetimepicker({
-            format: 'DD/MM/YYYY',
-        });
-    </script>
-    <script src="/js/class/class_details.js"></script>
-</th:block>
 </body>
 </html>

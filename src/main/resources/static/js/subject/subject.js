@@ -112,14 +112,29 @@ var OnSaveExcelData = () => {
         method: "POST",
         contentType: false,
         processData: false,
-        success: () => {
-
+        success: (data) => {
+            toastr.success(data);
+            setTimeout(()=>{
+                location.reload();
+            },2000);
         },
-        error: () => {
-
+        error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error("Đỗ dữ liệu thất bại");
+            }
         }
     });
-    alert("ok");
 }
 
 var OnEditSubject = (id) => {
@@ -153,7 +168,7 @@ var OnEditSubject = (id) => {
                     }
                 });
             } else {
-                toastr.error("Xóa thất bại");
+                toastr.error("Không tìm thấy dữ liệu");
             }
         }
     });
@@ -182,6 +197,7 @@ var OnCreateSubject = () => {
             data: JSON.stringify(subject),
             success: (data) => {
                 toastr.success("Tạo thành công");
+                $("#subject-modal").modal("hidex");
                 setTimeout(() => {
                     location.reload();
                 }, 1500);
@@ -226,12 +242,12 @@ var OnUpdateSubject = () => {
         };
         $.ajax({
             url: "/dashboard/subject/update",
-            dataType: "json",
             contentType: "application/json",
             method: "post",
             data: JSON.stringify(subject)
             , success: (data) => {
                 toastr.success("Cập nhật thành công");
+                $("#subject-edit-modal").modal("hide");
                 setTimeout(() => {
                     location.reload();
                 }, 2000);

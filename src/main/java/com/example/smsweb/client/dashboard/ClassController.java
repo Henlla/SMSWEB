@@ -42,9 +42,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.*;
 import java.util.Date;
-
 import static org.apache.poi.ss.util.CellUtil.createCell;
 
 @Controller
@@ -69,18 +72,13 @@ public class ClassController {
         if (_token.equals("")) {
             return "redirect:/dashboard/login";
         }
-
         RestTemplate restTemplate = new RestTemplate();
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + _token);
         HttpEntity<Object> request = new HttpEntity<>(headers);
-
         ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "get", HttpMethod.GET, request, String.class);
         List<Classses> classList = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Classses>>() {
         });
-
-
         model.addAttribute("classes", classList);
         return "dashboard/class/class_index";
     }

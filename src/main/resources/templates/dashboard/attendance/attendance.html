@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Điểm danh</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<section layout:fragment="content">
+    <section class="content-wrapper">
+        <section class="content-header">
+            <h5 class="m-0">Điểm danh</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row mb-3">
+                    <div class="col-12 d-flex align-items-center">
+                        <select class="select2 col-2 form-control" onchange="OnChangeClass()" id="classList">
+                            <option value="">---------Chọn lớp---------</option>
+                            <option th:each="items:${listClass}" th:value="${items.id}">[[${items.classCode}]]</option>
+                        </select>
+                    </div>
+                </section>
+                <section class="row">
+                    <div class="col-12">
+                        <table id="attendanceTable" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên sinh viên</th>
+                                <th>Có mặt</th>
+                                <th>Vắng mặt</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                            </thead>
+                            <tbody id="attendanceBody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </section>
+        </section>
+    </section>
+</section>
+<th:block layout:fragment="optional">
+    <script src="/js/attendance/attendance.js"></script>
+</th:block>
+</body>
+</html>
