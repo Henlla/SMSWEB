@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ISubject extends IGenericRepository<Subject> {
     List<Subject> findSubjectByMajorId(int majorId);
-    String importExcelData(MultipartFile file);
+    List<Subject> findSubjectByMajorIdSemester(Integer majorId,Integer semester);
+    boolean importExcelData(MultipartFile file);
 }

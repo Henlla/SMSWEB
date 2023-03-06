@@ -64,4 +64,9 @@ public class ScheduleService implements ISchedule {
     public Schedule findScheduleByClass(Integer classId) {
         return dao.findScheduleByClassId(classId).orElseThrow(()->new ErrorHandler("Cannot find schedule with class id = " + classId));
     }
+    
+    @Override
+    public List<Schedule> findScheduleByClassID(Integer classId) {
+        return dao.findAllByClassId(classId).orElseThrow(()->new ErrorHandler("Cannot find schedule list with classId = "+classId));
+    }
 }

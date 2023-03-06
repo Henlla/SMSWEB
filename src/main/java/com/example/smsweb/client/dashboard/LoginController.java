@@ -77,8 +77,8 @@ public class LoginController {
                 jwtTokenCookie.setPath("/");
                 responseHttp.addCookie(jwtTokenCookie);
                 return "redirect:/dashboard";
-            }else{
-                model.addAttribute("msg", "Tài khoản không cấp phép");
+            }else {
+                model.addAttribute("msg", "Đăng nhập thất bại");
                 return "dashboard/login/login";
             }
         } catch (HttpClientErrorException e) {
@@ -88,15 +88,5 @@ public class LoginController {
             }
             return null;
         }
-    }
-
-    @PostMapping("dashboard/logout")
-    public String logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("_token", null);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-        return "redirect:/dashboard/login";
     }
 }

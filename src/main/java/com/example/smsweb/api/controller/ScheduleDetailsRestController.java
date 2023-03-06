@@ -46,21 +46,31 @@ public class ScheduleDetailsRestController {
 
     }
 
-    @PostMapping("findScheduleByDate")
-    public ResponseEntity<?> findScheduleByDate(@RequestParam("date") String date) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleByDate(date)));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
-        }
-    }
-
     @PostMapping("findScheduleDetail")
     public ResponseEntity<?> findScheduleDetail(@RequestParam("date") String date, @RequestParam("scheduleId") String scheduleId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetail(date, scheduleId)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> findOneScheduleDetails(@PathVariable("id")Integer id){
+        try {
+          ScheduleDetail  scheduleDetail=  scheduleDetailsService.findScheduleDetailById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),scheduleDetail));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
+        }
+
+    }
+
+    @PostMapping("/findScheduleByDate")
+    public ResponseEntity<?> findScheduleByDate(@RequestParam("date")String date){
+        try {
+            ScheduleDetail  scheduleDetail=  scheduleDetailsService.findScheduleDetailsByDate(date);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),scheduleDetail));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
+import lombok.NonNull;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.News;
@@ -24,11 +24,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.parser.Parser;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.time.LocalDate;
-import java.util.Date;
+
 import java.util.List;
+import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
+
 
 @Controller
 @RequestMapping("dashboard/news/")
@@ -214,15 +223,25 @@ public class NewsController {
     @PostMapping("import_file_excel")
     @ResponseBody
     public Object import_file_excel(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                     @RequestParam("file") MultipartFile file){
+                                    @NonNull @RequestParam("file") MultipartFile file){
+        FileInputStream fileInputStream = null;
+        XWPFDocument document = null;
         try {
-            FileInputStream fis = new FileInputStream(file.getOriginalFilename());
-            XWPFDocument document = new XWPFDocument(fis);
-            List<XWPFParagraph> paragraphs = document.getParagraphs();
-            for(int i=0;i<paragraphs.size();i++){
-                System.out.println(paragraphs.get(i).getParagraphText());
-            }
-            fis.close();
+//            InputStream input = file.getInputStream();
+//            Parser parser = new OOXMLParser();
+//
+//            StringWriter sw = new StringWriter();
+//            SAXTransformerFactory factory = (SAXTransformerFactory)
+//                    SAXTransformerFactory.newInstance();
+//            TransformerHandler handler = factory.newTransformerHandler();
+//            handler.getTransformer().setOutputProperty(OutputKeys.ENCODING, "utf-8");
+//            handler.getTransformer().setOutputProperty(OutputKeys.METHOD, "html");
+//            handler.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes");
+//            handler.setResult(new StreamResult(sw));
+//
+//            Metadata metadata = new Metadata();
+//            metadata.add(Metadata.CONTENT_TYPE, "text/html;charset=utf-8");
+//            parser.parse(input, handler, metadata, new ParseContext());
             return "success";
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());

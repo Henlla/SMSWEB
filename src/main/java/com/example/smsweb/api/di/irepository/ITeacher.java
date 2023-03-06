@@ -5,4 +5,5 @@ import com.example.smsweb.models.Teacher;
 
 public interface ITeacher extends IGenericRepository<Teacher> {
     Teacher findTeacherByProfileId(Integer id);
+    Teacher findTeacherByCard(String card);
 }

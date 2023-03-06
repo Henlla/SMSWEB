@@ -10,4 +10,5 @@ public interface IScheduleDetails {
     List<ScheduleDetail> findScheduleDetailsByScheduleId(Integer id);
     List<ScheduleDetail> findScheduleByDate(String date);
     ScheduleDetail findScheduleDetail(String date,String scheduleId);
+    ScheduleDetail findScheduleDetailById(Integer id);
 }

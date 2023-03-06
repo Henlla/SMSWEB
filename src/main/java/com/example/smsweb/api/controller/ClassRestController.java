@@ -74,5 +74,11 @@ public class ClassRestController extends GenericController<Classses> {
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Errpr",LocalDate.now().toString(),e.getMessage()));
         }
+
+    @PutMapping("/updateClass")
+    public ResponseEntity<?> updateClass(@RequestParam("class")String classes) throws JsonProcessingException {
+        Classses classses = new ObjectMapper().readValue(classes, Classses.class);
+        service.save(classses);
+        return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 }

@@ -125,4 +125,8 @@ public class SubjectService implements ISubject {
             return "Vui lòng chọn file";
         }
     }
+    
+     public List<Subject> findSubjectByMajorIdSemester(Integer majorId, Integer semester) {
+        return dao.findAllByMajorIdAndSemesterId(majorId,semester).orElseThrow(()->new ErrorHandler("Cannot find subject with majorId = "+majorId+" semester "+semester));
+    }
 }

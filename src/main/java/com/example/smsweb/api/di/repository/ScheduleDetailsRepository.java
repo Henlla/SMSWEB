@@ -12,4 +12,5 @@ public interface ScheduleDetailsRepository extends JpaRepository<ScheduleDetail,
     Optional<List<ScheduleDetail>> findAllByScheduleId(Integer id);
     Optional<List<ScheduleDetail>> findByDate(String date);
     Optional<ScheduleDetail> findScheduleDetailByDateAndScheduleId(String date,String scheduleId);
+    Optional<ScheduleDetail> findScheduleDetailByDate(String date);
 }
