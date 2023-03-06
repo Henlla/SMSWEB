@@ -5,9 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Danh sách sinh viên</title>
-    <style>
-
-    </style>
 </head>
 <body>
 <div layout:fragment="content">
@@ -49,7 +46,9 @@
                                 <tr class="text-center" th:each="class:${classes}">
                                     <td><span th:text="${classes.indexOf(class)+1}"></span></td>
                                     <td><span th:text="${class.getClassCode()}"></span></td>
-                                    <td><span th:text="${class.teacher.profileByProfileId.getFirstName()+' '+class.teacher.profileByProfileId.getLastName()}"/></td>
+                                    <td>
+                                        <span th:text="${class.teacher.profileByProfileId.getFirstName()+' '+class.teacher.profileByProfileId.getLastName()}"/>
+                                    </td>
                                     <td><span th:text="${class.major.getMajorName()}"></span></td>
                                     <td><span th:text="${class.studentClassById.size()}"></span></td>
                                     <td><span th:text="${class.getLimitStudent()}"></span></td>
@@ -66,93 +65,89 @@
             </div>
         </div>
     </section>
-</div>
-<th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
-    <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+    <th:block layout:fragment="optional">
+        <script>
+            $(document).ready(function () {
+                $('#class-table').DataTable({
+                    "oLanguage": {
+                        "sSearch": "Tìm kiếm :"
+                    },
+                    "lengthMenu": [5, 10, 25, 50, 75, 100],
+                    initComplete: function () {
+                        count = 0;
+                        this.api().columns([2]).every(function (i) {
+                            var title = this.header();
+                            //replace spaces with dashes
+                            title = $(title).html().replace(/[\W]/g, '');
+                            var column = this;
+                            var select = $('<select id="' + title + '" class="form-control form-control-sm select2" style="width: 50%" ></select>')
+                                .appendTo($('#select-major'))
+                                .on('change', function () {
+                                    //Get the "text" property from each selected data
+                                    //regex escape the value and store in array
+                                    var data = $.map($(this).select2('data'),
+                                        function (value, key) {
+                                            return value.text ? '^' + $.fn.dataTable.util.escapeRegex(value.text) + '$' : null;
+                                        });
+                                    //if no data selected use ""
+                                    if (data.length === 0) {
+                                        data = [""];
+                                    }
+                                    //join array into string with regex or (|)
+                                    var val = data.join('|');
+                                    //search for the option(s) selected
+                                    column
+                                        .search(val ? val : '', true, false)
+                                        .draw();
+                                });
 
-    <script>
-        $(document).ready(function () {
-            $('#class-table').DataTable({
-                "oLanguage": {
-                    "sSearch": "Tìm kiếm :"
-                },
-                "lengthMenu": [5, 10, 25, 50, 75, 100],
-                initComplete: function () {
-                    count = 0;
-                    this.api().columns([2]).every(function (i) {
-                        var title = this.header();
-                        //replace spaces with dashes
-                        title = $(title).html().replace(/[\W]/g, '');
-                        var column = this;
-                        var select = $('<select id="' + title + '" class="form-control form-control-sm select2" style="width: 50%" ></select>')
-                            .appendTo($('#select-major'))
-                            .on('change', function () {
-                                //Get the "text" property from each selected data
-                                //regex escape the value and store in array
-                                var data = $.map($(this).select2('data'),
-                                    function (value, key) {
-                                        return value.text ? '^' + $.fn.dataTable.util.escapeRegex(value.text) + '$' : null;
-                                    });
-                                //if no data selected use ""
-                                if (data.length === 0) {
-                                    data = [""];
-                                }
-                                //join array into string with regex or (|)
-                                var val = data.join('|');
-                                //search for the option(s) selected
-                                column
-                                    .search(val ? val : '', true, false)
-                                    .draw();
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>');
+                            });
+                            //use column title as selector and placeholder
+                            $('#' + title).select2({
+                                closeOnSelect: true,
+                                placeholder: "- All -",
+                                allowClear: true,
+                                width: 'resolve'
                             });
 
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d + '">' + d + '</option>');
+                            //initially clear select otherwise first option is selected
+                            $('.select2').val(null).trigger('change');
                         });
-                        //use column title as selector and placeholder
-                        $('#' + title).select2({
-                            closeOnSelect: true,
-                            placeholder: "- All -",
-                            allowClear: true,
-                            width: 'resolve'
-                        });
+                    },
+                })
 
-                        //initially clear select otherwise first option is selected
-                        $('.select2').val(null).trigger('change');
-                    });
-                },
-            })
-
-            $('.dataTables_filter input[type="search"]').css(
-                {'width':'350px','display':'inline-block'}
-            );
-        });
-
-        var OnUpdate = (id) => {
-            $.ajax({
-                url: "/dashboard/class/class-update/" + id,
-                dataType: "json",
-                contentType: "application/json",
-                method: "GET",
-                success: (data) => {
-                    console.log(data)
-                    $('#class_code').val(data.classCode)
-                    $('#class_teacher').val(data.teacher.profileByProfileId.firstName+' '+data.teacher.profileByProfileId.lastName)
-                    $('#class_major').val(data.major.majorName)
-                    $('#class_student_count').val(data.studentClassById.length)
-                    $('#class_student_limit').val(data.limitStudent)
-                    $('#class_create_date').val(data.startDate)
-                    $('#class_status').val(data.classStatus)
-
-                    $("#class_details").modal("show");
-                },
-                error: (data) => {
-                    console.log(data);
-                }
+                $('.dataTables_filter input[type="search"]').css(
+                    {'width': '350px', 'display': 'inline-block'}
+                );
             });
-        }
-    </script>
-</th:block>
+
+            var OnUpdate = (id) => {
+                $.ajax({
+                    url: "/dashboard/class/class-update/" + id,
+                    dataType: "json",
+                    contentType: "application/json",
+                    method: "GET",
+                    success: (data) => {
+                        console.log(data)
+                        $('#class_code').val(data.classCode)
+                        $('#class_teacher').val(data.teacher.profileByProfileId.firstName + ' ' + data.teacher.profileByProfileId.lastName)
+                        $('#class_major').val(data.major.majorName)
+                        $('#class_student_count').val(data.studentClassById.length)
+                        $('#class_student_limit').val(data.limitStudent)
+                        $('#class_create_date').val(data.startDate)
+                        $('#class_status').val(data.classStatus)
+
+                        $("#class_details").modal("show");
+                    },
+                    error: (data) => {
+                        console.log(data);
+                    }
+                });
+            }
+        </script>
+    </th:block>
+</div>
 </body>
 </html>

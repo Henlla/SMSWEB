@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -56,6 +58,26 @@ public class MailService {
         helper.setText(html, true);
         log.info("Sending email: {} with html body: {}", mail, html);
         emailSender.send(message);
+    }
+
+    public void sendHtmlMessageSendSchedule(Mail mail, File attachment) throws MessagingException {
+       try {
+           MimeMessage message = emailSender.createMimeMessage();
+           MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+           Context context = new Context();
+           context.setVariables(mail.getProps());
+           helper.setFrom(fromMail);
+           helper.setTo(mail.getToMail());
+           helper.setSubject(mail.getSubject());
+           String html = templateEngine.process("mail/mail-send-schedule.html", context);
+           helper.setText(html, true);
+           FileSystemResource file = new FileSystemResource(attachment);
+           helper.addAttachment(attachment.getName(), file);
+           log.info("Sending email: {} with html body: {}", mail, html);
+           emailSender.send(message);
+       }catch (Exception e) {
+           e.printStackTrace();
+       }
     }
 }
 

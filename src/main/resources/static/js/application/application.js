@@ -81,7 +81,6 @@ var OnChangeStatus = () => {
     }
 }
 
-
 var OnDeleteApplicationType = (id) => {
     Swal.fire({
         title: 'Bạn muốn xóa dữ liệu này?',
@@ -95,9 +94,9 @@ var OnDeleteApplicationType = (id) => {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "/dashboard/deleteAppType/delete/" + id,
+                url: "/dashboard/applicationType/deleteAppType/" + id,
                 method: "POST",
-                success: () => {
+                success: (data) => {
                     toastr.success("Xóa thành dữ liệu công");
                     setTimeout(() => {
                         location.reload();
@@ -116,7 +115,7 @@ var OnDeleteApplicationType = (id) => {
                             }
                         });
                     } else {
-                        toastr.error("Xóa thất bại");
+                        toastr.error(data.responseText);
                     }
                 }
             });
@@ -153,7 +152,7 @@ var OnAppDownload = (id) => {
                             }
                         });
                     } else {
-                        toastr.error("Xóa thất bại");
+                        toastr.error(data.responseText);
                     }
                 }
             });
@@ -171,7 +170,7 @@ var OnAppDownload = (id) => {
                     }
                 });
             } else {
-                toastr.error("Xóa thất bại");
+                toastr.error(data.responseText);
             }
         }
     });
@@ -199,7 +198,7 @@ var OnEditApplication = (id) => {
                     }
                 });
             } else {
-                toastr.error("Không tìm thấy dữ liệu");
+                toastr.error(data.responseText);
             }
         }
     });
@@ -255,7 +254,7 @@ var OnUpdateApplication = async () => {
                     }
                 });
             } else {
-                toastr.error("Cập nhật thất bại");
+                toastr.error(data.responseText);
             }
         }
     });
@@ -298,7 +297,7 @@ var OnCreateApplicationType = async () => {
                         }
                     });
                 } else {
-                    toastr.error("Tạo mới thất bại");
+                    toastr.error(data.responseText);
                 }
             }
         });
@@ -309,7 +308,7 @@ var OnCreateApplicationType = async () => {
 
 var OnCreateApplication = async () => {
     var app_type = $("#appType").val();
-    var student_id = 1;
+    var student_id = 6;
     var note = $("#note").val();
     var app_type_file = $("#app-type-file").get(0).files[0];
     var application = {
@@ -323,7 +322,6 @@ var OnCreateApplication = async () => {
     $.ajax({
         url: "/dashboard/application/save_app",
         contentType: "application/json",
-        processData: false,
         method: "POST",
         data: JSON.stringify(application),
         success: () => {
@@ -346,7 +344,7 @@ var OnCreateApplication = async () => {
                     }
                 });
             } else {
-                toastr.error("Tạo mới thất bại");
+                toastr.error(data.responseText);
             }
         }
     });

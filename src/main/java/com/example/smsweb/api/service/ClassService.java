@@ -55,5 +55,10 @@ public class ClassService implements IClass {
         return repository.findAllByTeacherId(id);
     }
 
+    @Override
+    public Classses findClassByTeacherIdAndScheduleId(String teacherId, String scheduleId) {
+        return repository.findClasssesByTeacherIdAndId(teacherId,scheduleId).orElseThrow(()->new ErrorHandler("Không tìm thấy class"));
+    }
+
 
 }

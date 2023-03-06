@@ -1,18 +1,13 @@
 package com.example.smsweb.api.service;
 
-import com.example.smsweb.api.di.irepository.IClass;
 import com.example.smsweb.api.di.irepository.IStudentClass;
-import com.example.smsweb.api.di.repository.ClassRepository;
 import com.example.smsweb.api.di.repository.StudentClassRepository;
 import com.example.smsweb.api.exception.ErrorHandler;
-import com.example.smsweb.models.Classses;
 import com.example.smsweb.models.StudentClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentClassService implements IStudentClass {
@@ -40,7 +35,7 @@ public class StudentClassService implements IStudentClass {
 
     @Override
     public StudentClass findOne(int id) {
-        return repository.findById(id).orElseThrow(()->new ErrorHandler("Cannot find id := "+id));
+        return repository.findById(id).orElseThrow(() -> new ErrorHandler("Cannot find id := " + id));
     }
 
     @Override
@@ -50,6 +45,11 @@ public class StudentClassService implements IStudentClass {
 
     @Override
     public List<StudentClass> findClassIdByStudentId(Integer id) {
-        return repository.findAllByStudentId(id).orElseThrow(()->new ErrorHandler("Cannot find class id with student id = "+id));
+        return repository.findAllByStudentId(id).orElseThrow(() -> new ErrorHandler("Cannot find class id with student id = " + id));
+    }
+
+    @Override
+    public List<StudentClass> findStudentByClassId(Integer id) {
+        return repository.findAllByClassId(id).orElseThrow(() -> new ErrorHandler("Cannot find student with id = " + id));
     }
 }

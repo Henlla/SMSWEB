@@ -37,13 +37,13 @@ public class LoginController {
     AuthenticationManager authenticationManager;
 
     @GetMapping("dashboard/login")
-    public String login(){
+    public String login() {
         return "dashboard/login/login";
     }
 
     @PostMapping("dashboard/login")
-    public String login(@RequestParam("username")String username,
-                        @RequestParam("password")String password,
+    public String login(@RequestParam("username") String username,
+                        @RequestParam("password") String password,
                         HttpServletResponse responseHttp,
                         HttpServletRequest requestHttp,
                         Model model) throws JsonProcessingException {
@@ -70,20 +70,16 @@ public class LoginController {
             boolean hasUserRole = auth.getAuthorities().stream()
                     .anyMatch(r -> r.getAuthority().equals("ADMIN") || r.getAuthority().equals("STAFF"));
 
-            if(hasUserRole){
+            if (hasUserRole) {
                 Cookie jwtTokenCookie = new Cookie("_token", _token);
                 jwtTokenCookie.setSecure(true);
                 jwtTokenCookie.setHttpOnly(true);
                 jwtTokenCookie.setPath("/");
                 responseHttp.addCookie(jwtTokenCookie);
                 return "redirect:/dashboard";
-            }else{
-                Cookie jwtTokenCookie = new Cookie("_token", _token);
-                jwtTokenCookie.setSecure(true);
-                jwtTokenCookie.setHttpOnly(true);
-                jwtTokenCookie.setPath("/");
-                responseHttp.addCookie(jwtTokenCookie);
-                return "redirect:/index";
+            }else {
+                model.addAttribute("msg", "Đăng nhập thất bại");
+                return "dashboard/login/login";
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -92,15 +88,5 @@ public class LoginController {
             }
             return null;
         }
-    }
-
-    @PostMapping("dashboard/logout")
-    public String logout(HttpServletResponse response){
-        Cookie cookie = new Cookie("_token",null);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-        return "redirect:/dashboard/login";
     }
 }

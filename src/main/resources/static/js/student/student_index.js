@@ -278,9 +278,7 @@ var OnUpdate = (id) => {
             const province_id = data.student.studentByProfile.profileProvince.id
 
             const district_id = data.student.studentByProfile.districtByDistrictId.id
-
             const ward_id = data.student.studentByProfile.wardByWardId.id
-
             console.log(province_id, district_id, ward_id)
             $("#province_u").val(province_id).trigger('change');
 

@@ -28,6 +28,11 @@ public class ScheduleDetail {
     @Column(name = "schedule_id")
     private Integer scheduleId;
 
+
+    @Basic
+    @Column(name = "slot")
+    private Integer slot;
+
     @Basic
     @Column(name = "day_of_week")
     private String dayOfWeek;

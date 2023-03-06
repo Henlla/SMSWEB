@@ -18,6 +18,7 @@ public class DayInWeek {
     private Integer subjectId;
     private String dayOfWeek;
     private Integer month;
+    private Integer slot;
     private Integer week;
     private Integer weekOfYear;
 }

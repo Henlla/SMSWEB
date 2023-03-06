@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -60,6 +61,15 @@ public class StudentClassRestController extends GenericController<StudentClass> 
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),service.findAll()));
         }catch (Exception e){
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
+        }
+    }
+
+    @GetMapping("/getStudentByClassCode/{id}")
+    public ResponseEntity<?> findStudentByClassId(@PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findStudentByClassId(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Không tì thấy dữ liệu"));
         }
     }
 }

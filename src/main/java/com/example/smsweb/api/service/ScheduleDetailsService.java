@@ -30,6 +30,15 @@ public class ScheduleDetailsService implements IScheduleDetails {
     }
 
     @Override
+    public List<ScheduleDetail> findScheduleByDate(String date) {
+        return repository.findByDate(date).orElseThrow(() -> new ErrorHandler("Không tìm thấy schedule với date: " + date));
+    }
+
+    @Override
+    public ScheduleDetail findScheduleDetail(String date, String scheduleId) {
+        return repository.findScheduleDetailByDateAndScheduleId(date, scheduleId).orElseThrow(() -> new ErrorHandler("Không tìm thấy schedule detail với id = " + scheduleId));
+    }
+
     public ScheduleDetail findScheduleDetailById(Integer id) {
         return repository.findById(id).orElseThrow(() -> new ErrorHandler("Cannot find schedule details with id = " + id));
     }
