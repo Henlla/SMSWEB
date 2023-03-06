@@ -25,11 +25,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.temporal.WeekFields;
-import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @Slf4j
@@ -52,18 +52,13 @@ public class ClassController {
         if (_token.equals("")) {
             return "redirect:/dashboard/login";
         }
-
         RestTemplate restTemplate = new RestTemplate();
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + _token);
         HttpEntity<Object> request = new HttpEntity<>(headers);
-
         ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "list", HttpMethod.GET, request, String.class);
         List<Classses> classList = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Classses>>() {
         });
-
-
         model.addAttribute("classes", classList);
         return "dashboard/class/class_index";
     }

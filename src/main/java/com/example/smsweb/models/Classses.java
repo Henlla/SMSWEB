@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -61,11 +59,11 @@ public class Classses {
     private List<StudentClass> studentClassById;
 
     @ManyToOne
-    @JoinColumn(name = "major_id" , insertable = false, updatable = false)
+    @JoinColumn(name = "major_id", insertable = false, updatable = false)
     private Major major;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id" , insertable = false, updatable = false)
+    @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
     //@JsonManagedReference("teacherClass")
     private Teacher teacher;
 

@@ -20,28 +20,47 @@ import java.util.List;
 public class ScheduleDetailsRestController {
     @Autowired
     private ScheduleDetailsService scheduleDetailsService;
+
     @PostMapping("saveAll")
-    public ResponseEntity<?> saveAll(@RequestParam("listSchedule")String listSchedule){
+    public ResponseEntity<?> saveAll(@RequestParam("listSchedule") String listSchedule) {
         try {
             List<ScheduleDetail> list = new ObjectMapper().readValue(listSchedule, new TypeReference<List<ScheduleDetail>>() {
             });
             scheduleDetailsService.addScheduleList(list);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),"ok"));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), "ok"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), e.getMessage()));
         }
 
     }
 
     @PutMapping("put")
-    public ResponseEntity<?> putScheduleDetails(@RequestParam("schedule_details")String schedule_details){
+    public ResponseEntity<?> putScheduleDetails(@RequestParam("schedule_details") String schedule_details) {
         try {
-            ScheduleDetail scheduleDetail = new ObjectMapper().readValue(schedule_details,ScheduleDetail.class);
+            ScheduleDetail scheduleDetail = new ObjectMapper().readValue(schedule_details, ScheduleDetail.class);
             scheduleDetailsService.putScheduleDetails(scheduleDetail);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),"Cập nhật thành công"));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), "Cập nhật thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), e.getMessage()));
         }
 
+    }
+
+    @PostMapping("findScheduleByDate")
+    public ResponseEntity<?> findScheduleByDate(@RequestParam("date") String date) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleByDate(date)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
+        }
+    }
+
+    @PostMapping("findScheduleDetail")
+    public ResponseEntity<?> findScheduleDetail(@RequestParam("date") String date, @RequestParam("scheduleId") String scheduleId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetail(date, scheduleId)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
+        }
     }
 }

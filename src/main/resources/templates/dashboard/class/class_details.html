@@ -5,11 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Danh sách sinh viên lớp [[${class.classCode}]]</title>
-    <!--    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">-->
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
-    <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/class_details.css">
 </head>
 <body>
@@ -482,21 +477,9 @@
             </div>
         </div>
     </section>
+    <th:block layout:fragment="optional">
+        <script src="/js/class/class_details.js"></script>
+    </th:block>
 </div>
-<th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/moment/moment.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
-    <script type="text/javascript">
-        $('#reservationdate_u').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-    </script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
-    <!--    <script src="/js/student/student_index.js"></script>-->
-    <script src="/js/class/class_details.js"></script>
-</th:block>
 </body>
 </html>

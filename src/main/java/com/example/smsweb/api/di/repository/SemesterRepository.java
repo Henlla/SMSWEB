@@ -4,4 +4,5 @@ import com.example.smsweb.api.generic.GenericRepository;
 import com.example.smsweb.models.Semester;
 
 public interface SemesterRepository extends GenericRepository<Semester,Integer> {
+    Semester findBySemesterCode(String semester);
 }

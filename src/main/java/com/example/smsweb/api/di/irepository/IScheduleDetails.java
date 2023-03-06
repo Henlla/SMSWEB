@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface IScheduleDetails {
 
-    public void addScheduleList(List<ScheduleDetail> list);
+    void addScheduleList(List<ScheduleDetail> list);
     List<ScheduleDetail> findScheduleDetailsByScheduleId(Integer id);
+    List<ScheduleDetail> findScheduleByDate(String date);
+    ScheduleDetail findScheduleDetail(String date,String scheduleId);
 }

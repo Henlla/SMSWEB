@@ -86,7 +86,6 @@ $(() => {
 
 });
 
-
 var OnCreateMajor = () => {
     if ($("#create-form").valid()) {
         var major_code = $("#create_major_code").val();
@@ -98,11 +97,11 @@ var OnCreateMajor = () => {
         $.ajax({
             url: "/dashboard/major/save",
             contentType: "application/json",
-            dataType: "json",
             method: "post",
             data: JSON.stringify(major),
             success: (data) => {
                 toastr.success("Tạo mới thành công");
+                $("#create-major-modal").modal("hide");
                 setTimeout(() => {
                     location.reload();
                 }, 2000);
@@ -119,8 +118,8 @@ var OnCreateMajor = () => {
                             location.href = "/dashboard/login";
                         }
                     });
-                }else{
-                    toastr.error("Xóa thất bại");
+                } else {
+                    toastr.error("Tạo mới thất bại");
                 }
             }
         });
@@ -130,7 +129,6 @@ var OnCreateMajor = () => {
 var OnEditMajor = (id) => {
     $.ajax({
         url: "/dashboard/major/findOne/" + id,
-        dataType: "json",
         contentType: "application/json",
         method: "GET",
         success: (data) => {
@@ -150,8 +148,8 @@ var OnEditMajor = (id) => {
                         location.href = "/dashboard/login";
                     }
                 });
-            }else{
-                toastr.error("Xóa thất bại");
+            } else {
+                toastr.error("Không tìm thấy dữ liệu");
             }
         }
     });
@@ -170,6 +168,7 @@ var OnUpdateMajor = () => {
         data: JSON.stringify(major),
         success: () => {
             toastr.success("Cập nhật thành công");
+            $("#edit-major-modal").modal("hide");
             setTimeout(() => {
                 location.reload();
             }, 2000);
@@ -186,8 +185,8 @@ var OnUpdateMajor = () => {
                         location.href = "/dashboard/login";
                     }
                 });
-            }else{
-                toastr.error("Xóa thất bại");
+            } else {
+                toastr.error("Cập nhật thất bại");
             }
         }
     });
@@ -205,7 +204,7 @@ var OnDeleteMajor = (id) => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        cancelButtonText:"Hủy",
+        cancelButtonText: "Hủy",
         confirmButtonText: 'Đồng ý!'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -241,36 +240,38 @@ var OnDeleteMajor = (id) => {
 
 var OnSaveExcelData = () => {
     var file = $("#fileUpload").get(0).files[0];
-    var formData = new FormData();
-    formData.append("file", file);
-    $.ajax({
-        url: "/dashboard/major/import-excel",
-        data: formData,
-        method: "POST",
-        processData: false,
-        contentType: false,
-        enctype: "multipart/form-data",
-        success: () => {
-            toastr.success("Đỗ dữ liệu thành công");
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
-        },
-        error: (data) => {
-            if (data.responseText.toLowerCase() === "token expired") {
-                Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
-                    showDenyButton: false,
-                    showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.href = "/dashboard/login";
-                    }
-                });
-            }else{
-                toastr.error("Đỗ dữ liệu thành công");
+    if(file !== undefined){
+        var formData = new FormData();
+        formData.append("file", file);
+        $.ajax({
+            url: "/dashboard/major/import-excel",
+            data: formData,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            enctype: "multipart/form-data",
+            success: (data) => {
+                toastr.success(data);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            },
+            error: (data) => {
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Đồng ý',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                } else {
+                    toastr.error("Đỗ dữ liệu thất bại");
+                }
             }
-        }
-    });
+        });
+    }
 }

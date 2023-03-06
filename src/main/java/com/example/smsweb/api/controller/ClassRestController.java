@@ -3,10 +3,7 @@ package com.example.smsweb.api.controller;
 import com.example.smsweb.api.di.irepository.IClass;
 import com.example.smsweb.api.generic.GenericController;
 import com.example.smsweb.dto.ResponseModel;
-import com.example.smsweb.models.Account;
 import com.example.smsweb.models.Classses;
-import com.example.smsweb.models.Student;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -38,7 +36,6 @@ public class ClassRestController extends GenericController<Classses> {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),e.getMessage()));
         }
     }
-
 
     @PostMapping("/findClassCode")
     public ResponseEntity<?> findClassCode(@RequestParam("classCode") String classCode){
@@ -68,5 +65,14 @@ public class ClassRestController extends GenericController<Classses> {
     @GetMapping("/findClassByTeacher/{id}")
     public ResponseEntity<?> findClassByTeacher(@PathVariable("id") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(),service.findClassByTeacherId(id)));
+    }
+
+    @PostMapping("/findClassByTeacherAndSchedule")
+    public ResponseEntity<?> findClassByTeacherAndSchedule(@RequestParam("teacherId")String teacherId,@RequestParam("scheduleId")String scheduleId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findClassByTeacherIdAndScheduleId(teacherId,scheduleId)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Errpr",LocalDate.now().toString(),e.getMessage()));
+        }
     }
 }

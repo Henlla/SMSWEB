@@ -28,6 +28,9 @@ var OnCreateSchedule = (classId, majorId, shift) => {
 }
 
 $(document).ready(function () {
+    $('#reservationdate_u').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
     $('#semesterSchedule').on('change', function () {
         let data = new FormData()
         data.append("semester", $('#semesterSchedule').val())

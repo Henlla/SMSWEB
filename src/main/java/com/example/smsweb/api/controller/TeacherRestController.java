@@ -2,7 +2,6 @@ package com.example.smsweb.api.controller;
 
 import com.example.smsweb.api.di.irepository.ITeacher;
 import com.example.smsweb.dto.ResponseModel;
-import com.example.smsweb.models.Student;
 import com.example.smsweb.models.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,34 +11,37 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalTime;
 
 @RestController
-@RequestMapping("/api/teachers")
+@RequestMapping("api/teachers")
 public class TeacherRestController {
     @Autowired
     private ITeacher iTeacher;
+
     @PostMapping("/")
-    public ResponseEntity<?> saveTeacher(@ModelAttribute Teacher teacher){
+    public ResponseEntity<?> saveTeacher(@ModelAttribute Teacher teacher) {
         iTeacher.save(teacher);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(),teacher));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), teacher));
     }
+
     @GetMapping("/list")
-    public ResponseEntity<?> findAllTeacher(){
+    public ResponseEntity<?> findAllTeacher() {
         return ResponseEntity.status(HttpStatus.OK).body(iTeacher.findAll());
     }
+
     @GetMapping("/get/{id}")
-    public ResponseEntity<?> findTeacherById(@PathVariable("id") Integer id){
+    public ResponseEntity<?> findTeacherById(@PathVariable("id") Integer id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), iTeacher.findOne(id)));
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("error", LocalTime.now().toString(), e.getMessage()));
         }
     }
 
     @GetMapping("/getByProfile/{id}")
-    public ResponseEntity<?> findTeacherByProfileId(@PathVariable("id") Integer id){
+    public ResponseEntity<?> findTeacherByProfileId(@PathVariable("id") Integer id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(iTeacher.findTeacherByProfileId(id));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("error", LocalTime.now().toString(), e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalTime.now().toString(), e.getMessage()));
         }
     }
 }

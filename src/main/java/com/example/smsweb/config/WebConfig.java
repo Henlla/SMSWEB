@@ -45,10 +45,11 @@ public class WebConfig {
                 .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
                  "/api/districts/**","/api/accounts/login","/api/wards/**"
                         ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**").permitAll()
-                .requestMatchers("/dashboard/login","/login").permitAll()
+                .requestMatchers("/dashboard/login","/login/**").permitAll()
                 .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
                 .requestMatchers("/dashboard/teacher/**","/dashboard/student/**"
-                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**","/dashboard/applicationType/**","/dashboard/news/**").hasAnyAuthority("STAFF","ADMIN")
+                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**","/dashboard/applicationType/**"
+                        ,"/dashboard/news/**","/dashboard/class/**","/dashboard/attendance/**").hasAnyAuthority("STAFF","ADMIN")
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/news/list","/api/news/get/{id}").permitAll()
@@ -57,8 +58,14 @@ public class WebConfig {
                 .requestMatchers("/api/teachers/getByProfile/{id}").hasAnyAuthority("TEACHER")
                 .requestMatchers("/api/students-subject/**","/api/classes/**","/api/schedules/**","/api/schedules_detail/**").hasAnyAuthority("ADMIN","STUDENT","TEACHER","STAFF")
                 .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**",
-                 "/api/student-major/**","/api/teachers/**",
+                        "/api/student-major/**","/api/teachers/**",
                         "/api/staffs/**","/api/news/**").hasAnyAuthority("ADMIN","STAFF")
+                //teacher
+                .requestMatchers("/api/attendance/**","/dashboard/attendance/**"
+                        ,"/api/student-class/**","/teacher/**","/api/students/**")
+                .permitAll()
+                //student
+
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied")

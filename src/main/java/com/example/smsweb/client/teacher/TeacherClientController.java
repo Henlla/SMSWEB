@@ -2,16 +2,15 @@ package com.example.smsweb.client.teacher;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class HomeController {
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
+@RequestMapping("teacher")
+public class TeacherClientController {
 
     @GetMapping("/index")
     public String index() {
-        return "/index";
+        return "teacher/index";
     }
+
 }

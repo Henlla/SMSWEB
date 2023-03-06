@@ -1,8 +1,11 @@
 package com.example.smsweb.client.dashboard;
 
+import com.example.smsweb.api.di.irepository.ISubject;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.Subject;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,13 +16,15 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
+@Slf4j
 @RequestMapping("dashboard/subject")
 public class SubjectController {
+    @Autowired
+    private ISubject service;
 
     private String SUBJECT_URL = "http://localhost:8080/api/subject/";
     private String MAJOR_URL = "http://localhost:8080/api/major/";
     private String SEMESTER_URL = "http://localhost:8080/api/semester/";
-
     private RestTemplate restTemplate;
     ResponseModel listSubject;
     ResponseModel listMajor;
@@ -28,23 +33,29 @@ public class SubjectController {
     @GetMapping("/index")
     public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) {
         try {
-            JWTUtils.checkExpired(_token);
-            listSubject = new ResponseModel();
-            listMajor = new ResponseModel();
-            listSemester = new ResponseModel();
-            restTemplate = new RestTemplate();
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                listSubject = new ResponseModel();
+                listMajor = new ResponseModel();
+                listSemester = new ResponseModel();
+                restTemplate = new RestTemplate();
 
-            listSubject = restTemplate.getForObject(SUBJECT_URL + "list", ResponseModel.class);
-            listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
-            listSemester = restTemplate.getForObject(SEMESTER_URL + "list", ResponseModel.class);
+                listSubject = restTemplate.getForObject(SUBJECT_URL + "list", ResponseModel.class);
+                listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
+                listSemester = restTemplate.getForObject(SEMESTER_URL + "list", ResponseModel.class);
 
-            model.addAttribute("listSubject", listSubject.getData());
-            model.addAttribute("listMajor", listMajor.getData());
-            model.addAttribute("listSemester", listSemester.getData());
-            model.addAttribute("subject", new Subject());
-            return "dashboard/subject/subject_index";
+                model.addAttribute("listSubject", listSubject.getData());
+                model.addAttribute("listMajor", listMajor.getData());
+                model.addAttribute("listSemester", listSemester.getData());
+                model.addAttribute("subject", new Subject());
+                return "dashboard/subject/subject_index";
+            } else {
+                return "redirect:/dashboard/login";
+            }
+
         } catch (Exception e) {
-            return "redirect:/dashboard/login";
+            log.error("Index Application: " + e.getMessage());
+            return e.getMessage();
         }
     }
 
@@ -52,16 +63,21 @@ public class SubjectController {
     @ResponseBody
     public Object post(@CookieValue(name = "_token", defaultValue = "") String _token, @RequestBody Subject subject) {
         try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
-            content.add("subject", subject);
-            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-            return response;
-        } catch (Exception e) {
-            return e.getMessage();
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+                content.add("subject", subject);
+                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
+                ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+                return response.getBody().getData();
+            } else {
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception ex) {
+            log.error("Save Subject: " + ex.getMessage());
+            return new ResponseEntity<String>("Tạo mới thất bại", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -69,14 +85,19 @@ public class SubjectController {
     @ResponseBody
     public Object delete(@CookieValue(name = "_token") String _token, @PathVariable("id") String id) {
         try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            HttpEntity<String> request = new HttpEntity<String>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "delete/" + id, HttpMethod.DELETE, request, ResponseModel.class);
-            return response;
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                HttpEntity<String> request = new HttpEntity<String>(headers);
+                ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "delete/" + id, HttpMethod.DELETE, request, ResponseModel.class);
+                return response.getBody().getData();
+            } else {
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
+            }
         } catch (Exception e) {
-            return e.getMessage();
+            log.error("Delete Subject: " + e.getMessage());
+            return new ResponseEntity<String>("Xóa thất bại", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -84,17 +105,22 @@ public class SubjectController {
     @ResponseBody
     public Object update(@CookieValue(name = "_token", defaultValue = "") String _token, @RequestBody Subject subject) {
         try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
-            content.add("subject", subject);
-            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "update", HttpMethod.PUT, request, ResponseModel.class);
-            return response;
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + _token);
+                MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+                content.add("subject", subject);
+                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
+                ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "update", HttpMethod.PUT, request, ResponseModel.class);
+                return response.getBody().getData();
+            } else {
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
+            }
         } catch (Exception e) {
-            return e.getMessage();
+            log.error("Update Subject: " + e.getMessage());
+            return new ResponseEntity<String>("Cập nhật thất bại", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -102,22 +128,42 @@ public class SubjectController {
     @ResponseBody
     public Object findOne(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") int id) {
         try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            content.add("id", String.valueOf(id));
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
-            return response.getBody().getData();
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+                content.add("id", String.valueOf(id));
+                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(content, headers);
+                ResponseEntity<ResponseModel> response = restTemplate.exchange(SUBJECT_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
+                return response.getBody().getData();
+            } else {
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
+            }
         } catch (Exception e) {
-            return e.getMessage();
+            log.error("FindOne Subject: " + e.getMessage());
+            return new ResponseEntity<String>("Không tìm thấy dữ liệu", HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/importExcelData")
     @ResponseBody
-    public Object importExcelData(@RequestParam("file") MultipartFile file) {
-        return "";
+    public Object importExcelData(@CookieValue("_token") String _token, @RequestParam("file") MultipartFile file) {
+        try {
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                String status = service.importExcelData(file);
+                if (status.equals("")) {
+                    return "Đỗ dữ liệu thành công";
+                } else {
+                    return new ResponseEntity<String>(status, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.error("Import Subject: " + e.getMessage());
+            return new ResponseEntity<String>("Đỗ dữ liệu thất bại", HttpStatus.BAD_REQUEST);
+        }
     }
 }

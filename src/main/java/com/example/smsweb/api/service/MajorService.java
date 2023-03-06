@@ -8,6 +8,7 @@ import com.example.smsweb.utils.ExcelExport.MajorExport;
 import com.example.smsweb.utils.ExcelHelper;
 import com.example.smsweb.utils.FileUtils;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class MajorService implements IMajor {
     @Autowired
     private MajorRepository dao;
@@ -61,32 +63,38 @@ public class MajorService implements IMajor {
     }
 
     @Override
-    public void importDataToDb(MultipartFile file) {
+    public String importDataToDb(MultipartFile file) {
         if (!file.isEmpty()) {
-            listMajor = new ArrayList<>();
-            try {
-                workbook = new XSSFWorkbook(file.getInputStream());
-                sheet = workbook.getSheetAt(0);
-                for (int rowIndex = 1; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
-                    XSSFRow row = sheet.getRow(rowIndex);
-                    String major_code = ExcelHelper.getValue(row.getCell(0)).toString() == null ? "" : ExcelHelper.getValue(row.getCell(0)).toString();
-                    String major_name = ExcelHelper.getValue(row.getCell(1)).toString() == null ? "" : ExcelHelper.getValue(row.getCell(1)).toString();
-                    if (!major_code.isEmpty() && !major_name.isEmpty()) {
-                        Major major = Major.builder().majorCode(major_code).majorName(major_name).build();
-                        listMajor.add(major);
-                        FileUtils.writeImageFromExcel(major_code,STORE_URL_IMAGE,workbook,rowIndex-1);
+            if (FileUtils.getExtension(file.getOriginalFilename()).equals("xlsx")) {
+                listMajor = new ArrayList<>();
+                try {
+                    workbook = new XSSFWorkbook(file.getInputStream());
+                    sheet = workbook.getSheetAt(0);
+                    for (int rowIndex = 1; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
+                        XSSFRow row = sheet.getRow(rowIndex);
+                        String major_code = ExcelHelper.getValue(row.getCell(0)).toString() == null ? "" : ExcelHelper.getValue(row.getCell(0)).toString();
+                        String major_name = ExcelHelper.getValue(row.getCell(1)).toString() == null ? "" : ExcelHelper.getValue(row.getCell(1)).toString();
+                        if (!major_code.isEmpty() && !major_name.isEmpty()) {
+                            Major major = Major.builder().majorCode(major_code).majorName(major_name).build();
+                            listMajor.add(major);
+//                            FileUtils.writeImageFromExcel(major_code, STORE_URL_IMAGE, workbook, rowIndex - 1);
+                        }
                     }
+                    if (!listMajor.isEmpty()) {
+                        dao.saveAll(listMajor);
+                    } else {
+                        return "File excel không có dữ liệu";
+                    }
+                    return "";
+                } catch (Exception e) {
+                    log.error("Import Major: " + e.getMessage());
+                    return "Đỗ dữ liệu thất bại";
                 }
-            } catch (Exception e) {
-                throw new ErrorHandler(e.getMessage());
-            }
-            if (!listMajor.isEmpty()) {
-                dao.saveAll(listMajor);
             } else {
-                throw new ErrorHandler("Không có dữ liệu");
+                return "Vui lòng chọn file excel";
             }
         } else {
-            throw new ErrorHandler("Vui lòng chọn file");
+            return "Vui lòng chọn file";
         }
     }
 
