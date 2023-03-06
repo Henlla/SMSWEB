@@ -23,7 +23,7 @@ public class ScheduleTask {
     private final String URL_FCM = "http://localhost:8080/fcm/";
     private final String URL_DEVICE = "http://localhost:8080/api/device/";
 
-    @Scheduled(cron = "0 23 18 1/1 * *")
+    @Scheduled(cron = "0 44 17 1/1 * *")
     public void sendNotification() throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -33,14 +33,17 @@ public class ScheduleTask {
         String devices = restTemplate.getForObject(URL_DEVICE+"getAll", String.class);
         List<Devices> devicesList = new ObjectMapper().readValue(devices, new TypeReference<List<Devices>>() {
         });
+
         List<String> listDeviceToken = new ArrayList<>();
         for (Devices device : devicesList){
             listDeviceToken.add(device.getDeviceToken());
         }
+
         MulticastMessageRepresentation message = new MulticastMessageRepresentation();
         DataNotification dataNotification = new DataNotification();
         dataNotification.setContent(currenDate.toString());
         dataNotification.setAction("Schedule");
+
         String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
         message.setTitle("Lịch học hôm nay");
         message.setData(jsonData);

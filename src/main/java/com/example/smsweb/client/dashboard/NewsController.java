@@ -1,13 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
 import lombok.NonNull;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFFooter;
-import org.apache.poi.xwpf.usermodel.XWPFHeader;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.News;
@@ -30,13 +24,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.parser.Parser;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.time.LocalDate;
-import java.util.Date;
+
 import java.util.List;
-import java.util.Objects;
+import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
+
 
 @Controller
 @RequestMapping("dashboard/news/")
@@ -226,15 +227,21 @@ public class NewsController {
         FileInputStream fileInputStream = null;
         XWPFDocument document = null;
         try {
-            File file1 = new File(Objects.requireNonNull(file.getOriginalFilename()));
-            fileInputStream = new FileInputStream(file1.getAbsolutePath());
-            document = new XWPFDocument(fileInputStream);
-            XWPFWordExtractor extractor = new XWPFWordExtractor(document);
-
-            System.out.println("The Contents of the Word File are ::");
-            System.out.println("--------------------------------------");
-
-            System.out.println(extractor.getText());
+//            InputStream input = file.getInputStream();
+//            Parser parser = new OOXMLParser();
+//
+//            StringWriter sw = new StringWriter();
+//            SAXTransformerFactory factory = (SAXTransformerFactory)
+//                    SAXTransformerFactory.newInstance();
+//            TransformerHandler handler = factory.newTransformerHandler();
+//            handler.getTransformer().setOutputProperty(OutputKeys.ENCODING, "utf-8");
+//            handler.getTransformer().setOutputProperty(OutputKeys.METHOD, "html");
+//            handler.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes");
+//            handler.setResult(new StreamResult(sw));
+//
+//            Metadata metadata = new Metadata();
+//            metadata.add(Metadata.CONTENT_TYPE, "text/html;charset=utf-8");
+//            parser.parse(input, handler, metadata, new ParseContext());
             return "success";
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());

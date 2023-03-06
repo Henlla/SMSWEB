@@ -5,10 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Danh sách sinh viên lớp [[${class.classCode}]]</title>
-    <!--    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">-->
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
     <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/class_details.css">
 </head>
@@ -38,7 +34,11 @@
                                         <table style="width:100%; height: 100%">
                                             <tr>
                                                 <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Giáo viên:&nbsp;</b></h5></td>
-                                                <td><h5>[[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5>
+                                                <td style="width:150%;display: flex;align-items: center" ><h5 class="text-bold">
+                                                    [[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5>
+                                                    <a th:data-id="${class.getTeacherId()}"
+                                                       th:data-name="${class.getTeacher().getProfileByProfileId().getFirstName()+' '+class.getTeacher().getProfileByProfileId().getLastName()}"
+                                                       onclick="OnChangeTeacher(this.getAttribute('data-name'),this.getAttribute('data-id'))" class="btn btn-success btn-sm">Đổi giáo viên</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -71,6 +71,7 @@
                                            class="btn btn-primary btn-sm">Xem thời khóa biểu</a>
                                         <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
                                            class="btn btn-success btn-sm">Tải xuống danh sách</a>
+                                        <a data-target="#send_schedule" data-toggle="modal" class="btn btn-success btn-sm">Gửi thời khóa biểu</a>
                                     </td>
                                 </tr>
                             </table>
@@ -82,8 +83,6 @@
                 <div class="container" style="margin-top: 10px">
                     <div class="row">
                         <div class="col-12">
-                            <!--                            <label>Tìm kiếm theo nghành học :</label>-->
-                            <!--                            <div id="select-major"></div>-->
                             <table id="student-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
@@ -115,206 +114,269 @@
                     </div>
                 </div>
             </div>
-            
-            
-            <div class="modal fade" id="create_schedule" tabindex="-1"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Tạo thời khóa biểu</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <i class="fas fa-times fa-sm"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <form id="role_create-form">
-                                    <div class="col-6">
-                                        <label for="startDate">Ngày bắt đầu:</label>
-                                        <input type="date" class="form-control" id="startDate" name="startDate"
-                                               placeholder="chọn ngày bắt đầu học">
-                                        <input type="text" id="inputToday" style="display: none">
+        </div>
+        <div class="modal fade" id="create_schedule" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tạo thời khóa biểu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="role_create-form">
+                                <div class="col-6">
+                                    <label for="startDate">Ngày bắt đầu:</label>
+                                    <input type="date" class="form-control" id="startDate" name="startDate"
+                                           placeholder="chọn ngày bắt đầu học">
+                                    <input type="text" id="inputToday" style="display: none">
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="semester">Kì của nghành học:</label>
+                                        <select id="semester" class="form-control" name="semester"
+                                                style="width: 100%;">
+                                            <option value="">-----Chọn kì------</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
                                     </div>
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label for="semester">Kì của nghành học:</label>
-                                            <select id="semester" class="form-control" name="semester"
-                                                    style="width: 100%;">
-                                                <option value="">-----Chọn kì------</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
-                        <div id="spinner-div" class="pt-5">
-                            <div class="spinner-border text-primary" role="status">
-                            </div>
+                    </div>
+                    <div id="spinner-div" class="pt-5">
+                        <div class="spinner-border text-primary" role="status">
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
-                            </button>
-                            <button type="button" class="btn btn-info btn-sm" th:data-id="${class.getId()}"
-                                    th:data-major="${class.getMajorId()}"
-                                    th:data-shift="${class.getShift()}"
-                                    onclick="OnCreateSchedule(this.getAttribute('data-id'),
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Đóng
+                        </button>
+                        <button type="button" class="btn btn-info btn-sm" th:data-id="${class.getId()}"
+                                th:data-major="${class.getMajorId()}"
+                                th:data-shift="${class.getShift()}"
+                                onclick="OnCreateSchedule(this.getAttribute('data-id'),
                                     this.getAttribute('data-major'),
                                      this.getAttribute('data-shift'))" data-dismiss="modal"><i
-                                    class="fas fa-plus"></i> Tạo
-                            </button>
-                        </div>
+                                class="fas fa-plus"></i> Tạo
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="details_schedule" tabindex="-1"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Xem thời khóa biểu</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <i class="fas fa-times fa-sm"></i>
-                            </button>
+        </div>
+        <div class="modal fade" id="details_schedule" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xem thời khóa biểu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="schedule_details_form">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="semester">Kì của nghành học:</label>
+                                        <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()" class="form-control" name="semester"
+                                                style="width: 100%;">
+                                            <option value="">-----Chọn kì------</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div class="modal-body">
+                        <div class="container">
                             <div class="container">
-                                <form id="schedule_details_form">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label for="semester">Kì của nghành học:</label>
-                                            <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()" class="form-control" name="semester"
-                                                    style="width: 100%;">
-                                                <option value="">-----Chọn kì------</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="container">
-                                <div class="container">
-                                    <div class="timetable-img text-center">
-                                        <img src="img/content/timetable.png" alt="">
-                                    </div>
-                                    <div class="table-responsive">
-                                        <div class="float-right"><a id="btn_update_schedule" class="btn btn-info btn-sm">Chỉnh sửa</a></div>
-                                        <table id="schedule_table" class="table table-bordered text-center">
-                                            <thead>
-                                            <tr class="bg-light-gray">
-                                                <th class="text-uppercase">Thứ hai</th>
-                                                <th class="text-uppercase">Thứ ba</th>
-                                                <th class="text-uppercase">Thứ tư</th>
-                                                <th class="text-uppercase">Thứ năm</th>
-                                                <th class="text-uppercase">Thứ sáu</th>
-                                                <th class="text-uppercase">Thứ bảy</th>
-                                                <th class="text-uppercase">Chủ nhật</th>
-                                            </tr>
-                                            </thead>
-
-                                        </table>
-                                    </div>
+                                <div class="timetable-img text-center">
+                                    <img src="img/content/timetable.png" alt="">
+                                </div>
+                                <div class="float-right"><a id="btn_update_schedule" class="btn btn-info btn-sm">Chỉnh sửa</a></div>
+                                <a id="btnDownSchedule" class="btn btn-danger btn-sm">Tải xuống</a>
+                                <div class="table-responsive">
+                                    <table id="schedule_table" class="table table-bordered text-center">
+                                        <thead>
+                                        <tr class="bg-light-gray">
+                                            <th class="text-uppercase">Thứ hai</th>
+                                            <th class="text-uppercase">Thứ ba</th>
+                                            <th class="text-uppercase">Thứ tư</th>
+                                            <th class="text-uppercase">Thứ năm</th>
+                                            <th class="text-uppercase">Thứ sáu</th>
+                                            <th class="text-uppercase">Thứ bảy</th>
+                                            <th class="text-uppercase">Chủ nhật</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
-                            </button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Đóng
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="schedule_update" tabindex="-1"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Thay đổi ngày thời khóa biểu</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <i class="fas fa-times fa-sm"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <form >
-                                    <div class="col">
-                                        <div class="form-group" style="display: flex;justify-content: center;align-items: center">
-                                            <input type="hidden" id="schedule_details_id">
-                                            <div class="input-group date" id="day_default"
-                                                 data-target-input="nearest">
-                                                <input type="text"
-                                                       class="form-control form-control-sm day_default datetimepicker-input"
-                                                       data-target="#day_default_input" readonly/>
-                                                <div class="input-group-append" data-target="#day_default_input"
-                                                     data-toggle="datetimepicker">
-                                                    <div class="input-group-text"><i class="fa fa-calendar"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <img src="/img/arrow_forward.png" alt="" width="20" height="20">
-                                            <div class="input-group date" id="newDate_input"
-                                                 data-target-input="nearest">
-                                                <input type="text"
-                                                       class="form-control form-control-sm newDate datetimepicker-input"
-                                                       data-target="#newDate_input"
-                                                       placeholder="Chọn ngày thay đổi"/>
-                                                <div class="input-group-append" data-target="#newDate_input"
-                                                     data-toggle="datetimepicker">
-                                                    <div class="input-group-text"><i class="fa fa-calendar"></i>
-                                                    </div>
+        </div>
+        <div class="modal fade" id="schedule_update" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thay đổi ngày thời khóa biểu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form >
+                                <div class="col">
+                                    <div class="form-group" style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="schedule_details_id">
+                                        <div class="input-group date" id="day_default"
+                                             data-target-input="nearest">
+                                            <input type="text"
+                                                   class="form-control form-control-sm day_default datetimepicker-input"
+                                                   data-target="#day_default_input" readonly/>
+                                            <div class="input-group-append" data-target="#day_default_input"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                 </div>
                                             </div>
                                         </div>
-                                        <span style="color:red" id="msg_error" class="float-right"></span>
+                                        <img src="/img/arrow_forward.png" alt="" width="20" height="20">
+                                        <div class="input-group date" id="newDate_input"
+                                             data-target-input="nearest">
+                                            <input type="text"
+                                                   class="form-control form-control-sm newDate datetimepicker-input"
+                                                   data-target="#newDate_input"
+                                                   placeholder="Chọn ngày thay đổi"/>
+                                            <div class="input-group-append" data-target="#newDate_input"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </form>
-                            </div>
+                                    <span style="color:red" id="msg_error" class="float-right"></span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Đóng
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submitChangeDate"><i class="fas fa-check"></i> Thay đổi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="change_teacher" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thay đổi giáo viên</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form >
+                                <div class="col">
+                                    <div class="form-group" style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="teacherId" >
+                                        <input type="text" id="teacher" readonly>
+                                        <img src="/img/arrow_forward.png" alt="" width="20" height="20">
+                                        <input type="text" style="width: 300px;" id="teacher_change">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Đóng
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submitTeacher"><i class="fas fa-check"></i> Thay đổi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="send_schedule" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Gửi thời khóa biểu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form >
+                                <div class="col">
+                                    <div class="form-group">
+                                        <input type="file" accept=".xlsx" class="form-control" id="fileSchedule" >
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
                                     class="fas fa-times"></i> Đóng
                             </button>
-                            <button type="button" class="btn btn-success btn-sm" id="btn_submitChangeDate"><i class="fas fa-check"></i> Thay đổi
+                            <button type="button" class="btn btn-success btn-sm" id="btnSendSchedule"><i class="fas fa-check"></i> Gửi
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!--Modal add student  by file-->
-            <div class="modal fade" id="class_import_student_file" tabindex="-1"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Thêm danh sách sinh viên</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <i class="fas fa-times fa-sm"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <form id="form_import_student_file" enctype="multipart/form-data">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label for="studentList">Thêm danh sách sinh viên&nbsp;</label><a href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Tải mẫu danh sách</a>
-                                            <input type="file" accept=".xlsx" class="form-control" id="studentList" name="studentList">
-                                        </div>
-                                        <div class="form-group">
-                                            <input class="form-control btn-primary" type="submit" value="Thêm sinh viên">
-                                        </div>
+        <!--Modal add student  by file-->
+        <div class="modal fade" id="class_import_student_file" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thêm danh sách sinh viên</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="form_import_student_file" enctype="multipart/form-data">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="studentList">Thêm danh sách sinh viên&nbsp;</label><a href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Tải mẫu danh sách</a>
+                                        <input type="file" accept=".xlsx" class="form-control" id="studentList" name="studentList">
                                     </div>
-                                </form>
-                            </div>
+                                    <div class="form-group">
+                                        <input class="form-control btn-primary" type="submit" value="Thêm sinh viên">
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -327,11 +389,6 @@
     </section>
 </div>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/moment/moment.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
     <script type="text/javascript">
         $('#newDate_input').datetimepicker({
             format: 'DD/MM/YYYY',
@@ -340,7 +397,6 @@
             format: 'DD/MM/YYYY',
         });
     </script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/js/class/class_details.js"></script>
 </th:block>
 </body>
