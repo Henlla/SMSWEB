@@ -230,31 +230,30 @@ $(document).ready(function () {
 
     $("#form_add_student").submit(function (event) {
         event.preventDefault();
-        var studentCard = $("#inputStudentCard").val();
-        if (availablePlace < 1) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: 'Sỉ số lớp đã đạt tối đa',
-                showDenyButton: false,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Đồng ý',
-            })
-        } else {
-            $('#form_add_student').validate({
-                rules: {
-                    inputStudentCard: {
-                        required: true
-                    }
-                },
-                messages: {
-                    inputStudentCard: {
-                        required: "Vui lòng nhập mã sinh viên"
-                    }
-                },
-            })
-            if ($('#form_add_student').valid()) {
-
+        $('#form_add_student').validate({
+            rules: {
+                inputStudentCard: {
+                    required: true
+                }
+            },
+            messages: {
+                inputStudentCard: {
+                    required: "Vui lòng nhập mã sinh viên"
+                }
+            },
+        })
+        if ($('#form_add_student').valid()) {
+            var studentCard = $("#inputStudentCard").val();
+            if (availablePlace < 1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Sỉ số lớp đã đạt tối đa',
+                    showDenyButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Đồng ý',
+                })
+            }else {
                 const dataTable = $("#student-table").DataTable();
                 var listStudent = new Array()
                 const regExp = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;

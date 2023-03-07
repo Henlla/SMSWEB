@@ -27,7 +27,7 @@
                                             </tr>
                                         </table>
                                     </td>
-                                    <td></td>
+                                    <td class="d-flex justify-content-end"></td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -43,15 +43,7 @@
                                             </tr>
                                         </table>
                                     </td>
-                                    <td class="d-flex justify-content-end">
-                                        <form id="form_add_student" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}">
-                                            <input id="inputStudentCard" placeholder="Nhập số thẻ sinh viên" required title="Vui lòng nhập mã sinh viên" >
-                                            <button type="submit" class="btn btn-info btn-sm">Thêm sinh viên</button>
-                                        </form>
-                                        <a class="btn btn-primary btn-sm"
-                                            th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                                           data-target="#class_import_student_file" data-toggle="modal">Thêm nhiều sinh viên</a>
-                                    </td>
+                                    <td class="d-flex justify-content-end"></td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -64,14 +56,41 @@
                                         </table>
                                     </td>
                                     <td class="d-flex justify-content-end">
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                                           data-target="#create_schedule" data-toggle="modal"
-                                           class="btn btn-warning btn-sm">Tạo thời khoá biểu</a>
-                                        <a data-target="#details_schedule" data-toggle="modal"
-                                           class="btn btn-primary btn-sm">Xem thời khóa biểu</a>
-                                        <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
-                                           class="btn btn-success btn-sm">Tải xuống danh sách</a>
-                                        <a data-target="#send_schedule" data-toggle="modal" class="btn btn-success btn-sm">Gửi thời khóa biểu</a>
+                                        <table>
+                                            <tr>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#class_add_student" data-toggle="modal">Thêm sinh viên</a></td>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#class_import_student_file" data-toggle="modal">Thêm nhiều sinh viên</a></td>
+                                                <td>
+                                                    <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}" class="btn btn-success btn-sm">Tải xuống danh sách</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="d-flex justify-content-end">
+                                        <table>
+                                            <tr>
+                                                <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                   data-target="#create_schedule" data-toggle="modal"
+                                                   class="btn btn-warning btn-sm">Tạo thời khoá biểu</a>
+                                                <a data-target="#details_schedule" data-toggle="modal"
+                                                   class="btn btn-primary btn-sm">Xem thời khóa biểu</a>
+                                                <a data-target="#send_schedule" data-toggle="modal" class="btn btn-success btn-sm">Gửi thời khóa biểu</a>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>
@@ -115,6 +134,7 @@
                 </div>
             </div>
         </div>
+        <!--Modal-->
         <div class="modal fade" id="create_schedule" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -353,6 +373,35 @@
             </div>
         </div>
 
+        <!--Modal add student-->
+        <div class="modal fade" id="class_add_student" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thêm sinh viên</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="form_add_student">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputStudentCard">Nhập mã sinh viên:&nbsp;</label>
+                                        <input class="form-control" id="inputStudentCard" name="inputStudentCard" placeholder="Nhập mã sinh viên">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control btn-primary" type="submit" value="Thêm sinh viên">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--Modal add student  by file-->
         <div class="modal fade" id="class_import_student_file" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -382,6 +431,7 @@
                 </div>
             </div>
         </div>
+
         <input type="hidden" id="classId" th:value="${class.id}">
         <input type="hidden" id="classCode" th:value="${class.classCode}">
         <input type="hidden" id="shift" th:value="${class.getShift()}">
