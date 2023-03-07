@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+<title>HKT University - Teacher</title>
+<link rel="shortcut icon" href="/teacherDashboard/assets/img/favicon.png">
+
+<link href="../../https@fonts.googleapis.com/css2@family=Roboto_3Aital,wght_400,400;0,500;0,700;0,900;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/teacherDashboard/assets/plugins/bootstrap/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="/teacherDashboard/assets/plugins/feather/feather.css">
+
+<link rel="stylesheet" href="/teacherDashboard/assets/plugins/icons/flags/flags.css">
+
+<link rel="stylesheet" href="/teacherDashboard/assets/plugins/fontawesome/css/fontawesome.min.css">
+<link rel="stylesheet" href="/teacherDashboard/assets/plugins/fontawesome/css/all.min.css">
+
+<link rel="stylesheet" href="/teacherDashboard/assets/plugins/simple-calendar/simple-calendar.css">
+
+<link rel="stylesheet" href="/teacherDashboard/assets/css/style.css">
+<th:block layout:fragment="selfStyle"></th:block>
+</head>
+<body>
+
+<div class="main-wrapper">
+
+    <th:block th:replace="~{teacherDashboard/components/header}"></th:block>
+    <th:block th:replace="~{teacherDashboard/components/navbar}"></th:block>
+    
+
+    <div class="page-wrapper">
+        <th:block layout:fragment="content"></th:block>
+    </div>
+
+</div>
+
+
+<script src="/teacherDashboard/assets/js/jquery-3.6.0.min.js"></script>
+
+<script src="/teacherDashboard/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script src="/teacherDashboard/assets/js/feather.min.js"></script>
+
+<script src="/teacherDashboard/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<script src="/teacherDashboard/assets/plugins/apexchart/apexcharts.min.js"></script>
+<script src="/teacherDashboard/assets/plugins/apexchart/chart-data.js"></script>
+
+<script src="/teacherDashboard/assets/plugins/simple-calendar/jquery.simple-calendar.js"></script>
+<script src="/teacherDashboard/assets/js/calander.js"></script>
+
+<script src="/teacherDashboard/assets/js/circle-progress.min.js"></script>
+
+<script src="/teacherDashboard/assets/js/script.js"></script>
+
+<th:block layout:fragment="optional"></th:block>
+</body>
+</html>

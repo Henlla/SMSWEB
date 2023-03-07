@@ -8,6 +8,7 @@ import com.example.smsweb.mail.Mail;
 import com.example.smsweb.mail.MailService;
 import com.example.smsweb.models.*;
 import com.example.smsweb.utils.DayOfWeekSchedule;
+import com.example.smsweb.utils.ExcelExport.ClassExport;
 import com.example.smsweb.utils.ExcelExport.ScheduleExport;
 import com.example.smsweb.utils.ExcelHelper;
 import com.example.smsweb.utils.FileUtils;
@@ -773,84 +774,8 @@ public class ClassController {
             String headerValue = "attachment; filename=students_" + classModel.getClassCode() + ".xlsx";
             response.setHeader(headerKey, headerValue);
 
-            XSSFWorkbook workbook = new XSSFWorkbook();
-            XSSFSheet sheet;
-            CellStyle style ;
-            XSSFFont font;
-            sheet = workbook.createSheet("CLASS "+ classModel.getClassCode());
-            sheet.addMergedRegion(new CellRangeAddress(0,0,0,6));
-            Row row;
-
-            //Create Title
-            row = sheet.createRow(0);
-            style = workbook.createCellStyle();
-            font = workbook.createFont();
-            font.setBold(true);
-            font.setFontHeight(20);
-            style.setFont(font);
-            style.setAlignment(HorizontalAlignment.CENTER);
-            style.setVerticalAlignment(VerticalAlignment.CENTER);
-
-            createCell(row, 0, "STUDENTS OF CLASS "+classModel.getClassCode(), style);
-
-            //Create header for workbook
-            row = sheet.createRow(1);
-
-            style = workbook.createCellStyle();
-            font = workbook.createFont();
-            font.setItalic(true);
-            font.setFontHeight(16);
-            style.setFont(font);
-            style.setAlignment(HorizontalAlignment.CENTER);
-            style.setVerticalAlignment(VerticalAlignment.CENTER);
-
-            createCell(row, 0, "Student Card", style);
-            createCell(row, 1, "Full Name", style);
-            createCell(row, 2, "Gender", style);
-            createCell(row, 3, "Date of birth", style);
-            createCell(row, 4, "Phone number", style);
-            createCell(row, 5, "Email", style);
-            createCell(row, 6, "Province", style);
-            
-            sheet.autoSizeColumn(0);
-            sheet.autoSizeColumn(1);
-            sheet.autoSizeColumn(2);
-            sheet.autoSizeColumn(3);
-            sheet.autoSizeColumn(4);
-            sheet.autoSizeColumn(5);
-            sheet.autoSizeColumn(6);
-
-            //Write data
-            style = workbook.createCellStyle();
-            font = workbook.createFont();
-            font.setFontHeight(12);
-            style.setFont(font);
-            int rowCount = 2;
-            for (StudentClass studentClass:classModel.getStudentClassById()) {
-                row = sheet.createRow(rowCount);
-                createCell(row, 0, studentClass.getClassStudentByStudent().getStudentCard(), style);
-                createCell(row, 1,studentClass.getClassStudentByStudent().getStudentByProfile().getFirstName()+ " "
-                        + studentClass.getClassStudentByStudent().getStudentByProfile().getLastName(),
-                        style);
-                createCell(row, 2, studentClass.getClassStudentByStudent().getStudentByProfile().getSex(), style);
-                createCell(row, 3, studentClass.getClassStudentByStudent().getStudentByProfile().getDob(), style);
-                createCell(row, 4, studentClass.getClassStudentByStudent().getStudentByProfile().getPhone(), style);
-                createCell(row, 5, studentClass.getClassStudentByStudent().getStudentByProfile().getEmail(), style);
-                createCell(row, 6, studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince().getName(), style);
-                sheet.autoSizeColumn(0);
-                sheet.autoSizeColumn(1);
-                sheet.autoSizeColumn(2);
-                sheet.autoSizeColumn(3);
-                sheet.autoSizeColumn(4);
-                sheet.autoSizeColumn(5);
-                sheet.autoSizeColumn(6);
-                rowCount++;
-            }
-
-            ServletOutputStream outputStream = response.getOutputStream();
-            workbook.write(outputStream);
-            workbook.close();
-            outputStream.close();
+            ClassExport classExport = new ClassExport(classModel);
+            classExport.generateExcelFile(response);
 
         } catch (HttpClientErrorException e) {
             throw new ErrorHandler("token expired");
