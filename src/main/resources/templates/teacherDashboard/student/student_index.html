@@ -9,157 +9,84 @@
     <link rel="stylesheet" href="/css/student_details.css">
 </head>
 <body>
-<div layout:fragment="content">
-    <section>
-        <div class="content-wrapper">
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý sinh viên</h5>
-                        </div>
+    <div layout:fragment="content" class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-sub-header">
+                        <h3 class="page-title">Sinh viên</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a th:href="@{'/teacher/students'}">Tất cả sinh viên</a> </li>
+<!--                            <li class="breadcrumb-item active">Tất cả sinh viên</li>-->
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="content-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm"><i class="fas fa-plus"></i> Thêm mới</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Xuất dữ liệu</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu mẫu</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <label>Tìm kiếm theo nghành học :</label>
-                            <div id="select-major"></div>
-                            <table id="student-table" class="table table-bordered">
-                                <thead>
-                                <tr class="text-center">
-                                    <th>STT</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Mã sinh viên</th>
-                                    <th>Tên sinh viên</th>
-                                    <th>Nghành học</th>
-                                    <th>Hành động</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr class="text-center" th:each="student:${students}">
-                                    <td><span
-                                            th:text="${students.indexOf(student)+1}"></span>
-                                    </td>
-                                    <td><img th:src="${student.studentByProfile.getAvartarUrl()}" alt="" width="50"
-                                             height=50></td>
-                                    <td>
-                                        <span th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
-                                    </td>
-                                    <td><span th:text="${student.studentCard}"></span></td>
-                                    <td>
-                                        <th:block th:each="major :${student.majorStudentsById}">
-                                            [[${major.majorByMajorId.majorName}]]
-                                        </th:block>
-                                    </td>
-                                    <td class="text-center">
-                                        <a class="mr-3" th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:data-name="${student.id}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="student_details" tabindex="-1"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết sinh viên</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <i class="fas fa-times fa-sm"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <img id="st_image" style="width: 100%;height: 100%">
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label>Họ và tên : </label>&nbsp;<span
-                                                    id="st_fullName"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>Mã số sinh viên : </label>&nbsp;<span
-                                                    id="st_card"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>Giới tính : </label>&nbsp;<span
-                                                    id="st_sex"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>Ngày sinh : </label>&nbsp;<span
-                                                    id="st_dob"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>Số điện thoại : </label>&nbsp;<span
-                                                    id="st_phone"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>Email : </label>&nbsp;<span
-                                                    id="st_email"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>CCCD/CMND : </label>&nbsp;<span
-                                                    id="st_identityId"></span>
-                                            </div>
-                                            <div class="col-12">
-                                                <label>Địa chỉ : </label>&nbsp;<span
-                                                    id="st_address"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>Nghành học : </label>&nbsp;<span id="st_major"></span>
-                                            </div>
-                                            <div class="col-6">
-                                                <label>Lớp học : </label>&nbsp;
-                                                <span
-                                                        id="st_class"></span>
-                                            </div>
-                                            <div class="col-12">
-                                                <div id="spinner-divI" class="pt-5">
-                                                    <div class="spinner-border text-primary" role="status">
-                                                    </div>
-                                                </div>
-                                                <input type="hidden" id="accountId" value="">
-                                                <input type="hidden" id="email" value="">
-                                                <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật
-                                                    khẩu
-                                                </button>
-                                            </div>
-                                        </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table comman-shadow">
+                    <div class="card-body">
+                        <div class="page-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="page-title">Sinh viên</h3>
+                                    <div class="text-end float-end ms-auto download-grp">
+                                        <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-outline-primary"><i class="fas fa-download"></i> Download</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
-                            </button>
+
+                        <div class="row table-responsive">
+                            <div class="col-12">
+                                <label>Tìm kiếm theo nghành học :</label>
+                                <div class="mb-2" id="select-major"></div>
+                                <table id="student-table" class="table table-bordered">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th>STT</th>
+                                        <th>Mã sinh viên</th>
+                                        <th>Tên sinh viên</th>
+                                        <th>Ngày sinh</th>
+                                        <th>Nghành học</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="text-center" th:each="student:${students}">
+                                        <td><span th:text="${students.indexOf(student)+1}"></span></td>
+                                        <td><span th:text="${student.studentCard}"></span></td>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                <a th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))" class="avatar avatar-sm me-2">
+                                                    <img class="avatar-img rounded-circle" th:src="${student.studentByProfile.getAvartarUrl()}" alt="student-img">
+                                                </a>
+                                                <a th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"></a>
+                                            </h2>
+                                            <span th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
+                                        </td>
+                                        <td><span th:text="${student.getStudentByProfile().getDob()}"></span></td>
+                                        <td>
+                                            <th:block th:each="major :${student.majorStudentsById}">
+                                                [[${major.majorByMajorId.majorName}]]
+                                            </th:block>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="mr-3" th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-</div>
-<th:block layout:fragment="optional">
-    <script src="/js/student/student_index.js"></script>
-</th:block>
+    </div>
+    <th:block layout:fragment="optional">
+        <script type="text/javascript" src="/teacherDashboard/assets/js/custormJs/student-index.js"></script>
+    </th:block>
 </body>
 </html>

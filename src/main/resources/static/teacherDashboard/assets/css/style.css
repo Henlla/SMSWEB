@@ -72,6 +72,11 @@ a:focus {
 	outline: none;
 	text-decoration: none;
 }
+.dataTables_length label{
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
@@ -1539,7 +1544,7 @@ button.bg-danger:hover {
 	color: #fff;
 }
 div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-	margin: 15px 0 0;
+    justify-content: flex-end !important;
 }
 div.dataTables_wrapper div.dataTables_info {
     padding-top: 25px;
@@ -1567,8 +1572,7 @@ div.dataTables_wrapper div.dataTables_length select {
 	height: 45px;
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow {
-	height: 43px;
-	right: 7px;
+	right: 0.5px;
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
 	border-color: #000 transparent transparent;

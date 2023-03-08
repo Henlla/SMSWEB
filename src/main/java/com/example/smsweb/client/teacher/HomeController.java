@@ -153,7 +153,7 @@ public class HomeController {
         return "teacherDashboard/class/class_index";
     }
 
-    @GetMapping("/class-details/{classCode}")
+    @GetMapping("class/{classCode}")
     public String class_details(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
                                 @PathVariable("classCode") String classCode) {
         try {

@@ -4,30 +4,43 @@
       layout:decorate="~{teacherDashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sinh viên</title>
-    <style>
-
-    </style>
+    <title>Danh sách </title>
+    <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
-<div layout:fragment="content">
-    <section>
-        <div class="content-wrapper">
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h5 class="m-0">Danh sách lớp học</h5>
-                        </div>
-                    </div>
+<div layout:fragment="content" class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">Lớp học</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{'/teacher/classes'}">Tất cả Lớp học</a> </li>
+<!--                        <li class="breadcrumb-item active">Tất cả Lớp học</li>-->
+                    </ul>
                 </div>
             </div>
-            <div class="content-body">
-                <div class="container-fluid">
-                    <div class="row">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table comman-shadow">
+                <div class="card-body">
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="page-title">Lớp học</h3>
+                                <div class="text-end float-end ms-auto download-grp">
+<!--                                    <a class="btn btn-outline-primary"><i class="fas fa-download"></i> Download</a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row table-responsive">
                         <div class="col-12">
                             <label>Tìm kiếm theo nghành học :</label>
-                            <div id="select-major"></div>
+                            <div class="mb-2" id="select-major"></div>
                             <table id="class-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
@@ -44,12 +57,21 @@
                                 <tr class="text-center" th:each="class:${classes}">
                                     <td><span th:text="${classes.indexOf(class)+1}"></span></td>
                                     <td><span th:text="${class.getClassCode()}"></span></td>
-                                    <td><span th:text="${class.teacher.profileByProfileId.getFirstName()+' '+class.teacher.profileByProfileId.getLastName()}"/></td>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a th:data-name="${class.getTeacherId()}" onclick="OnDetails(this.getAttribute('data-name'))" class="avatar avatar-sm me-2">
+                                                <img class="avatar-img rounded-circle" th:src="${class.getTeacher().getProfileByProfileId().getAvartarUrl()}" alt="student-img">
+                                            </a>
+                                        </h2>
+                                        <a th:data-name="${class.getTeacherId()}" onclick="OnDetails(this.getAttribute('data-name'))">
+                                            <span th:text="${class.teacher.profileByProfileId.getFirstName()+' '+class.teacher.profileByProfileId.getLastName()}"/>
+                                        </a>
+                                    </td>
                                     <td><span th:text="${class.major.getMajorName()}"></span></td>
                                     <td><span th:text="${class.studentClassById.size()}"></span></td>
                                     <td><span th:text="${class.getLimitStudent()}"></span></td>
                                     <td class="text-center">
-                                        <a class="mr-3" th:href="${'/teacherDashboard/class/class-details/'+ class.getClassCode()}" ><i class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3" th:href="${'/teacher/class/'+ class.getClassCode()}" ><i class="fas fa-eye indigo-text"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -59,71 +81,11 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </div>
+
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
-    <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            $('#class-table').DataTable({
-                "oLanguage": {
-                    "sSearch": "Tìm kiếm :"
-                },
-                "lengthMenu": [5, 10, 25, 50, 75, 100],
-                initComplete: function () {
-                    count = 0;
-                    this.api().columns([3]).every(function (i) {
-                        var title = this.header();
-                        //replace spaces with dashes
-                        title = $(title).html().replace(/[\W]/g, '');
-                        var column = this;
-                        var select = $('<select id="' + title + '" class="form-control form-control-sm select2" style="width: 50%" ></select>')
-                            .appendTo($('#select-major'))
-                            .on('change', function () {
-                                //Get the "text" property from each selected data
-                                //regex escape the value and store in array
-                                var data = $.map($(this).select2('data'),
-                                    function (value, key) {
-                                        return value.text ? '^' + $.fn.dataTable.util.escapeRegex(value.text) + '$' : null;
-                                    });
-                                //if no data selected use ""
-                                if (data.length === 0) {
-                                    data = [""];
-                                }
-                                //join array into string with regex or (|)
-                                var val = data.join('|');
-                                //search for the option(s) selected
-                                column
-                                    .search(val ? val : '', true, false)
-                                    .draw();
-                            });
-
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d + '">' + d + '</option>');
-                        });
-                        //use column title as selector and placeholder
-                        $('#' + title).select2({
-                            closeOnSelect: true,
-                            placeholder: "- All -",
-                            allowClear: true,
-                            width: 'resolve'
-                        });
-
-                        //initially clear select otherwise first option is selected
-                        $('.select2').val(null).trigger('change');
-                    });
-                },
-            })
-
-            $('.dataTables_filter input[type="search"]').css(
-                {'width':'350px','display':'inline-block'}
-            );
-        });
-
-    </script>
+    <script type="text/javascript" src="/teacherDashboard/assets/js/custormJs/class.js"></script>
 </th:block>
 </body>
 </html>
