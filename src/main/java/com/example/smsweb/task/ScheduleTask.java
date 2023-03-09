@@ -23,7 +23,7 @@ public class ScheduleTask {
     private final String URL_FCM = "http://localhost:8080/fcm/";
     private final String URL_DEVICE = "http://localhost:8080/api/device/";
 
-    @Scheduled(cron = "0 44 17 1/1 * *")
+    @Scheduled(cron = "0 33 17 1/1 * *")
     public void sendNotification() throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

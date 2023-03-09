@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.*;
 import java.util.Date;
+import java.util.stream.Collectors;
+
 import static org.apache.poi.ss.util.CellUtil.createCell;
 
 @Controller
@@ -68,6 +70,7 @@ public class ClassController {
     private final String HOLIDAY_URL = "https://holidayapi.com/v1/holidays?pretty&key=97662a7f-e120-4e95-b3a8-7c18d1c40717&country=VN&year=2022";
     @Autowired
     private MailService mailService;
+
     @GetMapping("/class-index")
     public String index(Model model, @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
         if (_token.equals("")) {
@@ -246,7 +249,7 @@ public class ClassController {
                             if (Arrays.stream(DayOfWeekSchedule.array0).anyMatch(dayOfWeek::equals)
                                     && isInHoliday) {
                                 ScheduleDetail scheduleDetail = new ScheduleDetail();
-                                if(i%2==0){
+                                if (i % 2 == 0) {
                                     scheduleDetail.setDayOfWeek(dayOfWeek);
                                     scheduleDetail.setDate(date.toString());
                                     scheduleDetail.setScheduleId(schedule.getId());
@@ -255,7 +258,7 @@ public class ClassController {
                                     listScheduleDetails.add(scheduleDetail);
                                     slot++;
                                     break;
-                                }else{
+                                } else {
                                     scheduleDetail.setDayOfWeek(dayOfWeek);
                                     scheduleDetail.setDate(date.toString());
                                     scheduleDetail.setScheduleId(schedule.getId());
@@ -268,7 +271,7 @@ public class ClassController {
                                         break;
                                     }
                                 }
-                            }else{
+                            } else {
                                 break;
                             }
                         }
@@ -293,7 +296,7 @@ public class ClassController {
                             if (Arrays.stream(DayOfWeekSchedule.array1).anyMatch(dayOfWeek::equals)
                                     && isInHoliday) {
                                 ScheduleDetail scheduleDetail = new ScheduleDetail();
-                                if(i%2==0){
+                                if (i % 2 == 0) {
                                     scheduleDetail.setDayOfWeek(dayOfWeek);
                                     scheduleDetail.setDate(date.toString());
                                     scheduleDetail.setScheduleId(schedule.getId());
@@ -302,7 +305,7 @@ public class ClassController {
                                     listScheduleDetails.add(scheduleDetail);
                                     slot++;
                                     break;
-                                }else{
+                                } else {
                                     scheduleDetail.setDayOfWeek(dayOfWeek);
                                     scheduleDetail.setDate(date.toString());
                                     scheduleDetail.setScheduleId(schedule.getId());
@@ -315,7 +318,7 @@ public class ClassController {
                                         break;
                                     }
                                 }
-                            }else{
+                            } else {
                                 break;
                             }
                         }
@@ -368,57 +371,80 @@ public class ClassController {
                 boolean flag = false;
                 LocalDate minDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).min(LocalDate::compareTo).get();
                 LocalDate maxDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).max(LocalDate::compareTo).get();
-                List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a,b)->LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
-                for (ScheduleDetail scheduleDetail : listSortDate) {
-                    if(flag){
+                List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
+                int index = 0;
+                for (LocalDate date = minDate; date.isBefore(maxDate.plusDays(1)); date = date.plusDays(1)) {
+                    if(listSortDate.size() == index){
                         break;
                     }
-                    for (LocalDate date = minDate;date .isBefore(maxDate.plusDays(1));date = date.plusDays(1)){
+                    for (int i = index ; i<listSortDate.size();i++) {
                         WeekFields weekFields = WeekFields.of(Locale.getDefault());
-                        int weekOfMonth = LocalDate.parse(scheduleDetail.getDate()).get(weekFields.weekOfMonth());
-                        int monthOfYear = LocalDate.parse(scheduleDetail.getDate()).getMonthValue();
-                        int weekOfYear = LocalDate.parse(scheduleDetail.getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                        if(date.isEqual(LocalDate.parse(scheduleDetail.getDate()))){
+                        int weekOfMonth = LocalDate.parse(listSortDate.get(i).getDate()).get(weekFields.weekOfMonth());
+                        int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
+                        int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                        if (date.isEqual(LocalDate.parse(listSortDate.get(i).getDate()))) {
                             DayInWeek diw = new DayInWeek();
-                            diw.setId(scheduleDetail.getId());
-                            diw.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                            diw.setSubject(scheduleDetail.getSubjectBySubjectId());
-                            diw.setDayOfWeek(scheduleDetail.getDayOfWeek());
-                            diw.setSubjectId(scheduleDetail.getSubjectId());
-                            diw.setSlot(scheduleDetail.getSlot());
+                            if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i)) && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))) {
+                                diw = new DayInWeek();
+                                diw.setId(listSortDate.get(i).getId());
+                                diw.setDate(LocalDate.parse(listSortDate.get(i).getDate()));
+                                diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
+                                diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
+                                diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                                diw.setWeek(weekOfMonth);
+                                diw.setSlot(listSortDate.get(i).getSlot());
+                                diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                                diw.setMonth(monthOfYear);
+                                diw.setWeekOfYear(weekOfYear);
+                                dayInWeekList.add(diw);
+                                index= i;
+                                break;
+                            }
+                            diw = new DayInWeek();
+                            diw.setId(listSortDate.get(i).getId());
+                            diw.setDate(LocalDate.parse(listSortDate.get(i).getDate()));
+                            diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
+                            diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
+                            diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                            diw.setSlot(listSortDate.get(i).getSlot());
                             diw.setWeek(weekOfMonth);
                             diw.setMonth(monthOfYear);
                             diw.setWeekOfYear(weekOfYear);
                             dayInWeekList.add(diw);
-                            if(listSortDate.get(listSortDate.size() - 1).equals(scheduleDetail) && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))){
-                                diw.setId(scheduleDetail.getId());
-                                diw.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                                diw.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                diw.setDayOfWeek(scheduleDetail.getDayOfWeek());
-                                diw.setSubjectId(scheduleDetail.getSubjectId());
-                                diw.setWeek(weekOfMonth);
-                                diw.setSubjectId(scheduleDetail.getSubjectId());
-                                diw.setMonth(monthOfYear);
-                                diw.setWeekOfYear(weekOfYear);
-                                dayInWeekList.add(diw);
-                                flag=!flag;
+                            index = i;
+                            if(LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))){
+                                index = listSortDate.indexOf(listSortDate.get(i)) + 1;
                                 break;
                             }
-                            minDate = date.plusDays(1);
-                            break;
-                        }else{
+                        }  else {
                             DayInWeek diw = new DayInWeek();
                             diw.setId(0);
                             diw.setDate(date);
                             diw.setSubject(null);
                             diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
                             diw.setSubjectId(0);
+                            diw.setSlot(1);
                             diw.setWeek(date.get(weekFields.weekOfMonth()));
                             diw.setMonth(date.getMonthValue());
                             diw.setWeekOfYear(date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
                             dayInWeekList.add(diw);
+
+                            diw = new DayInWeek();
+                            diw.setId(0);
+                            diw.setDate(date);
+                            diw.setSubject(null);
+                            diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
+                            diw.setSubjectId(0);
+                            diw.setSlot(2);
+                            diw.setWeek(date.get(weekFields.weekOfMonth()));
+                            diw.setMonth(date.getMonthValue());
+                            diw.setWeekOfYear(date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
+                            dayInWeekList.add(diw);
+                            break;
                         }
+
                     }
+
 
                 }
                 scheduleModel.setStartDate(LocalDate.parse(schedule.getStartDate()));
@@ -426,7 +452,24 @@ public class ClassController {
                 scheduleModel.setEndDate(LocalDate.parse(schedule.getEndDate()));
                 scheduleModel.setSemester(schedule.getSemester());
                 scheduleModel.setDayInWeeks(dayInWeekList);
-                return scheduleModel;
+                HashMap<Integer, List<DayInWeek>> hashMap = new HashMap<Integer, List<DayInWeek>>();
+                List<DayInWeek> listSort = scheduleModel.getDayInWeeks().stream().sorted((a,b)-> a.getWeekOfYear().compareTo(b.getWeekOfYear())).toList();
+                for (DayInWeek dayInWeek:listSort){
+                    Integer key  = dayInWeek.getWeekOfYear();
+                    if(hashMap.containsKey(key)){
+                        List<DayInWeek> list = hashMap.get(key);
+                        list.add(dayInWeek);
+
+                    }else{
+                        List<DayInWeek> list = new ArrayList<DayInWeek>();
+                        list.add(dayInWeek);
+                        hashMap.put(key, list);
+                    }
+                }
+                HashMap<Integer, List<DayInWeek>> newMapSortedByKey = hashMap.entrySet().stream()
+                        .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                        .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+                return newMapSortedByKey;
             } else {
                 return null;
             }
@@ -441,11 +484,11 @@ public class ClassController {
     }
 
 
-
     @PostMapping("/changeDateSchedule")
     @ResponseBody
     public Object changeDateSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
                                      @RequestParam("currenDate") String currenDate,
+                                     @RequestParam("slot") Integer slot,
                                      @RequestParam("classId") String classId,
                                      @RequestParam("semester") String semester) throws JsonProcessingException {
         try {
@@ -467,11 +510,13 @@ public class ClassController {
                 LocalDate date = LocalDate.parse(formatDate);
                 int getDate = date.getDayOfMonth();
                 int getMonth = date.getMonthValue();
-                boolean isSameDate = schedule.getScheduleDetailsById().stream().noneMatch(dates -> LocalDate.parse(dates.getDate()).getDayOfMonth() == getDate && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth);
+                boolean isSameDate = schedule.getScheduleDetailsById().stream()
+                        .anyMatch(dates -> LocalDate.parse(dates.getDate()).getDayOfMonth() == getDate
+                        && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth && dates.getSlot().equals(slot));
                 if (isSameDate) {
-                    return "success";
-                } else {
                     return "error";
+                } else {
+                    return "success";
                 }
             }
             return "";
@@ -489,6 +534,7 @@ public class ClassController {
     @ResponseBody
     public Object updateDateChangeSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
                                            @RequestParam("newDate") String newDate,
+                                           @RequestParam("slot") Integer slot,
                                            @RequestParam("schedule_details_id") String schedule_details_id) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
@@ -505,6 +551,7 @@ public class ClassController {
             String dayOfWeek = String.valueOf(LocalDate.parse(formatDate).getDayOfWeek());
             scheduleDetail.setDate(formatDate);
             scheduleDetail.setDayOfWeek(dayOfWeek);
+            scheduleDetail.setSlot(slot);
             String convertToJson = objectMapper.writeValueAsString(scheduleDetail);
             MultiValueMap<String, Object> paramsDetails = new LinkedMultiValueMap<>();
             paramsDetails.add("schedule_details", convertToJson);
@@ -530,28 +577,29 @@ public class ClassController {
     @ResponseBody
     public String findStudent(
             @CookieValue(name = "_token", defaultValue = "") String _token,
-            @PathVariable("studentCard")String studentCard
+            @PathVariable("studentCard") String studentCard
     ) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             JWTUtils.checkExpired(_token);
-            HttpHeaders headers= new HttpHeaders();
-            headers.set("Authorization","Bearer "+_token);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ObjectMapper objectMapper = new ObjectMapper();
-            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"findStudentByStudentCard/"+studentCard,HttpMethod.GET,request,String.class);
-            Student student = objectMapper.readValue(response.getBody(),new TypeReference<Student>(){});
-            if (student != null){
+            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL + "findStudentByStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
+            Student student = objectMapper.readValue(response.getBody(), new TypeReference<Student>() {
+            });
+            if (student != null) {
                 String convertToJson = objectMapper.writeValueAsString(student);
                 return convertToJson;
-            }else {
-                throw new ErrorHandler("Không tìm thấy sinh viên: "+ studentCard);
+            } else {
+                throw new ErrorHandler("Không tìm thấy sinh viên: " + studentCard);
             }
-        }catch (HttpClientErrorException ex){
+        } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
-            if(ex.getStatusCode() == HttpStatus.UNAUTHORIZED){
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 return ex.getMessage();
-            }else {
+            } else {
                 return ex.getMessage();
             }
 
@@ -564,15 +612,15 @@ public class ClassController {
     @ResponseBody
     public String addStudentToClass(
             @CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("studentId")int studentId,
-            @RequestParam("classId")int classId
+            @RequestParam("studentId") int studentId,
+            @RequestParam("classId") int classId
     ) {
         try {
             JWTUtils.checkExpired(_token);
 
             ObjectMapper objectMapper = new ObjectMapper();
             RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers= new HttpHeaders();
+            HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + _token);
 
             StudentClass studentClass = new StudentClass();
@@ -583,14 +631,14 @@ public class ClassController {
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-            content.add("newStudentClass",objectMapper.writeValueAsString(studentClass));
+            content.add("newStudentClass", objectMapper.writeValueAsString(studentClass));
             request = new HttpEntity<>(content, headers);
-            ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL+"save", HttpMethod.POST, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "save", HttpMethod.POST, request, ResponseModel.class);
 
-            if (responseStudentClass.getStatusCode().is2xxSuccessful()){
+            if (responseStudentClass.getStatusCode().is2xxSuccessful()) {
                 String convertToJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
                 return convertToJson;
-            }else {
+            } else {
                 throw new ErrorHandler("Thêm sinh viên thất bại");
             }
 
@@ -603,7 +651,7 @@ public class ClassController {
     @ResponseBody
     public String importStudentExcel(
             @CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("classCode")String classCode,
+            @RequestParam("classCode") String classCode,
             @RequestParam("availablePlace") int availablePlace,
             @RequestParam(name = "studentList", required = false) MultipartFile file
     ) {
@@ -618,8 +666,9 @@ public class ClassController {
                         throw new ErrorHandler(response.getMessage());
                     }
                 } catch (Exception e) {
-                    String message = e.getMessage().substring(e.getMessage().indexOf("\"")+1, e.getMessage().lastIndexOf("\""));
-                    throw new ErrorHandler(message);                }
+                    String message = e.getMessage().substring(e.getMessage().indexOf("\"") + 1, e.getMessage().lastIndexOf("\""));
+                    throw new ErrorHandler(message);
+                }
             } else {
                 throw new ErrorHandler("Không thể thêm danh sách trống");
             }
@@ -627,6 +676,7 @@ public class ClassController {
             throw new ErrorHandler(ex.getMessage());
         }
     }
+
     @PostMapping("/class-create")
     @ResponseBody
     public String createClass(Model model,
@@ -656,7 +706,7 @@ public class ClassController {
                         if (result.getStatus() == "success") {
                             return result.toString();
                         } else {
-                            return new ClassResponse("success", "Thêm danh sách sinh viên thất bại. "+ result.getMessage()).toString();
+                            return new ClassResponse("success", "Thêm danh sách sinh viên thất bại. " + result.getMessage()).toString();
                         }
                     } catch (Exception e) {
                         String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
@@ -710,9 +760,10 @@ public class ClassController {
 
                     ResponseEntity<String> responseStudent = restTemplate.exchange(STUDENT_URL + "findStudentIdByRangeStudentCard/" + new ObjectMapper().writeValueAsString(listStudentCard),
                             HttpMethod.GET, request, String.class);
-                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(), new TypeReference<List<Student>>() {});
-                    if(listStudent.size() > availablePlace){
-                        return new ClassResponse("error", "Chỉ được thêm "+ availablePlace + " vào lớp");
+                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(), new TypeReference<List<Student>>() {
+                    });
+                    if (listStudent.size() > availablePlace) {
+                        return new ClassResponse("error", "Chỉ được thêm " + availablePlace + " vào lớp");
                     }
 
                     content.add("classCode", classCode);
@@ -733,27 +784,27 @@ public class ClassController {
                     content.add("listStudentClass", objectMapper.writeValueAsString(studentClassList));
                     request = new HttpEntity<>(content, headers);
                     ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, request, ResponseModel.class);
-                    if (responseStudentClass.getStatusCode().is2xxSuccessful()){
-                        return new ClassResponse("success","Thêm thành công "+ studentClassList.size()+ " sinh viên");
-                    }else{
-                        return new ClassResponse("error","Thêm danh sách sinh viên thất bại");
+                    if (responseStudentClass.getStatusCode().is2xxSuccessful()) {
+                        return new ClassResponse("success", "Thêm thành công " + studentClassList.size() + " sinh viên");
+                    } else {
+                        return new ClassResponse("error", "Thêm danh sách sinh viên thất bại");
                     }
                 } else {
-                    return new ClassResponse("error","Không thể thêm danh sách trống");
+                    return new ClassResponse("error", "Không thể thêm danh sách trống");
                 }
             } catch (Exception e) {
                 var s = e.getMessage();
                 throw new RuntimeException(e.getMessage());
             }
         }
-        return new ClassResponse("error","Không thể thêm danh sách trống");
+        return new ClassResponse("error", "Không thể thêm danh sách trống");
     }
 
     @GetMapping("/export-student-excel/{ClassId}")
     public void exportStudentList(HttpServletResponse response,
                                   @CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @PathVariable("ClassId")int classId
-    ){
+                                  @PathVariable("ClassId") int classId
+    ) {
         try {
             JWTUtils.checkExpired(_token);
 
@@ -764,7 +815,8 @@ public class ClassController {
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ObjectMapper objectMapper = new ObjectMapper();
             ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId, HttpMethod.GET, request, String.class);
-            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {});
+            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {
+            });
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
 
             Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
@@ -773,6 +825,7 @@ public class ClassController {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=students_" + classModel.getClassCode() + ".xlsx";
             response.setHeader(headerKey, headerValue);
+
 
             ClassExport classExport = new ClassExport(classModel);
             classExport.generateExcelFile(response);
@@ -789,24 +842,24 @@ public class ClassController {
     @GetMapping("/getTeacherByCard/{card}")
     @ResponseBody
     public Object getTeacherByCard(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                   @PathVariable("card")String card){
+                                   @PathVariable("card") String card) {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization","Bearer "+_token);
+            headers.add("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<Teacher> response = restTemplate.exchange(TEACHER_URL+"getByCard/"+card,HttpMethod.GET,request,Teacher.class);
-            if(response.getStatusCode().is2xxSuccessful()){
-                if(response.getBody() == null){
+            ResponseEntity<Teacher> response = restTemplate.exchange(TEACHER_URL + "getByCard/" + card, HttpMethod.GET, request, Teacher.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                if (response.getBody() == null) {
                     return "null";
-                }else{
+                } else {
                     return response.getBody();
                 }
-            }else{
+            } else {
                 return "error";
             }
-        }catch (HttpClientErrorException ex) {
+        } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
             if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 return ex.getMessage();
@@ -819,29 +872,29 @@ public class ClassController {
     @PostMapping("change_teacher")
     @ResponseBody
     public Object change_teacher(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                 @RequestParam("classId")Integer classId,@RequestParam("teacherCard")String teacherCard) throws JsonProcessingException {
+                                 @RequestParam("classId") Integer classId, @RequestParam("teacherCard") String teacherCard) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization","Bearer "+_token);
+            headers.add("Authorization", "Bearer " + _token);
             ObjectMapper objectMapper = new ObjectMapper();
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL+"getClass/"+classId,HttpMethod.GET,request,ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
             String json = objectMapper.writeValueAsString(response.getBody().getData());
-            Classses classses = objectMapper.readValue(json,Classses.class);
+            Classses classses = objectMapper.readValue(json, Classses.class);
             HttpEntity<Object> requestTeacher = new HttpEntity<>(headers);
-            ResponseEntity<String> responseTeacher = restTemplate.exchange(TEACHER_URL+"getByCard/"+teacherCard,HttpMethod.GET,request,String.class);
-            Teacher teacher = objectMapper.readValue(responseTeacher.getBody(),Teacher.class);
+            ResponseEntity<String> responseTeacher = restTemplate.exchange(TEACHER_URL + "getByCard/" + teacherCard, HttpMethod.GET, request, String.class);
+            Teacher teacher = objectMapper.readValue(responseTeacher.getBody(), Teacher.class);
             classses.setTeacherId(teacher.getId());
 
             String jsonClass = objectMapper.writeValueAsString(classses);
-            MultiValueMap<String,Object> params = new LinkedMultiValueMap<>();
-            params.add("class",jsonClass);
-            HttpEntity<MultiValueMap<String,Object>> requestUpdateClass = new HttpEntity<>(params,headers);
-            ResponseEntity<String> responseEntity = restTemplate.exchange(CLASS_URL+"updateClass",HttpMethod.PUT,requestUpdateClass,String.class);
+            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+            params.add("class", jsonClass);
+            HttpEntity<MultiValueMap<String, Object>> requestUpdateClass = new HttpEntity<>(params, headers);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(CLASS_URL + "updateClass", HttpMethod.PUT, requestUpdateClass, String.class);
             return responseEntity.getBody();
-        }catch (HttpClientErrorException ex) {
+        } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
             if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 return ex.getMessage();
@@ -854,8 +907,8 @@ public class ClassController {
 
     @GetMapping("export_schedule/{classId}&{semester}")
     public void export_schedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                @PathVariable("classId")Integer classId ,
-                                @PathVariable("semester")Integer semester,HttpServletResponse responses) throws IOException {
+                                @PathVariable("classId") Integer classId,
+                                @PathVariable("semester") Integer semester, HttpServletResponse responses) throws IOException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -870,65 +923,87 @@ public class ClassController {
             String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
             Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL+"getClass/"+classId,HttpMethod.GET,request,ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
             String json = objectMapper.writeValueAsString(response.getBody().getData());
-            Classses classses = objectMapper.readValue(json,Classses.class);
+            Classses classses = objectMapper.readValue(json, Classses.class);
 
             ScheduleModel scheduleModel = new ScheduleModel();
             List<DayInWeek> dayInWeekList = new ArrayList<>();
             boolean flag = false;
             LocalDate minDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).min(LocalDate::compareTo).get();
             LocalDate maxDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).max(LocalDate::compareTo).get();
-            List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a,b)->LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
-            for (ScheduleDetail scheduleDetail : listSortDate) {
-                if(flag){
+            List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
+            int index = 0;
+            for (LocalDate date = minDate; date.isBefore(maxDate.plusDays(1)); date = date.plusDays(1)) {
+                if(listSortDate.size() == index){
                     break;
                 }
-                for (LocalDate date = minDate;date .isBefore(maxDate.plusDays(1));date = date.plusDays(1)){
+                for (int i = index ; i<listSortDate.size();i++) {
                     WeekFields weekFields = WeekFields.of(Locale.getDefault());
-                    int weekOfMonth = LocalDate.parse(scheduleDetail.getDate()).get(weekFields.weekOfMonth());
-                    int monthOfYear = LocalDate.parse(scheduleDetail.getDate()).getMonthValue();
-                    int weekOfYear = LocalDate.parse(scheduleDetail.getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                    if(date.isEqual(LocalDate.parse(scheduleDetail.getDate()))){
+                    int weekOfMonth = LocalDate.parse(listSortDate.get(i).getDate()).get(weekFields.weekOfMonth());
+                    int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
+                    int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                    if (date.isEqual(LocalDate.parse(listSortDate.get(i).getDate()))) {
                         DayInWeek diw = new DayInWeek();
-                        diw.setId(scheduleDetail.getId());
-                        diw.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                        diw.setSubject(scheduleDetail.getSubjectBySubjectId());
-                        diw.setDayOfWeek(scheduleDetail.getDayOfWeek());
-                        diw.setSubjectId(scheduleDetail.getSubjectId());
+                        if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i)) && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))) {
+                            diw = new DayInWeek();
+                            diw.setId(listSortDate.get(i).getId());
+                            diw.setDate(LocalDate.parse(listSortDate.get(i).getDate()));
+                            diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
+                            diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
+                            diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                            diw.setWeek(weekOfMonth);
+                            diw.setSlot(listSortDate.get(i).getSlot());
+                            diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                            diw.setMonth(monthOfYear);
+                            diw.setWeekOfYear(weekOfYear);
+                            dayInWeekList.add(diw);
+                            index= i;
+                            break;
+                        }
+                        diw = new DayInWeek();
+                        diw.setId(listSortDate.get(i).getId());
+                        diw.setDate(LocalDate.parse(listSortDate.get(i).getDate()));
+                        diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
+                        diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
+                        diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                        diw.setSlot(listSortDate.get(i).getSlot());
                         diw.setWeek(weekOfMonth);
                         diw.setMonth(monthOfYear);
                         diw.setWeekOfYear(weekOfYear);
                         dayInWeekList.add(diw);
-                        if(listSortDate.get(listSortDate.size() - 1).equals(scheduleDetail) && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))){
-                            diw.setId(scheduleDetail.getId());
-                            diw.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                            diw.setSubject(scheduleDetail.getSubjectBySubjectId());
-                            diw.setDayOfWeek(scheduleDetail.getDayOfWeek());
-                            diw.setSubjectId(scheduleDetail.getSubjectId());
-                            diw.setWeek(weekOfMonth);
-                            diw.setMonth(monthOfYear);
-                            diw.setWeekOfYear(weekOfYear);
-                            dayInWeekList.add(diw);
-                            flag=!flag;
+                        index = i;
+                        if(LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))){
+                            index = listSortDate.indexOf(listSortDate.get(i)) + 1;
                             break;
                         }
-                        minDate = date.plusDays(1);
-                        break;
-                    }else{
+                    }  else {
                         DayInWeek diw = new DayInWeek();
                         diw.setId(0);
                         diw.setDate(date);
                         diw.setSubject(null);
                         diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
                         diw.setSubjectId(0);
+                        diw.setSlot(1);
                         diw.setWeek(date.get(weekFields.weekOfMonth()));
                         diw.setMonth(date.getMonthValue());
                         diw.setWeekOfYear(date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
                         dayInWeekList.add(diw);
+
+                        diw = new DayInWeek();
+                        diw.setId(0);
+                        diw.setDate(date);
+                        diw.setSubject(null);
+                        diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
+                        diw.setSubjectId(0);
+                        diw.setSlot(2);
+                        diw.setWeek(date.get(weekFields.weekOfMonth()));
+                        diw.setMonth(date.getMonthValue());
+                        diw.setWeekOfYear(date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
+                        dayInWeekList.add(diw);
+                        break;
                     }
                 }
-
             }
             scheduleModel.setStartDate(LocalDate.parse(schedule.getStartDate()));
             scheduleModel.setId(schedule.getId());
@@ -940,11 +1015,11 @@ public class ClassController {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
             String currentDate = dateFormat.format(new Date());
             String headerKey = "Content-Disposition";
-            String headerValue = "attachment; filename="+classses.getClassCode()+".xlsx"; // file *.xlsx
+            String headerValue = "attachment; filename=" + classses.getClassCode() + ".xlsx"; // file *.xlsx
             responses.setHeader(headerKey, headerValue);
-            ScheduleExport generateFeedbackExcel = new ScheduleExport(scheduleModel,classses);
+            ScheduleExport generateFeedbackExcel = new ScheduleExport(scheduleModel, classses);
             generateFeedbackExcel.generateExcelFile(responses);
-        }catch (HttpClientErrorException ex) {
+        } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
             if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 throw new RuntimeException(ex.getMessage());
@@ -955,8 +1030,8 @@ public class ClassController {
     @PostMapping("sendSchedule")
     @ResponseBody
     public Object sendSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-                               @RequestParam("classId")Integer classId,
-                               @RequestParam("file")MultipartFile file){
+                               @RequestParam("classId") Integer classId,
+                               @RequestParam("file") MultipartFile file) {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
@@ -964,20 +1039,20 @@ public class ClassController {
             headers.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/"+classId, HttpMethod.GET, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             Classses classses = new ObjectMapper().readValue(json, Classses.class);
             File attachment = FileUtils.convertMultiPartToFile(file);
-            for (StudentClass student:classses.getStudentClassById()){
+            for (StudentClass student : classses.getStudentClassById()) {
                 //Send mail
                 Mail mail = new Mail();
                 mail.setToMail(student.getClassStudentByStudent().getStudentByProfile().getEmail());
                 mail.setSubject("Account student HKT SYSTEM");
-                String name = student.getClassStudentByStudent().getStudentByProfile().getFirstName()+" "+student.getClassStudentByStudent().getStudentByProfile().getLastName();
-                Map<String,Object> props = new HashMap<>();
-                props.put("fullname",name);
+                String name = student.getClassStudentByStudent().getStudentByProfile().getFirstName() + " " + student.getClassStudentByStudent().getStudentByProfile().getLastName();
+                Map<String, Object> props = new HashMap<>();
+                props.put("fullname", name);
                 mail.setProps(props);
-                mailService.sendHtmlMessageSendSchedule(mail,attachment);
+                mailService.sendHtmlMessageSendSchedule(mail, attachment);
                 //-----------------------------
             }
             return "success";

@@ -66,17 +66,9 @@ public class WebConfig {
                         ,"/api/student-class/**","/teacher/**","/api/students/**")
                 .permitAll()
                 //student
-
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied")
-//                .and()
-//                .formLogin()
-//                .loginPage("/dashboard/login")
-//                .defaultSuccessUrl("/dashboard", true)
-//                .usernameParameter("username")
-//                .passwordParameter("password")
-//                .failureUrl("/dashboard/login?error=true")
                 .and()
                 .logout()
                 .logoutUrl("/dashboard/logout")

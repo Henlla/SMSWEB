@@ -128,6 +128,7 @@ $(document).ready(function () {
             data.append('currenDate', i_newDate.val())
             data.append('classId', $('#classId').val())
             data.append('semester', $('#semesterSchedule').val())
+            data.append("slot", $('#slot').val())
             $.ajax({
                 url: "/dashboard/class/changeDateSchedule",
                 method: "POST",
@@ -140,13 +141,14 @@ $(document).ready(function () {
                     if (res.toLowerCase() === "error") {
                         Swal.fire(
                             "",
-                            "Ngày thay đổi đã tồn tại , Vui lòng chọn lại ",
+                            "Slot ngày đó đã tồn tại , Vui lòng chọn lại ",
                             "error"
                         )
                     } else {
                         let data2 = new FormData()
                         data2.append("schedule_details_id", $('#schedule_details_id').val())
                         data2.append("newDate", i_newDate.val())
+                        data2.append("slot", $('#slot').val())
                         $.ajax({
                             url: "/dashboard/class/updateDateChangeSchedule",
                             method: "POST",
@@ -434,8 +436,8 @@ $(document).ready(function () {
                         showCancelButton: false,
                         confirmButtonText: 'Đồng ý',
                     })
-                }else {
-                    let data = res.teacherCard + " (" + res.profileByProfileId.firstName + " "+res.profileByProfileId.lastName +")"
+                } else {
+                    let data = res.teacherCard + " (" + res.profileByProfileId.firstName + " " + res.profileByProfileId.lastName + ")"
                     $('#teacher_change').val(data)
                 }
             }, error: (xhr, status, error) => {
@@ -460,7 +462,7 @@ $(document).ready(function () {
 
         })
     })
-    $('#btn_submitTeacher').on('click',()=>{
+    $('#btn_submitTeacher').on('click', () => {
         Swal.fire({
             title: '',
             text: "Bạn có chắc thay đổi giáo viên ?",
@@ -472,17 +474,17 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 let data = new FormData()
-                data.append("classId",$('#classId').val())
+                data.append("classId", $('#classId').val())
                 let teacherCard = $('#teacher_change').val().split(" ")
-                data.append("teacherCard",teacherCard[0])
+                data.append("teacherCard", teacherCard[0])
                 $.ajax({
-                    url:"/dashboard/class/change_teacher",
-                    method:"POST",
+                    url: "/dashboard/class/change_teacher",
+                    method: "POST",
                     cache: false,
-                    data:data,
+                    data: data,
                     processData: false,
                     contentType: false,
-                    success:(res)=>{
+                    success: (res) => {
                         console.log(res)
                         Swal.fire({
                             title: 'Đổi giáo viên thành công',
@@ -494,7 +496,7 @@ $(document).ready(function () {
                                 location.reload();
                             }
                         })
-                    },error: (xhr, status, error) => {
+                    }, error: (xhr, status, error) => {
                         var err = eval("(" + xhr.responseText + ")");
                         $("#student_update").modal("hide");
                         console.log(err)
@@ -518,13 +520,13 @@ $(document).ready(function () {
             }
         })
     })
-    $('#btnSendSchedule').on('click',()=>{
+    $('#btnSendSchedule').on('click', () => {
         let data = new FormData();
-        data.append("file",$("#fileSchedule").get(0).files[0])
-        data.append("classId",$('#classId').val())
+        data.append("file", $("#fileSchedule").get(0).files[0])
+        data.append("classId", $('#classId').val())
         $.ajax({
-            url:"/dashboard/class/sendSchedule",
-            method:"POST",
+            url: "/dashboard/class/sendSchedule",
+            method: "POST",
             enctype: 'multipart/form-data',
             cache: false,
             processData: false,
@@ -536,7 +538,7 @@ $(document).ready(function () {
                     'success'
                 )
                 $('#modal_import_file').modal("hide")
-            }, error:(xhr, status, error)=>{
+            }, error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 if (err.message.toLowerCase() === "token expired") {
                     $('#spinner-divI').hide()
@@ -550,7 +552,7 @@ $(document).ready(function () {
                             location.href = "/dashboard/login";
                         }
                     })
-                }else{
+                } else {
                     Swal.fire(
                         'Đỗ dữ liệu thất bại',
                         'error'
@@ -563,7 +565,7 @@ $(document).ready(function () {
 
 });
 
-var OnUpdateDate = (id, date) => {
+var OnUpdateDate = (id, date,slot) => {
     // console.log(id)
     // console.log(date)
     $('#schedule_update').modal("show")
@@ -587,144 +589,256 @@ var OnChangeSemesterSchedule = () => {
         success: (res) => {
             $('#btn_update_schedule').css('display', 'block')
             $('#btnDownSchedule').show()
-            $('#btnDownSchedule').attr('href',`/dashboard/class/export_schedule/${classId}&${semester}`)
+            $('#btnDownSchedule').attr('href', `/dashboard/class/export_schedule/${classId}&${semester}`)
+            // console.log(res)
             let shift = $('#shift').val().substring(0, 1)
+            let arrTime = []
+            if(shift==='M'){
+                arrTime.push('7h30 - 9h30')
+                arrTime.push('9h30 - 11h30')
+            }else if(shift==='A'){
+                arrTime.push('12h30 - 15h30')
+                arrTime.push('15h30 - 17h30')
+            }else{
+                arrTime.push('17h30 - 19h30')
+                arrTime.push('19h30 - 21h30')
+            }
             if (res !== '') {
-                var time = ''
-                // console.log(res)
-                switch (shift) {
-                    case "M":
-                        time = "7h30 - 11h30"
-                        break;
-                    case "A":
-                        time = "13h30 - 17h30"
-                        break;
-                    case "E":
-                        time = "17h30 - 21h30"
-                        break;
-                }
-                const groups = res.dayInWeeks.reduce((groups, {weekOfYear, ...rest}) => {
-                    const key = `${weekOfYear}`;
-                    groups[key] = groups[key] || {weekOfYear, list: []}
-                    groups[key]["list"].push(rest);
-                    return groups;
-                }, {});
-                // console.log(groups)
-                const arr = Object.values(groups)
-                // console.log(arr)
+                const list = Object.values(res);
+                // console.log(list)
                 let table = document.getElementById("schedule_table")
                 $('#schedule_table tbody').remove()
                 let tbody = document.createElement("tbody")
-
-                for (let i = 0; i < arr.length; i++) {
+                for (let i of list) {
                     const tr = document.createElement("tr")
-                    console.log(arr[i])
-                    const td0 = document.createElement("td")
-                    td0.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                    const td1 = document.createElement("td")
-                    td1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                    const td2 = document.createElement("td")
-                    td2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                    const td3 = document.createElement("td")
-                    td3.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                    const td4 = document.createElement("td")
-                    td4.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                    const td5 = document.createElement("td")
-                    td5.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                    const td6 = document.createElement("td")
-                    td6.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                    for (let j = 0; j < arr[i].list.length; j++) {
-                        // console.log(arr[i].list[j])
-                        switch (arr[i].list[j].dayOfWeek) {
+
+                    const td0_1 = document.createElement("td")
+                    td0_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                    const td0_2 = document.createElement("td")
+                    td0_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+
+                    const td1_1 = document.createElement("td")
+                    td1_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                    const td1_2 = document.createElement("td")
+                    td1_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+
+                    const td2_1 = document.createElement("td")
+                    td2_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                    const td2_2 = document.createElement("td")
+                    td2_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+
+                    const td3_1 = document.createElement("td")
+                    td3_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                    const td3_2 = document.createElement("td")
+                    td3_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+
+                    const td4_1 = document.createElement("td")
+                    td4_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                    const td4_2 = document.createElement("td")
+                    td4_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+
+                    const td5_1 = document.createElement("td")
+                    td5_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                    const td5_2 = document.createElement("td")
+                    td5_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+
+                    const td6_1 = document.createElement("td")
+                    td6_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                    const td6_2 = document.createElement("td")
+                    td6_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+
+                    for (let j of i) {
+                        switch (j.dayOfWeek) {
                             case "MONDAY":
-                                td0.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${arr[i].list[j].subject.subjectCode}</span>
-                                    <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${arr[i].list[j].date} 
-                                    <a class="ml-1 btn_update_date"><i data-id="${arr[i].list[j].id}" data-date="${arr[i].list[j].date}" 
-                                            onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'))" class="fas fa-pencil-alt"></i></a></div>
-                                    <div class="font-size13 text-light-gray">${time}</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                } else {
+                                    td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                }
                             case "TUESDAY":
-                                td1.innerHTML =
-                                    `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${arr[i].list[j].subject.subjectCode}</span>
-                                    <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${arr[i].list[j].date} 
-                                    <a class="ml-1 btn_update_date"><i data-id="${arr[i].list[j].id}" data-date="${arr[i].list[j].date}" 
-                                            onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'))" class="fas fa-pencil-alt"></i></a></div>
-                                    <div class="font-size13 text-light-gray">${time}</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                } else {
+                                    td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                }
                             case "WEDNESDAY":
-                                td2.innerHTML =
-                                    `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${arr[i].list[j].subject.subjectCode}</span>
-                                    <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${arr[i].list[j].date}
-                                     <a class="ml-1 btn_update_date"><i data-id="${arr[i].list[j].id}" data-date="${arr[i].list[j].date}" 
-                                            onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'))" class="fas fa-pencil-alt"></i></a></div>
-                                     <div class="font-size13 text-light-gray">${time}</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                } else {
+                                    td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                }
                             case "THURSDAY":
-                                td3.innerHTML =
-                                    `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${arr[i].list[j].subject.subjectCode}</span>
-                                    <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${arr[i].list[j].date} 
-                                     <a class="ml-1 btn_update_date"><i data-id="${arr[i].list[j].id}" data-date="${arr[i].list[j].date}" 
-                                            onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'))" class="fas fa-pencil-alt"></i></a></div>
-                                    <div class="font-size13 text-light-gray">${time}</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                } else {
+                                    td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                }
                             case "FRIDAY":
-                                td4.innerHTML =
-                                    `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${arr[i].list[j].subject.subjectCode}</span>
-                                    <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${arr[i].list[j].date} 
-                                     <a class="ml-1 btn_update_date"><i data-id="${arr[i].list[j].id}" data-date="${arr[i].list[j].date}" 
-                                            onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'))" class="fas fa-pencil-alt"></i></a></div>
-                                    <div class="font-size13 text-light-gray">${time}</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                } else {
+                                    td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                }
                             case "SATURDAY":
-                                td5.innerHTML =
-                                    `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${arr[i].list[j].subject.subjectCode}</span>
-                                    <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${arr[i].list[j].date} 
-                                     <a class="ml-1 btn_update_date"><i data-id="${arr[i].list[j].id}" data-date="${arr[i].list[j].date}" 
-                                            onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'))" class="fas fa-pencil-alt"></i></a></div>
-                                    <div class="font-size13 text-light-gray">${time}</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                } else {
+                                    td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                }
                             case "SUNDAY":
-                                td6.innerHTML =
-                                    `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${arr[i].list[j].subject.subjectCode}</span>
-                                    <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${arr[i].list[j].date} 
-                                     <a class="ml-1 btn_update_date"><i data-id="${arr[i].list[j].id}" data-date="${arr[i].list[j].date}" 
-                                            onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'))" class="fas fa-pencil-alt"></i></a></div>
-                                    <div class="font-size13 text-light-gray">${time}</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td6_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                } else {
+                                    td6_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                      <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
+                                              onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
+                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                    break;
+                                }
                             case "1":
-                                td0.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td0_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                } else {
+                                    td0_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                }
                             case "2":
-                                td1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td1_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                } else {
+                                    td1_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                }
                             case "3":
-                                td2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td2_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                } else {
+                                    td2_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                }
                             case "4":
-                                td3.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td3_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                } else {
+                                    td3_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                }
                             case "5":
-                                td4.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td4_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                } else {
+                                    td4_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                }
                             case "6":
-                                td5.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td5_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                } else {
+                                    td5_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                }
                             case "7":
-                                td6.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
-                                break;
+                                if (j.slot === 1) {
+                                    td6_1.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                } else {
+                                    td6_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
+                                    break;
+                                }
                         }
                     }
-                    tr.appendChild(td0)
-                    tr.appendChild(td1)
-                    tr.appendChild(td2)
-                    tr.appendChild(td3)
-                    tr.appendChild(td4)
-                    tr.appendChild(td5)
-                    tr.appendChild(td6)
+                    tr.appendChild(td0_1)
+                    tr.appendChild(td0_2)
+                    tr.appendChild(td1_1)
+                    tr.appendChild(td1_2)
+                    tr.appendChild(td2_1)
+                    tr.appendChild(td2_2)
+                    tr.appendChild(td3_1)
+                    tr.appendChild(td3_2)
+                    tr.appendChild(td4_1)
+                    tr.appendChild(td4_2)
+                    tr.appendChild(td5_1)
+                    tr.appendChild(td5_2)
+                    tr.appendChild(td6_1)
+                    tr.appendChild(td6_2)
                     tbody.appendChild(tr)
                     table.appendChild(tbody)
                     $('.btn_update_date').css('display', 'none')
+
                 }
+
             } else {
                 Swal.fire(
                     "",
