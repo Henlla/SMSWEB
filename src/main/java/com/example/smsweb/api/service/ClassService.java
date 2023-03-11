@@ -60,5 +60,10 @@ public class ClassService implements IClass {
         return repository.findClasssesByTeacherIdAndId(teacherId,scheduleId).orElseThrow(()->new ErrorHandler("Không tìm thấy class"));
     }
 
+    @Override
+    public List<Classses> findClassByMajorId(Integer majorId) {
+        return repository.findAllByMajorId(majorId).orElseThrow(()->new ErrorHandler("Cannot find class with majorId = "+majorId));
+    }
+
 
 }

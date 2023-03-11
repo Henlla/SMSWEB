@@ -212,6 +212,7 @@ var OnDetails = (id) => {
             $('#st_phone').html(data.student.studentByProfile.phone)
             $('#st_email').html(data.student.studentByProfile.email)
             $('#st_sex').html(data.student.studentByProfile.sex)
+            let classCode = "";
             for (var major of data.student.majorStudentsById) {
                 $('#st_major').html(major.majorByMajorId.majorName)
             }
@@ -219,8 +220,9 @@ var OnDetails = (id) => {
                 $('#st_class').html('Chưa có')
             }else {
                 for (var classes of data.classes) {
-                    $('#st_class').html(classes.classCode)
+                    classCode+=classes.classCode+" "
                 }
+                $('#st_class').html(classCode)
             }
             $('#st_identityId').html(data.student.studentByProfile.identityCard)
             $('#st_address').html(data.student.studentByProfile.address + ' , ' + data.student.studentByProfile.wardByWardId.name + ' , ' + data.student.studentByProfile.districtByDistrictId.name + ' , ' + data.student.studentByProfile.profileProvince.name)
