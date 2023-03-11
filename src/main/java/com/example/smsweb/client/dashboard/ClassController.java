@@ -125,7 +125,13 @@ public class ClassController {
             ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST, request, ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             Classses classses = new ObjectMapper().readValue(json, Classses.class);
+            HttpEntity<Object> request2 = new HttpEntity<>(headers);
+            ResponseEntity<ResponseModel> response2 = restTemplate.exchange(CLASS_URL + "findClassByMajorId/" + classses.getMajorId(), HttpMethod.GET, request2, ResponseModel.class);
+            String json2 = new ObjectMapper().writeValueAsString(response2.getBody().getData());
+            List<Classses> listClass = new ObjectMapper().readValue(json2, new TypeReference<List<Classses>>() {
+            });
             model.addAttribute("class", classses);
+            model.addAttribute("classList", listClass.stream().filter(classses1 -> !classses1.getClassCode().equals(classses.getClassCode())).collect(Collectors.toList()));
             return "dashboard/class/class_details";
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -374,10 +380,10 @@ public class ClassController {
                 List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
                 int index = 0;
                 for (LocalDate date = minDate; date.isBefore(maxDate.plusDays(1)); date = date.plusDays(1)) {
-                    if(listSortDate.size() == index){
+                    if (listSortDate.size() == index) {
                         break;
                     }
-                    for (int i = index ; i<listSortDate.size();i++) {
+                    for (int i = index; i < listSortDate.size(); i++) {
                         WeekFields weekFields = WeekFields.of(Locale.getDefault());
                         int weekOfMonth = LocalDate.parse(listSortDate.get(i).getDate()).get(weekFields.weekOfMonth());
                         int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
@@ -397,7 +403,7 @@ public class ClassController {
                                 diw.setMonth(monthOfYear);
                                 diw.setWeekOfYear(weekOfYear);
                                 dayInWeekList.add(diw);
-                                index= i;
+                                index = i;
                                 break;
                             }
                             diw = new DayInWeek();
@@ -412,11 +418,11 @@ public class ClassController {
                             diw.setWeekOfYear(weekOfYear);
                             dayInWeekList.add(diw);
                             index = i;
-                            if(LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))){
+                            if (LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))) {
                                 index = listSortDate.indexOf(listSortDate.get(i)) + 1;
                                 break;
                             }
-                        }  else {
+                        } else {
                             DayInWeek diw = new DayInWeek();
                             diw.setId(0);
                             diw.setDate(date);
@@ -453,14 +459,14 @@ public class ClassController {
                 scheduleModel.setSemester(schedule.getSemester());
                 scheduleModel.setDayInWeeks(dayInWeekList);
                 HashMap<Integer, List<DayInWeek>> hashMap = new HashMap<Integer, List<DayInWeek>>();
-                List<DayInWeek> listSort = scheduleModel.getDayInWeeks().stream().sorted((a,b)-> a.getWeekOfYear().compareTo(b.getWeekOfYear())).toList();
-                for (DayInWeek dayInWeek:listSort){
-                    Integer key  = dayInWeek.getWeekOfYear();
-                    if(hashMap.containsKey(key)){
+                List<DayInWeek> listSort = scheduleModel.getDayInWeeks().stream().sorted((a, b) -> a.getWeekOfYear().compareTo(b.getWeekOfYear())).toList();
+                for (DayInWeek dayInWeek : listSort) {
+                    Integer key = dayInWeek.getWeekOfYear();
+                    if (hashMap.containsKey(key)) {
                         List<DayInWeek> list = hashMap.get(key);
                         list.add(dayInWeek);
 
-                    }else{
+                    } else {
                         List<DayInWeek> list = new ArrayList<DayInWeek>();
                         list.add(dayInWeek);
                         hashMap.put(key, list);
@@ -512,7 +518,7 @@ public class ClassController {
                 int getMonth = date.getMonthValue();
                 boolean isSameDate = schedule.getScheduleDetailsById().stream()
                         .anyMatch(dates -> LocalDate.parse(dates.getDate()).getDayOfMonth() == getDate
-                        && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth && dates.getSlot().equals(slot));
+                                && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth && dates.getSlot().equals(slot));
                 if (isSameDate) {
                     return "error";
                 } else {
@@ -935,10 +941,10 @@ public class ClassController {
             List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
             int index = 0;
             for (LocalDate date = minDate; date.isBefore(maxDate.plusDays(1)); date = date.plusDays(1)) {
-                if(listSortDate.size() == index){
+                if (listSortDate.size() == index) {
                     break;
                 }
-                for (int i = index ; i<listSortDate.size();i++) {
+                for (int i = index; i < listSortDate.size(); i++) {
                     WeekFields weekFields = WeekFields.of(Locale.getDefault());
                     int weekOfMonth = LocalDate.parse(listSortDate.get(i).getDate()).get(weekFields.weekOfMonth());
                     int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
@@ -958,7 +964,7 @@ public class ClassController {
                             diw.setMonth(monthOfYear);
                             diw.setWeekOfYear(weekOfYear);
                             dayInWeekList.add(diw);
-                            index= i;
+                            index = i;
                             break;
                         }
                         diw = new DayInWeek();
@@ -973,11 +979,11 @@ public class ClassController {
                         diw.setWeekOfYear(weekOfYear);
                         dayInWeekList.add(diw);
                         index = i;
-                        if(LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))){
+                        if (LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))) {
                             index = listSortDate.indexOf(listSortDate.get(i)) + 1;
                             break;
                         }
-                    }  else {
+                    } else {
                         DayInWeek diw = new DayInWeek();
                         diw.setId(0);
                         diw.setDate(date);
@@ -1056,6 +1062,71 @@ public class ClassController {
                 //-----------------------------
             }
             return "success";
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return ex.getMessage();
+        }
+    }
+
+    @PostMapping("checkStudentInClass")
+    @ResponseBody
+    public Object checkStudentInClass(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                      @RequestParam("classId") Integer classId,
+                                      @RequestParam("studentId") Integer studentId) {
+
+        try {
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(STUDENT_CLASS_URL + "getStudent/" + studentId, HttpMethod.GET, request, ResponseModel.class);
+            String json = objectMapper.writeValueAsString(response.getBody().getData());
+            List<StudentClass> studentClassList = objectMapper.readValue(json, new TypeReference<List<StudentClass>>() {
+            });
+            boolean isExistsInClass = studentClassList.stream().anyMatch(studentClass -> studentClass.getClassId().equals(classId));
+            if (isExistsInClass) {
+                return "error";
+            } else {
+                return "success";
+            }
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return ex.getMessage();
+        }
+    }
+
+    @PostMapping("changeClassForStudent")
+    @ResponseBody
+    public Object changeClassForStudent(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                        @RequestParam("studentId") Integer studentId,
+                                        @RequestParam("classIdChange") Integer classIdChange,
+                                        @RequestParam("classIdCurrent") Integer classIdCurrent) {
+
+        try {
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(STUDENT_CLASS_URL + "getStudent/" + studentId, HttpMethod.GET, request, ResponseModel.class);
+            String json = objectMapper.writeValueAsString(response.getBody().getData());
+            List<StudentClass> studentClassList = objectMapper.readValue(json, new TypeReference<List<StudentClass>>() {
+            });
+            StudentClass studentClass = studentClassList.stream().filter(studentClass1 -> studentClass1.getClassId().equals(classIdCurrent) && studentClass1.getStudentId().equals(studentId)).findFirst().get();
+            studentClass.setClassId(classIdChange);
+            String jsonRequest = objectMapper.writeValueAsString(studentClass);
+            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+            params.add("studentClass", jsonRequest);
+            HttpEntity<MultiValueMap<String, Object>> request2 = new HttpEntity<>(params, headers);
+            ResponseEntity<ResponseModel> response2 = restTemplate.exchange(STUDENT_CLASS_URL + "put", HttpMethod.PUT, request2, ResponseModel.class);
+            if(response2.getStatusCode().is2xxSuccessful()){
+                return "success";
+            }else{
+                return "error";
+            }
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return ex.getMessage();

@@ -594,14 +594,14 @@ var OnChangeSemesterSchedule = () => {
             let shift = $('#shift').val().substring(0, 1)
             let arrTime = []
             if(shift==='M'){
-                arrTime.push('7h30 - 9h30')
-                arrTime.push('9h30 - 11h30')
+                arrTime.push('7:30-9:30')
+                arrTime.push('9:30-11:30')
             }else if(shift==='A'){
-                arrTime.push('12h30 - 15h30')
-                arrTime.push('15h30 - 17h30')
+                arrTime.push('12:30-15:30')
+                arrTime.push('15:30-17:30')
             }else{
-                arrTime.push('17h30 - 19h30')
-                arrTime.push('19h30 - 21h30')
+                arrTime.push('17:30-19:30')
+                arrTime.push('19:30-21:30')
             }
             if (res !== '') {
                 const list = Object.values(res);
@@ -877,3 +877,92 @@ var OnChangeTeacher = (teacherName, id) => {
     $('#teacherId').val(id)
     $('#change_teacher').modal('show')
 }
+
+var OnChangeClassStudent=(studentId,studentName)=>{
+    console.log(studentId)
+    $('#studentId').val(studentId)
+    $('.studentName').html(studentName)
+    $('.classCode').html($('#classCode').val())
+    $('#change_class_student').modal('show')
+}
+
+var OnCheckStudentInClass= ()=>{
+    let studentId =  $('#studentId').val()
+    let data = new FormData()
+    data.append("studentId",studentId)
+    data.append("classId",$('#classList').val())
+    $.ajax({
+        url:"/dashboard/class/checkStudentInClass",
+        method:"POST",
+        data:data,
+        contentType: false,
+        cache: false,
+        processData: false,
+        success:(res)=>{
+            if(res.toLowerCase() == "error"){
+                Swal.fire(
+                    "",
+                    "This student already exists in the class",
+                    "error"
+                )
+            }else{
+                Swal.fire(
+                    "",
+                    "You can change this student's class",
+                    "success"
+                )
+                $('#btn_change_class_student').show()
+            }
+        }, error: (xhr, status, error) => {
+            var err = eval("(" + xhr.responseText + ")");
+            $("#student_update").modal("hide");
+            console.log(err)
+            if (err.message.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Đồng ý',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                })
+            } else {
+                toastr.success('Xem thông tin thất bại')
+            }
+        }
+    })
+}
+
+var OnSubmitChangeClassStudent = ()=>{
+    let studentId = $('#studentId').val()
+    let classIdChange = $('#classList').val()
+    let classIdCurrent = $('#classId').val()
+    let data = new FormData()
+    data.append("studentId",studentId)
+    data.append("classIdChange",classIdChange)
+    data.append("classIdCurrent",classIdCurrent)
+
+    $.ajax({
+        url:"/dashboard/class/changeClassForStudent",
+        data:data,
+        method:"POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success:(res)=>{
+            Swal.fire(
+                "",
+                "Change class for student success",
+                "success"
+            )
+            $('#btn_change_class_student').hide()
+        },error:(err)=>{
+
+
+        }
+
+    })
+}
+
