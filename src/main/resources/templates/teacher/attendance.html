@@ -4,7 +4,7 @@
       layout:decorate="~{index}">
 <head>
     <meta charset="UTF-8">
-    <title>Điểm danh</title>
+    <title>Attendance</title>
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
@@ -12,30 +12,98 @@
 <section layout:fragment="content">
     <section class="container">
         <section class="content-header">
-            <h5 class="m-0">Điểm danh</h5>
+            <h5 class="m-0">Take Attendance</h5>
+            <input type="text" hidden id="classId">
         </section>
         <section class="content-body">
             <section class="container-fluid">
-                <section class="row mb-3">
-                    <div class="col-12">
-                        <select class="form-control select2" onchange="OnChangeClass()" name="" id="classList">
-                            <option value="">Chọn lớp</option>
-                            <option th:each="items:${listClass}" th:value="${items.class_id}">[[${items.class_name +"   ( "+ items.date +"  -  " + items.subject_name + " - " + items.subject_code + " )"}]]</option>
-                        </select>
-                    </div>
-                </section>
                 <section class="row">
                     <section class="col-12">
-                        <table class="table table-hover table-bordered" id="listStudent">
+                        <table class="table table-hover table-bordered" id="classList">
+                            <thead>
+                            <tr class="text-center">
+                                <th>STT</th>
+                                <th>Class</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="text-center" th:each="items:${listClass}">
+                                <td style="vertical-align: middle">[[${listClass.indexOf(items)+1}]]</td>
+                                <td style="vertical-align: middle" th:value="${items.class_id}">
+                                    [[${items.class_name}]]
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <th:block th:if="${items.isAttendance == 0}">
+                                        <button th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-user-edit"></i></button>
+                                        <button disabled th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
+                                            <i class="fas fa-edit"></i></button>
+                                    </th:block>
+                                    <th:block th:unless="${items.isAttendance == 0}">
+                                        <button disabled th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-user-edit"></i></button>
+                                        <button th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
+                                            <i class="fas fa-edit"></i></button>
+                                    </th:block>
+                                </td>
+                            </tr>
+                            </tbody>
                         </table>
-                        <div class="d-flex justify-content-center">
-                            <input type="button" id="btnOnsubmit" onclick="OnSubmitAttendance()" value="Chấp nhận" style="width: 200px" class="btn btn-primary btn-sm mb-2 d-none">
-                        </div>
                     </section>
                 </section>
             </section>
         </section>
     </section>
+
+    <div class="modal fade" id="attendance-modal" data-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Take Attendance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <section class="row">
+                        <section class="col-12">
+                            <table style="width: 100%;" class="table table-hover table-bordered" id="listStudent">
+                            </table>
+                        </section>
+                    </section>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <input type="button" id="btnOnsubmit" onclick="OnSubmitAttendance()" value="Confirm" style="width: 200px" class="btn btn-primary btn-sm mb-2">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit-attendance-modal" data-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="">Edit Attendance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <section class="row">
+                        <section class="col-12">
+                            <table style="width: 100%;" class="table table-hover table-bordered" id="listEditStudent">
+                            </table>
+                        </section>
+                    </section>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <input type="button" id="btnOnUpdate" onclick="OnUpdateAttendance()" value="Confirm" style="width: 200px" class="btn btn-primary btn-sm mb-2">
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 <th:block layout:fragment="optional">
     <script src="/js/HelperJs.js"></script>

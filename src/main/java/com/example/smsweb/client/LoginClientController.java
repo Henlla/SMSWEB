@@ -83,13 +83,13 @@ public class LoginClientController {
                 jwtTokenCookie.setPath("/");
                 responseHttp.addCookie(jwtTokenCookie);
                 return "redirect:/student/index";
-            }else{
-                model.addAttribute("msg", "Tài khoản không cấp phép");
+            } else {
+                model.addAttribute("msg", "Account access denied");
                 return "login";
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                model.addAttribute("msg", "Đăng nhập thất bại");
+                model.addAttribute("msg", "Login fail");
                 return "login";
             }
             return null;

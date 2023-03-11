@@ -78,12 +78,12 @@ public class LoginController {
                 responseHttp.addCookie(jwtTokenCookie);
                 return "redirect:/dashboard";
             }else {
-                model.addAttribute("msg", "Đăng nhập thất bại");
+                model.addAttribute("msg", "Login fail");
                 return "dashboard/login/login";
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                model.addAttribute("msg", "Đăng nhập thất bại");
+                model.addAttribute("msg", "Login success");
                 return "dashboard/login/login";
             }
             return null;

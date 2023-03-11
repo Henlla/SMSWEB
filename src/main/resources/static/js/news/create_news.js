@@ -53,11 +53,11 @@ $(() => {
                 contentType: false,
                 success: (result) => {
                     console.log(result)
-                    toastr.success('Tạo sinh tin tức')
+                    toastr.success('Create success')
                     $('#spinner-div').hide();
                 },
                 error: (e) => {
-                    toastr.error('Thất bại')
+                    toastr.error('Create fail')
                     $('#spinner-div').hide();
                 }
             })
@@ -92,14 +92,14 @@ $(() => {
             $('.errorAvatar').css("display", "none")
         } else {
             $('.errorAvatar').css("display", "block")
-            $('.errorAvatar').html("Vui lòng chọn file hình ảnh (png,jpg,jpeg)")
+            $('.errorAvatar').html("Please choose image file (png,jpg,jpeg)")
         }
     });
 
 
     // custom confirm
     $('.icon-cancel_image').on('click', function () {
-        Confirm('Hủy hình ảnh', 'Có chắc chắn muốn hủy hình ảnh?', 'Hủy', 'Không')
+        Confirm('Cancel image', 'Are you sure to cancel?', 'Ok', 'Cancel')
 
 
     })
@@ -157,7 +157,7 @@ $(() => {
         if (readURL(this)) {
 
         } else {
-            Swal.fire('File không hợp lệ !')
+            Swal.fire('File incorrect !')
             this.value = ''
         }
     });
@@ -181,7 +181,7 @@ var OnImportFileSubmit = ()=>{
         data: data,
         success: () => {
             Swal.fire(
-                'Đỗ dữ liệu thành công',
+                'Import success',
                 'success'
             )
             $('#modal_import_file').modal("hide")
@@ -190,18 +190,18 @@ var OnImportFileSubmit = ()=>{
             if (err.message.toLowerCase() === "token expired") {
                 $('#spinner-divI').hide()
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             }else{
                 Swal.fire(
-                    'Đỗ dữ liệu thất bại',
+                    'Import fail',
                     'error'
                 )
             }

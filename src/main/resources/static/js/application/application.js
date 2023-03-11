@@ -9,22 +9,22 @@ $(() => {
         scrollY: '300px',
         "language": {
             "decimal": "",
-            "emptyTable": "Không có dữ liệu",
+            "emptyTable": "Don't have any record",
             "info": "",
             "infoEmpty": "",
             "infoFiltered": "",
             "infoPostFix": "",
             "thousands": ",",
-            "lengthMenu": "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
             "processing": "",
-            "search": "Tìm kiếm:",
-            "zeroRecords": "Không tìm thấy dữ liệu",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first": "Trang đầu",
-                "last": "Trang cuối",
-                "next": "Trang kế tiếp",
-                "previous": "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
                 "sortAscending": ": activate to sort column ascending",
@@ -40,22 +40,22 @@ $(() => {
         scrollY: '300px',
         "language": {
             "decimal": "",
-            "emptyTable": "Không có dữ liệu",
+            "emptyTable": "Don't have any record",
             "info": "",
             "infoEmpty": "",
             "infoFiltered": "",
             "infoPostFix": "",
             "thousands": ",",
-            "lengthMenu": "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
             "processing": "",
-            "search": "Tìm kiếm:",
-            "zeroRecords": "Không tìm thấy dữ liệu",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first": "Trang đầu",
-                "last": "Trang cuối",
-                "next": "Trang kế tiếp",
-                "previous": "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
                 "sortAscending": ": activate to sort column ascending",
@@ -72,32 +72,32 @@ $(() => {
 
 var OnChangeStatus = () => {
     var status = $("#edit-status").val();
-    if(status === "DISCARD"){
-        $("#edit-note").val("Vui lòng tải hướng dẫn và làm theo hướng dẫn");
-    }else if(status === "APPROVED"){
-        $("#edit-note").val("Sau 7 ngày đến phòng tài vụ để lấy đơn");
-    }else{
+    if (status === "DISCARD") {
+        $("#edit-note").val("Please download the guide then follow it");
+    } else if (status === "APPROVED") {
+        $("#edit-note").val("After 7 days go to finance room get the application");
+    } else {
         $("#edit-note").val("");
     }
 }
 
 var OnDeleteApplicationType = (id) => {
     Swal.fire({
-        title: 'Bạn muốn xóa dữ liệu này?',
-        text: "Sau khi đồng ý sẽ không khôi phục được!",
+        title: 'Do you want to delete this ?',
+        text: "When you confirm data can't recover!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        cancelButtonText: "Hủy",
-        confirmButtonText: 'Đồng ý!'
+        cancelButtonText: "Cancel",
+        confirmButtonText: 'Confirm!'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
                 url: "/dashboard/applicationType/deleteAppType/" + id,
                 method: "POST",
                 success: (data) => {
-                    toastr.success("Xóa thành dữ liệu công");
+                    toastr.success("Delete data success");
                     setTimeout(() => {
                         location.reload();
                     }, 2000);
@@ -105,10 +105,10 @@ var OnDeleteApplicationType = (id) => {
                 error: (data) => {
                     if (data.responseText.toLowerCase() === "token expired") {
                         Swal.fire({
-                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            title: 'End of login session please login again',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Confirm',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = "/dashboard/login";
@@ -142,10 +142,10 @@ var OnAppDownload = (id) => {
                 error: (data) => {
                     if (data.responseText.toLowerCase() === "token expired") {
                         Swal.fire({
-                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            title: 'End of login session please login again',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Confirm',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = "/dashboard/login";
@@ -160,10 +160,10 @@ var OnAppDownload = (id) => {
         error: (data) => {
             if (data.responseText.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
@@ -188,10 +188,10 @@ var OnEditApplication = (id) => {
         error: (data) => {
             if (data.responseText.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
@@ -235,7 +235,7 @@ var OnUpdateApplication = async () => {
         contentType: "application/json",
         data: JSON.stringify(application),
         success: (data) => {
-            toastr.success("Cập nhật thành công");
+            toastr.success("Update success");
             $("#app-edit-modal").modal("hide");
             setTimeout(() => {
                 location.reload();
@@ -244,10 +244,10 @@ var OnUpdateApplication = async () => {
         error: (data) => {
             if (data.responseText.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
@@ -279,7 +279,7 @@ var OnCreateApplicationType = async () => {
             enctype: "multipart/form-data",
             success: (data) => {
                 $("#create-app-type-modal").modal("hide");
-                toastr.success("Tạo thành công");
+                toastr.success("Create success");
                 setTimeout(() => {
                     location.reload();
                 }, 1500);
@@ -287,10 +287,10 @@ var OnCreateApplicationType = async () => {
             error: (data) => {
                 if (data.responseText.toLowerCase() === "token expired") {
                     Swal.fire({
-                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        title: 'End of login session please login again',
                         showDenyButton: false,
                         showCancelButton: false,
-                        confirmButtonText: 'Đồng ý',
+                        confirmButtonText: 'Confirm',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             location.href = "/dashboard/login";
@@ -302,7 +302,7 @@ var OnCreateApplicationType = async () => {
             }
         });
     } else {
-        $("#error-file").html("Vui lòng chọn file .docx");
+        $("#error-file").html("Please choose the .docx file");
     }
 }
 
@@ -325,7 +325,7 @@ var OnCreateApplication = async () => {
         method: "POST",
         data: JSON.stringify(application),
         success: () => {
-            toastr.success("Tạo mới thành công");
+            toastr.success("Create success");
             $("#app-modal").modal("hide");
             setTimeout(() => {
                 location.reload();
@@ -334,10 +334,10 @@ var OnCreateApplication = async () => {
         error: (data) => {
             if (data.responseText.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";

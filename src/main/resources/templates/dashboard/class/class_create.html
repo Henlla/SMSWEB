@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Thêm sinh viên</title>
+    <title>Class</title>
     <link rel="stylesheet" href="/css/create_teacher.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -15,12 +15,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Thêm lớp học mới</h1>
+                        <h1 class="m-0">Create class</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Thêm lớp học mới</li>
+                            <li class="breadcrumb-item active">Create new class</li>
                         </ol>
                     </div>
                 </div>
@@ -34,22 +34,22 @@
                 </div>
                 <div class="row">
                     <div class="col-6">
-                        <label>Mã lớp học :</label>
+                        <label>Class code :</label>
                         <input type="text" class="form-control classCode" id="classCode" name="classCode" readonly="">
                     </div>
                     <div class="col-6">
-                        <label>Nghành Học :</label>
+                        <label>Major code :</label>
                         <select id="majorId" class="form-control major" name="majorId" style="width: 100%;">
-                            <option selected="selected" value="">----- Chọn nghành học------</option>
+                            <option selected="selected" value="">----- Choose major------</option>
                             <th:block th:each="major : ${majors}">
                                 <option th:value="${major.id}">[[${major.majorName}]]</option>
                             </th:block>
                         </select>
                     </div>
                     <div class="col-6">
-                        <label>Giáo viên chủ nhiệm :</label>
+                        <label>Teacher :</label>
                         <select id="teacherId" class="form-control teacher" name="teacherId" style="width: 100%;">
-                            <option selected="selected" value="">----- Chọn giáo viên------</option>
+                            <option selected="selected" value="">----- Choose teacher------</option>
                             <th:block th:each="teacher : ${teachers}">
                                 <option th:value="${teacher.id}">[[${teacher.profileByProfileId.firstName + " " +
                                     teacher.profileByProfileId.lastName}]]
@@ -60,35 +60,35 @@
                     <div class="row col-6">
                         <div class="col">
                             <div class="form-group">
-                                <label for="shift">Thời gian học trong ngày:</label>
+                                <label for="shift">Time :</label>
                                 <select id="shift" class="form-control teacher" name="teacherId" style="width: 100%;">
-                                    <option value="">-----Chọn thời gian------</option>
-                                    <option value="M">Buổi Sáng</option>
-                                    <option value="A">Buổi Chiều</option>
-                                    <option value="E">Buổi Tối</option>
+                                    <option value="">-----Choose time------</option>
+                                    <option value="M">Morning</option>
+                                    <option value="A">Afternoon</option>
+                                    <option value="E">Evening</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="dayOfWeek">Ngày học trong tuần:</label>
+                                <label for="dayOfWeek">Day of week:</label>
                                 <select id="dayOfWeek" class="form-control teacher" name="teacherId" style="width: 100%;">
-                                    <option value="">-----Chọn ngày------</option>
-                                    <option value="0">Thứ 2 - 4 - 6</option>
-                                    <option value="1">Thứ 3 - 5 - 7</option>
+                                    <option value="">-----Choose days------</option>
+                                    <option value="0">Monday - Wednesday - Friday</option>
+                                    <option value="1">Tuesday - Thursday - Saturday</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <label for="startDate">Ngày bắt đầu học:</label>
+                        <label for="startDate">Start time:</label>
                         <input type="date" class="form-control" id="startDate" name="startDate"
                                placeholder="chọn ngày bắt đầu học">
                         <input type="text" id="inputToday" style="display: none">
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label for="limitStudent">Số Sinh viên tối đa</label>
+                            <label for="limitStudent">Limit student</label>
                             <input type="number" value="22" class="form-control" id="limitStudent" name="limitStudent"
                                    placeholder="Số Sinh viên tối đa">
                         </div>
@@ -96,16 +96,16 @@
                     <br>
                     <div class="col-6">
                         <div class="form-group">
-                            <label for="studentList">Thêm danh sách sinh viên của lớp
-                                mới&nbsp;&nbsp;</label><a href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Tải mẫu
-                            danh sách</a>
+                            <label for="studentList">Import list of
+                                student&nbsp;&nbsp;</label><a href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Download
+                            example file</a>
                             <input type="file" accept=".xlsx" class="form-control" id="studentList" name="studentList">
                         </div>
                     </div>
                     <div class="col-6"></div>
 
                     <div class="col-6 form-group mx-auto">
-                        <button type="submit" id="btn_create_class" class="btn btn-default btn-block">Tạo lớp
+                        <button type="submit" id="btn_create_class" class="btn btn-default btn-block">Create
                         </button>
                     </div>
                 </div>

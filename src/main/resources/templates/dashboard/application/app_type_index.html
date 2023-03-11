@@ -4,21 +4,21 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý đơn đăng ký</title>
+    <title>Application Type Manager</title>
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
 <div layout:fragment="content">
     <section class="content-wrapper">
         <section class="content-header">
-            <h5 class="m-0">Quản lý mẫu đơn</h5>
+            <h5 class="m-0">Application Type Manager</h5>
         </section>
         <section class="content-body">
             <section class="container-fluid">
                 <section class="row">
                     <section class="col-12">
                         <button data-toggle="modal" data-target="#create-app-type-modal" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"></i> Thêm mới
+                            <i class="fas fa-plus" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"></i> Create
                         </button>
                     </section>
                 </section>
@@ -28,8 +28,8 @@
                             <thead>
                             <tr class="text-center">
                                 <th>STT</th>
-                                <th>Tên mẫu đơn</th>
-                                <th>Hành động</th>
+                                <th>Application Type Name</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -54,7 +54,7 @@
         <section class="modal-dialog">
             <section class="modal-content">
                 <section class="modal-header h-auto">
-                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Thêm mới mẫu đơn</h5>
+                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Create new application type</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -62,13 +62,13 @@
                 <section class="modal-body">
                     <section class="row mb-3">
                         <section class="col-12">
-                            <label class="font-weight-normal f-13">Tên mẫu đơn</label>
-                            <input type="text" id="app-type-name" placeholder="Nhập tên mẫu đơn" class="form-control form-control-sm">
+                            <label class="font-weight-normal f-13">Application type name</label>
+                            <input type="text" id="app-type-name" placeholder="Enter application name..." class="form-control form-control-sm">
                         </section>
                     </section>
                     <section class="row mb-3">
                         <section class="form-group form-control-sm col-12">
-                            <label class="font-weight-normal f-13">Chọn tệp mẫu</label>
+                            <label class="font-weight-normal f-13">Choose file</label>
                             <input type="file" class="form-control-file border" id="app-type-file">
                             <span class="text-danger mb-3" id="error-file"></span>
                         </section>
@@ -76,7 +76,7 @@
                 </section>
                 <section class="modal-footer h-auto">
                     <button type="button" onclick="OnCreateApplicationType()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Tạo
+                            class="fas fa-plus"></i> Create
                     </button>
                 </section>
             </section>

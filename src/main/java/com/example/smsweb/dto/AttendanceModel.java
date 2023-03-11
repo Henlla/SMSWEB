@@ -14,4 +14,5 @@ public class AttendanceModel {
     private String student_id;
     private String note;
     private String status;
+    private String slot;
 }

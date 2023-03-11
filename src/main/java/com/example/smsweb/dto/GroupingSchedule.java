@@ -9,10 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceView {
-    private String class_id;
-    private String class_name;
-    private String date;
-    private Integer isAttendance;
-    private Integer slot;
+public class GroupingSchedule {
+    public Integer schedule_id;
+    public Integer class_id;
 }

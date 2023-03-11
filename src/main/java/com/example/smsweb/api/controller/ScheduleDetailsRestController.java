@@ -27,9 +27,9 @@ public class ScheduleDetailsRestController {
             List<ScheduleDetail> list = new ObjectMapper().readValue(listSchedule, new TypeReference<List<ScheduleDetail>>() {
             });
             scheduleDetailsService.addScheduleList(list);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), "ok"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), "Save success"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), "Save fail"));
         }
 
     }
@@ -39,39 +39,94 @@ public class ScheduleDetailsRestController {
         try {
             ScheduleDetail scheduleDetail = new ObjectMapper().readValue(schedule_details, ScheduleDetail.class);
             scheduleDetailsService.putScheduleDetails(scheduleDetail);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), "Cập nhật thành công"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), "Update success"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), "Update fail"));
         }
 
     }
 
     @PostMapping("findScheduleDetail")
-    public ResponseEntity<?> findScheduleDetail(@RequestParam("date") String date, @RequestParam("scheduleId") String scheduleId) {
+    public ResponseEntity<?> findScheduleDetail(@RequestParam("date") String date,
+                                                @RequestParam("scheduleId") String scheduleId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetail(date, scheduleId)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
         }
     }
-    @GetMapping("/get/{id}")
-    public ResponseEntity<?> findOneScheduleDetails(@PathVariable("id")Integer id){
+
+    @PostMapping("findScheduleDetailBySlot")
+    public ResponseEntity<?> findScheduleDetail(@RequestParam("date") String date,
+                                                @RequestParam("scheduleId") String scheduleId,
+                                                @RequestParam("slot") String slot) {
         try {
-          ScheduleDetail  scheduleDetail=  scheduleDetailsService.findScheduleDetailById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),scheduleDetail));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetailBySlot(date, scheduleId, slot)));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> findOneScheduleDetails(@PathVariable("id") Integer id) {
+        try {
+            ScheduleDetail scheduleDetail = scheduleDetailsService.findScheduleDetailById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), scheduleDetail));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), "Don't find any records"));
         }
 
     }
 
     @PostMapping("/findScheduleByDate")
-    public ResponseEntity<?> findScheduleByDate(@RequestParam("date")String date){
+    public ResponseEntity<?> findScheduleByDate(@RequestParam("date") String date) {
         try {
-            ScheduleDetail  scheduleDetail=  scheduleDetailsService.findScheduleDetailsByDate(date);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(),scheduleDetail));
+            ScheduleDetail scheduleDetail = scheduleDetailsService.findScheduleDetailsByDate(date);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), scheduleDetail));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findScheduleDetailsByDate")
+    public ResponseEntity<?> findScheduleDetailsByDate(@RequestParam("date") String date) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleByDate(date)));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findScheduleDetailByScheduleIdAndSubjectId")
+    public ResponseEntity<?> findScheduleDetailByScheduleIdAndSubjectId(@RequestParam("scheduleId") Integer scheduleId,
+                                                                        @RequestParam("subjectId") Integer subjectId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetailByScheduleIdAndSubjectId(scheduleId, subjectId)));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findScheduleDetailByDateBetween")
+    public ResponseEntity<?> findScheduleDetailByDateBetween(@RequestParam("fromDate") String fromDate,@RequestParam("toDate")String toDate){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),scheduleDetailsService.findScheduleDetailByDateBetween(fromDate, toDate)));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(),e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Don't find any records"));
+        }
+    }
+    @PostMapping("/findScheduleDetailByDateBetweenAndScheduleId")
+    public ResponseEntity<?> findScheduleDetailByDateBetweenAndScheduleId(@RequestParam("fromDate") String fromDate,
+                                                                          @RequestParam("toDate")String toDate,
+                                                                          @RequestParam("scheduleId")Integer scheduleId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),scheduleDetailsService.findScheduleDetailByDateBetweenAndScheduleId(fromDate, toDate,scheduleId)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Don't find any records"));
         }
     }
 }

@@ -8,4 +8,8 @@ import java.util.Optional;
 
 public interface AttendanceRepository extends GenericRepository<Attendance,Integer> {
     Optional<List<Attendance>> findAttendancesByDate(String date);
+    Optional<List<Attendance>> findAttendancesByDateAndSlot(String date,String slot);
+    Attendance findAttendanceByDateAndSlotAndStudentSubjectId(String date, Integer slot, Integer studentSubjectId);
+    List<Attendance> findAttendancesByStudentSubjectId(Integer studentSubjectId);
+    List<Attendance> findAttendancesByDateAndSlotAndStudentSubjectId(String date, Integer slot,Integer studentSubjectId);
 }
