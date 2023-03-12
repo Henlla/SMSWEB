@@ -77,7 +77,7 @@ public class SubjectController {
             }
         } catch (Exception ex) {
             log.error("Save Subject: " + ex.getMessage());
-            return new ResponseEntity<String>("Tạo mới thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Create fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -97,7 +97,7 @@ public class SubjectController {
             }
         } catch (Exception e) {
             log.error("Delete Subject: " + e.getMessage());
-            return new ResponseEntity<String>("Xóa thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Delete fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -120,7 +120,7 @@ public class SubjectController {
             }
         } catch (Exception e) {
             log.error("Update Subject: " + e.getMessage());
-            return new ResponseEntity<String>("Cập nhật thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Update fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -142,7 +142,7 @@ public class SubjectController {
             }
         } catch (Exception e) {
             log.error("FindOne Subject: " + e.getMessage());
-            return new ResponseEntity<String>("Không tìm thấy dữ liệu", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("Don't find any records", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -154,7 +154,7 @@ public class SubjectController {
             if (!isExpired.toLowerCase().equals("token expired")) {
                 String status = service.importExcelData(file);
                 if (status.equals("")) {
-                    return "Đỗ dữ liệu thành công";
+                    return "Import success";
                 } else {
                     return new ResponseEntity<String>(status, HttpStatus.BAD_REQUEST);
                 }
@@ -163,7 +163,7 @@ public class SubjectController {
             }
         } catch (Exception e) {
             log.error("Import Subject: " + e.getMessage());
-            return new ResponseEntity<String>("Đỗ dữ liệu thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Import fail", HttpStatus.BAD_REQUEST);
         }
     }
 }

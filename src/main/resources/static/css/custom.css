@@ -28,6 +28,15 @@
     color: red;
 }
 
+.modal ::-webkit-scrollbar {
+    width: 6px !important;
+}
+.modal ::-webkit-scrollbar-thumb{
+    width: 1px !important;
+    background: #ccc !important;
+    border-radius: 20px !important;
+}
+
 .error {
     color: red;
     font-weight: normal !important;
@@ -46,4 +55,7 @@
 }
 .dataTables_scrollBody::-webkit-scrollbar-thumb{
     width: 0 !important;
+}
+table.dataTable tbody td {
+    vertical-align: middle;
 }

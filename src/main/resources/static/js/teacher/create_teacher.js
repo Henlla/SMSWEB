@@ -82,7 +82,7 @@ $(()=>{
             $('.errorAvatar').css("display","none")
         }else{
             $('.errorAvatar').css("display","block")
-            $('.errorAvatar').html("Vui lòng chọn file hình ảnh (png,jpg,jpeg)")
+            $('.errorAvatar').html("Please choose image (png,jpg,jpeg)")
         }
     });
 
@@ -90,7 +90,7 @@ $(()=>{
     // custom confirm
     $('.icon-cancel_image').on('click',function (){
         $('.background-choose_image').css("filter","blur(3px)")
-        Confirm('Hủy hình ảnh', 'Có chắc chắn muốn hủy hình ảnh?', 'Hủy', 'Không')
+        Confirm('Cancel image', 'Are you sure cancel image?', 'Ok', 'Cancel')
 
 
     })
@@ -207,32 +207,32 @@ $(()=>{
             },
             messages:{
                 first_name : {
-                    required:"Vui lòng nhập họ sinh viên"
+                    required:"Please enter first name"
                 },
                 last_name : {
-                    required:"Vui lòng nhập tên sinh viên"
+                    required:"Please enter last name"
                 },
                 phone: {
-                    required: "Vui lòng nhập số điện thoại "
+                    required: "Please enter phone numbers "
                 },
                 email: {
-                    required: "Vui lòng nhập email ",
-                    email:"Vui lòng nhập đúng email"
+                    required: "Please enter email ",
+                    email:"Email wrong format"
                 },
                 identityCard: {
-                    required: "Vui lòng nhập CMND/CCCD "
+                    required: "Please enter identity card "
                 },
                 province: {
-                    valueNotEquals: "Vui lòng chọn tỉnh/thành phố "
+                    valueNotEquals: "Please enter provice "
                 },
                 district: {
-                    valueNotEquals: "Vui lòng chọn quận/huyện "
+                    valueNotEquals: "Please enter district "
                 },
                 ward: {
-                    valueNotEquals: "Vui lòng chọn xã/thị trấn "
+                    valueNotEquals: "Please enter ward "
                 },
                 address:{
-                    required: "Vui lòng nhập địa chỉ"
+                    required: "Please enter address"
                 },
 
             },
@@ -242,7 +242,7 @@ $(()=>{
 
         if(avatarUrl.files.length===0){
             $('.errorAvatar').css("display","block")
-            $('.errorAvatar').html("Vui lòng chọn ảnh")
+            $('.errorAvatar').html("Please choose image")
         }else{
             if($('#form-create').valid()){
                 $('#spinner-div').show()
@@ -271,12 +271,12 @@ $(()=>{
                         $('.icon-cancel_image').css("display","none")
                         $('.icon-choose_image').css("display","block")
                         $('.background-choose_image').attr('src','/img/avatar.png').css("filter","blur(3px)")
-                        toastr.success('Tạo giáo viên thành công')
+                        toastr.success('Create success')
                         $('#spinner-div').hide();
                     },
                     error:(e)=>{
                         console.log(e)
-                        toastr.error('Thất bại')
+                        toastr.error('Fail')
                         $('#spinner-div').hide();
                     }
                 })

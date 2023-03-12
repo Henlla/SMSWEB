@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<section layout:fragment="content">
+    <section class="container">
+        <section class="content-header">
+            <h5 class="m-0">View Attendance</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row mb-3">
+                    <div class="col-12">
+                        <input type="text" hidden th:value="${student.id}" id="currentStudentId">
+                    </div>
+                </section>
+                <section class="row">
+                    <section class="col-12">
+                        <table id="listSubject" class="table table-bordered table-hover">
+                            <thead>
+                            <tr class="text-center">
+                                <th>STT</th>
+                                <th>Subject Code</th>
+                                <th>Subject Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="text-center" th:each="items:${listSubject}">
+                                <td>[[${listSubject.indexOf(items)+1}]]</td>
+                                <td>[[${items.subject_code}]]</td>
+                                <td>[[${items.subject_name}]]</td>
+                                <td th:if="${items.status} >= 0 AND ${items.status} <= 10" class="text-success">[[${items.status}]]%</td>
+                                <td th:if="${items.status} >= 10 AND ${items.status} <= 20" class="text-warning">[[${items.status}]]%</td>
+                                <td th:if="${items.status} >= 20 AND ${items.status} <= 25" class="text-danger">[[${items.status}]]%</td>
+                                <td>
+                                    <button th:data-name="${items.id}" onclick="OnViewAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+    <div class="modal fade" id="student-attendance-model" data-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="">View Attendance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <section class="row">
+                        <section class="col-12">
+                            <table style="width: 100%" id="listAttendance" class="table table-bordered table-hover">
+                            </table>
+                        </section>
+                    </section>
+                </div>
+                <div class="modal-footer justify-content-center"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<th:block layout:fragment="optional">
+    <script src="/js/attendance/student_attendance.js"></script>
+</th:block>
+</body>
+</html>

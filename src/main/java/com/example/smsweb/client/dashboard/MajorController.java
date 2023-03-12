@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,9 +71,12 @@ public class MajorController {
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
+        } catch (HttpClientErrorException e) {
+            String message = e.getResponseBodyAsString();
+            return new ResponseEntity<String>(message, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Save Major: " + e.getMessage());
-            return new ResponseEntity<String>("Tạo mới thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Create fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -91,9 +95,12 @@ public class MajorController {
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
+        }catch (HttpClientErrorException e) {
+            String message = e.getResponseBodyAsString();
+            return new ResponseEntity<String>(message, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("FindOne Major: " + e.getMessage());
-            return new ResponseEntity<String>("Không tìm thấy dữ liệu", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("Don't find any record", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -113,9 +120,12 @@ public class MajorController {
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
+        }catch (HttpClientErrorException e) {
+            String message = e.getResponseBodyAsString();
+            return new ResponseEntity<String>(message, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Update Major: " + e.getMessage());
-            return new ResponseEntity<String>("Cập nhật thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Update fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -135,9 +145,12 @@ public class MajorController {
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
+        }catch (HttpClientErrorException e) {
+            String message = e.getResponseBodyAsString();
+            return new ResponseEntity<String>(message, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Delete Major: " + e.getMessage());
-            return new ResponseEntity<String>("Xóa thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Delete fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -155,13 +168,13 @@ public class MajorController {
                 List<Major> listMajors = new ObjectMapper().readValue(json, new TypeReference<>() {
                 });
                 service.exportDataToExcel(responses, listMajors, "major_export");
-                return new ResponseEntity<String>("Xuất dữ liệu thành công", HttpStatus.OK);
+                return new ResponseEntity<String>("Export data success", HttpStatus.OK);
             } else {
-                return new ResponseEntity<String>("token expired", HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
             log.error("Export Major: " + e.getMessage());
-            return new ResponseEntity<String>("Xuất dữ liệu thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Export data fail", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -173,16 +186,19 @@ public class MajorController {
             if (!isExpired.toLowerCase().equals("token expired")) {
                 String status = service.importDataToDb(file);
                 if (status.equals("")) {
-                    return new ResponseEntity<String>("Đỗ dữ liệu thành công",HttpStatus.OK);
+                    return new ResponseEntity<String>("Import data success", HttpStatus.OK);
                 } else {
                     return new ResponseEntity<String>(status, HttpStatus.NO_CONTENT);
                 }
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
+        }catch (HttpClientErrorException e) {
+            String message = e.getResponseBodyAsString();
+            return new ResponseEntity<String>(message, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Import Major: " + e.getMessage());
-            return new ResponseEntity<String>("Đỗ dữ liệu thất bại", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Import data fail", HttpStatus.BAD_REQUEST);
         }
     }
 }

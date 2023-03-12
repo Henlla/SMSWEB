@@ -16,11 +16,11 @@ var OnCreateSchedule = (classId, majorId, shift) => {
         processData: false,
         contentType: false,
         success: (res) => {
-            toastr.success('Tạo thời khóa biểu thành công')
+            toastr.success('Create success')
             $('#create_schedule').modal("hide")
             $('#spinner-div').hide();
         }, error: (e) => {
-            toastr.error('Tạo thời khóa biểu thất bại')
+            toastr.error('Create fail')
             $('#create_schedule').modal("hide")
             $('#spinner-div').hide();
         }
@@ -42,22 +42,22 @@ $(document).ready(function () {
         scrollCollapse: true,
         "language": {
             "decimal": "",
-            "emptyTable": "Không có dữ liệu",
+            "emptyTable": "Don't have any record",
             "info": "",
             "infoEmpty": "",
             "infoFiltered": "",
             "infoPostFix": "",
             "thousands": ",",
-            "lengthMenu": "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
             "processing": "",
-            "search": "Tìm kiếm:",
-            "zeroRecords": "Không tìm thấy dữ liệu",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first": "Trang đầu",
-                "last": "Trang cuối",
-                "next": "Trang kế tiếp",
-                "previous": "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
                 "sortAscending": ": activate to sort column ascending",
@@ -97,7 +97,7 @@ $(document).ready(function () {
                 //use column title as selector and placeholder
                 $('#' + title).select2({
                     closeOnSelect: true,
-                    placeholder: "- Tất cả -",
+                    placeholder: "- All -",
                     allowClear: true,
                     width: 'resolve',
                 });
@@ -120,7 +120,7 @@ $(document).ready(function () {
     $('#btn_submitChangeDate').on('click', () => {
         if (i_newDate.val() === '') {
             msgError.css('display', 'block')
-            msgError.html('Vui lòng chọn ngày thay đổi')
+            msgError.html('Please choose date')
         } else {
             console.log($('#classId').val())
             console.log($('#semesterSchedule').val())
@@ -141,7 +141,7 @@ $(document).ready(function () {
                     if (res.toLowerCase() === "error") {
                         Swal.fire(
                             "",
-                            "Slot ngày đó đã tồn tại , Vui lòng chọn lại ",
+                            "This slot is exists, please choose again ",
                             "error"
                         )
                     } else {
@@ -160,17 +160,17 @@ $(document).ready(function () {
                                 if (res.toLowerCase() === "error") {
                                     Swal.fire(
                                         "",
-                                        "Thay đổi thất bại",
+                                        "Change fail",
                                         "error"
                                     )
                                 } else {
                                     $('#schedule_update').modal("hide")
                                     Swal.fire(
                                         "",
-                                        "Thay đổi ngày thành công",
+                                        "Change success",
                                         "success"
                                     )
-                                    $('#btn_update_schedule').html('Chỉnh sửa')
+                                    $('#btn_update_schedule').html('Edit')
                                     OnChangeSemesterSchedule();
                                 }
                             }, error: (xhr, status, error) => {
@@ -179,17 +179,17 @@ $(document).ready(function () {
                                 console.log(err)
                                 if (err.message.toLowerCase() === "token expired") {
                                     Swal.fire({
-                                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                                        title: 'End of login session please login again',
                                         showDenyButton: false,
                                         showCancelButton: false,
-                                        confirmButtonText: 'Đồng ý',
+                                        confirmButtonText: 'Confirm',
                                     }).then((result) => {
                                         if (result.isConfirmed) {
                                             location.href = "/dashboard/login";
                                         }
-                                    })
+                                    });
                                 } else {
-                                    toastr.success('Xem thông tin thất bại')
+                                    toastr.success('View detail fail')
                                 }
                             }
                         })
@@ -200,17 +200,17 @@ $(document).ready(function () {
                     console.log(err)
                     if (err.message.toLowerCase() === "token expired") {
                         Swal.fire({
-                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            title: 'End of login session please login again',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Confirm',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = "/dashboard/login";
                             }
-                        })
+                        });
                     } else {
-                        toastr.success('Xem thông tin thất bại')
+                        toastr.success('View detail fail')
                     }
                 }
             })
@@ -220,11 +220,11 @@ $(document).ready(function () {
     let flag = true;
     $('#btn_update_schedule').on('click', () => {
         if (flag === true) {
-            $('#btn_update_schedule').html('Hủy chỉnh sửa')
+            $('#btn_update_schedule').html('Cancel')
             $('.btn_update_date').css('display', 'block')
             flag = !flag;
         } else {
-            $('#btn_update_schedule').html('Chỉnh sửa')
+            $('#btn_update_schedule').html('Edit')
             $('.btn_update_date').css('display', 'none')
             flag = !flag;
         }
@@ -232,30 +232,30 @@ $(document).ready(function () {
 
     $("#form_add_student").submit(function (event) {
         event.preventDefault();
-        $('#form_add_student').validate({
-            rules: {
-                inputStudentCard: {
-                    required: true
-                }
-            },
-            messages: {
-                inputStudentCard: {
-                    required: "Vui lòng nhập mã sinh viên"
-                }
-            },
-        })
-        if ($('#form_add_student').valid()) {
-            var studentCard = $("#inputStudentCard").val();
-            if (availablePlace < 1) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi',
-                    text: 'Sỉ số lớp đã đạt tối đa',
-                    showDenyButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Đồng ý',
-                })
-            }else {
+        var studentCard = $("#inputStudentCard").val();
+        if (availablePlace < 1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Student in class was maximum',
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            })
+        } else {
+            $('#form_add_student').validate({
+                rules: {
+                    inputStudentCard: {
+                        required: true
+                    }
+                },
+                messages: {
+                    inputStudentCard: {
+                        required: "Please enter student card"
+                    }
+                },
+            })
+            if ($('#form_add_student').valid()) {
                 const dataTable = $("#student-table").DataTable();
                 var listStudent = new Array()
                 const regExp = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
@@ -266,11 +266,11 @@ $(document).ready(function () {
                 if (listStudent.filter(item => item == studentCard).length > 0) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Lỗi',
-                        text: 'Không cần thêm lại sinh viên đã có trong lớp',
+                        title: 'Error',
+                        text: "Don't need add student in this class",
                         showDenyButton: false,
                         confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Đồng ý',
+                        confirmButtonText: 'Ok',
                     })
                 } else {
                     $.ajax({
@@ -285,15 +285,15 @@ $(document).ready(function () {
                                 response = JSON.parse(response);
                                 Swal.fire({
                                     icon: 'question',
-                                    title: 'Chú ý',
+                                    title: 'Warning',
                                     html: 'Bạn có muốn thêm sinh viên: ' + response.studentByProfile.firstName + ' ' + response.studentByProfile.lastName +
                                         '<br> ngày sinh: ' + response.studentByProfile.dob,
                                     showCancelButton: true,
                                     showDenyButton: false,
                                     confirmButtonColor: '#3085d6',
                                     cancelButtonColor: '#d33',
-                                    cancelButtonText: 'Huỷ',
-                                    confirmButtonText: 'Đồng ý',
+                                    cancelButtonText: 'Cancel',
+                                    confirmButtonText: 'Confirm',
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         let data = new FormData()
@@ -309,10 +309,10 @@ $(document).ready(function () {
                                             success: (response) => {
                                                 Swal.fire({
                                                     icon: 'success',
-                                                    title: 'Thêm thành công',
+                                                    title: 'Create success',
                                                     showDenyButton: false,
                                                     showCancelButton: false,
-                                                    confirmButtonText: 'Đồng ý',
+                                                    confirmButtonText: 'Ok',
                                                 }).then((result) => {
                                                     location.reload();
                                                 })
@@ -320,10 +320,10 @@ $(document).ready(function () {
                                             error: (e) => {
                                                 Swal.fire({
                                                     icon: 'error',
-                                                    title: 'Thêm thất bại',
+                                                    title: 'Create fail',
                                                     showDenyButton: false,
                                                     showCancelButton: false,
-                                                    confirmButtonText: 'Đồng ý',
+                                                    confirmButtonText: 'Ok',
                                                 })
                                             }
                                         });
@@ -331,24 +331,24 @@ $(document).ready(function () {
                                 })
                             } else {
                                 Swal.fire({
-                                    title: 'Lỗi',
-                                    text: 'Sinh viên không tồn tại',
+                                    title: 'Error',
+                                    text: 'Student not found',
                                     icon: 'error',
                                     showDenyButton: false,
                                     showCancelButton: false,
-                                    confirmButtonText: 'Đồng ý',
+                                    confirmButtonText: 'Ok',
                                     timer: 2000
                                 })
                             }
                         },
                         error: (e) => {
                             Swal.fire({
-                                title: 'Lỗi',
+                                title: 'Error',
                                 text: e.messages,
                                 icon: 'error',
                                 showDenyButton: false,
                                 showCancelButton: false,
-                                confirmButtonText: 'Đồng ý',
+                                confirmButtonText: 'Ok',
                                 timer: 2000
                             })
                         }
@@ -363,11 +363,11 @@ $(document).ready(function () {
         if (availablePlace < 1) {
             Swal.fire({
                 icon: 'error',
-                title: 'Lỗi',
-                text: 'Sỉ số lớp đã đạt tối đa',
+                title: 'Error',
+                text: 'The student was maximum',
                 showDenyButton: false,
                 confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Đồng ý',
+                confirmButtonText: 'Ok',
             })
         } else {
             $('#form_import_student_file').validate({
@@ -378,7 +378,7 @@ $(document).ready(function () {
                 },
                 messages: {
                     studentList: {
-                        required: "Vui lòng chọn danh sách sinh viên"
+                        required: "Please choose list student"
                     },
                 },
             })
@@ -398,11 +398,11 @@ $(document).ready(function () {
                         response = JSON.parse(response);
                         Swal.fire({
                             icon: 'success',
-                            title: 'Thành công',
+                            title: 'Success',
                             text: response.message,
                             showDenyButton: false,
                             confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Ok',
                         }).then((result) => {
                             location.reload();
                         });
@@ -411,11 +411,11 @@ $(document).ready(function () {
                         console.log(error)
                         Swal.fire({
                             icon: 'error',
-                            title: 'Thất bại',
+                            title: 'Fail',
                             text: error.responseJSON.message,
                             showDenyButton: false,
                             confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Ok',
                         })
                     },
                 });
@@ -431,10 +431,10 @@ $(document).ready(function () {
                 console.log(res)
                 if (res.id == null) {
                     Swal.fire({
-                        title: 'Không tìm thấy giáo viên',
+                        title: "Don't find teacher",
                         showDenyButton: false,
                         showCancelButton: false,
-                        confirmButtonText: 'Đồng ý',
+                        confirmButtonText: 'Ok',
                     })
                 } else {
                     let data = res.teacherCard + " (" + res.profileByProfileId.firstName + " " + res.profileByProfileId.lastName + ")"
@@ -446,17 +446,17 @@ $(document).ready(function () {
                 console.log(err)
                 if (err.message.toLowerCase() === "token expired") {
                     Swal.fire({
-                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        title: 'End of login session please login again',
                         showDenyButton: false,
                         showCancelButton: false,
-                        confirmButtonText: 'Đồng ý',
+                        confirmButtonText: 'Confirm',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             location.href = "/dashboard/login";
                         }
-                    })
+                    });
                 } else {
-                    toastr.success('Xem thông tin thất bại')
+                    toastr.success('View detail fail')
                 }
             }
 
@@ -465,12 +465,12 @@ $(document).ready(function () {
     $('#btn_submitTeacher').on('click', () => {
         Swal.fire({
             title: '',
-            text: "Bạn có chắc thay đổi giáo viên ?",
+            text: "Are you sure to change teacher ?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Thay đổi'
+            confirmButtonText: 'Change'
         }).then((result) => {
             if (result.isConfirmed) {
                 let data = new FormData()
@@ -487,10 +487,10 @@ $(document).ready(function () {
                     success: (res) => {
                         console.log(res)
                         Swal.fire({
-                            title: 'Đổi giáo viên thành công',
+                            title: 'Change teacher success',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Ok',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.reload();
@@ -502,20 +502,19 @@ $(document).ready(function () {
                         console.log(err)
                         if (err.message.toLowerCase() === "token expired") {
                             Swal.fire({
-                                title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                                title: 'End of login session please login again',
                                 showDenyButton: false,
                                 showCancelButton: false,
-                                confirmButtonText: 'Đồng ý',
+                                confirmButtonText: 'Confirm',
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     location.href = "/dashboard/login";
                                 }
-                            })
+                            });
                         } else {
-                            toastr.success('Xem thông tin thất bại')
+                            toastr.success('View detail fail')
                         }
                     }
-
                 })
             }
         })
@@ -534,7 +533,7 @@ $(document).ready(function () {
             data: data,
             success: () => {
                 Swal.fire(
-                    'Gửi thời khóa biểu thành công',
+                    'Send time table success',
                     'success'
                 )
                 $('#modal_import_file').modal("hide")
@@ -543,18 +542,18 @@ $(document).ready(function () {
                 if (err.message.toLowerCase() === "token expired") {
                     $('#spinner-divI').hide()
                     Swal.fire({
-                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        title: 'End of login session please login again',
                         showDenyButton: false,
                         showCancelButton: false,
-                        confirmButtonText: 'Đồng ý',
+                        confirmButtonText: 'Confirm',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             location.href = "/dashboard/login";
                         }
-                    })
-                } else {
+                    });
+                }else{
                     Swal.fire(
-                        'Đỗ dữ liệu thất bại',
+                        'Import fail',
                         'error'
                     )
                 }
@@ -842,7 +841,7 @@ var OnChangeSemesterSchedule = () => {
             } else {
                 Swal.fire(
                     "",
-                    "Chưa có thời khóa biểu kỳ " + $('#semesterSchedule').val(),
+                    "Don't have time table in semester " + $('#semesterSchedule').val(),
                     "error"
                 )
             }
@@ -854,17 +853,17 @@ var OnChangeSemesterSchedule = () => {
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             } else {
-                toastr.success('Xem thông tin thất bại')
+                toastr.success('View detail fail')
             }
         }
     })

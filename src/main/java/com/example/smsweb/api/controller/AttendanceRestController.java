@@ -25,9 +25,9 @@ public class AttendanceRestController extends GenericController<Attendance> {
         try {
             Attendance attendance = new ObjectMapper().readValue(attendanceJson, Attendance.class);
             service.save(attendance);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tạo mới thành công", LocalDate.now().toString(), null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tạo mới thành công", LocalDate.now().toString(), "Save success"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Tạo mới thất bại", LocalDate.now().toString(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Tạo mới thất bại", LocalDate.now().toString(), "Save fail"));
         }
     }
 
@@ -36,9 +36,9 @@ public class AttendanceRestController extends GenericController<Attendance> {
         try {
             Attendance attendance = new ObjectMapper().readValue(attendanceJson, Attendance.class);
             service.save(attendance);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Cập nhật thành công", LocalDate.now().toString(), null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Cập nhật thành công", LocalDate.now().toString(), "Update success"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Cập nhật thất bại", LocalDate.now().toString(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Cập nhật thất bại", LocalDate.now().toString(), "Update fail"));
         }
     }
 
@@ -48,18 +48,61 @@ public class AttendanceRestController extends GenericController<Attendance> {
             List<Attendance> listAttend = new ObjectMapper().readValue(listAttendance, new TypeReference<List<Attendance>>() {
             });
             service.saveAllAttendance(listAttend);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Sao lưu thành công"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Update success"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Update fail"));
         }
     }
 
     @PostMapping("/findAttendanceByDate")
     public ResponseEntity<?> findAttendanceByDate(@RequestParam("date") String date) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),service.findAttendByDate(date)));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),e.getMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findAttendByDate(date)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findAttendanceByDateAndSlot")
+    public ResponseEntity<?> findAttendanceByDateAndSlot(@RequestParam("date") String date, @RequestParam("slot") String slot) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findAttendanceByDateAndSlot(date, slot)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findAttendanceByDateSlotStudentSubject")
+    public ResponseEntity<?> findAttendanceByDateSlotStudentSubject(
+            @RequestParam("date") String date
+            , @RequestParam("slot") String slot
+            , @RequestParam("student_subject") String student_subject) {
+        try {
+            Attendance attendance = new Attendance();
+            attendance = service.findAttendanceByDateSlotStudentSubject(date, slot, student_subject);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), attendance));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findAttendanceByStudentSubjectId")
+    public ResponseEntity<?> findAttendanceByStudentSubjectId(@RequestParam("student_subject_id") Integer studentSubjectId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findAttendanceByStudentSubjectId(studentSubjectId)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findAttendanceByDateAndSlotAndStudentSubject")
+    public ResponseEntity<?> findAttendanceByDateAndStudentSubject(@RequestParam("date") String date,
+                                                                   @RequestParam("slot") Integer slot,
+                                                                   @RequestParam("studentSubjectId") Integer studentSubjectId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findAttendancesByDateAndSlotAndStudentSubjectId(date,slot, studentSubjectId)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
         }
     }
 }

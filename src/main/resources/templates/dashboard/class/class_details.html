@@ -4,7 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sinh viên lớp [[${class.classCode}]]</title>
+    <title>Student of class: [[${class.classCode}]]</title>
     <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/class_details.css">
 </head>
@@ -21,8 +21,7 @@
                                     <td>
                                         <table style="width:100%; height: 100%">
                                             <tr>
-                                                <td style="width:40%; height: 100%"><h5 class="text-bold">
-                                                    <b>Lớp:&nbsp;</b>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Class:&nbsp;</b>
                                                 </h5></td>
                                                 <td><h5>[[${class.classCode}]]</h5></td>
                                             </tr>
@@ -34,15 +33,12 @@
                                     <td>
                                         <table style="width:100%; height: 100%">
                                             <tr>
-                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Giáo viên:&nbsp;</b>
-                                                </h5></td>
-                                                <td style="width:150%;display: flex;align-items: center"><h5
-                                                        class="text-bold">
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Teacher:&nbsp;</b></h5></td>
+                                                <td style="width:150%;display: flex;align-items: center" ><h5 class="text-bold">
                                                     [[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5>
                                                     <a th:data-id="${class.getTeacherId()}"
                                                        th:data-name="${class.getTeacher().getProfileByProfileId().getFirstName()+' '+class.getTeacher().getProfileByProfileId().getLastName()}"
-                                                       onclick="OnChangeTeacher(this.getAttribute('data-name'),this.getAttribute('data-id'))"
-                                                       class="btn btn-success btn-sm">Đổi giáo viên</a>
+                                                       onclick="OnChangeTeacher(this.getAttribute('data-name'),this.getAttribute('data-id'))" class="btn btn-success btn-sm">Change teacher</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -53,11 +49,8 @@
                                     <td>
                                         <table style="width:100%; height: 100%">
                                             <tr>
-                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Sỉ số
-                                                    lớp:&nbsp;</b></h5></td>
-                                                <td><h5>
-                                                    [[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]]
-                                                    học sinh</h5></td>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Number of student:&nbsp;</b></h5></td>
+                                                <td><h5>[[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]] student</h5></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -66,15 +59,13 @@
                                             <tr>
                                                 <td><a class="btn btn-primary btn-sm"
                                                        th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                                                       data-target="#class_add_student" data-toggle="modal">Thêm sinh
-                                                    viên</a></td>
+                                                       data-target="#class_add_student" data-toggle="modal">Add student</a></td>
                                                 <td><a class="btn btn-primary btn-sm"
                                                        th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                                                       data-target="#class_import_student_file" data-toggle="modal">Thêm
-                                                    nhiều sinh viên</a></td>
+                                                       data-target="#class_import_student_file" data-toggle="modal">Add list of students</a></td>
                                                 <td>
                                                     <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
-                                                       class="btn btn-success btn-sm">Tải xuống danh sách</a>
+                                                       class="btn btn-success btn-sm">Download template</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -94,11 +85,11 @@
                                             <tr>
                                                 <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
                                                    data-target="#create_schedule" data-toggle="modal"
-                                                   class="btn btn-warning btn-sm">Tạo thời khoá biểu</a>
+                                                   class="btn btn-warning btn-sm">Create Time Table</a>
                                                 <a data-target="#details_schedule" data-toggle="modal"
-                                                   class="btn btn-primary btn-sm">Xem thời khóa biểu</a>
+                                                   class="btn btn-primary btn-sm">View Time Table</a>
                                                 <a data-target="#send_schedule" data-toggle="modal"
-                                                   class="btn btn-success btn-sm">Gửi thời khóa biểu</a>
+                                                   class="btn btn-success btn-sm">Send Time Table</a>
                                             </tr>
                                         </table>
                                     </td>
@@ -116,10 +107,10 @@
                                 <thead>
                                 <tr class="text-center">
                                     <th>STT</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Mã sinh viên</th>
-                                    <th>Tên sinh viên</th>
-                                    <th>Hành động</th>
+                                    <th>Avatar</th>
+                                    <th>Student Card</th>
+                                    <th>Student Name</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -155,7 +146,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Tạo thời khóa biểu</h5>
+                        <h5 class="modal-title">Create Time Table</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times fa-sm"></i>
                         </button>
@@ -164,17 +155,17 @@
                         <div class="container">
                             <form id="role_create-form">
                                 <div class="col-6">
-                                    <label for="startDate">Ngày bắt đầu:</label>
+                                    <label for="startDate">Start Date:</label>
                                     <input type="date" class="form-control" id="startDate" name="startDate"
                                            placeholder="chọn ngày bắt đầu học">
                                     <input type="text" id="inputToday" style="display: none">
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="semester">Kì của nghành học:</label>
+                                        <label for="semester">Semester:</label>
                                         <select id="semester" class="form-control" name="semester"
                                                 style="width: 100%;">
-                                            <option value="">-----Chọn kì------</option>
+                                            <option value="">-----Choose semester------</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -191,7 +182,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                class="fas fa-times"></i> Đóng
+                                class="fas fa-times"></i> Close
                         </button>
                         <button type="button" class="btn btn-info btn-sm" th:data-id="${class.getId()}"
                                 th:data-major="${class.getMajorId()}"
@@ -199,7 +190,7 @@
                                 onclick="OnCreateSchedule(this.getAttribute('data-id'),
                                     this.getAttribute('data-major'),
                                      this.getAttribute('data-shift'))" data-dismiss="modal"><i
-                                class="fas fa-plus"></i> Tạo
+                                class="fas fa-plus"></i> Create
                         </button>
                     </div>
                 </div>
@@ -210,7 +201,7 @@
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Xem thời khóa biểu</h5>
+                        <h5 class="modal-title">View Time Table</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times fa-sm"></i>
                         </button>
@@ -220,11 +211,9 @@
                             <form id="schedule_details_form">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="semester">Kì của nghành học:</label>
-                                        <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()"
-                                                class="form-control" name="semester"
-                                                style="width: 100%;">
-                                            <option value="">-----Chọn kì------</option>
+                                        <label for="semester">Semester:</label>
+                                        <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()" class="form-control" name="semester" style="width: 100%;">
+                                            <option value="">-----Choose semester------</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -239,20 +228,19 @@
                                 <div class="timetable-img text-center">
                                     <img src="img/content/timetable.png" alt="">
                                 </div>
-                                <div class="float-right"><a id="btn_update_schedule" class="btn btn-info btn-sm">Chỉnh
-                                    sửa</a></div>
-                                <a id="btnDownSchedule" class="btn btn-danger btn-sm">Tải xuống</a>
+                                <div class="float-right"><a id="btn_update_schedule" class="btn btn-info btn-sm">Edit</a></div>
+                                <a id="btnDownSchedule" class="btn btn-danger btn-sm">Download</a>
                                 <div class="table-responsive">
                                     <table id="schedule_table" class="table table-bordered text-center">
                                         <thead>
                                         <tr class="bg-light-gray">
-                                            <th colspan="2" class="text-uppercase">Thứ hai</th>
-                                            <th colspan="2" class="text-uppercase">Thứ ba</th>
-                                            <th colspan="2" class="text-uppercase">Thứ tư</th>
-                                            <th colspan="2" class="text-uppercase">Thứ năm</th>
-                                            <th colspan="2" class="text-uppercase">Thứ sáu</th>
-                                            <th colspan="2" class="text-uppercase">Thứ bảy</th>
-                                            <th colspan="2" class="text-uppercase">Chủ nhật</th>
+                                            <th class="text-uppercase">Monday</th>
+                                            <th class="text-uppercase">Tuesday</th>
+                                            <th class="text-uppercase">Wednesday</th>
+                                            <th class="text-uppercase">Thursday</th>
+                                            <th class="text-uppercase">Friday</th>
+                                            <th class="text-uppercase">Saturday</th>
+                                            <th class="text-uppercase">Sunday</th>
                                         </tr>
                                         </thead>
                                     </table>
@@ -262,7 +250,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                class="fas fa-times"></i> Đóng
+                                class="fas fa-times"></i> Close
                         </button>
                     </div>
                 </div>
@@ -273,7 +261,7 @@
             <div class="modal-dialog modal-md modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Thay đổi ngày thời khóa biểu</h5>
+                        <h5 class="modal-title">Change time table</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times fa-sm"></i>
                         </button>
@@ -324,10 +312,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                class="fas fa-times"></i> Đóng
+                                class="fas fa-times"></i> Close
                         </button>
-                        <button type="button" class="btn btn-success btn-sm" id="btn_submitChangeDate"><i
-                                class="fas fa-check"></i> Thay đổi
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submitChangeDate"><i class="fas fa-check"></i> Change
                         </button>
                     </div>
                 </div>
@@ -338,7 +325,7 @@
             <div class="modal-dialog modal-xl modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Thay đổi giáo viên</h5>
+                        <h5 class="modal-title">Change teacher</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times fa-sm"></i>
                         </button>
@@ -360,10 +347,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                class="fas fa-times"></i> Đóng
+                                class="fas fa-times"></i> Close
                         </button>
-                        <button type="button" class="btn btn-success btn-sm" id="btn_submitTeacher"><i
-                                class="fas fa-check"></i> Thay đổi
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submitTeacher"><i class="fas fa-check"></i> Change
                         </button>
                     </div>
                 </div>
@@ -374,7 +360,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Gửi thời khóa biểu</h5>
+                        <h5 class="modal-title">Send time table</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times fa-sm"></i>
                         </button>
@@ -391,10 +377,9 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
-                            <button type="button" class="btn btn-success btn-sm" id="btnSendSchedule"><i
-                                    class="fas fa-check"></i> Gửi
+                            <button type="button" class="btn btn-success btn-sm" id="btnSendSchedule"><i class="fas fa-check"></i> Send
                             </button>
                         </div>
                     </div>
@@ -481,7 +466,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Thêm danh sách sinh viên</h5>
+                        <h5 class="modal-title">Add Student</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times fa-sm"></i>
                         </button>
@@ -491,13 +476,11 @@
                             <form id="form_import_student_file" enctype="multipart/form-data">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="studentList">Thêm danh sách sinh viên&nbsp;</label><a
-                                            href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Tải mẫu danh sách</a>
-                                        <input type="file" accept=".xlsx" class="form-control" id="studentList"
-                                               name="studentList">
+                                        <label for="studentList">Add list of student&nbsp;</label><a href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Download example file</a>
+                                        <input type="file" accept=".xlsx" class="form-control" id="studentList" name="studentList">
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control btn-primary" type="submit" value="Thêm sinh viên">
+                                        <input class="form-control btn-primary" type="submit" value="Add student">
                                     </div>
                                 </div>
                             </form>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Thêm nhân viên</title>
+    <title>Add Staff</title>
     <link rel="stylesheet" href="/css/create_teacher.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -15,12 +15,12 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Thêm mới nhân viên</h1>
+                            <h1 class="m-0">Create staff</h1>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Thêm mới nhân viên</li>
+                                <li class="breadcrumb-item active">Create new staff</li>
                             </ol>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                             <div>
                                 <img src="/img/avatar.png" class="background-choose_image" style="">
                                 <input type="file" id="avatar" name="avatar" hidden>
-                                <span class="errorAvatar">Vui lòng chọn hình ảnh</span>
+                                <span class="errorAvatar">Please choose image</span>
                                 <img src="/img/plus.png" class="icon-choose_image" width="40" height="40">
                                 <img src="/img/multiply.png" class="icon-cancel_image" width="40" height="40">
 
@@ -47,29 +47,29 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="first_name">Họ :</label>
+                                        <label for="first_name">First Name :</label>
                                         <input type="text" class="form-control" id="first_name" name="first_name"
-                                               placeholder="Nhập họ nhân viên">
+                                               placeholder="Enter firstname...">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="last_name">Tên :</label>
+                                        <label for="last_name">Last Name :</label>
                                         <input type="text" class="form-control" id="last_name" name="last_name"
-                                               placeholder="Nhập tên nhân viên">
+                                               placeholder="Enter lastname...">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group" style="margin-top: 10px">
-                                        <label for="last_name">Giới tính :</label>
+                                        <label for="last_name">Gender :</label>
                                         <div class="form-check">
                                             <input class="form-check-input" value="Nam" type="radio" name="sex" id="flexRadioDefault1" checked>
                                             <label class="form-check-label" for="flexRadioDefault1">
-                                                Nam
+                                                Male
                                             </label>
                                             <input class="form-check-input" value="Nữ" type="radio" name="sex" style="margin-left: 15px;" id="flexRadioDefault2" >
                                             <label class="form-check-label"  style="margin-left: 36px;" for="flexRadioDefault2">
-                                                Nữ
+                                                Female
                                             </label>
                                         </div>
                                     </div>
@@ -78,7 +78,7 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label>Ngày sinh:</label>
+                                        <label>Date of Birth:</label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
                                                    data-target="#reservationdate" id="dob" name="dob"
@@ -92,17 +92,17 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="phone">Số điện thoại :</label>
+                                        <label for="phone">Phone numbers :</label>
                                         <input type="text" class="form-control" id="phone" name="phone"
-                                               placeholder="Nhập số điện thoại nhân viên">
+                                               placeholder="Enter phone numbers...">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="phone">Chức vụ :</label>
+                                        <label for="phone">Role :</label>
                                         <select id="role" onchange="selectRole()" class="form-control province" name="role"
                                                 style="width: 100%;">
-                                            <option selected="selected" value="">----- Chọn Chức vụ ------</option>
+                                            <option selected="selected" value="">----- Choose role ------</option>
                                             <th:block th:each="role : ${roles}">
                                                 <option th:value="${role.id}">[[${role.roleDescription}]]</option>
                                             </th:block>
@@ -115,24 +115,24 @@
                                     <div class="form-group">
                                         <label for="email">Email :</label>
                                         <input type="text" class="form-control" id="email" name="email"
-                                               placeholder="Nhập email nhân viên">
+                                               placeholder="Enter email...">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="email">CMND/CCCD :</label>
+                                        <label for="email">Identity Card :</label>
                                         <input type="text" class="form-control" id="identityCard" name="identityCard"
-                                               placeholder="Nhập CMND/CCCD nhân viên">
+                                               placeholder="Enter identity card...">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label>Tỉnh/TP :</label>
+                                        <label>Province :</label>
                                         <select id="province" onchange="selectProvince()" class="form-control select2" name="province"
                                                 style="width: 100%;">
-                                            <option selected="selected" value="">----- Chọn Tỉnh/Thành Phố------</option>
+                                            <option selected="selected" value="">----- Choose provice------</option>
                                             <th:block th:each="province : ${provinces}">
                                                 <option th:value="${province.id}">[[${province.name}]]</option>
                                             </th:block>
@@ -141,29 +141,29 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label>Quận/Huyện :</label>
+                                        <label>District :</label>
                                         <select id="district" onchange="selectDistrict()" class="form-control select2" name="district"
                                                 style="width: 100%;">
-                                            <option selected="selected" value="">----- Chọn Quận/Huyện------</option>
+                                            <option selected="selected" value="">----- Choose district------</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label>Xã/Thị trấn :</label>
+                                        <label>Ward :</label>
                                         <select id="ward" onchange="selectWard()" class="form-control select2" name="ward" style="width: 100%;">
-                                            <option selected="selected" value="">----- Chọn Xã/Thị Trấn------</option>
+                                            <option selected="selected" value="">----- Choose ward------</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="email">Địa chỉ :</label>
+                                <label for="email">Address :</label>
                                 <textarea type="text" cols="3" rows="2" style="resize: none" class="form-control"
-                                          name="address" id="address" placeholder="Nhập địa chỉ nhân viên"></textarea>
+                                          name="address" id="address" placeholder="Enter address..."></textarea>
                             </div>
                             <div class="form-group">
-                                <button type="submit" id="btn_create_student" class="btn btn-default">Tạo nhân viên
+                                <button type="submit" id="btn_create_student" class="btn btn-default">Create
                                 </button>
                             </div>
                         </div>

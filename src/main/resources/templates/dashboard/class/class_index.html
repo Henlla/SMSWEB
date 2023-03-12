@@ -4,7 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sinh viên</title>
+    <title>List student</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -14,7 +14,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h5 class="m-0">Danh sách lớp học</h5>
+                            <h5 class="m-0">List class</h5>
                         </div>
                     </div>
                 </div>
@@ -23,23 +23,22 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/class/class-create'}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:href="@{'/dashboard/class/class-create'}" class="btn btn-info btn-sm">Create</a>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <label>Tìm kiếm theo giáo viên :</label>
-                            <div id="select-teacher"></div>
+                            <label>Find by major :</label>
+                            <div id="select-major"></div>
                             <table id="class-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
-                                    <th>STT</th>
-                                    <th>Mã lớp học</th>
-                                    <th>Giáo viên phụ trách</th>
-                                    <th>Nghành học</th>
-                                    <th>Sỉ số lớp</th>
-                                    <th>Sỉ số lớp tối đa</th>
-                                    <th>Hành động</th>
+                                    <th>Class Code</th>
+                                    <th>Teacher</th>
+                                    <th>Major</th>
+                                    <th>Number of student</th>
+                                    <th>Limit student</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>

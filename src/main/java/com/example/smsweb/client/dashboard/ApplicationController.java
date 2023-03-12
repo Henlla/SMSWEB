@@ -62,7 +62,7 @@ public class ApplicationController {
             }
         } catch (Exception e) {
             log.error("GetOne Application: " + e.getMessage());
-            return new ResponseEntity<String>("Không tìm thấy dữ liệu",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("Don't find any records",HttpStatus.NOT_FOUND);
         }
     }
 
@@ -85,7 +85,7 @@ public class ApplicationController {
             }
         } catch (Exception e) {
             log.error("Save Application: " + e.getMessage());
-            return new ResponseEntity<String>( "Tạo mới thất bại",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>( "Create fail",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -107,7 +107,7 @@ public class ApplicationController {
             }
         } catch (Exception e) {
             log.error("Update Application: " + e.getMessage());
-            return new ResponseEntity<String>("Cập nhật thất bại",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Update fail",HttpStatus.BAD_REQUEST);
         }
     }
 }
