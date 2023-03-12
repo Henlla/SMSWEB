@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{teacherDashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sinh viên</title>
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/student_details.css">
+</head>
+<body>
+    <div layout:fragment="content" class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-sub-header">
+                        <h3 class="page-title">Sinh viên</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a th:href="@{'/teacher/students'}">Tất cả sinh viên</a> </li>
+<!--                            <li class="breadcrumb-item active">Tất cả sinh viên</li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table comman-shadow">
+                    <div class="card-body">
+                        <div class="page-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="page-title">Sinh viên</h3>
+                                    <div class="text-end float-end ms-auto download-grp">
+                                        <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-outline-primary"><i class="fas fa-download"></i> Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row table-responsive">
+                            <div class="col-12">
+                                <label>Tìm kiếm theo nghành học :</label>
+                                <div class="mb-2" id="select-major"></div>
+                                <table id="student-table" class="table table-bordered">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th>STT</th>
+                                        <th>Mã sinh viên</th>
+                                        <th>Tên sinh viên</th>
+                                        <th>Ngày sinh</th>
+                                        <th>Nghành học</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="text-center" th:each="student:${students}">
+                                        <td><span th:text="${students.indexOf(student)+1}"></span></td>
+                                        <td><span th:text="${student.studentCard}"></span></td>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                <a th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))" class="avatar avatar-sm me-2">
+                                                    <img class="avatar-img rounded-circle" th:src="${student.studentByProfile.getAvartarUrl()}" alt="student-img">
+                                                </a>
+                                                <a th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"></a>
+                                            </h2>
+                                            <span th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
+                                        </td>
+                                        <td><span th:text="${student.getStudentByProfile().getDob()}"></span></td>
+                                        <td>
+                                            <th:block th:each="major :${student.majorStudentsById}">
+                                                [[${major.majorByMajorId.majorName}]]
+                                            </th:block>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="mr-3" th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block layout:fragment="optional">
+        <script type="text/javascript" src="/teacherDashboard/assets/js/custormJs/student-index.js"></script>
+    </th:block>
+</body>
+</html>

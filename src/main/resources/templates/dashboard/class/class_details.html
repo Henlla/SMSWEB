@@ -27,7 +27,7 @@
                                             </tr>
                                         </table>
                                     </td>
-                                    <td></td>
+                                    <td class="d-flex justify-content-end"></td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -43,15 +43,7 @@
                                             </tr>
                                         </table>
                                     </td>
-                                    <td class="d-flex justify-content-end">
-                                        <form id="form_add_student" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}">
-                                            <input id="inputStudentCard" placeholder="Nhập số thẻ sinh viên" required title="Vui lòng nhập mã sinh viên" >
-                                            <button type="submit" class="btn btn-info btn-sm">Add student</button>
-                                        </form>
-                                        <a class="btn btn-primary btn-sm"
-                                            th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                                           data-target="#class_import_student_file" data-toggle="modal">Add list of student</a>
-                                    </td>
+                                    <td class="d-flex justify-content-end"></td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -63,14 +55,43 @@
                                         </table>
                                     </td>
                                     <td class="d-flex justify-content-end">
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                                           data-target="#create_schedule" data-toggle="modal"
-                                           class="btn btn-warning btn-sm">Time table</a>
-                                        <a data-target="#details_schedule" data-toggle="modal"
-                                           class="btn btn-primary btn-sm">View time table</a>
-                                        <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
-                                           class="btn btn-success btn-sm">Download list student</a>
-                                        <a data-target="#send_schedule" data-toggle="modal" class="btn btn-success btn-sm">Send time table</a>
+                                        <table>
+                                            <tr>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#class_add_student" data-toggle="modal">Add student</a></td>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#class_import_student_file" data-toggle="modal">Add list of students</a></td>
+                                                <td>
+                                                    <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
+                                                       class="btn btn-success btn-sm">Download template</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="d-flex justify-content-end">
+                                        <table>
+                                            <tr>
+                                                <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                   data-target="#create_schedule" data-toggle="modal"
+                                                   class="btn btn-warning btn-sm">Create Time Table</a>
+                                                <a data-target="#details_schedule" data-toggle="modal"
+                                                   class="btn btn-primary btn-sm">View Time Table</a>
+                                                <a data-target="#send_schedule" data-toggle="modal"
+                                                   class="btn btn-success btn-sm">Send Time Table</a>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>
@@ -105,6 +126,11 @@
                                     </td>
                                     <td><span th:text="${student.classStudentByStudent.studentCard}"></span></td>
                                     <td class="text-center">
+                                        <a th:data-studentId="${student.getClassStudentByStudent().getId()}"
+                                           th:data-studentName="${student.getClassStudentByStudent().getStudentByProfile().getFirstName()+' '+student.getClassStudentByStudent().getStudentByProfile().getLastName()}"
+                                           onclick="OnChangeClassStudent(this.getAttribute('data-studentId'),this.getAttribute('data-studentName'))"
+                                           class="btn btn-info btn-sm"><i class="fas fa-sync" style="color:black"></i>&nbsp;Change
+                                            class</a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -114,6 +140,7 @@
                 </div>
             </div>
         </div>
+        <!--Modal-->
         <div class="modal fade" id="create_schedule" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -185,8 +212,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="semester">Semester:</label>
-                                        <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()" class="form-control" name="semester"
-                                                style="width: 100%;">
+                                        <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()" class="form-control" name="semester" style="width: 100%;">
                                             <option value="">-----Choose semester------</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
@@ -242,9 +268,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="container">
-                            <form >
+                            <form>
                                 <div class="col">
-                                    <div class="form-group" style="display: flex;justify-content: center;align-items: center">
+                                    <div class="form-group"
+                                         style="display: flex;justify-content: center;align-items: center">
                                         <input type="hidden" id="schedule_details_id">
                                         <div class="input-group date" id="day_default"
                                              data-target-input="nearest">
@@ -270,6 +297,13 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col">
+                                        <label for="slot">Slot : </label>
+                                        <select name="" id="slot">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                        </select>
                                     </div>
                                     <span style="color:red" id="msg_error" class="float-right"></span>
                                 </div>
@@ -298,10 +332,11 @@
                     </div>
                     <div class="modal-body">
                         <div class="container">
-                            <form >
+                            <form>
                                 <div class="col">
-                                    <div class="form-group" style="display: flex;justify-content: center;align-items: center">
-                                        <input type="hidden" id="teacherId" >
+                                    <div class="form-group"
+                                         style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="teacherId">
                                         <input type="text" id="teacher" readonly>
                                         <img src="/img/arrow_forward.png" alt="" width="20" height="20">
                                         <input type="text" style="width: 300px;" id="teacher_change">
@@ -332,10 +367,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="container">
-                            <form >
+                            <form>
                                 <div class="col">
                                     <div class="form-group">
-                                        <input type="file" accept=".xlsx" class="form-control" id="fileSchedule" >
+                                        <input type="file" accept=".xlsx" class="form-control" id="fileSchedule">
                                     </div>
                                 </div>
                             </form>
@@ -351,7 +386,80 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="change_class_student" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change class for student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <div class="form-group"
+                                         style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="studentId">
+                                        <div style="display: flex;justify-content: center; align-items: center;width: 100%;">Name : <span style="font-weight: bold" class="studentName"></span>&nbsp;Class: <span style="font-weight: bold" class="classCode"></span>
+                                            &nbsp;&nbsp;
+                                            <img src="/img/arrow_forward.png" alt="" width="20" height="20">
+                                            &nbsp;&nbsp;
+                                            <select id="classList" onchange="OnCheckStudentInClass()" class="form-control select2" name="classList" style="width: 200px;">
+                                                <option selected="selected"  value="">----- Choose class------</option>
+                                                <th:block th:each="classs : ${classList}">
+                                                    <option th:value="${classs.getId()}">[[${classs.classCode}]]</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
 
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Đóng
+                        </button>
+                        <button type="button" id="btn_change_class_student" class="btn btn-success btn-sm" style="display: none" onclick="OnSubmitChangeClassStudent()"><i class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal add student-->
+        <div class="modal fade" id="class_add_student" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thêm sinh viên</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="form_add_student">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputStudentCard">Nhập mã sinh viên:&nbsp;</label>
+                                        <input class="form-control" id="inputStudentCard" name="inputStudentCard"
+                                               placeholder="Nhập mã sinh viên">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control btn-primary" type="submit" value="Thêm sinh viên">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--Modal add student  by file-->
         <div class="modal fade" id="class_import_student_file" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -381,10 +489,12 @@
                 </div>
             </div>
         </div>
+
         <input type="hidden" id="classId" th:value="${class.id}">
         <input type="hidden" id="classCode" th:value="${class.classCode}">
         <input type="hidden" id="shift" th:value="${class.getShift()}">
-        <input type="hidden" id="availablePlace" th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
+        <input type="hidden" id="availablePlace"
+               th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
     </section>
 </div>
 <th:block layout:fragment="optional">

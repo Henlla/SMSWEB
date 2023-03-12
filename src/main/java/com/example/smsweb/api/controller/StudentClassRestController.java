@@ -33,6 +33,17 @@ public class StudentClassRestController extends GenericController<StudentClass> 
         }
     }
 
+    @PutMapping("/put")
+    public ResponseEntity<?> put(@RequestParam("studentClass") String studentClass){
+        try {
+            StudentClass studentClassConvert = new ObjectMapper().readValue(studentClass, StudentClass.class);
+            service.save(studentClassConvert);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),studentClass));
+        }catch (Exception e){
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
+        }
+    }
+
     @PostMapping("/saveAll")
     public ResponseEntity<?> saveAll(@RequestParam("listStudentClass") String listStudentClass) throws JsonProcessingException {
         try {
@@ -51,7 +62,7 @@ public class StudentClassRestController extends GenericController<StudentClass> 
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),service.findClassIdByStudentId(id)));
         }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(),"Don't find any records"));
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(),null));
         }
     }
 

@@ -10,4 +10,5 @@ public interface IClass extends IGenericRepository<Classses> {
     List<String> searchClasssesByClassCode(String listStudentCard);
     List<Classses> findClassByTeacherId(Integer id);
     Classses findClassByTeacherIdAndScheduleId(String teacherId, String scheduleId);
+    List<Classses> findClassByMajorId(Integer majorId);
 }
