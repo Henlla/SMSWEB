@@ -5,21 +5,21 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Đơn đăng ký</title>
+    <title>Application</title>
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
 <div layout:fragment="content">
     <section class="content-wrapper">
         <section class="content-header">
-            <h5 class="m-0">Quản lý đơn đăng ký</h5>
+            <h5 class="m-0">Application Manager</h5>
         </section>
         <section class="content-body">
             <section class="container-fluid">
                 <section class="row mb-3">
                     <div class="col-12">
                         <button data-toggle="modal" data-target="#app-modal" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus pr-2"></i>Thêm mới
+                            <i class="fas fa-plus pr-2"></i>Create
                         </button>
                     </div>
                 </section>
@@ -29,10 +29,10 @@
                             <thead>
                             <tr class="text-center">
                                 <td>STT</td>
-                                <td>Ngày gửi</td>
-                                <td>Ghi chú</td>
-                                <td>Trạng thái</td>
-                                <td>Hành động</td>
+                                <td>Send Date</td>
+                                <td>Note</td>
+                                <td>Status</td>
+                                <td>Action</td>
                             </tr>
                             </thead>
                             <tbody>
@@ -76,7 +76,7 @@
         <section class="modal-dialog modal-xl modal-dialog-scrollable">
             <section class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title font-weight-bold" id="documentLabel">Xem trước tệp</h5>
+                    <h5 class="modal-title font-weight-bold" id="documentLabel">View file</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -86,7 +86,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" onclick="OnCreateApplication()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Tạo
+                            class="fas fa-plus"></i> Create
                     </button>
                 </div>
             </section>
@@ -97,7 +97,7 @@
         <section class="modal-dialog">
             <section class="modal-content">
                 <section class="modal-header">
-                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Thêm mới đơn đăng ký</h5>
+                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Create new Application</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -106,32 +106,32 @@
                     <form id="appForm">
                         <section class="row mb-3">
                             <div class="col-12 mb-3">
-                                <label class="font-weight-normal f-13">Loại đơn
+                                <label class="font-weight-normal f-13">Application Type
                                     <span class="text-danger">*</span></label>
                                 <select class="form-control form-control-sm select2bs4" name="appType" onchange="OnChangeAppType()" id="appType">
-                                    <option value="">----Chọn mẫu đơn----</option>
+                                    <option value="">----Choose template----</option>
                                     <option th:each="item:${listAppType}" th:value="${item.id}">[[${item.name}]]
                                     </option>
                                 </select>
                                 <a href="" class="d-none f-13" download id="appTypeDownload">Download</a>
                             </div>
                             <div class="col-12 mb-3">
-                                <label class="font-weight-normal f-13">Ghi chú
+                                <label class="font-weight-normal f-13">Note
                                     <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="note" name="note" placeholder="Nhập ghi chú" style="resize: none" cols="30" rows="3"></textarea>
+                                <textarea class="form-control" id="note" name="note" placeholder="Enter note..." style="resize: none" cols="30" rows="3"></textarea>
                             </div>
                             <div class="form-group form-control-sm col-12 mb-5">
-                                <label class="font-weight-normal f-13">Chọn tệp mẫu
+                                <label class="font-weight-normal f-13">Choose file
                                     <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control-file border mb-2" onchange="OnValidate(this)" id="app-type-file">
-                                <span class="text-danger mb-3">Vui lòng gửi đúng biểu mẫu kèm thông tin trên phần download</span>
+                                <span class="text-danger mb-3">Please download file and fill all information</span>
                             </div>
                         </section>
                     </form>
                 </section>
                 <section class="modal-footer">
                     <button type="button" onclick="OnCreateApplication()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Tạo
+                            class="fas fa-plus"></i> Send
                     </button>
                 </section>
             </section>
@@ -142,7 +142,7 @@
         <section class="modal-dialog modal-lg">
             <section class="modal-content">
                 <section class="modal-header">
-                    <h5 class="modal-title font-weight-bold" id="editModalLabel">Cập nhật trạng thái</h5>
+                    <h5 class="modal-title font-weight-bold" id="editModalLabel">Update status</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -151,11 +151,11 @@
                     <form id="app-edit-form">
                         <div class="form-group">
                             <input type="text" id="app-edit-id" hidden>
-                            <label>Trạng thái</label>
+                            <label>Status</label>
                             <select id="edit-status" onchange="OnChangeStatus()" class="select2bs4 form-control form-control-sm">
-                                <option value="">------ Chọn trạng thái --------</option>
-                                <option value="APPROVED">Chấp nhận</option>
-                                <option value="DISCARD">Không chấp nhận</option>
+                                <option value="">------ Choose Status --------</option>
+                                <option value="APPROVED">Accept</option>
+                                <option value="DISCARD">Denied</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -166,7 +166,7 @@
                 </section>
                 <section class="modal-footer">
                     <button type="button" onclick="OnUpdateApplication()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-save"></i> Cập nhật
+                            class="fas fa-save"></i> Update
                     </button>
                 </section>
             </section>

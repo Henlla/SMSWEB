@@ -9,10 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceView {
-    private String class_id;
-    private String class_name;
-    private String date;
-    private Integer isAttendance;
-    private Integer slot;
+public class SubjectView {
+    private Integer id;
+    private String subject_code;
+    private String subject_name;
+    private String status;
 }

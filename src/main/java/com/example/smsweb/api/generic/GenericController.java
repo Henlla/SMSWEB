@@ -36,7 +36,7 @@ public class GenericController<T> {
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         try {
             dao.delete(id);
-            return  ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),"Xóa thành công"));
+            return  ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),"Delete success"));
         } catch (Exception e) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
         }

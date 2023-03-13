@@ -23,7 +23,7 @@ public class SubjectRestController extends GenericController<Subject> {
         try {
             Subject subject = new ObjectMapper().readValue(subjectJson,Subject.class);
             service.save(subject);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),"Sao lưu thành công"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),"Save success"));
         }catch (Exception e){
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
         }
@@ -34,7 +34,7 @@ public class SubjectRestController extends GenericController<Subject> {
         try {
             Subject subject = new ObjectMapper().readValue(subjectJson,Subject.class);
             service.save(subject);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),"Cập nhật thành công"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),"Update success"));
         }catch (Exception e){
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
         }
@@ -57,4 +57,12 @@ public class SubjectRestController extends GenericController<Subject> {
         }
     }
 
+    @PostMapping("/findSubjectBySemesterIdAndMajorId")
+    public ResponseEntity<?> findSubjectBySemesterId(@RequestParam("fromSemester")Integer fromSemester,@RequestParam("toSemester")Integer toSemester, @RequestParam("majorId")Integer majorId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findSubjectBySemesterIdAndMajorId(fromSemester, toSemester, majorId)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(),"Don't find any records"));
+        }
+    }
 }

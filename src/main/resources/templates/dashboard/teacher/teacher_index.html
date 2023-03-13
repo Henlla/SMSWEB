@@ -4,7 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách giáo viên</title>
+    <title>List teacher</title>
 <!--    <link rel="stylesheet" href="/css/custom.css">-->
     <link rel="stylesheet" href="/css/teacher_details.css">
 </head>
@@ -16,7 +16,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý giáo viên</h5>
+                            <h5 class="m-0">Teacher Manager</h5>
                         </div>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/teacher/create-teacher'}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-info btn-sm">Thêm mới</a>
+                            <a th:href="@{'/dashboard/teacher/create-teacher'}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-info btn-sm">Create</a>
                         </div>
                     </div>
                     <div class="row">
@@ -34,10 +34,10 @@
                                 <thead>
                                 <tr class="text-center">
                                     <th>STT</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Tên giáo viên</th>
-                                    <th>Mã giáo viên</th>
-                                    <th>Hành động</th>
+                                    <th>Image</th>
+                                    <th>Teacher Name</th>
+                                    <th>Teacher Card</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -75,7 +75,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết giáo viên</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Teacher Details</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
@@ -89,19 +89,19 @@
                                     <div class="col-9">
                                         <div class="row">
                                             <div class="col-6">
-                                                <label>Họ và tên : </label>&nbsp;<span
+                                                <label>Full Name : </label>&nbsp;<span
                                                     id="tc_fullName"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Giới tính : </label>&nbsp;<span
+                                                <label>Gender : </label>&nbsp;<span
                                                     id="tc_sex"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Ngày sinh : </label>&nbsp;<span
+                                                <label>Date of Birth : </label>&nbsp;<span
                                                     id="tc_dob"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Số điện thoại : </label>&nbsp;<span
+                                                <label>Phone Numbers: </label>&nbsp;<span
                                                     id="tc_phone"></span>
                                             </div>
                                             <div class="col-6">
@@ -109,15 +109,15 @@
                                                     id="tc_email"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>CCCD/CMND : </label>&nbsp;<span
+                                                <label>Identity Card : </label>&nbsp;<span
                                                     id="tc_identityId"></span>
                                             </div>
                                             <div class="col-12">
-                                                <label>Địa chỉ : </label>&nbsp;<span
+                                                <label>Address : </label>&nbsp;<span
                                                     id="tc_address"></span>
                                             </div>
                                             <div class="col-12">
-                                                <label>Dạy lớp : </label>&nbsp;<span
+                                                <label>Class : </label>&nbsp;<span
                                                     id="tc_class"></span>
                                             </div>
                                             <div class="col-12">
@@ -127,8 +127,7 @@
                                                 </div>
                                                 <input type="hidden" id="accountId" value="">
                                                 <input type="hidden" id="email" value="">
-                                                <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật
-                                                    khẩu
+                                                <button id="reset_password" class="btn btn-info btn-sm">Reset Password
                                                 </button>
                                             </div>
                                         </div>
@@ -138,7 +137,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                         </div>
                     </div>
@@ -149,7 +148,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel1">Cập nhật giáo viên</h5>
+                            <h5 class="modal-title" id="exampleModalLabel1">Update student</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
@@ -165,8 +164,7 @@
                                         <input type="file" hidden id="fileAvatar" name="fileAvatar"
                                                onchange="previewImage()">
                                         <button type="button" id="btn-updateImg" onclick="selectFile()"
-                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Cập nhật
-                                            hình ảnh
+                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Update Image
                                         </button>
                                         <div id="btn-function" style="display: none">
                                             <button type="button" onclick="OnUpdateImg()"
@@ -182,23 +180,25 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Họ :</label>
+                                                    <label class="m-0" style="font-size: 13px">First Name :</label>
                                                     <input type="text" id="firstName_u"
+                                                           placeholder="Enter first name..."
                                                            class="form-control form-control-sm"
                                                     >
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Tên :</label>
+                                                    <label class="m-0" style="font-size: 13px">Last Name :</label>
                                                     <input type="text" id="lastName_u"
+                                                           placeholder="Enter last name..."
                                                            class="form-control form-control-sm"
                                                     >
                                                 </div>
                                             </div>
 
                                             <div class="col-6" style="margin-top: -10px;">
-                                                <label style="font-size: 13px">Ngày sinh:</label>
+                                                <label style="font-size: 13px">Date of Birth:</label>
                                                 <div class="input-group date" id="reservationdate_u"
                                                      data-target-input="nearest">
                                                     <input type="text"
@@ -214,46 +214,49 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-group">
-                                                    <label style="font-size: 13px">Giới tính :</label>
+                                                    <label style="font-size: 13px">Gender :</label>
                                                     <div class="form-check">
                                                         <input class="form-check-input" value="Nam" type="radio"
                                                                name="sex" id="flexRadioDefault1" checked>
                                                         <label class="form-check-label" for="flexRadioDefault1">
-                                                            Nam
+                                                            Male
                                                         </label>
                                                         <input class="form-check-input" value="Nữ" type="radio"
                                                                name="sex" style="margin-left: 15px;"
                                                                id="flexRadioDefault2">
                                                         <label class="form-check-label" style="margin-left: 36px;"
                                                                for="flexRadioDefault2">
-                                                            Nữ
+                                                            Female
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">Số điện thoại :</label>
+                                                <label class="m-0" style="font-size: 13px">Phone Numbers :</label>
                                                 <input type="text" id="phone_u"
+                                                       placeholder="Enter phone numbers..."
                                                        class="form-control form-control-sm">
                                             </div>
                                             <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">CCCD/CMND :</label>
+                                                <label class="m-0" style="font-size: 13px">Identity Card :</label>
                                                 <input type="text" id="identityCard_u"
+                                                       placeholder="Enter identity card..."
                                                        class="form-control form-control-sm"
                                                        >
                                             </div>
                                             <div class="col-12">
                                                 <label class="m-0" style="font-size: 13px">Email :</label>
                                                 <input type="text" id="email_u"
+                                                       placeholder="Enter email..."
                                                        class="form-control form-control-sm">
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Tỉnh/TP:</label>
+                                                    <label class="m-0" style="font-size: 13px">Province:</label>
                                                     <select id="province_u" class="form-control select2 form-control-sm"
                                                             name="province_u"
                                                             style="width: 100%;">
-                                                        <option selected="selected" value="">-Chọn Tỉnh/TP-</option>
+                                                        <option selected="selected" value="">-Choose province-</option>
                                                         <option th:each="province : ${provinces}"
                                                                 th:value="${province.id}">[[${province.name}]]
                                                         </option>
@@ -262,29 +265,29 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Quận/Huyện:</label>
+                                                    <label class="m-0" style="font-size: 13px">District:</label>
                                                     <select id="district_u" class="form-control select2 form-control-sm"
                                                             name="district_u"
                                                             style="width: 100%;">
-                                                        <option selected="selected" value="">-Chọn Quận/Huyện-</option>
+                                                        <option selected="selected" value="">-Choose district-</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Xã/Thị trấn:</label>
+                                                    <label class="m-0" style="font-size: 13px">Ward:</label>
                                                     <select id="ward_u" class="form-control select2 form-control-sm"
                                                             name="ward_u"
                                                             style="width: 100%;">
-                                                        <option selected="selected" value="">-Chọn Xã/Thị trấn-</option>
+                                                        <option selected="selected" value="">-Choose ward-</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-12">
-                                                <label class="m-0" style="font-size: 13px">Địa chỉ :</label>
+                                                <label class="m-0" style="font-size: 13px">Address :</label>
                                                 <input type="text" id="address_u"
                                                        class="form-control form-control-sm"
-                                                       placeholder="Nhập địa chỉ ">
+                                                       placeholder="Enter address... ">
                                             </div>
                                         </div>
                                     </div>
@@ -293,10 +296,10 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                             <button type="button" onclick="OnUpdateSubmit()" class="btn btn-primary btn-sm"><i
-                                    class="fas fa-plus"></i> Cập nhật
+                                    class="fas fa-plus"></i> Update
                             </button>
                         </div>
                     </div>

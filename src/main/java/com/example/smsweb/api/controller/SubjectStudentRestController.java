@@ -42,9 +42,48 @@ public class SubjectStudentRestController {
     @GetMapping("/getByAttendanceId/{id}")
     public ResponseEntity<?> getByAttendanceId(@PathVariable("id") String id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),service.findByAttendanceStudentSubjectId(id)));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),e.getMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findByAttendanceStudentSubjectId(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getByStudentId/{id}")
+    public ResponseEntity<?> getByStudentId(@PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findStudentSubjectByStudentId(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Không tìm thấy dữ liệu"));
+        }
+    }
+
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<?> getById(@PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findStudentSubjectById(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Không tìm thấy dữ liệu"));
+        }
+    }
+
+    @PostMapping("/findStudentSubjectBySubjectIdAndStudentId")
+    public ResponseEntity<?> findStudentSubjectBySubjectIdAndStudentId(@RequestParam("subjectId") Integer subjectId,
+                                                                       @RequestParam("studentId") Integer studentId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findStudentSubjectBySubjectIdAndStudentId(subjectId, studentId)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> update(@RequestParam("student_subject") String student_subject) {
+        try {
+            StudentSubject studentSubject = new ObjectMapper().readValue(student_subject, StudentSubject.class);
+            service.update(studentSubject);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Cập nhật thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Cập nhật thất bại"));
         }
     }
 }

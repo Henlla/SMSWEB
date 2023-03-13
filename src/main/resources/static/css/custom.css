@@ -24,8 +24,21 @@
     font-size: .875rem;
 }
 
+.btn-close:hover{
+    color:red !important;
+}
+
 .close:hover {
-    color: red;
+    color: red !important;
+}
+
+.modal ::-webkit-scrollbar {
+    width: 6px !important;
+}
+.modal ::-webkit-scrollbar-thumb{
+    width: 1px !important;
+    background: #ccc !important;
+    border-radius: 20px !important;
 }
 
 .error {
@@ -46,4 +59,7 @@
 }
 .dataTables_scrollBody::-webkit-scrollbar-thumb{
     width: 0 !important;
+}
+table.dataTable tbody td {
+    vertical-align: middle;
 }

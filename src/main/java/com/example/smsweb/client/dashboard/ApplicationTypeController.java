@@ -75,7 +75,7 @@ public class ApplicationTypeController {
             }
         } catch (Exception e) {
             log.error("Save ApplicationType: " + e.getMessage());
-            return new ResponseEntity<String>("Tạo mới thất bại",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Create fail",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -104,7 +104,7 @@ public class ApplicationTypeController {
             }
         } catch (Exception e) {
             log.error("Delete ApplicationType: " + e.getMessage());
-            return new ResponseEntity<String>("Xóa thất bại",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Delete fail",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -125,7 +125,7 @@ public class ApplicationTypeController {
             }
         } catch (Exception e) {
             log.error("GetOne ApplicationType: " + e.getMessage());
-            return new ResponseEntity<String>("Không tìm thấy dữ liệu",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("Don't find any records",HttpStatus.NOT_FOUND);
         }
     }
 }

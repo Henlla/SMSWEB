@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface StudentClassRepository extends GenericRepository<StudentClass, Integer> {
     Optional<List<StudentClass>> findAllByStudentId(Integer id);
     Optional<List<StudentClass>> findAllByClassId(Integer id);
+    StudentClass findStudentClassByStudentId(Integer id);
 }

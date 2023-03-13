@@ -5,26 +5,26 @@ $(()=>{
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
         scrollCollapse: true,
         "language": {
-            "decimal":        "",
-            "emptyTable":     "Không có dữ liệu",
-            "info":           "",
-            "infoEmpty":      "",
-            "infoFiltered":   "",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
-            "processing":     "",
-            "search":         "Tìm kiếm:",
-            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first":      "Trang đầu",
-                "last":       "Trang cuối",
-                "next":       "Trang kế tiếp",
-                "previous":   "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
-                "sortAscending":  ": activate to sort column ascending",
+                "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
         },
@@ -91,9 +91,9 @@ function Confirm(title, msg, $true, $false,isActive,id) { /*change*/
 
 var OnActive = (id,isActive)=>{
    if(isActive){
-       Confirm('Hiển thị', 'Có chắc chắn muốn ẩn tin tức này không ?', 'Có', 'Không',isActive,id)
+       Confirm('Show', 'Are you sure to show this news ?', 'Confirm', 'Cancel',isActive,id)
    }else{
-       Confirm('Hiển thị', 'Có chắc chắn muốn hiển thị tin tức này không ?', 'Có', 'Không',isActive,id)
+       Confirm('Hide', 'Are you sure to hide this news ?', 'Confirm', 'Cancel',isActive,id)
    }
 }
 
@@ -179,7 +179,7 @@ var OnUpdateSubmit = () =>{
             location.reload();
         },
         error: (e) => {
-            toastr.error('Thất bại')
+            toastr.error('Fail')
         }
     })
 
@@ -204,7 +204,7 @@ var CancelUpdateImg = () => {
 
 var OnUpdateImg = () => {
 
-    ConfirmImg('Thay đổi hình ảnh', 'Có chắc chắn muốn thay đổi hình ảnh?', 'Có', 'Không')
+    ConfirmImg('Change image', 'Are you sure change image?', 'Confirm', 'Cancel')
 }
 
 function ConfirmImg(title, msg, $true, $false) { /*change*/
@@ -279,17 +279,17 @@ var OnCreateFileTemplateSubmit = ()=>{
             if (err.message.toLowerCase() === "token expired") {
                 $('#spinner-divI').hide()
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             }else{
-                alert("Tạo mới thất bại");
+                alert("Create fail");
             }
         }
     });
@@ -313,17 +313,17 @@ var OnDownLoadTemplate = ()=>{
             if (err.message.toLowerCase() === "token expired") {
                 $('#spinner-divI').hide()
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             }else{
-                alert("Tạo mới thất bại");
+                alert("Create fail");
             }
         }
     });
