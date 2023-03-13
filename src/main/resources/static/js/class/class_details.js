@@ -16,11 +16,28 @@ var OnCreateSchedule = (classId, majorId, shift) => {
         processData: false,
         contentType: false,
         success: (res) => {
-            toastr.success('Create time table success')
+            console.log(res)
+            if(res==="error"){
+                Swal.fire(
+                    "",
+                    `Schedule for semester ${semester} already exist !`,
+                    "error"
+                )
+            }else{
+                Swal.fire(
+                "",
+                `Create schedule for semester ${semester} success !`,
+                "success"
+            )
+
             $('#create_schedule').modal("hide")
             $('#spinner-div').hide();
+            }
+           
+           
         }, error: (e) => {
-            toastr.error('Create fail')
+            toastr.error('Create schedule failed')
+
             $('#create_schedule').modal("hide")
             $('#spinner-div').hide();
         }

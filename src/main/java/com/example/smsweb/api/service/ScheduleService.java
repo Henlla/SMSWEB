@@ -57,7 +57,7 @@ public class ScheduleService implements ISchedule {
 
     @Override
     public Schedule findScheduleByClassAndSemester(Integer classId, Integer semester) {
-        return dao.findScheduleAndByClassIdAndSemester(classId,semester).orElseThrow(()->new ErrorHandler("Cannot find schedule with classId = "+classId+" and semester = "+semester));
+        return dao.findScheduleAndByClassIdAndSemester(classId,semester).orElse(null);
     }
 
     @Override
