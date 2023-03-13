@@ -60,7 +60,7 @@ public class StudentRestController {
             List<Student> studentIdByRangeStudentCard = iStudent.findStudentIdByRangeStudentCard(stringList);
             return ResponseEntity.status(HttpStatus.OK).body(studentIdByRangeStudentCard);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            throw new ErrorHandler(e.getMessage());
         }
     }
 }

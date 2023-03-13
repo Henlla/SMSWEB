@@ -666,8 +666,7 @@ public class ClassController {
                         throw new ErrorHandler(response.getMessage());
                     }
                 } catch (Exception e) {
-                    String message = e.getMessage().substring(e.getMessage().indexOf("\"") + 1, e.getMessage().lastIndexOf("\""));
-                    throw new ErrorHandler(message);
+                    throw new ErrorHandler(e.getMessage());
                 }
             } else {
                 throw new ErrorHandler("Không thể thêm danh sách trống");
@@ -774,8 +773,16 @@ public class ClassController {
                     });
                     String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
                     Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
+
                     List<StudentClass> studentClassList = new ArrayList<>();
                     for (Student student : listStudent) {
+                        for (StudentClass studentClass :classModel.getStudentClassById()){
+                            var card1= studentClass.getClassStudentByStudent().getStudentCard();
+                            var card2= student.getStudentCard();
+                            if( studentClass.getClassStudentByStudent().getStudentCard().equals(student.getStudentCard())){
+                                throw new ErrorHandler("Sinh viên: "+ student.getStudentByProfile().getFullName()+ " đã có trong lớp");
+                            }
+                        }
                         StudentClass studentClass = new StudentClass();
                         studentClass.setStudentId(student.getId());
                         studentClass.setClassId(classModel.getId());
