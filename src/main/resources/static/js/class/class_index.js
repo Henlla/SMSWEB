@@ -8,26 +8,26 @@ $(document).ready(function () {
         scrollCollapse: true,
         scrollY: '600px',
         "language": {
-            "decimal":        "",
-            "emptyTable":     "Không có dữ liệu",
-            "info":           "",
-            "infoEmpty":      "",
-            "infoFiltered":   "",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
-            "processing":     "",
-            "search":         "Tìm kiếm:",
-            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first":      "Trang đầu",
-                "last":       "Trang cuối",
-                "next":       "Trang kế tiếp",
-                "previous":   "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
-                "sortAscending":  ": activate to sort column ascending",
+                "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
         },initComplete: function () {
@@ -64,7 +64,7 @@ $(document).ready(function () {
                 //use column title as selector and placeholder
                 $('#' + title).select2({
                     closeOnSelect: true,
-                    placeholder: "- Tất cả -",
+                    placeholder: "- All -",
                     allowClear: true,
                     width: 'resolve',
                 });

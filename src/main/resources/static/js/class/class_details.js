@@ -16,7 +16,7 @@ var OnCreateSchedule = (classId, majorId, shift) => {
         processData: false,
         contentType: false,
         success: (res) => {
-            toastr.success('Create success')
+            toastr.success('Create time table success')
             $('#create_schedule').modal("hide")
             $('#spinner-div').hide();
         }, error: (e) => {
@@ -120,7 +120,7 @@ $(document).ready(function () {
     $('#btn_submitChangeDate').on('click', () => {
         if (i_newDate.val() === '') {
             msgError.css('display', 'block')
-            msgError.html('Please choose date')
+            msgError.html('Please choose date to change')
         } else {
             console.log($('#classId').val())
             console.log($('#semesterSchedule').val())
@@ -141,7 +141,7 @@ $(document).ready(function () {
                     if (res.toLowerCase() === "error") {
                         Swal.fire(
                             "",
-                            "This slot is exists, please choose again ",
+                            "This slot was exists, please choose another ",
                             "error"
                         )
                     } else {
@@ -170,7 +170,7 @@ $(document).ready(function () {
                                         "Change success",
                                         "success"
                                     )
-                                    $('#btn_update_schedule').html('Edit')
+                                    $('#btn_update_schedule').html('Change')
                                     OnChangeSemesterSchedule();
                                 }
                             }, error: (xhr, status, error) => {
@@ -189,7 +189,7 @@ $(document).ready(function () {
                                         }
                                     });
                                 } else {
-                                    toastr.success('View detail fail')
+                                    toastr.success('View fail')
                                 }
                             }
                         })
@@ -210,7 +210,7 @@ $(document).ready(function () {
                             }
                         });
                     } else {
-                        toastr.success('View detail fail')
+                        toastr.success('View fail')
                     }
                 }
             })
@@ -220,7 +220,7 @@ $(document).ready(function () {
     let flag = true;
     $('#btn_update_schedule').on('click', () => {
         if (flag === true) {
-            $('#btn_update_schedule').html('Cancel')
+            $('#btn_update_schedule').html('Cancel edit')
             $('.btn_update_date').css('display', 'block')
             flag = !flag;
         } else {
@@ -232,30 +232,30 @@ $(document).ready(function () {
 
     $("#form_add_student").submit(function (event) {
         event.preventDefault();
-        var studentCard = $("#inputStudentCard").val();
-        if (availablePlace < 1) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: 'Student in class was maximum',
-                showDenyButton: false,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Ok',
-            })
-        } else {
-            $('#form_add_student').validate({
-                rules: {
-                    inputStudentCard: {
-                        required: true
-                    }
-                },
-                messages: {
-                    inputStudentCard: {
-                        required: "Please enter student card"
-                    }
-                },
-            })
-            if ($('#form_add_student').valid()) {
+        $('#form_add_student').validate({
+            rules: {
+                inputStudentCard: {
+                    required: true
+                }
+            },
+            messages: {
+                inputStudentCard: {
+                    required: "Please enter student card"
+                }
+            },
+        })
+        if ($('#form_add_student').valid()) {
+            var studentCard = $("#inputStudentCard").val();
+            if (availablePlace < 1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Number of student is maximum',
+                    showDenyButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok',
+                })
+            }else {
                 const dataTable = $("#student-table").DataTable();
                 var listStudent = new Array()
                 const regExp = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
@@ -267,7 +267,7 @@ $(document).ready(function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: "Don't need add student in this class",
+                        text: 'This student was having in this class',
                         showDenyButton: false,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Ok',
@@ -285,7 +285,7 @@ $(document).ready(function () {
                                 response = JSON.parse(response);
                                 Swal.fire({
                                     icon: 'question',
-                                    title: 'Warning',
+                                    title: 'Chú ý',
                                     html: 'Bạn có muốn thêm sinh viên: ' + response.studentByProfile.firstName + ' ' + response.studentByProfile.lastName +
                                         '<br> ngày sinh: ' + response.studentByProfile.dob,
                                     showCancelButton: true,
@@ -293,7 +293,7 @@ $(document).ready(function () {
                                     confirmButtonColor: '#3085d6',
                                     cancelButtonColor: '#d33',
                                     cancelButtonText: 'Cancel',
-                                    confirmButtonText: 'Confirm',
+                                    confirmButtonText: 'Ok',
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         let data = new FormData()
@@ -309,7 +309,7 @@ $(document).ready(function () {
                                             success: (response) => {
                                                 Swal.fire({
                                                     icon: 'success',
-                                                    title: 'Create success',
+                                                    title: 'Add success',
                                                     showDenyButton: false,
                                                     showCancelButton: false,
                                                     confirmButtonText: 'Ok',
@@ -320,7 +320,7 @@ $(document).ready(function () {
                                             error: (e) => {
                                                 Swal.fire({
                                                     icon: 'error',
-                                                    title: 'Create fail',
+                                                    title: 'Add fail',
                                                     showDenyButton: false,
                                                     showCancelButton: false,
                                                     confirmButtonText: 'Ok',
@@ -332,7 +332,7 @@ $(document).ready(function () {
                             } else {
                                 Swal.fire({
                                     title: 'Error',
-                                    text: 'Student not found',
+                                    text: 'Student is not exists',
                                     icon: 'error',
                                     showDenyButton: false,
                                     showCancelButton: false,
@@ -364,7 +364,7 @@ $(document).ready(function () {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'The student was maximum',
+                text: 'Number of student is maximum',
                 showDenyButton: false,
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'Ok',
@@ -378,7 +378,7 @@ $(document).ready(function () {
                 },
                 messages: {
                     studentList: {
-                        required: "Please choose list student"
+                        required: "Please choose list of student"
                     },
                 },
             })
@@ -411,7 +411,7 @@ $(document).ready(function () {
                         console.log(error)
                         Swal.fire({
                             icon: 'error',
-                            title: 'Fail',
+                            title: 'Error',
                             text: error.responseJSON.message,
                             showDenyButton: false,
                             confirmButtonColor: '#3085d6',
@@ -431,7 +431,7 @@ $(document).ready(function () {
                 console.log(res)
                 if (res.id == null) {
                     Swal.fire({
-                        title: "Don't find teacher",
+                        title: "Don't find given teacher",
                         showDenyButton: false,
                         showCancelButton: false,
                         confirmButtonText: 'Ok',
@@ -456,7 +456,7 @@ $(document).ready(function () {
                         }
                     });
                 } else {
-                    toastr.success('View detail fail')
+                    toastr.success('View fail')
                 }
             }
 
@@ -512,9 +512,10 @@ $(document).ready(function () {
                                 }
                             });
                         } else {
-                            toastr.success('View detail fail')
+                            toastr.success('View fail')
                         }
                     }
+
                 })
             }
         })
@@ -551,9 +552,9 @@ $(document).ready(function () {
                             location.href = "/dashboard/login";
                         }
                     });
-                }else{
+                } else {
                     Swal.fire(
-                        'Import fail',
+                        'Send fail',
                         'error'
                     )
                 }
@@ -650,7 +651,7 @@ var OnChangeSemesterSchedule = () => {
                         switch (j.dayOfWeek) {
                             case "MONDAY":
                                 if (j.slot === 1) {
-                                    td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                    td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -841,7 +842,7 @@ var OnChangeSemesterSchedule = () => {
             } else {
                 Swal.fire(
                     "",
-                    "Don't have time table in semester " + $('#semesterSchedule').val(),
+                    "Don't have time table for semester " + $('#semesterSchedule').val(),
                     "error"
                 )
             }
@@ -863,7 +864,7 @@ var OnChangeSemesterSchedule = () => {
                     }
                 });
             } else {
-                toastr.success('View detail fail')
+                toastr.success('View fail')
             }
         }
     })
@@ -918,17 +919,17 @@ var OnCheckStudentInClass= ()=>{
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             } else {
-                toastr.success('Xem thông tin thất bại')
+                toastr.success('View fail')
             }
         }
     })
@@ -958,8 +959,6 @@ var OnSubmitChangeClassStudent = ()=>{
             )
             $('#btn_change_class_student').hide()
         },error:(err)=>{
-
-
         }
 
     })

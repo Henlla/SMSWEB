@@ -24,8 +24,12 @@
     font-size: .875rem;
 }
 
+.btn-close:hover{
+    color:red !important;
+}
+
 .close:hover {
-    color: red;
+    color: red !important;
 }
 
 .modal ::-webkit-scrollbar {

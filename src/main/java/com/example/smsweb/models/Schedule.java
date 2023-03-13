@@ -34,10 +34,14 @@ public class Schedule {
     private Integer classId;
     @ManyToOne
     @JsonBackReference("class_schedule")
-    @JoinColumn(name = "class_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JoinColumn(name = "class_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Classses classsesByClassId;
     @OneToMany(mappedBy = "scheduleByScheduleId")
     @JsonManagedReference
     private Collection<ScheduleDetail> scheduleDetailsById;
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
