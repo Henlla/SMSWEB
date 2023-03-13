@@ -4,10 +4,6 @@ $(() => {
         dropdownCssClass: "f-13"
     });
 
-    $("#attendance_date").datetimepicker({
-        format: "DD/MM/YYYY"
-    });
-
     $("#listStudent").DataTable({
         paging: false,
         searching: false,

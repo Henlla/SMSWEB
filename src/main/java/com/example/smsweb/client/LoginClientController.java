@@ -36,7 +36,7 @@ public class LoginClientController {
 
     @GetMapping("/login")
     public String loginIndex() {
-        return "login";
+        return "/login";
     }
 
     @PostMapping("/login")

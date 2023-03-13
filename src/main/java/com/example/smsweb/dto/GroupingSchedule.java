@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class GroupingSchedule {
-    public Integer schedule_id;
-    public Integer class_id;
+    private Integer schedule_id;
+    private Integer class_id;
 }
