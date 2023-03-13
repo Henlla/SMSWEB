@@ -1,6 +1,5 @@
 package com.example.smsweb.client.dashboard;
 
-
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.*;
 import com.example.smsweb.jwt.JWTUtils;
@@ -72,7 +71,8 @@ public class ClassController {
     private MailService mailService;
 
     @GetMapping("/class-index")
-    public String index(Model model, @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
+    public String index(Model model, @CookieValue(name = "_token", defaultValue = "") String _token)
+            throws JsonProcessingException {
         if (_token.equals("")) {
             return "redirect:/dashboard/login";
         }
@@ -80,16 +80,18 @@ public class ClassController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + _token);
         HttpEntity<Object> request = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "get", HttpMethod.GET, request, String.class);
-        List<Classses> classList = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Classses>>() {
-        });
+        ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "get", HttpMethod.GET, request,
+                String.class);
+        List<Classses> classList = new ObjectMapper().readValue(response.getBody(),
+                new TypeReference<List<Classses>>() {
+                });
         model.addAttribute("classes", classList);
         return "dashboard/class/class_index";
     }
 
-
     @GetMapping("/class-create")
-    public String createClass(Model model, @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
+    public String createClass(Model model, @CookieValue(name = "_token", defaultValue = "") String _token)
+            throws JsonProcessingException {
         if (_token.equals("")) {
             return "redirect:/dashboard/login";
         }
@@ -100,9 +102,11 @@ public class ClassController {
         headers.set("Authorization", "Bearer " + _token);
         HttpEntity<Object> request = new HttpEntity<>(headers);
 
-        ResponseEntity<String> teacherResponse = restTemplate.exchange(TEACHER_URL + "list", HttpMethod.GET, request, String.class);
-        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<List<Teacher>>() {
-        });
+        ResponseEntity<String> teacherResponse = restTemplate.exchange(TEACHER_URL + "list", HttpMethod.GET, request,
+                String.class);
+        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(),
+                new TypeReference<List<Teacher>>() {
+                });
 
         ResponseModel listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
 
@@ -113,7 +117,7 @@ public class ClassController {
 
     @GetMapping("/class-details/{classCode}")
     public String class_details(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
-                                @PathVariable("classCode") String classCode) {
+            @PathVariable("classCode") String classCode) {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
@@ -122,16 +126,21 @@ public class ClassController {
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             params.add("classCode", classCode);
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST,
+                    request, ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             Classses classses = new ObjectMapper().readValue(json, Classses.class);
             HttpEntity<Object> request2 = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response2 = restTemplate.exchange(CLASS_URL + "findClassByMajorId/" + classses.getMajorId(), HttpMethod.GET, request2, ResponseModel.class);
+            ResponseEntity<ResponseModel> response2 = restTemplate.exchange(
+                    CLASS_URL + "findClassByMajorId/" + classses.getMajorId(), HttpMethod.GET, request2,
+                    ResponseModel.class);
             String json2 = new ObjectMapper().writeValueAsString(response2.getBody().getData());
             List<Classses> listClass = new ObjectMapper().readValue(json2, new TypeReference<List<Classses>>() {
             });
             model.addAttribute("class", classses);
-            model.addAttribute("classList", listClass.stream().filter(classses1 -> !classses1.getClassCode().equals(classses.getClassCode())).collect(Collectors.toList()));
+            model.addAttribute("classList",
+                    listClass.stream().filter(classses1 -> !classses1.getClassCode().equals(classses.getClassCode()))
+                            .collect(Collectors.toList()));
             return "dashboard/class/class_details";
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -142,7 +151,7 @@ public class ClassController {
     @GetMapping("/class-update/{id}")
     @ResponseBody
     public Object class_update(@CookieValue(name = "_token", defaultValue = "") String _token,
-                               @PathVariable("id") Integer id) throws JsonProcessingException {
+            @PathVariable("id") Integer id) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + _token);
@@ -160,7 +169,7 @@ public class ClassController {
     @PostMapping("/class-checkExisted")
     @ResponseBody
     public String checkExistedClass(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                    @RequestParam("classCode") String classCode) throws JsonProcessingException {
+            @RequestParam("classCode") String classCode) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             ObjectMapper objectMapper = new ObjectMapper();
@@ -173,191 +182,230 @@ public class ClassController {
             content.add("classCode", classCode);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-            ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST,
+                    request, String.class);
 
             return response.toString();
         } catch (HttpClientErrorException e) {
             log.error(e.getMessage());
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 return e.getMessage();
-            } else return e.getMessage();
+            } else
+                return e.getMessage();
         }
     }
-
 
     @GetMapping("/class-searchClasssesByClassCode")
     @ResponseBody
     public String searchClasssesByClassCode(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
-                                            @RequestParam("classCode") String classCode) throws JsonProcessingException {
+            @RequestParam("classCode") String classCode) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + _token);
         HttpEntity<Object> request = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "searchClasssesByClassCode/" + classCode, HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "searchClasssesByClassCode/" + classCode,
+                HttpMethod.GET, request, String.class);
         return response.getBody();
     }
 
     @PostMapping("/create_schedule")
     @ResponseBody
     public String create_schedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @RequestParam("startDate") String startDate,
-                                  @RequestParam("semester") Integer semester,
-                                  @RequestParam("majorId") Integer majorId,
-                                  @RequestParam("shift") String shift,
-                                  @RequestParam("classId") String classId) {
+            @RequestParam("startDate") String startDate,
+            @RequestParam("semester") Integer semester,
+            @RequestParam("majorId") Integer majorId,
+            @RequestParam("shift") String shift,
+            @RequestParam("classId") String classId) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
             headers.set("Authorization", "Bearer " + _token);
-            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-            Schedule scheduleParams = new Schedule();
-            scheduleParams.setEndDate("");
-            scheduleParams.setStartDate(startDate);
-            scheduleParams.setClassId(Integer.parseInt(classId));
-            scheduleParams.setSemester(semester);
-            String json = objectMapper.writeValueAsString(scheduleParams);
-            params.add("schedule", json);
-            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "post", HttpMethod.POST, request, ResponseModel.class);
-            String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
-            Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
 
-            ResponseEntity<ResponseModel> responseMajor = restTemplate.getForEntity(MAJOR_URL + "get/" + majorId, ResponseModel.class);
-            String jsonMajor = objectMapper.writeValueAsString(responseMajor.getBody().getData());
-            Major major = objectMapper.readValue(jsonMajor, Major.class);
-
-            List<Subject> listSubject = major.getSubjectsById().stream().filter(subject -> subject.getSemesterId() == semester).toList();
-
-            LocalDate startDates = LocalDate.parse(startDate);
-            LocalDate endDateTemp = LocalDate.parse(startDate).plusYears(1);
-
-            ResponseEntity<HolidayModel> responseHoliday = restTemplate.getForEntity(HOLIDAY_URL, HolidayModel.class);
-            HolidayModel holidayModel = responseHoliday.getBody();
-            List<Holiday> holidayList = holidayModel.getHolidays();
-            LocalDate endDate;
-            List<ScheduleDetail> listScheduleDetails = new ArrayList<>();
-            char getShift = shift.charAt(1);
-            int slot = 0;
-
-            if (getShift == '0') {
-                for (Subject subject : listSubject) {
-                    slot = 0;
-                    for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
-                        for (int i = 1; i <= subject.getSlot(); i++) {
-                            int getDate = date.getDayOfMonth();
-                            int getMonth = date.getMonthValue();
-                            String dayOfWeek = String.valueOf(date.getDayOfWeek());
-                            boolean isInHoliday = holidayList.stream().noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth && holiday.getDate().getDayOfMonth() == getDate);
-                            if (Arrays.stream(DayOfWeekSchedule.array0).anyMatch(dayOfWeek::equals)
-                                    && isInHoliday) {
-                                ScheduleDetail scheduleDetail = new ScheduleDetail();
-                                if (i % 2 == 0) {
-                                    scheduleDetail.setDayOfWeek(dayOfWeek);
-                                    scheduleDetail.setDate(date.toString());
-                                    scheduleDetail.setScheduleId(schedule.getId());
-                                    scheduleDetail.setSubjectId(subject.getId());
-                                    scheduleDetail.setSlot(i);
-                                    listScheduleDetails.add(scheduleDetail);
-                                    slot++;
-                                    break;
-                                } else {
-                                    scheduleDetail.setDayOfWeek(dayOfWeek);
-                                    scheduleDetail.setDate(date.toString());
-                                    scheduleDetail.setScheduleId(schedule.getId());
-                                    scheduleDetail.setSubjectId(subject.getId());
-                                    scheduleDetail.setSlot(i);
-                                    listScheduleDetails.add(scheduleDetail);
-                                    slot++;
-                                    if (subject.getSlot() == slot) {
-                                        startDates = LocalDate.parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate()).plusDays(1);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                        if (subject.getSlot() == slot) {
-                            startDates = LocalDate.parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate()).plusDays(1);
-                            break;
-                        }
-                    }
-                    if (listSubject.get(listSubject.size() - 1).equals(subject) && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
-                        break;
-                    }
-                }
+            MultiValueMap<String, Object> paramsCheck = new LinkedMultiValueMap<>();
+            paramsCheck.add("classId", classId);
+            paramsCheck.add("semester", semester);
+            HttpEntity<MultiValueMap<String, Object>> requestCheck = new HttpEntity<>(paramsCheck, headers);
+            ResponseEntity<ResponseModel> responseCheck = restTemplate.exchange(
+                    SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestCheck, ResponseModel.class);
+            if (responseCheck.getBody().getData() != null) {
+                return "error";
             } else {
-                for (Subject subject : listSubject) {
-                    slot = 0;
-                    for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
-                        for (int i = 1; i <= subject.getSlot(); i++) {
-                            int getDate = date.getDayOfMonth();
-                            int getMonth = date.getMonthValue();
-                            String dayOfWeek = String.valueOf(date.getDayOfWeek());
-                            boolean isInHoliday = holidayList.stream().noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth && holiday.getDate().getDayOfMonth() == getDate);
-                            if (Arrays.stream(DayOfWeekSchedule.array1).anyMatch(dayOfWeek::equals)
-                                    && isInHoliday) {
-                                ScheduleDetail scheduleDetail = new ScheduleDetail();
-                                if (i % 2 == 0) {
-                                    scheduleDetail.setDayOfWeek(dayOfWeek);
-                                    scheduleDetail.setDate(date.toString());
-                                    scheduleDetail.setScheduleId(schedule.getId());
-                                    scheduleDetail.setSubjectId(subject.getId());
-                                    scheduleDetail.setSlot(i);
-                                    listScheduleDetails.add(scheduleDetail);
-                                    slot++;
-                                    break;
-                                } else {
-                                    scheduleDetail.setDayOfWeek(dayOfWeek);
-                                    scheduleDetail.setDate(date.toString());
-                                    scheduleDetail.setScheduleId(schedule.getId());
-                                    scheduleDetail.setSubjectId(subject.getId());
-                                    scheduleDetail.setSlot(i);
-                                    listScheduleDetails.add(scheduleDetail);
-                                    slot++;
-                                    if (subject.getSlot() == slot) {
-                                        startDates = LocalDate.parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate()).plusDays(1);
+                MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+                Schedule scheduleParams = new Schedule();
+                scheduleParams.setEndDate("");
+                scheduleParams.setStartDate(startDate);
+                scheduleParams.setClassId(Integer.parseInt(classId));
+                scheduleParams.setSemester(semester);
+                String json = objectMapper.writeValueAsString(scheduleParams);
+                params.add("schedule", json);
+                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "post",
+                        HttpMethod.POST, request, ResponseModel.class);
+                String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
+                Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+
+                ResponseEntity<ResponseModel> responseMajor = restTemplate.getForEntity(MAJOR_URL + "get/" + majorId,
+                        ResponseModel.class);
+                String jsonMajor = objectMapper.writeValueAsString(responseMajor.getBody().getData());
+                Major major = objectMapper.readValue(jsonMajor, Major.class);
+
+                List<Subject> listSubject = major.getSubjectsById().stream()
+                        .filter(subject -> subject.getSemesterId() == semester).toList();
+
+                LocalDate startDates = LocalDate.parse(startDate);
+                LocalDate endDateTemp = LocalDate.parse(startDate).plusYears(1);
+
+                ResponseEntity<HolidayModel> responseHoliday = restTemplate.getForEntity(HOLIDAY_URL,
+                        HolidayModel.class);
+                HolidayModel holidayModel = responseHoliday.getBody();
+                List<Holiday> holidayList = holidayModel.getHolidays();
+                LocalDate endDate;
+                List<ScheduleDetail> listScheduleDetails = new ArrayList<>();
+                char getShift = shift.charAt(1);
+                int slot = 0;
+
+                if (getShift == '0') {
+                    for (Subject subject : listSubject) {
+                        slot = 0;
+                        for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
+                            for (int i = 1; i <= subject.getSlot(); i++) {
+                                int getDate = date.getDayOfMonth();
+                                int getMonth = date.getMonthValue();
+                                String dayOfWeek = String.valueOf(date.getDayOfWeek());
+                                boolean isInHoliday = holidayList.stream()
+                                        .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
+                                                && holiday.getDate().getDayOfMonth() == getDate);
+                                if (Arrays.stream(DayOfWeekSchedule.array0).anyMatch(dayOfWeek::equals)
+                                        && isInHoliday) {
+                                    ScheduleDetail scheduleDetail = new ScheduleDetail();
+                                    if (i % 2 == 0) {
+                                        scheduleDetail.setDayOfWeek(dayOfWeek);
+                                        scheduleDetail.setDate(date.toString());
+                                        scheduleDetail.setScheduleId(schedule.getId());
+                                        scheduleDetail.setSubjectId(subject.getId());
+                                        scheduleDetail.setSlot(i);
+                                        listScheduleDetails.add(scheduleDetail);
+                                        slot++;
                                         break;
+                                    } else {
+                                        scheduleDetail.setDayOfWeek(dayOfWeek);
+                                        scheduleDetail.setDate(date.toString());
+                                        scheduleDetail.setScheduleId(schedule.getId());
+                                        scheduleDetail.setSubjectId(subject.getId());
+                                        scheduleDetail.setSlot(i);
+                                        listScheduleDetails.add(scheduleDetail);
+                                        slot++;
+                                        if (subject.getSlot() == slot) {
+                                            startDates = LocalDate.parse(
+                                                    listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
+                                                    .plusDays(1);
+                                            break;
+                                        }
                                     }
+                                } else {
+                                    break;
                                 }
-                            } else {
+                            }
+                            if (subject.getSlot() == slot) {
+                                startDates = LocalDate
+                                        .parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
+                                        .plusDays(1);
                                 break;
                             }
                         }
-                        if (subject.getSlot() == slot) {
-                            startDates = LocalDate.parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate()).plusDays(1);
+                        if (listSubject.get(listSubject.size() - 1).equals(subject)
+                                && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
                             break;
                         }
                     }
-                    if (listSubject.get(listSubject.size() - 1).equals(subject) && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
-                        break;
+                } else {
+                    for (Subject subject : listSubject) {
+                        slot = 0;
+                        for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
+                            for (int i = 1; i <= subject.getSlot(); i++) {
+                                int getDate = date.getDayOfMonth();
+                                int getMonth = date.getMonthValue();
+                                String dayOfWeek = String.valueOf(date.getDayOfWeek());
+                                boolean isInHoliday = holidayList.stream()
+                                        .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
+                                                && holiday.getDate().getDayOfMonth() == getDate);
+                                if (Arrays.stream(DayOfWeekSchedule.array1).anyMatch(dayOfWeek::equals)
+                                        && isInHoliday) {
+                                    ScheduleDetail scheduleDetail = new ScheduleDetail();
+                                    if (i % 2 == 0) {
+                                        scheduleDetail.setDayOfWeek(dayOfWeek);
+                                        scheduleDetail.setDate(date.toString());
+                                        scheduleDetail.setScheduleId(schedule.getId());
+                                        scheduleDetail.setSubjectId(subject.getId());
+                                        scheduleDetail.setSlot(i);
+                                        listScheduleDetails.add(scheduleDetail);
+                                        slot++;
+                                        break;
+                                    } else {
+                                        scheduleDetail.setDayOfWeek(dayOfWeek);
+                                        scheduleDetail.setDate(date.toString());
+                                        scheduleDetail.setScheduleId(schedule.getId());
+                                        scheduleDetail.setSubjectId(subject.getId());
+                                        scheduleDetail.setSlot(i);
+                                        listScheduleDetails.add(scheduleDetail);
+                                        slot++;
+                                        if (subject.getSlot() == slot) {
+                                            startDates = LocalDate.parse(
+                                                    listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
+                                                    .plusDays(1);
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    break;
+                                }
+                            }
+                            if (subject.getSlot() == slot) {
+                                startDates = LocalDate
+                                        .parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
+                                        .plusDays(1);
+                                break;
+                            }
+                        }
+                        if (listSubject.get(listSubject.size() - 1).equals(subject)
+                                && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
+                            break;
+                        }
                     }
                 }
+                MultiValueMap<String, Object> paramsScheduleDetails = new LinkedMultiValueMap<>();
+                paramsScheduleDetails.add("listSchedule", objectMapper.writeValueAsBytes(listScheduleDetails));
+                HttpEntity<MultiValueMap<String, Object>> requestScheduleDetails = new HttpEntity<>(
+                        paramsScheduleDetails, headers);
+                ResponseEntity<String> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL + "saveAll",
+                        HttpMethod.POST, requestScheduleDetails, String.class);
+                schedule.setEndDate(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate().toString());
+                MultiValueMap<String, Object> paramsSchedule = new LinkedMultiValueMap<>();
+                paramsSchedule.add("schedule", objectMapper.writeValueAsBytes(schedule));
+                HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(paramsSchedule, headers);
+                ResponseEntity<ResponseModel> response = restTemplate.exchange(SCHEDULE_URL + "put", HttpMethod.PUT,
+                        requestSchedule, ResponseModel.class);
+                return "success";
             }
-            MultiValueMap<String, Object> paramsScheduleDetails = new LinkedMultiValueMap<>();
-            paramsScheduleDetails.add("listSchedule", objectMapper.writeValueAsBytes(listScheduleDetails));
-            HttpEntity<MultiValueMap<String, Object>> requestScheduleDetails = new HttpEntity<>(paramsScheduleDetails, headers);
-            ResponseEntity<String> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL + "saveAll", HttpMethod.POST, requestScheduleDetails, String.class);
-            schedule.setEndDate(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate().toString());
-            MultiValueMap<String, Object> paramsSchedule = new LinkedMultiValueMap<>();
-            paramsSchedule.add("schedule", objectMapper.writeValueAsBytes(schedule));
-            HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(paramsSchedule, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(SCHEDULE_URL + "put", HttpMethod.PUT, requestSchedule, ResponseModel.class);
-            return "success";
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+        } catch (HttpClientErrorException ex) {
+            log.error(ex.getMessage());
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return null;
+            }
         }
     }
 
     @PostMapping("/getScheduleDetails")
     @ResponseBody
     public Object getScheduleDetails(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                     @RequestParam("classId") String classId,
-                                     @RequestParam("semester") String semester) throws JsonProcessingException {
+            @RequestParam("classId") String classId,
+            @RequestParam("semester") String semester) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -368,16 +416,24 @@ public class ClassController {
             params.add("classId", Integer.parseInt(classId));
             params.add("semester", Integer.parseInt(semester));
             HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule, ResponseModel.class);
-            if (responseSchedule.getStatusCode().is2xxSuccessful()) {
+            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(
+                    SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule,
+                    ResponseModel.class);
+            if (responseSchedule.getBody().getData()!=null) {
                 String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
                 ScheduleModel scheduleModel = new ScheduleModel();
                 List<DayInWeek> dayInWeekList = new ArrayList<>();
                 boolean flag = false;
-                LocalDate minDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).min(LocalDate::compareTo).get();
-                LocalDate maxDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).max(LocalDate::compareTo).get();
-                List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
+                LocalDate minDate = schedule.getScheduleDetailsById().stream()
+                        .map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).min(LocalDate::compareTo)
+                        .get();
+                LocalDate maxDate = schedule.getScheduleDetailsById().stream()
+                        .map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).max(LocalDate::compareTo)
+                        .get();
+                List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream()
+                        .sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate())))
+                        .toList();
                 int index = 0;
                 for (LocalDate date = minDate; date.isBefore(maxDate.plusDays(1)); date = date.plusDays(1)) {
                     if (listSortDate.size() == index) {
@@ -387,10 +443,12 @@ public class ClassController {
                         WeekFields weekFields = WeekFields.of(Locale.getDefault());
                         int weekOfMonth = LocalDate.parse(listSortDate.get(i).getDate()).get(weekFields.weekOfMonth());
                         int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
-                        int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                        int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate())
+                                .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
                         if (date.isEqual(LocalDate.parse(listSortDate.get(i).getDate()))) {
                             DayInWeek diw = new DayInWeek();
-                            if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i)) && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))) {
+                            if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i)) && date
+                                    .equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))) {
                                 diw = new DayInWeek();
                                 diw.setId(listSortDate.get(i).getId());
                                 diw.setDate(LocalDate.parse(listSortDate.get(i).getDate()));
@@ -418,7 +476,9 @@ public class ClassController {
                             diw.setWeekOfYear(weekOfYear);
                             dayInWeekList.add(diw);
                             index = i;
-                            if (LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))) {
+                            if (LocalDate
+                                    .parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate())
+                                    .isAfter(LocalDate.parse(listSortDate.get(i).getDate()))) {
                                 index = listSortDate.indexOf(listSortDate.get(i)) + 1;
                                 break;
                             }
@@ -451,7 +511,6 @@ public class ClassController {
 
                     }
 
-
                 }
                 scheduleModel.setStartDate(LocalDate.parse(schedule.getStartDate()));
                 scheduleModel.setId(schedule.getId());
@@ -459,7 +518,8 @@ public class ClassController {
                 scheduleModel.setSemester(schedule.getSemester());
                 scheduleModel.setDayInWeeks(dayInWeekList);
                 HashMap<Integer, List<DayInWeek>> hashMap = new HashMap<Integer, List<DayInWeek>>();
-                List<DayInWeek> listSort = scheduleModel.getDayInWeeks().stream().sorted((a, b) -> a.getWeekOfYear().compareTo(b.getWeekOfYear())).toList();
+                List<DayInWeek> listSort = scheduleModel.getDayInWeeks().stream()
+                        .sorted((a, b) -> a.getWeekOfYear().compareTo(b.getWeekOfYear())).toList();
                 for (DayInWeek dayInWeek : listSort) {
                     Integer key = dayInWeek.getWeekOfYear();
                     if (hashMap.containsKey(key)) {
@@ -474,7 +534,8 @@ public class ClassController {
                 }
                 HashMap<Integer, List<DayInWeek>> newMapSortedByKey = hashMap.entrySet().stream()
                         .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-                        .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+                        .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                                LinkedHashMap::new));
                 return newMapSortedByKey;
             } else {
                 return null;
@@ -489,14 +550,13 @@ public class ClassController {
         }
     }
 
-
     @PostMapping("/changeDateSchedule")
     @ResponseBody
     public Object changeDateSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                     @RequestParam("currenDate") String currenDate,
-                                     @RequestParam("slot") Integer slot,
-                                     @RequestParam("classId") String classId,
-                                     @RequestParam("semester") String semester) throws JsonProcessingException {
+            @RequestParam("currenDate") String currenDate,
+            @RequestParam("slot") Integer slot,
+            @RequestParam("classId") String classId,
+            @RequestParam("semester") String semester) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -507,7 +567,9 @@ public class ClassController {
             params.add("classId", Integer.parseInt(classId));
             params.add("semester", Integer.parseInt(semester));
             HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule, ResponseModel.class);
+            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(
+                    SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule,
+                    ResponseModel.class);
             if (responseSchedule.getStatusCode().is2xxSuccessful()) {
                 String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
@@ -518,7 +580,8 @@ public class ClassController {
                 int getMonth = date.getMonthValue();
                 boolean isSameDate = schedule.getScheduleDetailsById().stream()
                         .anyMatch(dates -> LocalDate.parse(dates.getDate()).getDayOfMonth() == getDate
-                                && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth && dates.getSlot().equals(slot));
+                                && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth
+                                && dates.getSlot().equals(slot));
                 if (isSameDate) {
                     return "error";
                 } else {
@@ -539,9 +602,9 @@ public class ClassController {
     @PostMapping("/updateDateChangeSchedule")
     @ResponseBody
     public Object updateDateChangeSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                           @RequestParam("newDate") String newDate,
-                                           @RequestParam("slot") Integer slot,
-                                           @RequestParam("schedule_details_id") String schedule_details_id) throws JsonProcessingException {
+            @RequestParam("newDate") String newDate,
+            @RequestParam("slot") Integer slot,
+            @RequestParam("schedule_details_id") String schedule_details_id) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -551,7 +614,9 @@ public class ClassController {
             String[] splitDate = newDate.split("/");
             String formatDate = splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0];
             HttpEntity<Object> requestScheduleDetails = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(SCHEDULE_DETAIL_URL + "get/" + Integer.parseInt(schedule_details_id), HttpMethod.GET, requestScheduleDetails, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(
+                    SCHEDULE_DETAIL_URL + "get/" + Integer.parseInt(schedule_details_id), HttpMethod.GET,
+                    requestScheduleDetails, ResponseModel.class);
             String jsonScheduleDetails = objectMapper.writeValueAsString(response.getBody().getData());
             ScheduleDetail scheduleDetail = objectMapper.readValue(jsonScheduleDetails, ScheduleDetail.class);
             String dayOfWeek = String.valueOf(LocalDate.parse(formatDate).getDayOfWeek());
@@ -561,8 +626,10 @@ public class ClassController {
             String convertToJson = objectMapper.writeValueAsString(scheduleDetail);
             MultiValueMap<String, Object> paramsDetails = new LinkedMultiValueMap<>();
             paramsDetails.add("schedule_details", convertToJson);
-            HttpEntity<MultiValueMap<String, Object>> requestScheduleDetailsPUT = new HttpEntity<>(paramsDetails, headers);
-            ResponseEntity<ResponseModel> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL + "put", HttpMethod.PUT, requestScheduleDetailsPUT, ResponseModel.class);
+            HttpEntity<MultiValueMap<String, Object>> requestScheduleDetailsPUT = new HttpEntity<>(paramsDetails,
+                    headers);
+            ResponseEntity<ResponseModel> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL + "put",
+                    HttpMethod.PUT, requestScheduleDetailsPUT, ResponseModel.class);
             if (responseScheduleDetails.getStatusCode().is2xxSuccessful()) {
                 return "success";
             } else {
@@ -583,8 +650,7 @@ public class ClassController {
     @ResponseBody
     public String findStudent(
             @CookieValue(name = "_token", defaultValue = "") String _token,
-            @PathVariable("studentCard") String studentCard
-    ) {
+            @PathVariable("studentCard") String studentCard) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             JWTUtils.checkExpired(_token);
@@ -592,7 +658,8 @@ public class ClassController {
             headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ObjectMapper objectMapper = new ObjectMapper();
-            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL + "findStudentByStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    STUDENT_URL + "findStudentByStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
             Student student = objectMapper.readValue(response.getBody(), new TypeReference<Student>() {
             });
             if (student != null) {
@@ -619,8 +686,7 @@ public class ClassController {
     public String addStudentToClass(
             @CookieValue(name = "_token", defaultValue = "") String _token,
             @RequestParam("studentId") int studentId,
-            @RequestParam("classId") int classId
-    ) {
+            @RequestParam("classId") int classId) {
         try {
             JWTUtils.checkExpired(_token);
 
@@ -639,7 +705,8 @@ public class ClassController {
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
             content.add("newStudentClass", objectMapper.writeValueAsString(studentClass));
             request = new HttpEntity<>(content, headers);
-            ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "save",
+                    HttpMethod.POST, request, ResponseModel.class);
 
             if (responseStudentClass.getStatusCode().is2xxSuccessful()) {
                 String convertToJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
@@ -659,8 +726,7 @@ public class ClassController {
             @CookieValue(name = "_token", defaultValue = "") String _token,
             @RequestParam("classCode") String classCode,
             @RequestParam("availablePlace") int availablePlace,
-            @RequestParam(name = "studentList", required = false) MultipartFile file
-    ) {
+            @RequestParam(name = "studentList", required = false) MultipartFile file) {
         try {
             JWTUtils.checkExpired(_token);
             if (file != null) {
@@ -672,7 +738,8 @@ public class ClassController {
                         throw new ErrorHandler(response.getMessage());
                     }
                 } catch (Exception e) {
-                    String message = e.getMessage().substring(e.getMessage().indexOf("\"") + 1, e.getMessage().lastIndexOf("\""));
+                    String message = e.getMessage().substring(e.getMessage().indexOf("\"") + 1,
+                            e.getMessage().lastIndexOf("\""));
                     throw new ErrorHandler(message);
                 }
             } else {
@@ -686,10 +753,9 @@ public class ClassController {
     @PostMapping("/class-create")
     @ResponseBody
     public String createClass(Model model,
-                              @CookieValue(name = "_token", defaultValue = "") String _token,
-                              @RequestParam("newClass") String newClass,
-                              @RequestParam(name = "file", required = false) MultipartFile file
-    ) throws JsonProcessingException {
+            @CookieValue(name = "_token", defaultValue = "") String _token,
+            @RequestParam("newClass") String newClass,
+            @RequestParam(name = "file", required = false) MultipartFile file) throws JsonProcessingException {
         try {
             RestTemplate restTemplate = new RestTemplate();
 
@@ -701,18 +767,21 @@ public class ClassController {
             content.add("newClass", newClass);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request,
+                    ResponseModel.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Classses classModel = objectMapper.readValue(newClass, Classses.class);
                 Object data = response.getBody().getData();
                 if (file != null) {
                     try {
-                        ClassResponse result = importStudentClass(_token, file, classModel.getClassCode(), classModel.getLimitStudent());
+                        ClassResponse result = importStudentClass(_token, file, classModel.getClassCode(),
+                                classModel.getLimitStudent());
                         if (result.getStatus() == "success") {
                             return result.toString();
                         } else {
-                            return new ClassResponse("success", "Thêm danh sách sinh viên thất bại. " + result.getMessage()).toString();
+                            return new ClassResponse("success",
+                                    "Thêm danh sách sinh viên thất bại. " + result.getMessage()).toString();
                         }
                     } catch (Exception e) {
                         String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
@@ -735,7 +804,8 @@ public class ClassController {
 
     }
 
-    private ClassResponse importStudentClass(String _token, MultipartFile file, String classCode, int availablePlace) throws JsonProcessingException {
+    private ClassResponse importStudentClass(String _token, MultipartFile file, String classCode, int availablePlace)
+            throws JsonProcessingException {
         if (!file.isEmpty()) {
             try {
                 // get list studentId form Excel file
@@ -764,20 +834,25 @@ public class ClassController {
 
                     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
 
-                    ResponseEntity<String> responseStudent = restTemplate.exchange(STUDENT_URL + "findStudentIdByRangeStudentCard/" + new ObjectMapper().writeValueAsString(listStudentCard),
+                    ResponseEntity<String> responseStudent = restTemplate.exchange(
+                            STUDENT_URL + "findStudentIdByRangeStudentCard/"
+                                    + new ObjectMapper().writeValueAsString(listStudentCard),
                             HttpMethod.GET, request, String.class);
-                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(), new TypeReference<List<Student>>() {
-                    });
+                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(),
+                            new TypeReference<List<Student>>() {
+                            });
                     if (listStudent.size() > availablePlace) {
                         return new ClassResponse("error", "Chỉ được thêm " + availablePlace + " vào lớp");
                     }
 
                     content.add("classCode", classCode);
                     request = new HttpEntity<>(content, headers);
-                    ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findClassCode", HttpMethod.POST, request, String.class);
+                    ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findClassCode",
+                            HttpMethod.POST, request, String.class);
                     content.remove("classCode");
-                    ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {
-                    });
+                    ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),
+                            new TypeReference<ResponseModel>() {
+                            });
                     String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
                     Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
                     List<StudentClass> studentClassList = new ArrayList<>();
@@ -789,9 +864,11 @@ public class ClassController {
                     }
                     content.add("listStudentClass", objectMapper.writeValueAsString(studentClassList));
                     request = new HttpEntity<>(content, headers);
-                    ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, request, ResponseModel.class);
+                    ResponseEntity<ResponseModel> responseStudentClass = restTemplate
+                            .exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, request, ResponseModel.class);
                     if (responseStudentClass.getStatusCode().is2xxSuccessful()) {
-                        return new ClassResponse("success", "Thêm thành công " + studentClassList.size() + " sinh viên");
+                        return new ClassResponse("success",
+                                "Thêm thành công " + studentClassList.size() + " sinh viên");
                     } else {
                         return new ClassResponse("error", "Thêm danh sách sinh viên thất bại");
                     }
@@ -808,9 +885,8 @@ public class ClassController {
 
     @GetMapping("/export-student-excel/{ClassId}")
     public void exportStudentList(HttpServletResponse response,
-                                  @CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @PathVariable("ClassId") int classId
-    ) {
+            @CookieValue(name = "_token", defaultValue = "") String _token,
+            @PathVariable("ClassId") int classId) {
         try {
             JWTUtils.checkExpired(_token);
 
@@ -820,9 +896,11 @@ public class ClassController {
             headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ObjectMapper objectMapper = new ObjectMapper();
-            ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId, HttpMethod.GET, request, String.class);
-            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {
-            });
+            ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId,
+                    HttpMethod.GET, request, String.class);
+            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),
+                    new TypeReference<ResponseModel>() {
+                    });
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
 
             Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
@@ -831,7 +909,6 @@ public class ClassController {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=students_" + classModel.getClassCode() + ".xlsx";
             response.setHeader(headerKey, headerValue);
-
 
             ClassExport classExport = new ClassExport(classModel);
             classExport.generateExcelFile(response);
@@ -848,14 +925,15 @@ public class ClassController {
     @GetMapping("/getTeacherByCard/{card}")
     @ResponseBody
     public Object getTeacherByCard(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                   @PathVariable("card") String card) {
+            @PathVariable("card") String card) {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<Teacher> response = restTemplate.exchange(TEACHER_URL + "getByCard/" + card, HttpMethod.GET, request, Teacher.class);
+            ResponseEntity<Teacher> response = restTemplate.exchange(TEACHER_URL + "getByCard/" + card, HttpMethod.GET,
+                    request, Teacher.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 if (response.getBody() == null) {
                     return "null";
@@ -878,7 +956,8 @@ public class ClassController {
     @PostMapping("change_teacher")
     @ResponseBody
     public Object change_teacher(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                 @RequestParam("classId") Integer classId, @RequestParam("teacherCard") String teacherCard) throws JsonProcessingException {
+            @RequestParam("classId") Integer classId, @RequestParam("teacherCard") String teacherCard)
+            throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
@@ -886,11 +965,13 @@ public class ClassController {
             headers.add("Authorization", "Bearer " + _token);
             ObjectMapper objectMapper = new ObjectMapper();
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId,
+                    HttpMethod.GET, request, ResponseModel.class);
             String json = objectMapper.writeValueAsString(response.getBody().getData());
             Classses classses = objectMapper.readValue(json, Classses.class);
             HttpEntity<Object> requestTeacher = new HttpEntity<>(headers);
-            ResponseEntity<String> responseTeacher = restTemplate.exchange(TEACHER_URL + "getByCard/" + teacherCard, HttpMethod.GET, request, String.class);
+            ResponseEntity<String> responseTeacher = restTemplate.exchange(TEACHER_URL + "getByCard/" + teacherCard,
+                    HttpMethod.GET, request, String.class);
             Teacher teacher = objectMapper.readValue(responseTeacher.getBody(), Teacher.class);
             classses.setTeacherId(teacher.getId());
 
@@ -898,7 +979,8 @@ public class ClassController {
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             params.add("class", jsonClass);
             HttpEntity<MultiValueMap<String, Object>> requestUpdateClass = new HttpEntity<>(params, headers);
-            ResponseEntity<String> responseEntity = restTemplate.exchange(CLASS_URL + "updateClass", HttpMethod.PUT, requestUpdateClass, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(CLASS_URL + "updateClass", HttpMethod.PUT,
+                    requestUpdateClass, String.class);
             return responseEntity.getBody();
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
@@ -910,11 +992,10 @@ public class ClassController {
         }
     }
 
-
     @GetMapping("export_schedule/{classId}&{semester}")
     public void export_schedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                @PathVariable("classId") Integer classId,
-                                @PathVariable("semester") Integer semester, HttpServletResponse responses) throws IOException {
+            @PathVariable("classId") Integer classId,
+            @PathVariable("semester") Integer semester, HttpServletResponse responses) throws IOException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -925,20 +1006,26 @@ public class ClassController {
             params.add("classId", classId);
             params.add("semester", semester);
             HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule, ResponseModel.class);
+            ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(
+                    SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule,
+                    ResponseModel.class);
             String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
             Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId,
+                    HttpMethod.GET, request, ResponseModel.class);
             String json = objectMapper.writeValueAsString(response.getBody().getData());
             Classses classses = objectMapper.readValue(json, Classses.class);
 
             ScheduleModel scheduleModel = new ScheduleModel();
             List<DayInWeek> dayInWeekList = new ArrayList<>();
             boolean flag = false;
-            LocalDate minDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).min(LocalDate::compareTo).get();
-            LocalDate maxDate = schedule.getScheduleDetailsById().stream().map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).max(LocalDate::compareTo).get();
-            List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
+            LocalDate minDate = schedule.getScheduleDetailsById().stream()
+                    .map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).min(LocalDate::compareTo).get();
+            LocalDate maxDate = schedule.getScheduleDetailsById().stream()
+                    .map(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate())).max(LocalDate::compareTo).get();
+            List<ScheduleDetail> listSortDate = schedule.getScheduleDetailsById().stream()
+                    .sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
             int index = 0;
             for (LocalDate date = minDate; date.isBefore(maxDate.plusDays(1)); date = date.plusDays(1)) {
                 if (listSortDate.size() == index) {
@@ -948,10 +1035,12 @@ public class ClassController {
                     WeekFields weekFields = WeekFields.of(Locale.getDefault());
                     int weekOfMonth = LocalDate.parse(listSortDate.get(i).getDate()).get(weekFields.weekOfMonth());
                     int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
-                    int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate()).get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                    int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate())
+                            .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
                     if (date.isEqual(LocalDate.parse(listSortDate.get(i).getDate()))) {
                         DayInWeek diw = new DayInWeek();
-                        if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i)) && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))) {
+                        if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i))
+                                && date.equals(LocalDate.parse(listSortDate.get(listSortDate.size() - 1).getDate()))) {
                             diw = new DayInWeek();
                             diw.setId(listSortDate.get(i).getId());
                             diw.setDate(LocalDate.parse(listSortDate.get(i).getDate()));
@@ -979,7 +1068,8 @@ public class ClassController {
                         diw.setWeekOfYear(weekOfYear);
                         dayInWeekList.add(diw);
                         index = i;
-                        if (LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate()).isAfter(LocalDate.parse(listSortDate.get(i).getDate()))) {
+                        if (LocalDate.parse(listSortDate.get(listSortDate.indexOf(listSortDate.get(i)) + 1).getDate())
+                                .isAfter(LocalDate.parse(listSortDate.get(i).getDate()))) {
                             index = listSortDate.indexOf(listSortDate.get(i)) + 1;
                             break;
                         }
@@ -1036,8 +1126,8 @@ public class ClassController {
     @PostMapping("sendSchedule")
     @ResponseBody
     public Object sendSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-                               @RequestParam("classId") Integer classId,
-                               @RequestParam("file") MultipartFile file) {
+            @RequestParam("classId") Integer classId,
+            @RequestParam("file") MultipartFile file) {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
@@ -1045,21 +1135,23 @@ public class ClassController {
             headers.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId,
+                    HttpMethod.GET, request, ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             Classses classses = new ObjectMapper().readValue(json, Classses.class);
             File attachment = FileUtils.convertMultiPartToFile(file);
             for (StudentClass student : classses.getStudentClassById()) {
-                //Send mail
+                // Send mail
                 Mail mail = new Mail();
                 mail.setToMail(student.getClassStudentByStudent().getStudentByProfile().getEmail());
                 mail.setSubject("Account student HKT SYSTEM");
-                String name = student.getClassStudentByStudent().getStudentByProfile().getFirstName() + " " + student.getClassStudentByStudent().getStudentByProfile().getLastName();
+                String name = student.getClassStudentByStudent().getStudentByProfile().getFirstName() + " "
+                        + student.getClassStudentByStudent().getStudentByProfile().getLastName();
                 Map<String, Object> props = new HashMap<>();
                 props.put("fullname", name);
                 mail.setProps(props);
                 mailService.sendHtmlMessageSendSchedule(mail, attachment);
-                //-----------------------------
+                // -----------------------------
             }
             return "success";
         } catch (Exception ex) {
@@ -1071,8 +1163,8 @@ public class ClassController {
     @PostMapping("checkStudentInClass")
     @ResponseBody
     public Object checkStudentInClass(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                      @RequestParam("classId") Integer classId,
-                                      @RequestParam("studentId") Integer studentId) {
+            @RequestParam("classId") Integer classId,
+            @RequestParam("studentId") Integer studentId) {
 
         try {
             JWTUtils.checkExpired(_token);
@@ -1081,11 +1173,13 @@ public class ClassController {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(STUDENT_CLASS_URL + "getStudent/" + studentId, HttpMethod.GET, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(
+                    STUDENT_CLASS_URL + "getStudent/" + studentId, HttpMethod.GET, request, ResponseModel.class);
             String json = objectMapper.writeValueAsString(response.getBody().getData());
             List<StudentClass> studentClassList = objectMapper.readValue(json, new TypeReference<List<StudentClass>>() {
             });
-            boolean isExistsInClass = studentClassList.stream().anyMatch(studentClass -> studentClass.getClassId().equals(classId));
+            boolean isExistsInClass = studentClassList.stream()
+                    .anyMatch(studentClass -> studentClass.getClassId().equals(classId));
             if (isExistsInClass) {
                 return "error";
             } else {
@@ -1100,9 +1194,9 @@ public class ClassController {
     @PostMapping("changeClassForStudent")
     @ResponseBody
     public Object changeClassForStudent(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                        @RequestParam("studentId") Integer studentId,
-                                        @RequestParam("classIdChange") Integer classIdChange,
-                                        @RequestParam("classIdCurrent") Integer classIdCurrent) {
+            @RequestParam("studentId") Integer studentId,
+            @RequestParam("classIdChange") Integer classIdChange,
+            @RequestParam("classIdCurrent") Integer classIdCurrent) {
 
         try {
             JWTUtils.checkExpired(_token);
@@ -1111,20 +1205,25 @@ public class ClassController {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(STUDENT_CLASS_URL + "getStudent/" + studentId, HttpMethod.GET, request, ResponseModel.class);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(
+                    STUDENT_CLASS_URL + "getStudent/" + studentId, HttpMethod.GET, request, ResponseModel.class);
             String json = objectMapper.writeValueAsString(response.getBody().getData());
             List<StudentClass> studentClassList = objectMapper.readValue(json, new TypeReference<List<StudentClass>>() {
             });
-            StudentClass studentClass = studentClassList.stream().filter(studentClass1 -> studentClass1.getClassId().equals(classIdCurrent) && studentClass1.getStudentId().equals(studentId)).findFirst().get();
+            StudentClass studentClass = studentClassList.stream()
+                    .filter(studentClass1 -> studentClass1.getClassId().equals(classIdCurrent)
+                            && studentClass1.getStudentId().equals(studentId))
+                    .findFirst().get();
             studentClass.setClassId(classIdChange);
             String jsonRequest = objectMapper.writeValueAsString(studentClass);
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             params.add("studentClass", jsonRequest);
             HttpEntity<MultiValueMap<String, Object>> request2 = new HttpEntity<>(params, headers);
-            ResponseEntity<ResponseModel> response2 = restTemplate.exchange(STUDENT_CLASS_URL + "put", HttpMethod.PUT, request2, ResponseModel.class);
-            if(response2.getStatusCode().is2xxSuccessful()){
+            ResponseEntity<ResponseModel> response2 = restTemplate.exchange(STUDENT_CLASS_URL + "put", HttpMethod.PUT,
+                    request2, ResponseModel.class);
+            if (response2.getStatusCode().is2xxSuccessful()) {
                 return "success";
-            }else{
+            } else {
                 return "error";
             }
         } catch (Exception ex) {

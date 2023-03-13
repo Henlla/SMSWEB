@@ -16,11 +16,26 @@ var OnCreateSchedule = (classId, majorId, shift) => {
         processData: false,
         contentType: false,
         success: (res) => {
-            toastr.success('Tạo thời khóa biểu thành công')
+            console.log(res)
+            if(res==="error"){
+                Swal.fire(
+                    "",
+                    `Schedule for semester ${semester} already exist !`,
+                    "error"
+                )
+            }else{
+                Swal.fire(
+                "",
+                `Create schedule for semester ${semester} success !`,
+                "success"
+            )
             $('#create_schedule').modal("hide")
             $('#spinner-div').hide();
+            }
+           
+           
         }, error: (e) => {
-            toastr.error('Tạo thời khóa biểu thất bại')
+            toastr.error('Create schedule failed')
             $('#create_schedule').modal("hide")
             $('#spinner-div').hide();
         }

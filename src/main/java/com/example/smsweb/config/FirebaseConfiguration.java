@@ -48,7 +48,6 @@ public class FirebaseConfiguration {
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials).setStorageBucket(environment.getProperty("firebase.bucket-name"))
                 .build();
-
         return FirebaseApp.initializeApp(options);
     }
 
