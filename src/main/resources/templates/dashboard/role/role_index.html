@@ -4,7 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách chức vụ</title>
+    <title>List role</title>
     <link rel="stylesheet" href="/css/student_details.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý chức vụ</h5>
+                            <h5 class="m-0">Role Manager</h5>
                         </div>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                     <div class="row">
                         <div class="col-12">
                             <input type="button" class="btn btn-info btn-sm" data-target="#role_create"
-                                   data-toggle="modal" value="Thêm mới">
+                                   data-toggle="modal" value="Create">
                         </div>
                     </div>
                     <div class="row">
@@ -34,9 +34,9 @@
                             <table id="role-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
-                                    <th>Mã chức vụ</th>
-                                    <th>Mô tả</th>
-                                    <th>Hành động</th>
+                                    <th>Role code</th>
+                                    <th>Role name</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -60,7 +60,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Tạo chức vụ</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Create role</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
@@ -69,26 +69,26 @@
                             <div class="container">
                                 <form id="role_create-form">
                                     <div class="form-group">
-                                        <label class="m-0" style="font-size: 13px">Mã chức vụ</label>
+                                        <label class="m-0" style="font-size: 13px">Role code</label>
                                         <input type="text" name="role_code_validate" id="role_code_create"
                                                class="form-control form-control-sm"
-                                               placeholder="Nhập mã chức vụ , VD: STAFF">
+                                               placeholder="Enter role code , example: STAFF">
                                     </div>
                                     <div class="form-group">
-                                        <label class="m-0" style="font-size: 13px">Mô tả chức vụ</label>
+                                        <label class="m-0" style="font-size: 13px">Role name</label>
                                         <input type="text" name="role_description_validate" id="role_description_create"
                                                class="form-control form-control-sm"
-                                               placeholder="Nhập mô tả chức vụ , VD: Nhân viên">
+                                               placeholder="Enter role name , example: Employee">
                                     </div>
                                 </form>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                             <button type="button" onclick="OnCreateRole()" class="btn btn-info btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-plus"></i> Tạo
+                                    class="fas fa-plus"></i> Create
                             </button>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel1">Cập nhật sinh viên</h5>
+                            <h5 class="modal-title" id="exampleModalLabel1">Update Student</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
@@ -108,10 +108,10 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                             <button type="button" onclick="OnUpdateSubmit()" class="btn btn-primary btn-sm"><i
-                                    class="fas fa-plus"></i> Cập nhật
+                                    class="fas fa-plus"></i> Update
                             </button>
                         </div>
                     </div>

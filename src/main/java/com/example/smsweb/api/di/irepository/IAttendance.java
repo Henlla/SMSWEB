@@ -8,4 +8,8 @@ import java.util.List;
 public interface IAttendance extends IGenericRepository<Attendance> {
     void saveAllAttendance(List<Attendance> attendances);
     List<Attendance> findAttendByDate(String date);
+    List<Attendance> findAttendanceByDateAndSlot(String date,String slot);
+    Attendance findAttendanceByDateSlotStudentSubject(String date,String slot,String student_subject);
+    List<Attendance> findAttendanceByStudentSubjectId(Integer studentSubjectId);
+    List<Attendance> findAttendancesByDateAndSlotAndStudentSubjectId(String date,Integer slot, Integer studentSubjectId);
 }

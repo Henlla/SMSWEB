@@ -42,9 +42,9 @@ public class ClassRestController extends GenericController<Classses> {
     @PostMapping("/findClassCode")
     public ResponseEntity<?> findClassCode(@RequestParam("classCode") String classCode) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(), service.findByClassCode(classCode)));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(), service.findByClassCode(classCode)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Tìm thất bại", LocalTime.now().toString(), null));
         }
     }
 
@@ -74,7 +74,7 @@ public class ClassRestController extends GenericController<Classses> {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByTeacherIdAndScheduleId(teacherId, scheduleId)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Errpr", LocalDate.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), e.getMessage()));
         }
     }
 
@@ -82,6 +82,11 @@ public class ClassRestController extends GenericController<Classses> {
     public ResponseEntity<?> updateClass(@RequestParam("class") String classes) throws JsonProcessingException {
         Classses classses = new ObjectMapper().readValue(classes, Classses.class);
         service.save(classses);
-        return ResponseEntity.status(HttpStatus.OK).body("success");
+        return ResponseEntity.status(HttpStatus.OK).body("Success");
+    }
+
+    @GetMapping("/findClassByMajorId/{majorId}")
+    public ResponseEntity<?> findClassByMajorId(@PathVariable("majorId")Integer majorId){
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findClassByMajorId(majorId)));
     }
 }

@@ -104,24 +104,24 @@ $(()=>{
             },
             messages:{
                 classCode : {
-                    required:"Vui lòng nhập Mã lớp học"
+                    required:"Please enter class code"
                 },
                 majorId : {
-                    required:"Vui lòng chọn nghành học"
+                    required:"Please enter major"
                 },
                 teacherId: {
-                    required: "Vui lòng chọn Giáo viên chủ nhiệm"
+                    required: "Please choose teacher"
                 },
                 shift: {
-                    required: "Vui lòng chọn thời gian học trong ngày"
+                    required: "Please choose timer"
                 },
                 dayOfWeek: {
-                    required: "Vui lòng chọn ngày học trong tuần"
+                    required: "Please choose day of weeks"
                 },
                 startDate: {
-                    required: "Vui lòng chọn ngày bắt đầu học",
-                    date: "Ngày định dạng mm/dd/yyyy",
-                    dateGreaterThan: "Ngày bắt đầu học không thể là ngày trong quá khứ !!"
+                    required: "Please enter start date",
+                    date: "Date format mm/dd/yyyy",
+                    dateGreaterThan: "Start date must be in the future !!"
                 },
             },
         })
@@ -144,13 +144,13 @@ $(()=>{
                         $('#classCode').val("");
                         selectDayOfWeek.val("").change();
                         selectShift.val("").change();
-                        toastr.success('Tạo lớp học thành công')
+                        toastr.success('Create success')
                         if(result.message != null && result.message != ''){
                             toastr.warning(result.message)
                         }
                         $('#spinner-div').hide();
                     }else {
-                        toastr.error('Tạo lớp học thất bại')
+                        toastr.error('Create fail')
                         $('#spinner-div').hide();
                     }
                 },
@@ -160,17 +160,17 @@ $(()=>{
                     if (err.message.toLowerCase() === "token expired") {
                         $('#spinner-div').hide();
                         Swal.fire({
-                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            title: 'End of login session please login again',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Confirm',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = "/dashboard/login";
                             }
-                        })
+                        });
                     }else{
-                        toastr.error('Tạo sinh viên thất bại')
+                        toastr.error('Create fail')
                     }
                 }
             })

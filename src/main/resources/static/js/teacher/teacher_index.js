@@ -17,26 +17,26 @@ $(()=>{
             targets: 1
         }],
         "language": {
-            "decimal":        "",
-            "emptyTable":     "Không có dữ liệu",
-            "info":           "",
-            "infoEmpty":      "",
-            "infoFiltered":   "",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
-            "processing":     "",
-            "search":         "Tìm kiếm:",
-            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first":      "Trang đầu",
-                "last":       "Trang cuối",
-                "next":       "Trang kế tiếp",
-                "previous":   "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
-                "sortAscending":  ": activate to sort column ascending",
+                "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
         }
@@ -47,7 +47,7 @@ $(()=>{
     );
 
     $('#reset_password').on('click', () => {
-        Confirm('Đặt lại mật khẩu', 'Có chắc chắn muốn đặt lại mật khẩu?', 'Có', 'Không')
+        Confirm('Reset password', 'Are you sure reset password?', 'Ok', 'Cancel')
     })
 
     function Confirm(title, msg, $true, $false) { /*change*/
@@ -84,7 +84,7 @@ $(()=>{
                     console.log(data)
                 },
                 complete: () => {
-                    toastr.success('Đặt lại mật khẩu thành công')
+                    toastr.success('Reset password success')
                     $('#spinner-div').hide()
                 }
             })
@@ -161,7 +161,7 @@ var OnDetails = (id) => {
             $('#tc_sex').html(data.teacher.profileByProfileId.sex)
             $('#tc_identityId').html(data.teacher.profileByProfileId.identityCard)
             if (data.classses.length === 0) {
-                $('#tc_class').html("Chưa có")
+                $('#tc_class').html("Don't have")
             } else {
                 for (var classes of data.classses) {
                     $('#tc_class').html(classes.classCode)
@@ -292,10 +292,10 @@ var OnUpdateSubmit = () =>{
             $("#student_update").modal("hide");
             $('#spinner-divT').hide();
             location.reload();
-            toastr.success('Cập nhật giáo viên thành công')
+            toastr.success('Update success')
         },
         error:(e)=>{
-            toastr.error('Thất bại')
+            toastr.error('Fail')
             $('#spinner-divT').hide();
         }
     })
@@ -319,7 +319,7 @@ var CancelUpdateImg = () =>{
 
 var OnUpdateImg = () => {
 
-    ConfirmImg('Thay đổi hình ảnh', 'Có chắc chắn muốn thay đổi hình ảnh?', 'Có', 'Không')
+    ConfirmImg('Change image', 'Are you sure change image?', 'Ok', 'Cancel')
 }
 function ConfirmImg(title, msg, $true, $false) { /*change*/
     var $content =  "<div class='dialog-ovelay'>" +
@@ -357,7 +357,7 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
             success : (data)=>{
                 $('#spinner-divT').hide()
                 location.reload();
-                toastr.success('Thay đổi hình ảnh thành công')
+                toastr.success('Change success')
             }
         })
         $(this).parents('.dialog-ovelay').fadeOut(500, function () {

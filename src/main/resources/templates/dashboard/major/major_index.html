@@ -4,26 +4,25 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Ngành học</title>
+    <title>Major</title>
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
 <div layout:fragment="content">
     <section class="content-wrapper">
         <section class="content-header">
-            <h5 class="m-0">Quản lý ngành học</h5>
+            <h5 class="m-0">Major manager</h5>
         </section>
         <section class="content-body">
             <section class="container-fluid">
                 <section class="row mb-3">
                     <div class="col-12 d-flex align-items-center">
                         <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" data-target="#create-major-modal" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus"></i> Thêm mới
+                            <i class="fas fa-plus"></i> Create
                         </button>
-                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Xuất dữ liệu</a>
+                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Export data</a>
                         <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>
-                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Đổ
-                            dữ liệu</a>
+                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Import Data</a>
                     </div>
                 </section>
                 <section class="row">
@@ -32,9 +31,9 @@
                             <thead>
                             <tr class="text-center">
                                 <th class="th-sm">STT</th>
-                                <th class="th-sm">Mã ngành học</th>
-                                <th class="th-sm">Tên ngành học</th>
-                                <th class="th-sm">Hành động</th>
+                                <th class="th-sm">Major Code</th>
+                                <th class="th-sm">Major Name</th>
+                                <th class="th-sm">Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -58,12 +57,11 @@
         </section>
     </section>
 
-    <div class="modal fade" id="create-major-modal" data-backdrop="static" tabindex="-1"
-         aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="create-major-modal" data-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Thêm mới ngành học</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add new major</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -71,22 +69,22 @@
                 <div class="modal-body">
                     <form th:id="create-form">
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Mã ngành học</label>
+                            <label class="m-0" style="font-size: 13px">Major code</label>
                             <input type="text" name="create_major_code_validate" th:id="create_major_code"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập mã ngành học">
+                                   placeholder="Enter major code...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Tên ngành học</label>
+                            <label class="m-0" style="font-size: 13px">Major name</label>
                             <input type="text" name="create_major_name_validate" th:id="create_major_name"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập tên ngành học">
+                                   placeholder="Enter major name...">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" onclick="OnCreateMajor()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Tạo
+                            class="fas fa-plus"></i> Create
                     </button>
                 </div>
             </div>
@@ -98,7 +96,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Cập nhật ngành học</h5>
+                    <h5 class="modal-title">Update major</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -107,22 +105,22 @@
                     <form th:id="edit-form">
                         <input type="text" th:id="edit_major_id" hidden>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Mã ngành học</label>
+                            <label class="m-0" style="font-size: 13px">Major code</label>
                             <input type="text" name="edit_major_code_validate" th:id="edit_major_code"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập mã ngành học">
+                                   placeholder="Enter major code...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Tên ngành học</label>
+                            <label class="m-0" style="font-size: 13px">Major name</label>
                             <input type="text" name="edit_major_name_validate" th:id="edit_major_name"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập tên ngành học">
+                                   placeholder="Enter major name...">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" onclick="OnUpdateMajor()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Cập nhật
+                            class="fas fa-plus"></i> Update
                     </button>
                 </div>
             </div>

@@ -11,26 +11,26 @@ $(()=>{
         scrollCollapse: true,
         scrollY: '600px',
         "language": {
-            "decimal":        "",
-            "emptyTable":     "Không có dữ liệu",
-            "info":           "",
-            "infoEmpty":      "",
-            "infoFiltered":   "",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
-            "processing":     "",
-            "search":         "Tìm kiếm:",
-            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first":      "Trang đầu",
-                "last":       "Trang cuối",
-                "next":       "Trang kế tiếp",
-                "previous":   "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
-                "sortAscending":  ": activate to sort column ascending",
+                "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
         },initComplete: function () {
@@ -67,7 +67,7 @@ $(()=>{
                 //use column title as selector and placeholder
                 $('#' + title).select2({
                     closeOnSelect: true,
-                    placeholder: "- Tất cả -",
+                    placeholder: "- All -",
                     allowClear: true,
                     width: 'resolve',
                 });
@@ -82,7 +82,7 @@ $(()=>{
         {'width': '350px', 'display': 'inline-block'}
     );
     $('#reset_password').on('click', () => {
-        Confirm('Đặt lại mật khẩu', 'Có chắc chắn muốn đặt lại mật khẩu?', 'Có', 'Không')
+        Confirm('Rest password', 'Do you want rest password?', 'Confirm', 'Cancel')
     })
 
     function Confirm(title, msg, $true, $false) { /*change*/
@@ -117,7 +117,7 @@ $(()=>{
                 data: data,
                 success: (data) => {
                     console.log(data)
-                    toastr.success('Đặt lại mật khẩu thành công')
+                    toastr.success('Reset password success')
                     $("#student_details").modal("hide");
                     $('#spinner-div').hide()
                 },error:(xhr, status, error)=>{
@@ -125,17 +125,17 @@ $(()=>{
                     console.log(err)
                     if (err.message.toLowerCase() === "token expired") {
                         Swal.fire({
-                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            title: 'End of login session please login again',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Confirm',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = "/dashboard/login";
                             }
-                        })
+                        });
                     }else{
-                        alert("Tạo mới thất bại");
+                        alert("Create fail");
                     }
                 }
             })
@@ -212,6 +212,7 @@ var OnDetails = (id) => {
             $('#st_phone').html(data.student.studentByProfile.phone)
             $('#st_email').html(data.student.studentByProfile.email)
             $('#st_sex').html(data.student.studentByProfile.sex)
+            let classCode = "";
             for (var major of data.student.majorStudentsById) {
                 $('#st_major').html(major.majorByMajorId.majorName)
             }
@@ -219,8 +220,9 @@ var OnDetails = (id) => {
                 $('#st_class').html('Chưa có')
             }else {
                 for (var classes of data.classes) {
-                    $('#st_class').html(classes.classCode)
+                    classCode+=classes.classCode+" "
                 }
+                $('#st_class').html(classCode)
             }
             $('#st_identityId').html(data.student.studentByProfile.identityCard)
             $('#st_address').html(data.student.studentByProfile.address + ' , ' + data.student.studentByProfile.wardByWardId.name + ' , ' + data.student.studentByProfile.districtByDistrictId.name + ' , ' + data.student.studentByProfile.profileProvince.name)
@@ -236,17 +238,17 @@ var OnDetails = (id) => {
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             }else{
-                toastr.success('Xem thông tin thất bại')
+                toastr.success("Can't get detail")
             }
         }
     });
@@ -316,17 +318,17 @@ var OnUpdate = (id) => {
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             }else{
-                toastr.success('Xem thông tin thất bại')
+                toastr.success('Get detail fail')
             }
         }
     });
@@ -390,17 +392,17 @@ var OnUpdateSubmit = () => {
             if (err.message.toLowerCase() === "token expired") {
                 $('#spinner-divI').hide();
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
+                });
             }else{
-                toastr.success('Cập nhật thất bại')
+                toastr.success('Update fail')
             }
         }
     })
@@ -426,7 +428,7 @@ var CancelUpdateImg = () => {
 
 var OnUpdateImg = () => {
 
-    ConfirmImg('Thay đổi hình ảnh', 'Có chắc chắn muốn thay đổi hình ảnh?', 'Có', 'Không')
+    ConfirmImg('Change picture', 'Are you sure change picture?', 'Confirm', 'Cancel')
 }
 
 function ConfirmImg(title, msg, $true, $false) { /*change*/
@@ -465,24 +467,24 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
             success: (data) => {
                 $('#spinner-divI').hide()
                 location.reload();
-                toastr.success('Thay đổi hình ảnh thành công')
+                toastr.success('Change success')
             }, error:(xhr, status, error)=>{
                 var err = eval("(" + xhr.responseText + ")");
                 console.log(err)
                 if (err.message.toLowerCase() === "token expired") {
                     $('#spinner-divI').hide()
                     Swal.fire({
-                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        title: 'End of login session please login again',
                         showDenyButton: false,
                         showCancelButton: false,
-                        confirmButtonText: 'Đồng ý',
+                        confirmButtonText: 'Confirm',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             location.href = "/dashboard/login";
                         }
-                    })
+                    });
                 }else{
-                    alert("Tạo mới thất bại");
+                    alert("Change fail");
                 }
             }
         })

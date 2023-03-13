@@ -72,4 +72,8 @@ public class Classses {
         this.onDeleted = false;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

@@ -7,26 +7,26 @@ $(()=>{
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
         "language": {
-            "decimal":        "",
-            "emptyTable":     "Không có dữ liệu",
-            "info":           "",
-            "infoEmpty":      "",
-            "infoFiltered":   "",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
-            "processing":     "",
-            "search":         "Tìm kiếm:",
-            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first":      "Trang đầu",
-                "last":       "Trang cuối",
-                "next":       "Trang kế tiếp",
-                "previous":   "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
-                "sortAscending":  ": activate to sort column ascending",
+                "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
         },initComplete: function () {
@@ -65,7 +65,7 @@ $(()=>{
                 //use column title as selector and placeholder
                 $('#' + title).select2({
                     closeOnSelect: true,
-                    placeholder: "- Tất cả -",
+                    placeholder: "- All -",
                     allowClear: true,
                     width: 'resolve',
                 });
@@ -99,7 +99,7 @@ var OnDetails = (id) => {
                 $('#st_major').html(major.majorByMajorId.majorName)
             }
             if(data.classes.length ===0){
-                $('#st_class').html('Chưa có')
+                $('#st_class').html("Don't have")
             }else {
                 for (var classes of data.classes) {
                     $('#st_class').html(classes.classCode)
@@ -110,26 +110,23 @@ var OnDetails = (id) => {
             $('#accountId').val(data.student.studentByProfile.accountByAccountId.id)
             $('#email').val(data.student.studentByProfile.email)
             $("#student_details").modal("show");
-            // $.ajax({
-            //     url: "/dashboard/student/getClassByStudentId/" + id,
-            // })
         },  error:(xhr, status, error)=>{
             var err = eval("(" + xhr.responseText + ")");
             $("#student_details").modal("hide");
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        location.href = "/dashboard/login";
+                        location.href = "/login";
                     }
-                })
+                });
             }else{
-                toastr.success('Xem thông tin thất bại')
+                toastr.success("View fail")
             }
         }
     });
