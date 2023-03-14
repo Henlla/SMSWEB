@@ -36,6 +36,7 @@ public class AttendanceController {
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private final String SUBJECT_URL = "http://localhost:8080/api/subject/";
+    private final String ATTENDANCE_TRACKING_URL = "http://localhost:8080/api/attendance_tracking/";
     RestTemplate restTemplate;
     List<Schedule> listSchedule;
     List<ScheduleDetail> listScheduleDetail;
@@ -91,16 +92,6 @@ public class AttendanceController {
                         listSchedule.add(schedule);
                     }
                     List<Integer> scheduleClass = listSchedule.stream().map(Schedule::getClassId).distinct().toList();
-//                    Map<Integer, Map<Integer, List<Schedule>>> scheduleGrouping = listSchedule.stream().collect(Collectors.groupingBy(Schedule::getId, Collectors.groupingBy(Schedule::getClassId)));
-//                    for (Map.Entry<Integer, Map<Integer, List<Schedule>>> pair : scheduleGrouping.entrySet()) {
-//                        for (Map.Entry<Integer, List<Schedule>> pair2 : pair.getValue().entrySet()) {
-//                            GroupingSchedule groupingSchedule = new GroupingSchedule();
-//                            groupingSchedule.setSchedule_id(pair.getKey());
-//                            groupingSchedule.setClass_id(pair2.getKey());
-//                            listGroupingSchedule.add(groupingSchedule);
-//                        }
-//                    }
-
                     for (Integer scheduleClassId : scheduleClass) {
                         // Lấy User hiên tại
                         Account teacherUser = (Account) auth.getPrincipal();
@@ -208,10 +199,10 @@ public class AttendanceController {
                         }
                     }
                     Collections.sort(listAttendanceView, Comparator.comparing(AttendanceView::getDate));
-                    model.addAttribute("msg","");
+                    model.addAttribute("msg", "");
                     model.addAttribute("listClass", listAttendanceView);
                     return "teacherDashboard/attendance/attendance";
-                }else{
+                } else {
                     model.addAttribute("msg", "Don't have time table for today");
                     return "teacherDashboard/attendance/attendance";
                 }
@@ -244,27 +235,27 @@ public class AttendanceController {
         }
     }
 
-
     @PostMapping("/submitAttendance")
     @ResponseBody
     public Object submitAttendance(@CookieValue(name = "_token", defaultValue = "") String _token,
                                    @RequestParam("attendModel") String attenModel,
                                    @RequestParam("classId") String classId,
                                    @RequestParam("date") String date,
-                                   @RequestParam("slot") String slot) {
+                                   @RequestParam("slot") String slot,
+                                   Authentication auth) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
                 listAttendance = new ArrayList<>();
                 listExitAttendance = new ArrayList<>();
+                listStudentSubject = new ArrayList<>();
                 countAbsent = new ArrayList<>();
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", "Bearer " + _token);
-
+                HttpEntity<String> request = new HttpEntity<>(headers);
                 // Lấy schedule
-                HttpEntity<String> requestSchedule = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classId, HttpMethod.GET, requestSchedule, ResponseModel.class);
+                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classId, HttpMethod.GET, request, ResponseModel.class);
                 String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
 
@@ -316,43 +307,65 @@ public class AttendanceController {
                     contentAttendance.add("list_attendance", attendanceJson);
                     HttpEntity<MultiValueMap<String, String>> requestAttendance = new HttpEntity<>(contentAttendance, headers);
                     ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "saveAll", HttpMethod.POST, requestAttendance, ResponseModel.class);
-                    for (Attendance attendance : listAttendance) {
-                        // Lấy student subject
-                        HttpEntity<String> requestStudentSubject = new HttpEntity<>(headers);
-                        ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getById/" + attendance.getStudentSubjectId(), HttpMethod.GET, requestStudentSubject, ResponseModel.class);
-                        String studentSubjectJson = new ObjectMapper().writeValueAsString(responseStudentSubject.getBody().getData());
-                        StudentSubject studentSubject = new ObjectMapper().readValue(studentSubjectJson, StudentSubject.class);
+                    if (responseAttendance.getStatusCode().is2xxSuccessful()) {
+                        for (Attendance attendance : listAttendance) {
+                            // Lấy student subject
+                            ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getById/" + attendance.getStudentSubjectId(), HttpMethod.GET, request, ResponseModel.class);
+                            String studentSubjectJson = new ObjectMapper().writeValueAsString(responseStudentSubject.getBody().getData());
+                            StudentSubject studentSubject = new ObjectMapper().readValue(studentSubjectJson, StudentSubject.class);
 
-                        // Lấy subject
-                        HttpEntity<String> requestSubject = new HttpEntity<>(headers);
-                        ResponseEntity<ResponseModel> responseSubject = restTemplate.exchange(SUBJECT_URL + "findOne/" + studentSubject.getSubjectId(), HttpMethod.GET, requestSubject, ResponseModel.class);
-                        String subjectJson = new ObjectMapper().writeValueAsString(responseSubject.getBody().getData());
-                        Subject subject = new ObjectMapper().readValue(subjectJson, Subject.class);
+                            // Lấy subject
+                            ResponseEntity<ResponseModel> responseSubject = restTemplate.exchange(SUBJECT_URL + "findOne/" + studentSubject.getSubjectId(), HttpMethod.GET, request, ResponseModel.class);
+                            String subjectJson = new ObjectMapper().writeValueAsString(responseSubject.getBody().getData());
+                            Subject subject = new ObjectMapper().readValue(subjectJson, Subject.class);
 
-                        // Lấy Attendance
-                        MultiValueMap<String, Integer> attendanceContent = new LinkedMultiValueMap<>();
-                        attendanceContent.add("student_subject_id", attendance.getStudentSubjectId());
-                        HttpEntity<MultiValueMap<String, Integer>> attendanceRequest = new HttpEntity<>(attendanceContent, headers);
-                        ResponseEntity<ResponseModel> attendanceResponse = restTemplate.exchange(ATTENDANCE_URL + "findAttendanceByStudentSubjectId", HttpMethod.POST, attendanceRequest, ResponseModel.class);
-                        String jsonAttendance = new ObjectMapper().writeValueAsString(attendanceResponse.getBody().getData());
-                        List<Attendance> listAttendance = new ObjectMapper().readValue(jsonAttendance, new TypeReference<List<Attendance>>() {
-                        });
-                        for (Attendance countAttendance : listAttendance) {
-                            if (countAttendance.getStatus() == 0) {
-                                countAbsent.add(countAttendance.getStatus());
+                            // Lấy Attendance
+                            MultiValueMap<String, Integer> attendanceContent = new LinkedMultiValueMap<>();
+                            attendanceContent.add("student_subject_id", attendance.getStudentSubjectId());
+                            HttpEntity<MultiValueMap<String, Integer>> attendanceRequest = new HttpEntity<>(attendanceContent, headers);
+                            ResponseEntity<ResponseModel> attendanceResponse = restTemplate.exchange(ATTENDANCE_URL + "findAttendanceByStudentSubjectId", HttpMethod.POST, attendanceRequest, ResponseModel.class);
+                            String jsonAttendance = new ObjectMapper().writeValueAsString(attendanceResponse.getBody().getData());
+                            List<Attendance> listAttendance = new ObjectMapper().readValue(jsonAttendance, new TypeReference<List<Attendance>>() {
+                            });
+                            for (Attendance countAttendance : listAttendance) {
+                                if (countAttendance.getStatus() == 0) {
+                                    countAbsent.add(countAttendance.getStatus());
+                                }
                             }
+                            double absentCount = countAbsent.size();
+                            double countSlot = subject.getSlot();
+                            int sumSlot = (int) Math.floor((absentCount / countSlot) * 100);
+                            studentSubject.setStatus(String.valueOf(sumSlot));
+                            String jsonStudentSubject = new ObjectMapper().writeValueAsString(studentSubject);
+                            StudentSubject subjectStudent = new ObjectMapper().readValue(jsonStudentSubject, StudentSubject.class);
+                            listStudentSubject.add(subjectStudent);
+                            countAbsent.clear();
                         }
-                        double absentCount = countAbsent.size();
-                        double countSlot = subject.getSlot();
-                        int sumSlot = (int) Math.floor((absentCount / countSlot) * 100);
-                        studentSubject.setStatus(String.valueOf(sumSlot));
-                        String jsonStudentSubject = new ObjectMapper().writeValueAsString(studentSubject);
                         MultiValueMap<String, String> studentSubjectContent = new LinkedMultiValueMap<>();
+                        String jsonStudentSubject = new ObjectMapper().writeValueAsString(listStudentSubject);
                         studentSubjectContent.add("student_subject", jsonStudentSubject);
                         HttpEntity<MultiValueMap<String, String>> studentSubjectRequest = new HttpEntity<>(studentSubjectContent, headers);
-                        restTemplate.exchange(STUDENT_SUBJECT_URL + "update", HttpMethod.POST, studentSubjectRequest, ResponseModel.class);
+                        restTemplate.exchange(STUDENT_SUBJECT_URL + "updateAll", HttpMethod.POST, studentSubjectRequest, ResponseModel.class);
+
+                        // Lấy profile
+                        Account account = (Account) auth.getPrincipal();
+                        HttpEntity<String> profileRequest = new HttpEntity<>(headers);
+                        ResponseEntity<Profile> responseProfile = restTemplate.exchange(PROFILE_URL + "get/" + account.getId(), HttpMethod.GET, request, Profile.class);
+                        // Lấy teacher
+                        ResponseEntity<Teacher> responseTeacher = restTemplate.exchange(TEACHER_URL + "getByProfile/" + responseProfile.getBody().getId(), HttpMethod.GET, request, Teacher.class);
+                        AttendanceTracking attendanceTracking = new AttendanceTracking();
+                        attendanceTracking.setTeacherId(responseTeacher.getBody().getId());
+                        attendanceTracking.setDate(date);
+
+                        MultiValueMap<String,String> trackingContent = new LinkedMultiValueMap<>();
+                        trackingContent.add("attendance_tracking",new ObjectMapper().writeValueAsString(attendanceTracking));
+                        HttpEntity<MultiValueMap<String,String>> trackingRequest = new HttpEntity<>(trackingContent,headers);
+                        restTemplate.exchange(ATTENDANCE_TRACKING_URL + "saveTracking",HttpMethod.POST,trackingRequest,ResponseModel.class);
+
+                        return responseAttendance.getBody().getData();
+                    } else {
+                        return new ResponseEntity<String>("Attendance fail", HttpStatus.BAD_REQUEST);
                     }
-                    return responseAttendance.getBody().getData();
                 } else {
                     return new ResponseEntity<String>("Slot " + slot + " this class had attendance", HttpStatus.BAD_REQUEST);
                 }
@@ -364,6 +377,7 @@ public class AttendanceController {
             return new ResponseEntity<String>("Attendance fail", HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PostMapping("/findAttendanceByDate")
     @ResponseBody
@@ -472,6 +486,7 @@ public class AttendanceController {
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
                 listAttendance = new ArrayList<>();
+                countAbsent = new ArrayList<>();
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", "Bearer " + _token);
                 // Lấy schedule
@@ -518,7 +533,6 @@ public class AttendanceController {
                 ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "saveAll", HttpMethod.POST, requestAttendance, ResponseModel.class);
 
                 for (Attendance attendance : listAttendance) {
-                    countAbsent = new ArrayList<>();
                     // Lấy student subject
                     HttpEntity<String> requestStudentSubject = new HttpEntity<>(headers);
                     ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getById/" + attendance.getStudentSubjectId(), HttpMethod.GET, requestStudentSubject, ResponseModel.class);
@@ -549,11 +563,16 @@ public class AttendanceController {
                     int sumSlot = (int) Math.floor((absentCount / countSlot) * 100);
                     studentSubject.setStatus(String.valueOf(sumSlot));
                     String jsonStudentSubject = new ObjectMapper().writeValueAsString(studentSubject);
-                    MultiValueMap<String, String> studentSubjectContent = new LinkedMultiValueMap<>();
-                    studentSubjectContent.add("student_subject", jsonStudentSubject);
-                    HttpEntity<MultiValueMap<String, String>> studentSubjectRequest = new HttpEntity<>(studentSubjectContent, headers);
-                    restTemplate.exchange(STUDENT_SUBJECT_URL + "update", HttpMethod.POST, studentSubjectRequest, ResponseModel.class);
+                    StudentSubject subjectStudent = new ObjectMapper().readValue(jsonStudentSubject, StudentSubject.class);
+                    listStudentSubject.add(subjectStudent);
+                    countAbsent.clear();
                 }
+                MultiValueMap<String, String> studentSubjectContent = new LinkedMultiValueMap<>();
+                String jsonStudentSubject = new ObjectMapper().writeValueAsString(listStudentSubject);
+                studentSubjectContent.add("student_subject", jsonStudentSubject);
+                HttpEntity<MultiValueMap<String, String>> studentSubjectRequest = new HttpEntity<>(studentSubjectContent, headers);
+                restTemplate.exchange(STUDENT_SUBJECT_URL + "updateAll", HttpMethod.POST, studentSubjectRequest, ResponseModel.class);
+
                 return responseAttendance.getBody().getData();
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
@@ -563,4 +582,5 @@ public class AttendanceController {
             return new ResponseEntity<String>("Update fail", HttpStatus.BAD_REQUEST);
         }
     }
+
 }

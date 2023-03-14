@@ -2,7 +2,10 @@ package com.example.smsweb.client.teacher;
 
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
-import com.example.smsweb.models.*;
+import com.example.smsweb.models.Classses;
+import com.example.smsweb.models.News;
+import com.example.smsweb.models.Student;
+import com.example.smsweb.models.Subject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +18,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -31,45 +37,42 @@ public class HomeController {
     private final String SEMESTER_URL = "http://localhost:8080/api/semester/";
     private final String NEWS_URL = "http://localhost:8080/api/news/";
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
+    public RestTemplate restTemplate;
 
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
-    @GetMapping(value = {"/index", ""})
-    public String index(Model model) {
-//        try {
-//            JWTUtils.checkExpired(_token);
-//            RestTemplate restTemplate = new RestTemplate();
-//            HttpHeaders headers= new HttpHeaders();
-//            headers.set("Authorization","Bearer "+_token);
-//            HttpEntity<Object> request = new HttpEntity<>(headers);
-//            ResponseEntity<String> response = restTemplate.exchange(PROFILE_URL+"get/"+_accountId,HttpMethod.GET,request,String.class);
-//            Profile profile = new ObjectMapper().readValue(response.getBody(), new TypeReference<Profile>(){});
-//
-//            model.addAttribute("profile", profile);
-//            return "teacherDashboard/home";
-//        }catch (Exception ex){
-//            log.error(ex.getMessage());
-//            return "redirect:/teacherDashboard/logout";
-//        }
-        return "teacherDashboard/home";
+    @GetMapping("/index")
+    public String index(@CookieValue(name = "_token") String _token) {
+        try {
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                return "teacherDashboard/home";
+            } else {
+                return "redirect:/login";
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/students")
-    public String students(Model model,@CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
+    public String students(Model model, @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers= new HttpHeaders();
-            headers.set("Authorization","Bearer "+_token);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"list",HttpMethod.GET,request,String.class);
-            List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>(){});
-            model.addAttribute("students",listStudent.stream().sorted((s1,s2)->s2.getId().compareTo(s1.getId())).toList());
+            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL + "list", HttpMethod.GET, request, String.class);
+            List<Student> listStudent = new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Student>>() {
+            });
+            model.addAttribute("students", listStudent.stream().sorted((s1, s2) -> s2.getId().compareTo(s1.getId())).toList());
             return "teacherDashboard/student/student_index";
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.error(ex.getMessage());
             return "redirect:/teacherDashboard/logout";
         }
@@ -116,16 +119,17 @@ public class HomeController {
 
     @GetMapping("/news")
     public String news(Model model,
-                        @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
+                       @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<ResponseModel> response = restTemplate.getForEntity(NEWS_URL + "list", ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
-            List<News> newsList = new ObjectMapper().readValue(json, new TypeReference<List<News>>() {});
+            List<News> newsList = new ObjectMapper().readValue(json, new TypeReference<List<News>>() {
+            });
             model.addAttribute("news", newsList);
             return "teacherDashboard/news/new_index";
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.error(ex.getMessage());
             return "redirect:/teacherDashboard/logout";
         }

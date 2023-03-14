@@ -66,29 +66,6 @@ public class ApplicationController {
         }
     }
 
-    @PostMapping("/save_app")
-    @ResponseBody
-    public Object save_app(@CookieValue(name = "_token", defaultValue = "") String _token, @RequestBody Application application) {
-        try {
-            String isExpired = JWTUtils.isExpired(_token);
-            if (!isExpired.toLowerCase().equals("token expired")) {
-                restTemplate = new RestTemplate();
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", "Bearer " + _token);
-                MultiValueMap<String, Application> content = new LinkedMultiValueMap<>();
-                content.add("application", application);
-                HttpEntity<MultiValueMap<String, Application>> request = new HttpEntity<MultiValueMap<String, Application>>(content, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-                return response.getBody().getData();
-            } else {
-                return new ResponseEntity<String>(isExpired,HttpStatus.UNAUTHORIZED);
-            }
-        } catch (Exception e) {
-            log.error("Save Application: " + e.getMessage());
-            return new ResponseEntity<String>( "Create fail",HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @PostMapping("/update")
     @ResponseBody
     public Object update(@CookieValue(name = "_token", defaultValue = "") String _token, @RequestBody Application application) {

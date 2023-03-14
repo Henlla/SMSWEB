@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Application</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <section class="container">
+        <section class="row">
+            <h2>View Application</h2>
+            <section class="col-12">
+                <table class="table table-bordered table-hover" style="width: 100%;" id="listApplication"></table>
+            </section>
+        </section>
+    </section>
+</section>
+<th:block layout:fragment="optional">
+    <script src="/js/student/student_application.js"></script>
+</th:block>
+</body>
+</html>
