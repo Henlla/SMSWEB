@@ -502,36 +502,169 @@ var OnChangeWeek = ()=>{
                                 arrDate = i.date.split("-")
                                 formatDate = arrDate[2] + "/"+arrDate[1]
                                 $('.date_monday').html(formatDate)
+                                if(shift==="M"){
+                                    if(i.slot==1){
+                                        $('.r1_1').html(``)
+                                    }else{
+                                        $('.r2_1').html(``)
+                                    }
+                                }else if(shift==="A"){
+                                    if(i.slot==1){
+                                        $('.r3_1').html(``)
+                                    }else{
+                                        $('.r4_1').html(``)
+                                    }
+                                }else if(shift==="E"){
+                                    if(i.slot==1){
+                                        $('.r5_1').html(``)
+                                    }else{
+                                        $('.r6_1').html(``)
+                                    }
+                                }
                                 break;
                             case "2":
                                 arrDate = i.date.split("-")
                                 formatDate = arrDate[2] + "/"+arrDate[1]
                                 $('.date_tuesday').html(formatDate)
+                                if(shift==="M"){
+                                    if(i.slot==1){
+                                        $('.r1_2').html(` `)
+                                    }else{
+                                        $('.r2_2').html(` `)
+                                    }
+                                }else if(shift==="A"){
+                                    if(i.slot==1){
+                                        $('.r3_2').html(` `)
+                                    }else{
+                                        $('.r4_2').html(` `)
+                                    }
+                                }else if(shift==="E"){
+                                    if(i.slot==1){
+                                        $('.r5_2').html(` `)
+                                    }else{
+                                        $('.r6_2').html(` `)
+                                    }
+                                }
                                 break;
                             case "3":
                                 arrDate = i.date.split("-")
                                 formatDate = arrDate[2] + "/"+arrDate[1]
                                 $('.date_wednesday').html(formatDate)
+                                if(shift==="M"){
+                                    if(i.slot==1){
+                                        $('.r1_3').html(` `)
+                                    }else{
+                                        $('.r2_3').html(` `)
+                                    }
+                                }else if(shift==="A"){
+                                    if(i.slot==1){
+                                        $('.r3_3').html(` `)
+                                    }else{
+                                        $('.r4_3').html(` `)
+                                    }
+                                }else if(shift==="E"){
+                                    if(i.slot==1){
+                                        $('.r5_3').html(``)
+                                    }else{
+                                        $('.r6_3').html(` `)
+                                    }
+                                }
                                 break;
                             case "4":
                                 arrDate = i.date.split("-")
                                 formatDate = arrDate[2] + "/"+arrDate[1]
                                 $('.date_thursday').html(formatDate)
+                                if(shift==="M"){
+                                    if(i.slot==1){
+                                        $('.r1_4').html(` `)
+                                    }else{
+                                        $('.r2_4').html(` `)
+                                    }
+                                }else if(shift==="A"){
+                                    if(i.slot==1){
+                                        $('.r3_4').html(` `)
+                                    }else{
+                                        $('.r4_4').html(` `)
+                                    }
+                                }else if(shift==="E"){
+                                    if(i.slot==1){
+                                        $('.r5_4').html(``)
+                                    }else{
+                                        $('.r6_4').html(` `)
+                                    }
+                                }
                                 break;
                             case "5":
                                 arrDate = i.date.split("-")
                                 formatDate = arrDate[2] + "/"+arrDate[1]
                                 $('.date_friday').html(formatDate)
+                                if(shift==="M"){
+                                    if(i.slot==1){
+                                        $('.r1_5').html(` }</div>`)
+                                    }else{
+                                        $('.r2_5').html(` `)
+                                    }
+                                }else if(shift==="A"){
+                                    if(i.slot==1){
+                                        $('.r3_5').html(` `)
+                                    }else{
+                                        $('.r4_5').html(` `)
+                                    }
+                                }else if(shift==="E"){
+                                    if(i.slot==1){
+                                        $('.r5_5').html(` `)
+                                    }else{
+                                        $('.r6_5').html(` `)
+                                    }
+                                }
                                 break;
                             case "6":
                                 arrDate = i.date.split("-")
                                 formatDate = arrDate[2] + "/"+arrDate[1]
                                 $('.date_saturday').html(formatDate)
+                                if(shift==="M"){
+                                    if(i.slot==1){
+                                        $('.r1_6').html(` `)
+                                    }else{
+                                        $('.r2_6').html(` `)
+                                    }
+                                }else if(shift==="A"){
+                                    if(i.slot==1){
+                                        $('.r3_6').html(` `)
+                                    }else{
+                                        $('.r4_6').html(``)
+                                    }
+                                }else if(shift==="E"){
+                                    if(i.slot==1){
+                                        $('.r5_6').html(` `)
+                                    }else{
+                                        $('.r6_6').html(` `)
+                                    }
+                                }
                                 break;
                             case "7":
                                 arrDate = i.date.split("-")
                                 formatDate = arrDate[2] + "/"+arrDate[1]
                                 $('.date_sunday').html(formatDate)
+                                if(shift==="M"){
+                                    if(i.slot==1){
+                                        $('.r1_7').html(` `)
+                                    }else{
+                                        $('.r2_7').html(``)
+                                    }
+                                }else if(shift==="A"){
+                                    if(i.slot==1){
+                                        $('.r3_7').html(` `)
+                                    }else{
+                                        $('.r4_7').html(` `)
+                                    }
+                                }else if(shift==="E"){
+                                    if(i.slot==1){
+                                        $('.r5_7').html(` `)
+                                    }else{
+                                        $('.r6_7').html(` `)
+                                    }
+                                }
                                 break;
                         }
                     }
