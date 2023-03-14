@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -110,8 +109,8 @@ public class StudentClientController {
             LocalDate now = LocalDate.now(); // 2015-11-23
             LocalDate firstDay = now.with(firstDayOfYear()); // 2015-01-01
             LocalDate lastDay = now.with(lastDayOfYear()); // 2015-12-31
-            int weekOfFirstDay = firstDay.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-            int weekOfLastDay = lastDay.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+            int weekOfFirstDay = firstDay.get(WeekFields.of(Locale.getDefault()).weekOfYear());
+            int weekOfLastDay = lastDay.get(WeekFields.of(Locale.getDefault()).weekOfYear());
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM");
             List<WeekOfYear> weekOfYearList = new ArrayList<>();
             for (int i = weekOfFirstDay; i <= weekOfLastDay; i++) {

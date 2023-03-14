@@ -340,7 +340,7 @@ const OnSubmitAttendance = () => {
                     "slot": classId[1]
                 },
                 success: (data) => {
-                    toastr.success("Điểm danh thành công");
+                    toastr.success("Take attendance success");
                     setTimeout(() => {
                         location.reload();
                     }, 2000);
@@ -348,10 +348,10 @@ const OnSubmitAttendance = () => {
                 error: (data) => {
                     if (data.responseText.toLowerCase() === "token expired") {
                         Swal.fire({
-                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            title: 'End of login session, please login again',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Ok',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = "/login";
