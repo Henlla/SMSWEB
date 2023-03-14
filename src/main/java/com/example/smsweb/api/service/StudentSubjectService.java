@@ -77,6 +77,18 @@ public class StudentSubjectService {
     }
 
     public void update(StudentSubject studentSubject) {
-        repository.save(studentSubject);
+        try {
+            repository.save(studentSubject);
+        }catch (Exception e){
+            throw new ErrorHandler("Fail");
+        }
+    }
+
+    public void updateAll(List<StudentSubject> listStudentSubject) {
+        try {
+            repository.saveAll(listStudentSubject);
+        }catch (Exception e){
+            throw new ErrorHandler("Fail");
+        }
     }
 }

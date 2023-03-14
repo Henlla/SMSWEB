@@ -17,11 +17,7 @@
         <section class="content-body">
             <section class="container-fluid">
                 <section class="row mb-3">
-                    <div class="col-12">
-                        <button data-toggle="modal" data-target="#app-modal" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus pr-2"></i>Create
-                        </button>
-                    </div>
+                    <div class="col-12"></div>
                 </section>
                 <section class="row">
                     <section class="col-12">
@@ -71,6 +67,7 @@
             </section>
         </section>
     </section>
+
     <section class="modal fade" id="show-document" data-backdrop="static"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
         <section class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -92,51 +89,7 @@
             </section>
         </section>
     </section>
-    <section class="modal fade" id="app-modal" data-backdrop="static"
-             aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <section class="modal-dialog">
-            <section class="modal-content">
-                <section class="modal-header">
-                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Create new Application</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <i class="fas fa-times fa-sm"></i>
-                    </button>
-                </section>
-                <section class="modal-body">
-                    <form id="appForm">
-                        <section class="row mb-3">
-                            <div class="col-12 mb-3">
-                                <label class="font-weight-normal f-13">Application Type
-                                    <span class="text-danger">*</span></label>
-                                <select class="form-control form-control-sm select2bs4" name="appType" onchange="OnChangeAppType()" id="appType">
-                                    <option value="">----Choose template----</option>
-                                    <option th:each="item:${listAppType}" th:value="${item.id}">[[${item.name}]]
-                                    </option>
-                                </select>
-                                <a href="" class="d-none f-13" download id="appTypeDownload">Download</a>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="font-weight-normal f-13">Note
-                                    <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="note" name="note" placeholder="Enter note..." style="resize: none" cols="30" rows="3"></textarea>
-                            </div>
-                            <div class="form-group form-control-sm col-12 mb-5">
-                                <label class="font-weight-normal f-13">Choose file
-                                    <span class="text-danger">*</span></label>
-                                <input type="file" class="form-control-file border mb-2" onchange="OnValidate(this)" id="app-type-file">
-                                <span class="text-danger mb-3">Please download file and fill all information</span>
-                            </div>
-                        </section>
-                    </form>
-                </section>
-                <section class="modal-footer">
-                    <button type="button" onclick="OnCreateApplication()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Send
-                    </button>
-                </section>
-            </section>
-        </section>
-    </section>
+
     <section class="modal fade" id="app-edit-modal" data-backdrop="static"
              aria-labelledby="editModalLabel" aria-hidden="true">
         <section class="modal-dialog modal-lg">
