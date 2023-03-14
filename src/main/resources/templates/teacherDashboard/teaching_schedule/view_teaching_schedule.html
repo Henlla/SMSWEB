@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{teacherDashboard/index}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Class</title>
+    <link rel="stylesheet" href="/css/custom.css" />
+    <link rel="stylesheet" href="/css/teacher/teaching_schedule.css" />
+  </head>
+  <body>
+    <div layout:fragment="content" class="content container-fluid">
+      <div class="page-header">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="page-sub-header">
+              <h3 class="page-title">
+                View teaching schedule for [[${classses.classCode}]]
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card card-table comman-shadow">
+            <div class="card-body">
+              <div class="row table-responsive">
+                <div class="col-12">
+                  <section class="col-12 cbx_week">
+                    <input
+                      type="hidden"
+                      th:value="${scheduleList}"
+                      id="scheduleList"
+                    />
+                    <input
+                      type="hidden"
+                      th:value="${classses.classCode}"
+                      id="classCode"
+                    />
+                    <input
+                    type="hidden"
+                    th:value="${classses.shift}"
+                    id="shift"
+                  />
+                    <label for="week">Select week</label>
+                    <select
+                      id="week"
+                      class="form-control"
+                      style="width: 100%"
+                      onchange="OnChangeWeek()"
+                    >
+                      <th:block th:each="week:${listWeek}">
+                        <th:block th:if="${currenWeek == week.week}">
+                          <option
+                            th:value="${week.week}"
+                            th:text="${week.date}"
+                            selected
+                          ></option>
+                        </th:block>
+                        <th:block th:if="${currenWeek != week.week}">
+                          <option
+                            th:value="${week.week}"
+                            th:text="${week.date}"
+                          ></option>
+                        </th:block>
+                      </th:block>
+                    </select>
+                  </section>
+                </div>
+                <div class="col-12" style="margin-top: 50px">
+                  <div class="timetable" style="width: 100%; height: 500px">
+                    <div class="week-names" style="background-color: #6b90da">
+                      <div class="dayOfWeek">
+                        monday <span class="date_monday"></span>
+                      </div>
+                      <div class="dayOfWeek">
+                        tuesday <span class="date_tuesday"></span>
+                      </div>
+                      <div class="dayOfWeek">
+                        wednesday <span class="date_wednesday"></span>
+                      </div>
+                      <div class="dayOfWeek">
+                        thursday <span class="date_thursday"></span>
+                      </div>
+                      <div class="dayOfWeek">
+                        friday <span class="date_friday"></span>
+                      </div>
+                      <div class="dayOfWeek">
+                        saturday <span class="date_saturday"></span>
+                      </div>
+                      <div class="dayOfWeek">
+                        sunday <span class="date_sunday"></span>
+                      </div>
+                    </div>
+                    <div
+                      class="time-interval"
+                      style="background-color: lightgray"
+                    >
+                      <div>7:30 - 9:30</div>
+                      <div>9:30 - 11:30</div>
+                      <div>13:30 - 15:30</div>
+                      <div>15:30 - 17:30</div>
+                      <div>17:30 - 19:30</div>
+                      <div>19:30 - 21:30</div>
+                    </div>
+                    <div class="content">
+                      <div class="r1_1"></div>
+                      <div class="r1_2"></div>
+                      <div class="r1_3"></div>
+                      <div class="r1_4"></div>
+                      <div class="r1_5"></div>
+                      <div class="weekend r1_6"></div>
+                      <div class="weekend r1_7"></div>
+                      <div class="r2_1"></div>
+                      <div class="r2_2"></div>
+                      <div class="r2_3"></div>
+                      <div class="r2_4"></div>
+                      <div class="r2_5"></div>
+                      <div class="weekend r2_6"></div>
+                      <div class="weekend r2_7"></div>
+                      <div class="r3_1"></div>
+                      <div class="r3_2"></div>
+                      <div class="r3_3"></div>
+                      <div class="r3_4"></div>
+                      <div class="r3_5"></div>
+                      <div class="weekend r3_6"></div>
+                      <div class="weekend r3_7"></div>
+                      <div class="r4_1"></div>
+                      <div class="r4_2"></div>
+                      <div class="r4_3"></div>
+                      <div class="r4_4"></div>
+                      <div class="r4_5"></div>
+                      <div class="weekend r4_6"></div>
+                      <div class="weekend r4_7"></div>
+                      <div class="r5_1"></div>
+                      <div class="r5_2"></div>
+                      <div class="r5_3"></div>
+                      <div class="r5_4"></div>
+                      <div class="r5_5"></div>
+                      <div class="weekend r5_6"></div>
+                      <div class="weekend r5_7"></div>
+                      <div class="r6_1"></div>
+                      <div class="r6_2"></div>
+                      <div class="r6_3"></div>
+                      <div class="r6_4"></div>
+                      <div class="r6_5"></div>
+                      <div class="weekend r6_6"></div>
+                      <div class="weekend r6_7"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <th:block layout:fragment="optional">
+      <script src="/teacherDashboard/assets/js/customJs/teaching_schedule.js"></script>
+    </th:block>
+  </body>
+</html>
