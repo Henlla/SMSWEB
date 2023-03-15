@@ -448,4 +448,74 @@ public class StudentClientController {
         }
     }
 
+    @GetMapping("/profile")
+    public String profile(@CookieValue(name = "_token", defaultValue = "") String _token, Model model,
+            Authentication auth) throws JsonProcessingException {
+        String isExpired = JWTUtils.isExpired(_token);
+        if (!isExpired.toLowerCase().equals("token expired")) {
+            HttpHeaders headers = new HttpHeaders();
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            Account studentAccount = (Account) auth.getPrincipal();
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            ResponseEntity<Profile> profileResponse = restTemplate
+                    .exchange(PROFILE_URL + "get/" + studentAccount.getId(), HttpMethod.GET, request, Profile.class);
+
+            ResponseEntity<Student> studentResponse = restTemplate.exchange(
+                    STUDENT_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET, request,
+                    Student.class);
+
+            ResponseEntity<ResponseModel> studentClassResponse = restTemplate.exchange(
+                    STUDENT_CLASS_URL + "getStudent/" + studentResponse.getBody().getId(), HttpMethod.GET, request,
+                    ResponseModel.class);
+            String jsonStudentClass = objectMapper.writeValueAsString(studentClassResponse.getBody().getData());
+            List<StudentClass> studentClassList = objectMapper.readValue(jsonStudentClass,
+                    new TypeReference<List<StudentClass>>() {
+                    });
+            List<Classses> listClass = new ArrayList<>();
+
+            for (StudentClass studentClass : studentClassList) {
+                ResponseEntity<ResponseModel> classResponse = restTemplate.exchange(
+                        CLASS_URL + "getClass/" + studentClass.getClassId(), HttpMethod.GET, request,
+                        ResponseModel.class);
+                String jsonClass = objectMapper.writeValueAsString(classResponse.getBody().getData());
+                Classses classses = objectMapper.readValue(jsonClass, Classses.class);
+                listClass.add(classses);
+            }
+            model.addAttribute("listClass", listClass);
+            model.addAttribute("account", studentAccount);
+            model.addAttribute("student", studentResponse.getBody());
+            return "student/profile";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/change_password/{accountId}")
+    @ResponseBody
+    public Object change_password(@CookieValue(name = "_token", defaultValue = "") String _token,
+            @RequestParam("oldPass") String oldPass,
+             @RequestParam("newPass") String newPass,
+            @PathVariable("accountId")Integer accountId) {
+        try {
+            JWTUtils.checkExpired(_token);
+            HttpHeaders headers = new HttpHeaders();
+          RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+            params.add("password", oldPass);
+            params.add("newPassword", newPass);
+            HttpEntity<MultiValueMap<String, Object>> request=  new HttpEntity<>(params,headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(ACCOUNT_URL+"changePassword/"+accountId, HttpMethod.PUT,request,ResponseModel.class);
+            return "success";
+        } catch (HttpClientErrorException ex) {
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return "error";
+            }
+        }
+    }
 }

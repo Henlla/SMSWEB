@@ -23,7 +23,14 @@ var OnCreateSchedule = (classId, majorId, shift) => {
                     `Schedule for semester ${semester} already exist !`,
                     "error"
                 )
-            }else{
+            }else if(res==="error date"){
+                Swal.fire(
+                    "", 
+                    `The start date must be greater than the date of the previous term's schedule !`,
+                    "error"
+                )    
+            }
+            else{
                 Swal.fire(
                 "",
                 `Create schedule for semester ${semester} success !`,
