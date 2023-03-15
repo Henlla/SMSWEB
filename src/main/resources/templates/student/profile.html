@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Student profile</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<section layout:fragment="content">
+    <section class="container">
+        <section class="content-header">
+            <h5 class="m-0">View Student Profile</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row mb-3">
+                    <div class="col-12">
+                    </div>
+                </section>
+                <section class="row">
+                    <section class="col-12">
+                        <img th:src="${student.studentByProfile.getAvartarUrl()}" style="height: 140px;width: 120px;" alt=""/>
+                        <button
+                        type="button"
+                        id="btn_changePassword"
+                        class="btn btn-primary btn-sm"
+                        style="margin-top: 100px;"
+                      >
+                        Change password
+                      </button>
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr class="text-center">
+                                <th colspan="2"><b>Infomation student</b></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Full Name</td>
+                                    <td th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Student RollNumber</td>
+                                    <td th:text="${student.studentCard}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Gender</td>
+                                    <td th:text="${student.studentByProfile.sex}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Date of birth</td>
+                                    <td th:text="${student.studentByProfile.dob}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Identity Card</td>
+                                    <td th:text="${student.studentByProfile.identityCard}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td th:text="${student.studentByProfile.email}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Phone</td>
+                                    <td th:text="${student.studentByProfile.phone}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Address</td>
+                                    <td th:text="${student.studentByProfile.address+' , '+student.studentByProfile.wardByWardId.name+' , '+student.studentByProfile.districtByDistrictId.name+' , '+student.studentByProfile.profileProvince.name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Class current</td>
+                                   <td>
+                                        <th:block th:if="${not #lists.isEmpty(listClass)}">
+                                            <th:block th:each="classes:${listClass}">
+                                                <span th:text="${classes.classCode+' '}"></span>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:unless="${not #lists.isEmpty(listClass)}">
+                                            <th:block>
+                                                <span>None</span>
+                                            </th:block>
+                                        </th:block>
+                                   </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div
+                class="modal fade"
+                id="change_password"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">
+                        Change password
+                      </h5>
+                    </div>
+                    <div class="modal-body">
+                      <form id="form_change_password">
+                        <div class="container">
+                            <input type="hidden" id="accountId" th:value="${account.id}">
+                          <div class="form-group">
+                            <label for="oldPass">Old password :</label>
+                            <input
+                              type="password"
+                              name="oldPass"
+                              id="oldPass"
+                              class="form-control"
+                              placeholder=""
+                              aria-describedby="oldPass"
+                            />
+                            <small id="mess_oldPass" class="text-muted"
+                              ></small
+                            >
+                          </div>
+                          <div class="form-group">
+                            <label for="newPass">New password</label>
+                            <input
+                              type="password"
+                              name="newPass"
+                              id="newPass"
+                              class="form-control"
+                              placeholder=""
+                              aria-describedby="newPass"
+                            />
+                            <small id="newPass" class="text-muted"
+                              ></small
+                            >
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button
+                            type="button"
+                            class="btn btn-danger btn-sm"
+                            data-dismiss="modal"
+                          >
+                            <i class="fas fa-times"></i> Close
+                          </button>
+                          <button
+                            type="submit"
+                            id="submitChange"
+                            class="btn btn-success btn-sm"
+                          >
+                            <i class="fas fa-times"></i> Change
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+</section>
+<th:block layout:fragment="optional">
+    <script src="/js/student/profile.js"></script>
+</th:block>
+</body>
+</html>
