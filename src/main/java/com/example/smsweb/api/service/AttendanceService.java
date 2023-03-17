@@ -16,6 +16,8 @@ import java.util.List;
 public class AttendanceService implements IAttendance {
     @Autowired
     private AttendanceRepository attendanceDao;
+    List<Attendance> listAttendance;
+    Attendance attendance;
 
     @Override
     public void save(Attendance attendance) {
@@ -73,14 +75,14 @@ public class AttendanceService implements IAttendance {
     }
 
     @Override
-    public List<Attendance> findAttendanceByDateAndSlot(String date, String slot) {
+    public List<Attendance> findAttendanceByDateAndSlot(String date, Integer slot) {
         return attendanceDao.findAttendancesByDateAndSlot(date, slot).orElseThrow(() -> new ErrorHandler("Don't find any records"));
     }
 
     @Override
     public Attendance findAttendanceByDateSlotStudentSubject(String date, String slot, String student_subject) {
         try {
-            Attendance attendance = new Attendance();
+            attendance = new Attendance();
             attendance = attendanceDao.findAttendanceByDateAndSlotAndStudentSubjectId(date, Integer.valueOf(slot), Integer.valueOf(student_subject));
             if (attendance != null) {
                 return attendance;
@@ -106,12 +108,42 @@ public class AttendanceService implements IAttendance {
     @Override
     public List<Attendance> findAttendancesByDateAndSlotAndStudentSubjectId(String date, Integer slot, Integer studentSubjectId) {
         try {
-            List<Attendance> listAttendance = new ArrayList<>();
-            listAttendance = attendanceDao.findAttendancesByDateAndSlotAndStudentSubjectId(date, slot,studentSubjectId);
+            listAttendance = new ArrayList<>();
+            listAttendance = attendanceDao.findAttendancesByDateAndSlotAndStudentSubjectId(date, slot, studentSubjectId);
             if (listAttendance.size() == 0) {
                 return null;
             } else {
                 return listAttendance;
+            }
+        } catch (Exception e) {
+            throw new ErrorHandler("Don't find any records");
+        }
+    }
+
+    @Override
+    public List<Attendance> findAttendancesByDateAndSlotAndStudentSubjectIdAndShift(String date, Integer slot, Integer studentSubjectId, String shift) {
+        try {
+            listAttendance = new ArrayList<>();
+            listAttendance = attendanceDao.findAttendancesByDateAndSlotAndStudentSubjectIdAndShift(date, slot, studentSubjectId, shift);
+            if (listAttendance.isEmpty()) {
+                return null;
+            } else {
+                return listAttendance;
+            }
+        } catch (Exception e) {
+            throw new ErrorHandler("Don't find any records");
+        }
+    }
+
+    @Override
+    public Attendance findAttendanceByDateAndSlotAndStudentSubjectIdAndShift(String date, Integer slot, Integer studentSubjectId, String shift) {
+        try {
+            attendance = new Attendance();
+            attendance = attendanceDao.findAttendanceByDateAndSlotAndStudentSubjectIdAndShift(date, slot, studentSubjectId, shift);
+            if (attendance == null) {
+                return null;
+            } else {
+                return attendance;
             }
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");

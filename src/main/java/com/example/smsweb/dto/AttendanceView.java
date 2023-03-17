@@ -15,4 +15,6 @@ public class AttendanceView {
     private String date;
     private Integer isAttendance;
     private Integer slot;
+    private String shift;
+    private Integer onTime;
 }

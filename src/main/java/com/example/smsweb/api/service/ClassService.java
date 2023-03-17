@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClassService implements IClass {
@@ -56,13 +57,18 @@ public class ClassService implements IClass {
     }
 
     @Override
-    public Classses findClassByTeacherIdAndScheduleId(String teacherId, String scheduleId) {
-        return repository.findClasssesByTeacherIdAndId(teacherId,scheduleId).orElseThrow(()->new ErrorHandler("Không tìm thấy class"));
+    public Classses findClassByTeacherIdAndScheduleId(Integer teacherId, Integer scheduleId) {
+        Optional<Classses> classsesOption = repository.findClasssesByTeacherIdAndId(teacherId, scheduleId);
+        if (classsesOption.isPresent()) {
+            return classsesOption.get();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public List<Classses> findClassByMajorId(Integer majorId) {
-        return repository.findAllByMajorId(majorId).orElseThrow(()->new ErrorHandler("Cannot find class with majorId = "+majorId));
+        return repository.findAllByMajorId(majorId).orElseThrow(() -> new ErrorHandler("Cannot find class with majorId = " + majorId));
     }
 
 
