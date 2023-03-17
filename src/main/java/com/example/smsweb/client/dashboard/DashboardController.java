@@ -1,6 +1,8 @@
 package com.example.smsweb.client.dashboard;
 
 import com.example.smsweb.jwt.JWTUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,5 +25,11 @@ public class DashboardController {
             log.error(ex.getMessage());
             return "redirect:/dashboard/logout";
         }
+    }
+
+    @GetMapping("/dashboard/logout")
+    public String logout(HttpServletRequest request) throws ServletException {
+        request.logout();
+        return "redirect:/dashboard/login";
     }
 }

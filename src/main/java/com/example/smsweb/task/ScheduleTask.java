@@ -29,7 +29,6 @@ public class ScheduleTask {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         LocalDate currenDate = LocalDate.now();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         String devices = restTemplate.getForObject(URL_DEVICE+"getAll", String.class);
         List<Devices> devicesList = new ObjectMapper().readValue(devices, new TypeReference<List<Devices>>() {
         });
