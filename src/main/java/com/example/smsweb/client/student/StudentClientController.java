@@ -43,7 +43,7 @@ public class StudentClientController {
     private final String NEWS_URL = "http://localhost:8080/api/news/";
 
     @GetMapping("/index")
-    public String index(@CookieValue(name = "_token", defaultValue = "") String _token,Model model) throws JsonProcessingException {
+    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             RestTemplate restTemplate = new RestTemplate();
@@ -53,13 +53,13 @@ public class StudentClientController {
             });
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
             model.addAttribute("listNews", newsList
-                                                            .stream()
-                                                            .filter(news->news.getIsActive().equals(true))
-                                                            .map(news->{
-                                                                news.setPost_date(LocalDate.parse(news.getPost_date()).format(dateTimeFormatter).toString());
-                                                                return news;
-                                                            })
-                                                            .toList());
+                    .stream()
+                    .filter(news -> news.getIsActive().equals(true))
+                    .map(news -> {
+                        news.setPost_date(LocalDate.parse(news.getPost_date()).format(dateTimeFormatter).toString());
+                        return news;
+                    })
+                    .toList());
             return "student/index";
         } else {
             return "redirect:/login";
@@ -68,7 +68,7 @@ public class StudentClientController {
 
     @GetMapping("/viewSchedule")
     public String viewSchedule(@CookieValue(name = "_token", defaultValue = "") String _token, Model model,
-            Authentication auth) throws JsonProcessingException {
+                               Authentication auth) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             HttpHeaders headers = new HttpHeaders();
@@ -110,8 +110,8 @@ public class StudentClientController {
 
     @GetMapping("/viewSchedule/{classCode}")
     public String viewSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-            Model model,
-            @PathVariable("classCode") String classCode) throws JsonProcessingException {
+                               Model model,
+                               @PathVariable("classCode") String classCode) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             HttpHeaders headers = new HttpHeaders();
@@ -168,8 +168,8 @@ public class StudentClientController {
     @PostMapping("/getScheduleDetails")
     @ResponseBody
     public Object getScheduleDetails(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("classId") Integer classId,
-            @RequestParam("semester") String semester) throws JsonProcessingException {
+                                     @RequestParam("classId") Integer classId,
+                                     @RequestParam("semester") String semester) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -316,9 +316,9 @@ public class StudentClientController {
     @PostMapping("/viewScheduleByWeek")
     @ResponseBody
     public Object viewScheduleByWeek(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("classId") Integer classId,
-            @RequestParam("semester") String semester,
-            @RequestParam("week") Integer week) throws JsonProcessingException {
+                                     @RequestParam("classId") Integer classId,
+                                     @RequestParam("semester") String semester,
+                                     @RequestParam("week") Integer week) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -470,7 +470,7 @@ public class StudentClientController {
 
     @GetMapping("/profile")
     public String profile(@CookieValue(name = "_token", defaultValue = "") String _token, Model model,
-            Authentication auth) throws JsonProcessingException {
+                          Authentication auth) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             HttpHeaders headers = new HttpHeaders();
@@ -515,20 +515,20 @@ public class StudentClientController {
     @PostMapping("/change_password/{accountId}")
     @ResponseBody
     public Object change_password(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("oldPass") String oldPass,
-             @RequestParam("newPass") String newPass,
-            @PathVariable("accountId")Integer accountId) {
+                                  @RequestParam("oldPass") String oldPass,
+                                  @RequestParam("newPass") String newPass,
+                                  @PathVariable("accountId") Integer accountId) {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
-          RestTemplate restTemplate = new RestTemplate();
+            RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
             headers.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             params.add("password", oldPass);
             params.add("newPassword", newPass);
-            HttpEntity<MultiValueMap<String, Object>> request=  new HttpEntity<>(params,headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(ACCOUNT_URL+"changePassword/"+accountId, HttpMethod.PUT,request,ResponseModel.class);
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(ACCOUNT_URL + "changePassword/" + accountId, HttpMethod.PUT, request, ResponseModel.class);
             return "success";
         } catch (HttpClientErrorException ex) {
             if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -541,7 +541,7 @@ public class StudentClientController {
 
     @GetMapping("/newsDetails/{newId}")
     public String newsDetails(@CookieValue(name = "_token", defaultValue = "") String _token,
-        @PathVariable("newId")Integer newId,Model model){
+                              @PathVariable("newId") Integer newId, Model model) {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
@@ -551,6 +551,6 @@ public class StudentClientController {
         } catch (Exception ex) {
             return "redirect:/login";
         }
-        
+
     }
 }
