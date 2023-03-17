@@ -4,19 +4,73 @@
       layout:decorate="~{index}">
 <head>
     <meta charset="UTF-8">
-    <title>Student</title>
+    <title>HKT - ACADEMY Portal</title>
+    <link rel="stylesheet" href="/css/student/header.css">
+    <link rel="stylesheet" href="/css/student/index.css">
 </head>
 <body>
 <section layout:fragment="content">
     <section class="container">
-        <h2 class="font-weight-bold">ACADEMY SYSTEM</h2>
-        <ul>
-            <li><a href="/student/attendance/index">Attendance</a></li>
-            <li><a href="/student/application/sendIndex">Send application</a></li>
-            <li><a href="/student/application/index">View application</a></li>
-            <li><a href="/student/viewSchedule">View schedule</a></li>
-            <li><a href="/student/profile">View student profile</a></li>
-        </ul>
+        <div class="row">
+            <div class="col-md-8" style="display: flex;justify-content: center;align-items: center;">
+                <h2 class="font-weight-bold">HKT - ACADEMY Portal</h2>
+            </div>
+            <div class="col-md-4">
+                <h2 class="font-weight-bold">
+                    <img src="/teacherDashboard/assets/img/logo.png" alt="Logo" width="200" height="100">
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 bread-crumb">
+                <div class="navigation">
+                    <a th:href="@{'/student/index'}">Home</a>
+                </div>
+                <div class="divUser">
+                    <span class="label label-success" th:text="${#authentication.getPrincipal().username}"></span>
+                     | 
+                    <a class="label label-success" th:href="${'/logout'}">Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="row">
+                    <div class="news box">
+                        <h3 class="blueTitle" style="width: 100%;float:left;display: flex;justify-content: center;">News</h3>
+                        <div class="listBoxWrapper">
+                            <div class="listNews">
+                                <ul>
+                                    <th:block th:each="news : ${listNews}">
+                                        <li>
+                                            <em class="date" th:text="${news.post_date+' - '}"></em>
+                                            <a class="new" th:href="${'/student/newsDetails/'+news.id}" th:text="${news.sub_title}"></a>
+                                        </li>
+                                    </th:block>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="box" style="float:right;width: 90%;">
+                        <h3 class="orangeTitle">Academic Information</h3>
+                        <div class="listBoxWrapper">
+                            <ul>
+                                <li><a href="/student/attendance/index">Attendance </a>(Xem điểm danh)</li>
+                                <li><a href="/student/application/sendIndex">Send application </a>(Gửi đơn)</li>
+                                <li><a href="/student/application/index">View application </a>(Xem đơn gửi)</li>
+                                <li><a href="/student/viewSchedule">View schedule </a>(Xem thời khóa biểu)</li>
+                                <li><a href="/student/profile">View student profile </a>(Xem thông tin cá nhân)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 </section>
 <th:block layout:fragment="optional">

@@ -40,10 +40,30 @@ public class StudentClientController {
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
     private final String SCHEDULE_DETAIL_URL = "http://localhost:8080/api/schedules_detail/";
+    private final String NEWS_URL = "http://localhost:8080/api/news/";
 
     @GetMapping("/index")
-    public String index() {
-        return "student/index";
+    public String index(@CookieValue(name = "_token", defaultValue = "") String _token,Model model) throws JsonProcessingException {
+        String isExpired = JWTUtils.isExpired(_token);
+        if (!isExpired.toLowerCase().equals("token expired")) {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseModel> response = restTemplate.getForEntity(NEWS_URL + "list", ResponseModel.class);
+            String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
+            List<News> newsList = new ObjectMapper().readValue(json, new TypeReference<List<News>>() {
+            });
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            model.addAttribute("listNews", newsList
+                                                            .stream()
+                                                            .filter(news->news.getIsActive().equals(true))
+                                                            .map(news->{
+                                                                news.setPost_date(LocalDate.parse(news.getPost_date()).format(dateTimeFormatter).toString());
+                                                                return news;
+                                                            })
+                                                            .toList());
+            return "student/index";
+        } else {
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/viewSchedule")
@@ -517,5 +537,20 @@ public class StudentClientController {
                 return "error";
             }
         }
+    }
+
+    @GetMapping("/newsDetails/{newId}")
+    public String newsDetails(@CookieValue(name = "_token", defaultValue = "") String _token,
+        @PathVariable("newId")Integer newId,Model model){
+        try {
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseModel> response = restTemplate.getForEntity(NEWS_URL + "get/" + newId, ResponseModel.class);
+            model.addAttribute("news", response.getBody().getData());
+            return "student/newDetails";
+        } catch (Exception ex) {
+            return "redirect:/login";
+        }
+        
     }
 }

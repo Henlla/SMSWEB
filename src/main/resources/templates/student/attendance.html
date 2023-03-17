@@ -6,10 +6,34 @@
     <meta charset="UTF-8">
     <title>Attendance</title>
     <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/student/header.css">
+</head>
 </head>
 <body>
 <section layout:fragment="content">
     <section class="container">
+        <div class="row">
+            <div class="col-md-8" style="display: flex;justify-content: center;align-items: center;">
+                <h2 class="font-weight-bold">HKT - ACADEMY Portal</h2>
+            </div>
+            <div class="col-md-4">
+                <h2 class="font-weight-bold">
+                    <img src="/teacherDashboard/assets/img/logo.png" alt="Logo" width="200" height="100">
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 bread-crumb">
+                <div class="navigation">
+                    <a th:href="@{'/student/index'}">Home</a>&nbsp; | &nbsp; <b>Attendance</b>
+                </div>
+                <div class="divUser">
+                    <span class="label label-success" th:text="${#authentication.getPrincipal().username}"></span>
+                     | 
+                    <a class="label label-success" th:href="${'/logout'}">Logout</a>
+                </div>
+            </div>
+        </div>
         <section class="content-header">
             <h5 class="m-0">View Attendance</h5>
         </section>
