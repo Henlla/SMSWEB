@@ -19,6 +19,7 @@ import java.util.List;
 public class AttendanceRestController extends GenericController<Attendance> {
     @Autowired
     private IAttendance service;
+    List<Attendance> listAttendance;
 
     @PostMapping("/save")
     public ResponseEntity<?> post(@RequestParam("attendance") String attendanceJson) {
@@ -129,4 +130,5 @@ public class AttendanceRestController extends GenericController<Attendance> {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
         }
     }
+
 }
