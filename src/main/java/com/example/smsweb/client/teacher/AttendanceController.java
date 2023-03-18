@@ -93,7 +93,8 @@ public class AttendanceController {
                         //Lấy schedule
                         ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "findScheduleById/" + scheduleDetail.getScheduleId(), HttpMethod.GET, request, ResponseModel.class);
                         String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
-                        List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {});
+                        List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
+                        });
                         listSchedule.addAll(scheduleList);
                     }
                     List<Integer> scheduleClass = listSchedule.stream().map(Schedule::getClassId).distinct().toList();
@@ -118,24 +119,39 @@ public class AttendanceController {
                     }
                     for (Classses classes : listClass) {
                         // Lấy schedule theo class
-                        ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classes.getId(), HttpMethod.GET, request, ResponseModel.class);
+                        MultiValueMap<String, Integer> contentClass = new LinkedMultiValueMap<>();
+                        contentClass.add("classId", classes.getId());
+                        HttpEntity<MultiValueMap<String, Integer>> requestClass = new HttpEntity<>(contentClass, headers);
+                        ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass", HttpMethod.POST, requestClass, ResponseModel.class);
                         String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
-                        Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
+                        List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
+                        });
 
                         String to_date = FormatDate.dateFormat(LocalDate.now(), "yyyy-mm-dd");
                         String[] formatDate = to_date.split("-");
                         String from_date = FormatDate.dateFormat(LocalDate.of(Integer.parseInt(formatDate[0]), Integer.parseInt(formatDate[1]), Integer.parseInt(formatDate[2]) - 2), "yyyy-mm-dd");
-
-                        // Lấy schedule detail theo schedule
-                        MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
-                        scheduleDetailContent.add("fromDate", from_date);
-                        scheduleDetailContent.add("toDate", to_date);
-                        scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
-                        HttpEntity<MultiValueMap<String, String>> scheduleDetailRequest = new HttpEntity<>(scheduleDetailContent, headers);
-                        ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailByDateBetweenAndScheduleId", HttpMethod.POST, scheduleDetailRequest, ResponseModel.class);
-                        String jsonScheduleDetail = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
-                        List<ScheduleDetail> scheduleDetailList = new ObjectMapper().readValue(jsonScheduleDetail, new TypeReference<List<ScheduleDetail>>() {
-                        });
+                        List<ScheduleDetail> scheduleDetailList = new ArrayList<>();
+                        for (Schedule schedule : scheduleList) {
+                            String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
+                            String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
+                            String year = String.valueOf(LocalDate.now().getYear());
+                            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                            LocalDate startDate= LocalDate.parse(schedule.getStartDate(), format);
+                            LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
+                            LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                            if(currentDate.isAfter(startDate) && currentDate.isBefore(endDate)){
+                                // Lấy schedule detail theo schedule
+                                MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
+                                scheduleDetailContent.add("fromDate", from_date);
+                                scheduleDetailContent.add("toDate", to_date);
+                                scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
+                                HttpEntity<MultiValueMap<String, String>> scheduleDetailRequest = new HttpEntity<>(scheduleDetailContent, headers);
+                                ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailByDateBetweenAndScheduleId", HttpMethod.POST, scheduleDetailRequest, ResponseModel.class);
+                                String jsonScheduleDetail = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
+                                scheduleDetailList = new ObjectMapper().readValue(jsonScheduleDetail, new TypeReference<List<ScheduleDetail>>() {
+                                });
+                            }
+                        }
                         for (ScheduleDetail scheduleDetail : scheduleDetailList) {
                             listStudentSubject.clear();
 

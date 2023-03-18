@@ -19,6 +19,7 @@ import java.util.List;
 public class AttendanceRestController extends GenericController<Attendance> {
     @Autowired
     private IAttendance service;
+    List<Attendance> listAttendance;
 
     @PostMapping("/save")
     public ResponseEntity<?> post(@RequestParam("attendance") String attendanceJson) {
@@ -125,6 +126,22 @@ public class AttendanceRestController extends GenericController<Attendance> {
                                                                            @RequestParam("shift") String shift) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findAttendanceByDateAndSlotAndStudentSubjectIdAndShift(date, slot, studentSubjectId, shift)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findAttendanceByDateSlotShift")
+    public ResponseEntity<?> findAttendanceByDateSlotShift(@RequestParam("date") String date,
+                                                           @RequestParam("slot") Integer slot,
+                                                           @RequestParam("shift") String shift) {
+        try {
+            listAttendance = service.findAttendanceByDateAndSlotAndShift(date, slot, shift);
+            if (listAttendance != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), listAttendance));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
         }
