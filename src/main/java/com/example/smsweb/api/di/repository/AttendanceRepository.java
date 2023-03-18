@@ -20,6 +20,4 @@ public interface AttendanceRepository extends GenericRepository<Attendance, Inte
     List<Attendance> findAttendancesByDateAndSlotAndStudentSubjectIdAndShift(String date, Integer slot, Integer studentSubjectId, String shift);
 
     Attendance findAttendanceByDateAndSlotAndStudentSubjectIdAndShift(String date, Integer slot, Integer studentSubjectId, String shift);
-
-    List<Attendance> findAttendancesByDateAndSlotAndShift(String date, Integer slot, String shift);
 }

@@ -149,19 +149,4 @@ public class AttendanceService implements IAttendance {
             throw new ErrorHandler("Don't find any records");
         }
     }
-
-    @Override
-    public List<Attendance> findAttendanceByDateAndSlotAndShift(String date, Integer slot, String shift) {
-        try {
-            listAttendance = new ArrayList<>();
-            listAttendance = attendanceDao.findAttendancesByDateAndSlotAndShift(date, slot, shift);
-            if (listAttendance.isEmpty()) {
-                return null;
-            } else {
-                return listAttendance;
-            }
-        } catch (Exception e) {
-            throw new ErrorHandler("Don't find any records");
-        }
-    }
 }

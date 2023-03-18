@@ -14,5 +14,4 @@ public interface IAttendance extends IGenericRepository<Attendance> {
     List<Attendance> findAttendancesByDateAndSlotAndStudentSubjectId(String date,Integer slot, Integer studentSubjectId);
     List<Attendance> findAttendancesByDateAndSlotAndStudentSubjectIdAndShift(String date,Integer slot, Integer studentSubjectId, String shift);
     Attendance findAttendanceByDateAndSlotAndStudentSubjectIdAndShift(String date,Integer slot, Integer studentSubjectId, String shift);
-    List<Attendance> findAttendanceByDateAndSlotAndShift(String date,Integer slot,String shift);
 }
