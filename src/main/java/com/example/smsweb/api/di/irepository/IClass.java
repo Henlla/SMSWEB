@@ -9,6 +9,6 @@ public interface IClass extends IGenericRepository<Classses> {
     Classses findByClassCode(String classCode);
     List<String> searchClasssesByClassCode(String listStudentCard);
     List<Classses> findClassByTeacherId(Integer id);
-    Classses findClassByTeacherIdAndScheduleId(String teacherId, String scheduleId);
+    Classses findClassByTeacherIdAndScheduleId(Integer teacherId, Integer scheduleId);
     List<Classses> findClassByMajorId(Integer majorId);
 }

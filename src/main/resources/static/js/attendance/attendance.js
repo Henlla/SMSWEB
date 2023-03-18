@@ -102,6 +102,53 @@ $(() => {
         }
     });
 
+    $("#listViewStudent").DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+        columnDefs: [
+            {
+                "targets": [0, 1, 2, 3, 4],
+                "className": "text-center",
+            },
+            {
+                "targets": [1, 2],
+                "orderable": false,
+            }
+        ],
+        columns: [
+            {title: "STT"},
+            {title: "Avatar"},
+            {title: "Student name"},
+            {title: "Status"},
+            {title: "Note"}
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
+
 });
 
 const DataTable = (response) => {
@@ -302,10 +349,95 @@ const DataTableEdit = (response) => {
     });
 }
 
+const DataTableView = (response) => {
+    let html = "";
+    $("#listViewStudent").DataTable({
+        autoWidth: false,
+        data: response,
+        paging: false,
+        searching: false,
+        info: false,
+        columnDefs: [
+            {
+                "targets": [0, 1, 2, 3, 4],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2],
+                "orderable": false,
+            }
+        ],
+        columns: [
+            {
+                render: function (data, type, row, index) {
+                    return index.row + 1;
+                }
+            },
+            {
+                data: "avatar",
+                render: function (data, type, row, index) {
+                    html = '<img style="width: 50px;height: 50px" src="' + data + '"/>'
+                    return html;
+                }
+            },
+            {
+                data: "student_name",
+                render: function (data, type, row, index) {
+                    return data;
+                }
+            },
+            {
+                data: {student_id: "student_id", isPresent: "isPresent"},
+                render: function (data, type, row, index) {
+                    if (data.isPresent === 1) {
+                        html = '<span class="text-success">Present</span>'
+                    } else {
+                        html = '<span class="text-danger">Absent</span>'
+                    }
+                    return html;
+                }
+            }
+            ,
+            {
+                data: {note: "note", student_id: "student_id"},
+                width: "250px",
+                render: function (data, type, row, index) {
+                    html = '<textarea readonly placeholder="Ghi chú..." style="resize: none" name="note' + data.student_id + '" id="note' + data.student_id + '" cols="30" rows="2" class="form-control">' + data.note + '</textarea>'
+                    return html;
+                }
+            }
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
+}
+
 const OnSubmitAttendance = () => {
     Swal.fire({
-        title: 'Do you want to send this ?',
-        text: "Check carefully before update!",
+        title: 'Do you want to take attendance ?',
+        text: "Check carefully before confirm!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -490,6 +622,52 @@ const OnEditAttendance = (obj) => {
                 DataTableEdit(response);
             } else {
                 DataTableEdit(response);
+            }
+        },
+        error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/login";
+                    }
+                });
+            } else {
+                if ($.fn.dataTable.isDataTable('#listEditStudent')) {
+                    table = $('#listEditStudent').DataTable();
+                    table.clear().draw();
+                }
+            }
+        }
+    });
+}
+
+const OnViewAttendance = (obj) => {
+    $("#classId").val(obj);
+    let classId = obj.split("-");
+    let dateFormat = FormatHelper("DATE", new Date(classId[2] + "-" + classId[3] + "-" + classId[4]), "yyyy-mm-dd");
+    $.ajax({
+        url: "/teacher/attendance/viewAttendance",
+        method: "POST",
+        data: {
+            "date": dateFormat,
+            "classId": classId[0],
+            "slot": classId[1]
+        },
+        success: (response) => {
+            let table;
+            $("#view-attendance-modal").modal("show");
+            if ($.fn.dataTable.isDataTable('#listViewStudent')) {
+                table = $('#listViewStudent').DataTable();
+                table.clear().draw();
+                table.destroy();
+                DataTableView(response);
+            } else {
+                DataTableView(response);
             }
         },
         error: (data) => {

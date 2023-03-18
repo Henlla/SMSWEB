@@ -32,8 +32,11 @@ public class Attendance {
     @Basic
     @Column(name = "slot")
     private Integer slot;
+    @Basic
+    @Column(name = "shift")
+    private String shift;
     @ManyToOne
-    @JoinColumn(name = "student_subject_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JoinColumn(name = "student_subject_id", referencedColumnName = "id", insertable = false, updatable = false)
     @JsonBackReference("attendance_student_subject")
     private StudentSubject studentSubjectByStudentSubjectId;
 }
