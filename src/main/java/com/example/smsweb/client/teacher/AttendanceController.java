@@ -136,10 +136,10 @@ public class AttendanceController {
                             String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
                             String year = String.valueOf(LocalDate.now().getYear());
                             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                            LocalDate startDate= LocalDate.parse(schedule.getStartDate(), format);
+                            LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
                             LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
                             LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
-                            if(currentDate.isAfter(startDate) && currentDate.isBefore(endDate)){
+                            if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                                 // Lấy schedule detail theo schedule
                                 MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
                                 scheduleDetailContent.add("fromDate", from_date);
@@ -379,20 +379,36 @@ public class AttendanceController {
                 headers.set("Authorization", "Bearer " + _token);
                 HttpEntity<String> request = new HttpEntity<>(headers);
 
-                // Lấy schedule
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classId, HttpMethod.GET, request, ResponseModel.class);
-                String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
-                Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
+                // Lấy Schedule theo class
+                MultiValueMap<String, String> contentClass = new LinkedMultiValueMap<>();
+                contentClass.add("classId", classId);
+                HttpEntity<MultiValueMap<String, String>> requestClass = new HttpEntity<>(contentClass, headers);
+                ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass", HttpMethod.POST, requestClass, ResponseModel.class);
+                String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
+                List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
+                });
 
-                //Lấy schedule detail
-                MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
-                scheduleDetailContent.add("date", date);
-                scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
-                scheduleDetailContent.add("slot", slot);
-                HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
-                ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
-                String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
-                ScheduleDetail scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
+                ScheduleDetail scheduleDetail = new ScheduleDetail();
+                for (Schedule schedule : scheduleList) {
+                    String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
+                    String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
+                    String year = String.valueOf(LocalDate.now().getYear());
+                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
+                    LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
+                    LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                        // Lấy Schedule detail
+                        MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
+                        scheduleDetailContent.add("date", date);
+                        scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
+                        scheduleDetailContent.add("slot", slot);
+                        HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
+                        ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
+                        String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
+                        scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
+                    }
+                }
 
                 // Lấy class theo id
                 ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
@@ -537,19 +553,34 @@ public class AttendanceController {
                 });
 
                 // Lấy Schedule theo class
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classId, HttpMethod.GET, request, ResponseModel.class);
-                String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
-                Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
-
-                // Lấy Schedule detail
-                MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
-                scheduleDetailContent.add("date", date);
-                scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
-                scheduleDetailContent.add("slot", slot);
-                HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
-                ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
-                String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
-                ScheduleDetail scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
+                MultiValueMap<String, String> contentClass = new LinkedMultiValueMap<>();
+                contentClass.add("classId", classId);
+                HttpEntity<MultiValueMap<String, String>> requestClass = new HttpEntity<>(contentClass, headers);
+                ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass", HttpMethod.POST, requestClass, ResponseModel.class);
+                String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
+                List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
+                });
+                ScheduleDetail scheduleDetail = new ScheduleDetail();
+                for (Schedule schedule : scheduleList) {
+                    String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
+                    String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
+                    String year = String.valueOf(LocalDate.now().getYear());
+                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
+                    LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
+                    LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                        // Lấy Schedule detail
+                        MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
+                        scheduleDetailContent.add("date", date);
+                        scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
+                        scheduleDetailContent.add("slot", slot);
+                        HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
+                        ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
+                        String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
+                        scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
+                    }
+                }
 
                 // Lấy class theo id
                 ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
@@ -635,21 +666,37 @@ public class AttendanceController {
                 headers.set("Authorization", "Bearer " + _token);
                 HttpEntity<String> request = new HttpEntity<>(headers);
 
-                // Lấy schedule
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classId, HttpMethod.GET, request, ResponseModel.class);
-                String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
-                Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
+                // Lấy Schedule theo class
+                MultiValueMap<String, String> contentClass = new LinkedMultiValueMap<>();
+                contentClass.add("classId", classId);
+                HttpEntity<MultiValueMap<String, String>> requestClass = new HttpEntity<>(contentClass, headers);
+                ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass", HttpMethod.POST, requestClass, ResponseModel.class);
+                String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
+                List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
+                });
 
-                //Lấy schedule detail
-                MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
-                scheduleDetailContent.add("date", date);
-                scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
-                scheduleDetailContent.add("slot", slot);
-                HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
-                ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
-                String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
-                ScheduleDetail scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
-
+                ScheduleDetail scheduleDetail = new ScheduleDetail();
+                for (Schedule schedule : scheduleList) {
+                    String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
+                    String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
+                    String year = String.valueOf(LocalDate.now().getYear());
+                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
+                    LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
+                    LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                        // Lấy Schedule detail
+                        MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
+                        scheduleDetailContent.add("date", date);
+                        scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
+                        scheduleDetailContent.add("slot", slot);
+                        HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
+                        ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
+                        String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
+                        scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
+                    }
+                }
+                
                 // Lấy class theo id
                 ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
                 String classJson = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
@@ -757,19 +804,36 @@ public class AttendanceController {
                 });
 
                 // Lấy Schedule theo class
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classId, HttpMethod.GET, request, ResponseModel.class);
-                String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
-                Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
+                MultiValueMap<String, String> contentClass = new LinkedMultiValueMap<>();
+                contentClass.add("classId", classId);
+                HttpEntity<MultiValueMap<String, String>> requestClass = new HttpEntity<>(contentClass, headers);
+                ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass", HttpMethod.POST, requestClass, ResponseModel.class);
+                String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
+                List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
+                });
 
-                // Lấy Schedule detail
-                MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
-                scheduleDetailContent.add("date", date);
-                scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
-                scheduleDetailContent.add("slot", slot);
-                HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
-                ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
-                String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
-                ScheduleDetail scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
+
+                ScheduleDetail scheduleDetail = new ScheduleDetail();
+                for (Schedule schedule : scheduleList) {
+                    String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
+                    String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
+                    String year = String.valueOf(LocalDate.now().getYear());
+                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
+                    LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
+                    LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                        // Lấy Schedule detail
+                        MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
+                        scheduleDetailContent.add("date", date);
+                        scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
+                        scheduleDetailContent.add("slot", slot);
+                        HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
+                        ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailBySlot", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
+                        String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
+                        scheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, ScheduleDetail.class);
+                    }
+                }
 
                 // Lấy class theo id
                 ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
