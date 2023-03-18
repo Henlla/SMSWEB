@@ -91,10 +91,10 @@ public class AttendanceController {
                 if (listScheduleDetail != null) {
                     for (ScheduleDetail scheduleDetail : listScheduleDetail) {
                         //Lấy schedule
-                        ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "get/" + scheduleDetail.getScheduleId(), HttpMethod.POST, request, ResponseModel.class);
+                        ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "findScheduleById/" + scheduleDetail.getScheduleId(), HttpMethod.GET, request, ResponseModel.class);
                         String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
-                        Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
-                        listSchedule.add(schedule);
+                        List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {});
+                        listSchedule.addAll(scheduleList);
                     }
                     List<Integer> scheduleClass = listSchedule.stream().map(Schedule::getClassId).distinct().toList();
                     for (Integer scheduleClassId : scheduleClass) {
@@ -117,7 +117,6 @@ public class AttendanceController {
                         }
                     }
                     for (Classses classes : listClass) {
-
                         // Lấy schedule theo class
                         ResponseEntity<ResponseModel> scheduleResponse = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + classes.getId(), HttpMethod.GET, request, ResponseModel.class);
                         String scheduleJson = new ObjectMapper().writeValueAsString(scheduleResponse.getBody().getData());
