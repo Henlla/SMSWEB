@@ -207,14 +207,14 @@ public class ClassController {
             @RequestParam("semester") Integer semester,
             @RequestParam("majorId") Integer majorId,
             @RequestParam("shift") String shift,
-            @RequestParam("classId") String classId) throws JsonProcessingException {
+            @RequestParam("classId") Integer classId) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
             headers.set("Authorization", "Bearer " + _token);
-
+            Schedule schedule = new Schedule();
             MultiValueMap<String, Object> paramsCheck = new LinkedMultiValueMap<>();
             paramsCheck.add("classId", classId);
             paramsCheck.add("semester", semester);
@@ -224,162 +224,358 @@ public class ClassController {
             if (responseCheck.getBody().getData() != null) {
                 return "error";
             } else {
-                MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-                Schedule scheduleParams = new Schedule();
-                scheduleParams.setEndDate("");
-                scheduleParams.setStartDate(startDate);
-                scheduleParams.setClassId(Integer.parseInt(classId));
-                scheduleParams.setSemester(semester);
-                String json = objectMapper.writeValueAsString(scheduleParams);
-                params.add("schedule", json);
-                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "post",
-                        HttpMethod.POST, request, ResponseModel.class);
-                String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
-                Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+                if (semester.equals(1)) {
+                    MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+                    Schedule scheduleParams = new Schedule();
+                    scheduleParams.setEndDate("");
+                    scheduleParams.setStartDate(startDate);
+                    scheduleParams.setClassId(classId);
+                    scheduleParams.setSemester(semester);
+                    String json = objectMapper.writeValueAsString(scheduleParams);
+                    params.add("schedule", json);
+                    HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+                    ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "post",
+                            HttpMethod.POST, request, ResponseModel.class);
+                    String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
+                    schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
 
-                ResponseEntity<ResponseModel> responseMajor = restTemplate.getForEntity(MAJOR_URL + "get/" + majorId,
-                        ResponseModel.class);
-                String jsonMajor = objectMapper.writeValueAsString(responseMajor.getBody().getData());
-                Major major = objectMapper.readValue(jsonMajor, Major.class);
+                    ResponseEntity<ResponseModel> responseMajor = restTemplate.getForEntity(
+                            MAJOR_URL + "get/" + majorId,
+                            ResponseModel.class);
+                    String jsonMajor = objectMapper.writeValueAsString(responseMajor.getBody().getData());
+                    Major major = objectMapper.readValue(jsonMajor, Major.class);
 
-                List<Subject> listSubject = major.getSubjectsById().stream()
-                        .filter(subject -> subject.getSemesterId() == semester).toList();
+                    List<Subject> listSubject = major.getSubjectsById().stream()
+                            .filter(subject -> subject.getSemesterId() == semester).toList();
 
-                LocalDate startDates = LocalDate.parse(startDate);
-                LocalDate endDateTemp = LocalDate.parse(startDate).plusYears(1);
+                    LocalDate startDates = LocalDate.parse(startDate);
+                    LocalDate endDateTemp = LocalDate.parse(startDate).plusYears(1);
 
-                ResponseEntity<HolidayModel> responseHoliday = restTemplate.getForEntity(HOLIDAY_URL,
-                        HolidayModel.class);
-                HolidayModel holidayModel = responseHoliday.getBody();
-                List<Holiday> holidayList = holidayModel.getHolidays();
-                LocalDate endDate;
-                List<ScheduleDetail> listScheduleDetails = new ArrayList<>();
-                char getShift = shift.charAt(1);
-                int slot = 0;
+                    ResponseEntity<HolidayModel> responseHoliday = restTemplate.getForEntity(HOLIDAY_URL,
+                            HolidayModel.class);
+                    HolidayModel holidayModel = responseHoliday.getBody();
+                    List<Holiday> holidayList = holidayModel.getHolidays();
+                    LocalDate endDate;
+                    List<ScheduleDetail> listScheduleDetails = new ArrayList<>();
+                    char getShift = shift.charAt(1);
+                    int slot = 0;
 
-                if (getShift == '0') {
-                    for (Subject subject : listSubject) {
-                        slot = 0;
-                        for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
-                            for (int i = 1; i <= subject.getSlot(); i++) {
-                                int getDate = date.getDayOfMonth();
-                                int getMonth = date.getMonthValue();
-                                String dayOfWeek = String.valueOf(date.getDayOfWeek());
-                                boolean isInHoliday = holidayList.stream()
-                                        .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
-                                                && holiday.getDate().getDayOfMonth() == getDate);
-                                if (Arrays.stream(DayOfWeekSchedule.array0).anyMatch(dayOfWeek::equals)
-                                        && isInHoliday) {
-                                    ScheduleDetail scheduleDetail = new ScheduleDetail();
-                                    if (i % 2 == 0) {
-                                        scheduleDetail.setDayOfWeek(dayOfWeek);
-                                        scheduleDetail.setDate(date.toString());
-                                        scheduleDetail.setScheduleId(schedule.getId());
-                                        scheduleDetail.setSubjectId(subject.getId());
-                                        scheduleDetail.setSlot(i);
-                                        listScheduleDetails.add(scheduleDetail);
-                                        slot++;
-                                        break;
-                                    } else {
-                                        scheduleDetail.setDayOfWeek(dayOfWeek);
-                                        scheduleDetail.setDate(date.toString());
-                                        scheduleDetail.setScheduleId(schedule.getId());
-                                        scheduleDetail.setSubjectId(subject.getId());
-                                        scheduleDetail.setSlot(i);
-                                        listScheduleDetails.add(scheduleDetail);
-                                        slot++;
-                                        if (subject.getSlot() == slot) {
-                                            startDates = LocalDate.parse(
-                                                    listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
-                                                    .plusDays(1);
+                    if (getShift == '0') {
+                        for (Subject subject : listSubject) {
+                            slot = 0;
+                            for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
+                                for (int i = 1; i <= subject.getSlot(); i++) {
+                                    int getDate = date.getDayOfMonth();
+                                    int getMonth = date.getMonthValue();
+                                    String dayOfWeek = String.valueOf(date.getDayOfWeek());
+                                    boolean isInHoliday = holidayList.stream()
+                                            .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
+                                                    && holiday.getDate().getDayOfMonth() == getDate);
+                                    if (Arrays.stream(DayOfWeekSchedule.array0).anyMatch(dayOfWeek::equals)
+                                            && isInHoliday) {
+                                        ScheduleDetail scheduleDetail = new ScheduleDetail();
+                                        if (i % 2 == 0) {
+                                            scheduleDetail.setDayOfWeek(dayOfWeek);
+                                            scheduleDetail.setDate(date.toString());
+                                            scheduleDetail.setScheduleId(schedule.getId());
+                                            scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setSlot(i);
+                                            listScheduleDetails.add(scheduleDetail);
+                                            slot++;
                                             break;
+                                        } else {
+                                            scheduleDetail.setDayOfWeek(dayOfWeek);
+                                            scheduleDetail.setDate(date.toString());
+                                            scheduleDetail.setScheduleId(schedule.getId());
+                                            scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setSlot(i);
+                                            listScheduleDetails.add(scheduleDetail);
+                                            slot++;
+                                            if (subject.getSlot() == slot) {
+                                                startDates = LocalDate.parse(
+                                                        listScheduleDetails.get(listScheduleDetails.size() - 1)
+                                                                .getDate())
+                                                        .plusDays(1);
+                                                break;
+                                            }
                                         }
+                                    } else {
+                                        break;
                                     }
-                                } else {
+                                }
+                                if (subject.getSlot() == slot) {
+                                    startDates = LocalDate
+                                            .parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
+                                            .plusDays(1);
                                     break;
                                 }
                             }
-                            if (subject.getSlot() == slot) {
-                                startDates = LocalDate
-                                        .parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
-                                        .plusDays(1);
+                            if (listSubject.get(listSubject.size() - 1).equals(subject)
+                                    && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
                                 break;
                             }
                         }
-                        if (listSubject.get(listSubject.size() - 1).equals(subject)
-                                && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
-                            break;
+                    } else {
+                        for (Subject subject : listSubject) {
+                            slot = 0;
+                            for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
+                                for (int i = 1; i <= subject.getSlot(); i++) {
+                                    int getDate = date.getDayOfMonth();
+                                    int getMonth = date.getMonthValue();
+                                    String dayOfWeek = String.valueOf(date.getDayOfWeek());
+                                    boolean isInHoliday = holidayList.stream()
+                                            .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
+                                                    && holiday.getDate().getDayOfMonth() == getDate);
+                                    if (Arrays.stream(DayOfWeekSchedule.array1).anyMatch(dayOfWeek::equals)
+                                            && isInHoliday) {
+                                        ScheduleDetail scheduleDetail = new ScheduleDetail();
+                                        if (i % 2 == 0) {
+                                            scheduleDetail.setDayOfWeek(dayOfWeek);
+                                            scheduleDetail.setDate(date.toString());
+                                            scheduleDetail.setScheduleId(schedule.getId());
+                                            scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setSlot(i);
+                                            listScheduleDetails.add(scheduleDetail);
+                                            slot++;
+                                            break;
+                                        } else {
+                                            scheduleDetail.setDayOfWeek(dayOfWeek);
+                                            scheduleDetail.setDate(date.toString());
+                                            scheduleDetail.setScheduleId(schedule.getId());
+                                            scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setSlot(i);
+                                            listScheduleDetails.add(scheduleDetail);
+                                            slot++;
+                                            if (subject.getSlot() == slot) {
+                                                startDates = LocalDate.parse(
+                                                        listScheduleDetails.get(listScheduleDetails.size() - 1)
+                                                                .getDate())
+                                                        .plusDays(1);
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                if (subject.getSlot() == slot) {
+                                    startDates = LocalDate
+                                            .parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
+                                            .plusDays(1);
+                                    break;
+                                }
+                            }
+                            if (listSubject.get(listSubject.size() - 1).equals(subject)
+                                    && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
+                                break;
+                            }
                         }
                     }
-                } else {
-                    for (Subject subject : listSubject) {
-                        slot = 0;
-                        for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
-                            for (int i = 1; i <= subject.getSlot(); i++) {
-                                int getDate = date.getDayOfMonth();
-                                int getMonth = date.getMonthValue();
-                                String dayOfWeek = String.valueOf(date.getDayOfWeek());
-                                boolean isInHoliday = holidayList.stream()
-                                        .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
-                                                && holiday.getDate().getDayOfMonth() == getDate);
-                                if (Arrays.stream(DayOfWeekSchedule.array1).anyMatch(dayOfWeek::equals)
-                                        && isInHoliday) {
-                                    ScheduleDetail scheduleDetail = new ScheduleDetail();
-                                    if (i % 2 == 0) {
-                                        scheduleDetail.setDayOfWeek(dayOfWeek);
-                                        scheduleDetail.setDate(date.toString());
-                                        scheduleDetail.setScheduleId(schedule.getId());
-                                        scheduleDetail.setSubjectId(subject.getId());
-                                        scheduleDetail.setSlot(i);
-                                        listScheduleDetails.add(scheduleDetail);
-                                        slot++;
-                                        break;
-                                    } else {
-                                        scheduleDetail.setDayOfWeek(dayOfWeek);
-                                        scheduleDetail.setDate(date.toString());
-                                        scheduleDetail.setScheduleId(schedule.getId());
-                                        scheduleDetail.setSubjectId(subject.getId());
-                                        scheduleDetail.setSlot(i);
-                                        listScheduleDetails.add(scheduleDetail);
-                                        slot++;
-                                        if (subject.getSlot() == slot) {
-                                            startDates = LocalDate.parse(
-                                                    listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
-                                                    .plusDays(1);
+                    MultiValueMap<String, Object> paramsScheduleDetails = new LinkedMultiValueMap<>();
+                    paramsScheduleDetails.add("listSchedule", objectMapper.writeValueAsBytes(listScheduleDetails));
+                    HttpEntity<MultiValueMap<String, Object>> requestScheduleDetails = new HttpEntity<>(
+                            paramsScheduleDetails, headers);
+                    ResponseEntity<String> responseScheduleDetails = restTemplate.exchange(
+                            SCHEDULE_DETAIL_URL + "saveAll",
+                            HttpMethod.POST, requestScheduleDetails, String.class);
+                    schedule.setEndDate(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate().toString());
+                    MultiValueMap<String, Object> paramsSchedule = new LinkedMultiValueMap<>();
+                    paramsSchedule.add("schedule", objectMapper.writeValueAsBytes(schedule));
+                    HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(paramsSchedule,
+                            headers);
+                    ResponseEntity<ResponseModel> response = restTemplate.exchange(SCHEDULE_URL + "put", HttpMethod.PUT,
+                            requestSchedule, ResponseModel.class);
+                    return "success";
+                } else if (semester > 1) {
+                    // check start must be greater than last date of object list schedule details
+
+                    MultiValueMap<String, Object> paramsScheduleSemesterBefore = new LinkedMultiValueMap<>();
+                    paramsScheduleSemesterBefore.add("classId", classId);
+                    paramsScheduleSemesterBefore.add("semester", semester - 1);
+                    HttpEntity<MultiValueMap<String, Object>> requestScheduleSemesterBefore = new HttpEntity<>(
+                        paramsScheduleSemesterBefore, headers);
+                    ResponseEntity<ResponseModel> responseScheduleSemesterBefore = restTemplate.exchange(
+                            SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestScheduleSemesterBefore,
+                            ResponseModel.class);
+
+                    String jsonConvert = objectMapper
+                            .writeValueAsString(responseScheduleSemesterBefore.getBody().getData());
+                    Schedule scheduleCheck = objectMapper.readValue(jsonConvert, Schedule.class);
+                    LocalDate convertStartdate = LocalDate.parse(startDate);
+                    ScheduleDetail lastDateOfList = scheduleCheck.getScheduleDetailsById().stream()
+                            .sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate())))
+                            .toList().get(scheduleCheck.getScheduleDetailsById().size() - 1);
+                    if (convertStartdate.isBefore(LocalDate.parse(lastDateOfList.getDate())) || convertStartdate.equals(LocalDate.parse(lastDateOfList.getDate()))) {
+                        return "error date";
+                    } else {
+                        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+                        Schedule scheduleParams = new Schedule();
+                        scheduleParams.setEndDate("");
+                        scheduleParams.setStartDate(startDate);
+                        scheduleParams.setClassId(classId);
+                        scheduleParams.setSemester(semester);
+                        String json = objectMapper.writeValueAsString(scheduleParams);
+                        params.add("schedule", json);
+                        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+                        ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "post",
+                                HttpMethod.POST, request, ResponseModel.class);
+                        String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
+                        schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+
+                        ResponseEntity<ResponseModel> responseMajor = restTemplate.getForEntity(
+                                MAJOR_URL + "get/" + majorId,
+                                ResponseModel.class);
+                        String jsonMajor = objectMapper.writeValueAsString(responseMajor.getBody().getData());
+                        Major major = objectMapper.readValue(jsonMajor, Major.class);
+
+                        List<Subject> listSubject = major.getSubjectsById().stream()
+                                .filter(subject -> subject.getSemesterId() == semester).toList();
+
+                        LocalDate startDates = LocalDate.parse(startDate);
+                        LocalDate endDateTemp = LocalDate.parse(startDate).plusYears(1);
+
+                        ResponseEntity<HolidayModel> responseHoliday = restTemplate.getForEntity(HOLIDAY_URL,
+                                HolidayModel.class);
+                        HolidayModel holidayModel = responseHoliday.getBody();
+                        List<Holiday> holidayList = holidayModel.getHolidays();
+                        LocalDate endDate;
+                        List<ScheduleDetail> listScheduleDetails = new ArrayList<>();
+                        char getShift = shift.charAt(1);
+                        int slot = 0;
+
+                        if (getShift == '0') {
+                            for (Subject subject : listSubject) {
+                                slot = 0;
+                                for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
+                                    for (int i = 1; i <= subject.getSlot(); i++) {
+                                        int getDate = date.getDayOfMonth();
+                                        int getMonth = date.getMonthValue();
+                                        String dayOfWeek = String.valueOf(date.getDayOfWeek());
+                                        boolean isInHoliday = holidayList.stream()
+                                                .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
+                                                        && holiday.getDate().getDayOfMonth() == getDate);
+                                        if (Arrays.stream(DayOfWeekSchedule.array0).anyMatch(dayOfWeek::equals)
+                                                && isInHoliday) {
+                                            ScheduleDetail scheduleDetail = new ScheduleDetail();
+                                            if (i % 2 == 0) {
+                                                scheduleDetail.setDayOfWeek(dayOfWeek);
+                                                scheduleDetail.setDate(date.toString());
+                                                scheduleDetail.setScheduleId(schedule.getId());
+                                                scheduleDetail.setSubjectId(subject.getId());
+                                                scheduleDetail.setSlot(i);
+                                                listScheduleDetails.add(scheduleDetail);
+                                                slot++;
+                                                break;
+                                            } else {
+                                                scheduleDetail.setDayOfWeek(dayOfWeek);
+                                                scheduleDetail.setDate(date.toString());
+                                                scheduleDetail.setScheduleId(schedule.getId());
+                                                scheduleDetail.setSubjectId(subject.getId());
+                                                scheduleDetail.setSlot(i);
+                                                listScheduleDetails.add(scheduleDetail);
+                                                slot++;
+                                                if (subject.getSlot() == slot) {
+                                                    startDates = LocalDate.parse(
+                                                            listScheduleDetails.get(listScheduleDetails.size() - 1)
+                                                                    .getDate())
+                                                            .plusDays(1);
+                                                    break;
+                                                }
+                                            }
+                                        } else {
                                             break;
                                         }
                                     }
-                                } else {
+                                    if (subject.getSlot() == slot) {
+                                        startDates = LocalDate
+                                                .parse(listScheduleDetails.get(listScheduleDetails.size() - 1)
+                                                        .getDate())
+                                                .plusDays(1);
+                                        break;
+                                    }
+                                }
+                                if (listSubject.get(listSubject.size() - 1).equals(subject)
+                                        && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
                                     break;
                                 }
                             }
-                            if (subject.getSlot() == slot) {
-                                startDates = LocalDate
-                                        .parse(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate())
-                                        .plusDays(1);
-                                break;
+                        } else {
+                            for (Subject subject : listSubject) {
+                                slot = 0;
+                                for (LocalDate date = startDates; date.isBefore(endDateTemp); date = date.plusDays(1)) {
+                                    for (int i = 1; i <= subject.getSlot(); i++) {
+                                        int getDate = date.getDayOfMonth();
+                                        int getMonth = date.getMonthValue();
+                                        String dayOfWeek = String.valueOf(date.getDayOfWeek());
+                                        boolean isInHoliday = holidayList.stream()
+                                                .noneMatch(holiday -> holiday.getDate().getMonthValue() == getMonth
+                                                        && holiday.getDate().getDayOfMonth() == getDate);
+                                        if (Arrays.stream(DayOfWeekSchedule.array1).anyMatch(dayOfWeek::equals)
+                                                && isInHoliday) {
+                                            ScheduleDetail scheduleDetail = new ScheduleDetail();
+                                            if (i % 2 == 0) {
+                                                scheduleDetail.setDayOfWeek(dayOfWeek);
+                                                scheduleDetail.setDate(date.toString());
+                                                scheduleDetail.setScheduleId(schedule.getId());
+                                                scheduleDetail.setSubjectId(subject.getId());
+                                                scheduleDetail.setSlot(i);
+                                                listScheduleDetails.add(scheduleDetail);
+                                                slot++;
+                                                break;
+                                            } else {
+                                                scheduleDetail.setDayOfWeek(dayOfWeek);
+                                                scheduleDetail.setDate(date.toString());
+                                                scheduleDetail.setScheduleId(schedule.getId());
+                                                scheduleDetail.setSubjectId(subject.getId());
+                                                scheduleDetail.setSlot(i);
+                                                listScheduleDetails.add(scheduleDetail);
+                                                slot++;
+                                                if (subject.getSlot() == slot) {
+                                                    startDates = LocalDate.parse(
+                                                            listScheduleDetails.get(listScheduleDetails.size() - 1)
+                                                                    .getDate())
+                                                            .plusDays(1);
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                    if (subject.getSlot() == slot) {
+                                        startDates = LocalDate
+                                                .parse(listScheduleDetails.get(listScheduleDetails.size() - 1)
+                                                        .getDate())
+                                                .plusDays(1);
+                                        break;
+                                    }
+                                }
+                                if (listSubject.get(listSubject.size() - 1).equals(subject)
+                                        && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
+                                    break;
+                                }
                             }
                         }
-                        if (listSubject.get(listSubject.size() - 1).equals(subject)
-                                && listSubject.get(listSubject.size() - 1).getSlot() == slot) {
-                            break;
-                        }
+                        MultiValueMap<String, Object> paramsScheduleDetails = new LinkedMultiValueMap<>();
+                        paramsScheduleDetails.add("listSchedule", objectMapper.writeValueAsBytes(listScheduleDetails));
+                        HttpEntity<MultiValueMap<String, Object>> requestScheduleDetails = new HttpEntity<>(
+                                paramsScheduleDetails, headers);
+                        ResponseEntity<String> responseScheduleDetails = restTemplate.exchange(
+                                SCHEDULE_DETAIL_URL + "saveAll",
+                                HttpMethod.POST, requestScheduleDetails, String.class);
+                        schedule.setEndDate(
+                                listScheduleDetails.get(listScheduleDetails.size() - 1).getDate().toString());
+                        MultiValueMap<String, Object> paramsSchedule = new LinkedMultiValueMap<>();
+                        paramsSchedule.add("schedule", objectMapper.writeValueAsBytes(schedule));
+                        HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(paramsSchedule,
+                                headers);
+                        ResponseEntity<ResponseModel> response = restTemplate.exchange(SCHEDULE_URL + "put",
+                                HttpMethod.PUT,
+                                requestSchedule, ResponseModel.class);
+                        return "success";
                     }
                 }
-                MultiValueMap<String, Object> paramsScheduleDetails = new LinkedMultiValueMap<>();
-                paramsScheduleDetails.add("listSchedule", objectMapper.writeValueAsBytes(listScheduleDetails));
-                HttpEntity<MultiValueMap<String, Object>> requestScheduleDetails = new HttpEntity<>(
-                        paramsScheduleDetails, headers);
-                ResponseEntity<String> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL + "saveAll",
-                        HttpMethod.POST, requestScheduleDetails, String.class);
-                schedule.setEndDate(listScheduleDetails.get(listScheduleDetails.size() - 1).getDate().toString());
-                MultiValueMap<String, Object> paramsSchedule = new LinkedMultiValueMap<>();
-                paramsSchedule.add("schedule", objectMapper.writeValueAsBytes(schedule));
-                HttpEntity<MultiValueMap<String, Object>> requestSchedule = new HttpEntity<>(paramsSchedule, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(SCHEDULE_URL + "put", HttpMethod.PUT,
-                        requestSchedule, ResponseModel.class);
-                return "success";
+                return "";
             }
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
@@ -409,7 +605,7 @@ public class ClassController {
             ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(
                     SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestSchedule,
                     ResponseModel.class);
-            if (responseSchedule.getBody().getData()!=null) {
+            if (responseSchedule.getBody().getData() != null) {
                 String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
                 ScheduleModel scheduleModel = new ScheduleModel();

@@ -33,18 +33,18 @@ public class ClassRestController extends GenericController<Classses> {
             Classses classses = new ObjectMapper().readValue(newclass, new TypeReference<Classses>() {
             });
             service.save(classses);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(), newclass));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), newclass));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), e.getMessage()));
         }
     }
 
     @PostMapping("/findClassCode")
     public ResponseEntity<?> findClassCode(@RequestParam("classCode") String classCode) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(), service.findByClassCode(classCode)));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), service.findByClassCode(classCode)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Tìm thất bại", LocalTime.now().toString(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), null));
         }
     }
 
@@ -56,7 +56,7 @@ public class ClassRestController extends GenericController<Classses> {
 
     @GetMapping("/getClass/{id}")
     public ResponseEntity<?> getClass(@PathVariable("id") Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), service.findOne(id)));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), service.findOne(id)));
     }
 
     @GetMapping("/get")
@@ -66,11 +66,11 @@ public class ClassRestController extends GenericController<Classses> {
 
     @GetMapping("/findClassByTeacher/{id}")
     public ResponseEntity<?> findClassByTeacher(@PathVariable("id") Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(), service.findClassByTeacherId(id)));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), service.findClassByTeacherId(id)));
     }
 
     @PostMapping("/findClassByTeacherAndSchedule")
-    public ResponseEntity<?> findClassByTeacherAndSchedule(@RequestParam("teacherId") String teacherId, @RequestParam("scheduleId") String scheduleId) {
+    public ResponseEntity<?> findClassByTeacherAndSchedule(@RequestParam("teacherId") Integer teacherId, @RequestParam("scheduleId") Integer scheduleId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByTeacherIdAndScheduleId(teacherId, scheduleId)));
         } catch (Exception e) {
@@ -86,7 +86,7 @@ public class ClassRestController extends GenericController<Classses> {
     }
 
     @GetMapping("/findClassByMajorId/{majorId}")
-    public ResponseEntity<?> findClassByMajorId(@PathVariable("majorId")Integer majorId){
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findClassByMajorId(majorId)));
+    public ResponseEntity<?> findClassByMajorId(@PathVariable("majorId") Integer majorId) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByMajorId(majorId)));
     }
 }

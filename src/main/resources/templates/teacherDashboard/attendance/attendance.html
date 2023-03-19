@@ -43,16 +43,26 @@
                                         </td>
                                         <td style="vertical-align: middle">
                                             <th:block th:if="${items.isAttendance == 0}">
-                                                <button th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-user-edit"></i></button>
-                                                <button disabled th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
-                                                    <i class="fas fa-edit"></i></button>
+                                                <th:block th:if="${items.onTime == 0}">
+                                                    <button th:data-name="${items.class_id}" disabled onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-user-edit"></i></button>
+                                                    <button disabled th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
+                                                        <i class="fas fa-edit"></i></button>
+                                                </th:block>
+                                                <th:block th:if="${items.onTime == 1}">
+                                                    <button th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-user-edit"></i></button>
+                                                    <button disabled th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
+                                                        <i class="fas fa-edit"></i></button>
+                                                </th:block>
                                             </th:block>
-                                            <th:block th:unless="${items.isAttendance == 0}">
+                                            <th:block th:if="${items.isAttendance == 1}">
                                                 <button disabled th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-user-edit"></i></button>
                                                 <button th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
                                                     <i class="fas fa-edit"></i></button>
+                                                <button th:data-name="${items.class_id}" class="btn btn-info btn-sm" onclick="OnViewAttendance(this.getAttribute('data-name'))">
+                                                    <i class="fas fa-eye"></i></button>
                                             </th:block>
                                         </td>
                                     </tr>
@@ -115,6 +125,30 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="view-attendance-modal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">View attendance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section class="row">
+                        <section class="col-12">
+                            <table style="width: 100%;" class="table table-hover table-bordered" id="listViewStudent">
+                            </table>
+                        </section>
+                    </section>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-danger" style="width: 200px" data-dismiss="modal">Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </section>
 <th:block layout:fragment="optional">

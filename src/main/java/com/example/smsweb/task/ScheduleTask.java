@@ -23,13 +23,12 @@ public class ScheduleTask {
     private final String URL_FCM = "http://localhost:8080/fcm/";
     private final String URL_DEVICE = "http://localhost:8080/api/device/";
 
-    @Scheduled(cron = "0 13 13 1/1 * *")
+    @Scheduled(cron = "0 38 17 1/1 * *")
     public void sendNotification() throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         LocalDate currenDate = LocalDate.now();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         String devices = restTemplate.getForObject(URL_DEVICE+"getAll", String.class);
         List<Devices> devicesList = new ObjectMapper().readValue(devices, new TypeReference<List<Devices>>() {
         });

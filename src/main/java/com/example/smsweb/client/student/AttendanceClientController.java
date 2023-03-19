@@ -50,70 +50,62 @@ public class AttendanceClientController {
                 restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", "Bearer " + _token);
+                HttpEntity<String> request = new HttpEntity<>(headers);
 
                 // Lấy profile
-                Account account = new Account();
-                account = (Account) auth.getPrincipal();
-                HttpEntity<String> profileRequest = new HttpEntity<>(headers);
-                ResponseEntity<Profile> responseProfile = restTemplate.exchange(PROFILE_URL + "get/" + account.getId(), HttpMethod.GET, profileRequest, Profile.class);
+                Account account = (Account) auth.getPrincipal();
+                ResponseEntity<Profile> responseProfile = restTemplate.exchange(PROFILE_URL + "get/" + account.getId(), HttpMethod.GET, request, Profile.class);
 
                 // Lấy Student
-                HttpEntity<String> requestStudent = new HttpEntity<>(headers);
-                ResponseEntity<Student> responseStudent = restTemplate.exchange(STUDENT_URL + "getByProfile/" + responseProfile.getBody().getId(), HttpMethod.GET, requestStudent, Student.class);
-
-                // Lấy student subject
-                HttpEntity<String> studentSubjectRequest = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getByStudentId/" + responseStudent.getBody().getId(), HttpMethod.GET, studentSubjectRequest, ResponseModel.class);
-                String studentSubjectJson = new ObjectMapper().writeValueAsString(responseStudentSubject.getBody().getData());
-                List<StudentSubject> listStudentSubject = new ObjectMapper().readValue(studentSubjectJson, new TypeReference<List<StudentSubject>>() {
-                });
+                ResponseEntity<Student> responseStudent = restTemplate.exchange(STUDENT_URL + "getByProfile/" + responseProfile.getBody().getId(), HttpMethod.GET, request, Student.class);
 
                 // Lấy class by student
-                HttpEntity<String> studentClassRequest = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "getClassByStudentId/" + responseStudent.getBody().getId(), HttpMethod.GET, studentClassRequest, ResponseModel.class);
+                ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "getClassesByStudentId/" + responseStudent.getBody().getId(), HttpMethod.GET, request, ResponseModel.class);
                 String studentClassJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
-                StudentClass studentClass = new ObjectMapper().readValue(studentClassJson, StudentClass.class);
-
-                // Lấy major_student by student
-                HttpEntity<String> majorStudentRequest = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> majorStudentResponse = restTemplate.exchange(STUDENT_MAJOR + "findMajorStudentByStudentId/" + studentClass.getStudentId(), HttpMethod.GET, majorStudentRequest, ResponseModel.class);
-                String studentMajorJson = new ObjectMapper().writeValueAsString(majorStudentResponse.getBody().getData());
-                MajorStudent majorStudent = new ObjectMapper().readValue(studentMajorJson, MajorStudent.class);
+                List<StudentClass> studentClassList = new ObjectMapper().readValue(studentClassJson, new TypeReference<List<StudentClass>>() {
+                });
 
                 //Lấy schedule
                 MultiValueMap<String, Integer> scheduleContent = new LinkedMultiValueMap<>();
-                scheduleContent.add("classId", studentClass.getClassId());
+                scheduleContent.add("classId", studentClassList.get(0).getClassId());
                 HttpEntity<MultiValueMap<String, Integer>> scheduleRequest = new HttpEntity<>(scheduleContent, headers);
                 ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass", HttpMethod.POST, scheduleRequest, ResponseModel.class);
                 String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
                 List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
                 });
 
-                // Lấy subject
-                MultiValueMap<String,Integer> subjectContent = new LinkedMultiValueMap<>();
-                subjectContent.add("fromSemester",1);
-                subjectContent.add("toSemester",scheduleList.size());
-                subjectContent.add("majorId",majorStudent.getMajorId());
-                HttpEntity<MultiValueMap<String,Integer>> subjectRequest = new HttpEntity<>(subjectContent,headers);
-                ResponseEntity<ResponseModel> responseSubject = restTemplate.exchange(SUBJECT_URL + "findSubjectBySemesterIdAndMajorId",HttpMethod.POST,subjectRequest,ResponseModel.class);
-                String subjectJson = new ObjectMapper().writeValueAsString(responseSubject.getBody().getData());
-                listSubject = new ObjectMapper().readValue(subjectJson, new TypeReference<List<Subject>>() {});
+                // Lấy major_student by student
+                ResponseEntity<ResponseModel> majorStudentResponse = restTemplate.exchange(STUDENT_MAJOR + "findMajorStudentByStudentId/" + studentClassList.get(0).getStudentId(), HttpMethod.GET, request, ResponseModel.class);
+                String studentMajorJson = new ObjectMapper().writeValueAsString(majorStudentResponse.getBody().getData());
+                MajorStudent majorStudent = new ObjectMapper().readValue(studentMajorJson, MajorStudent.class);
 
-                for (Subject subject : listSubject){
-                    SubjectView subjectView = new SubjectView();
-                    // Lấy student subject
-                    MultiValueMap<String,Integer> studentSubjectContent = new LinkedMultiValueMap<>();
-                    studentSubjectContent.add("subjectId",subject.getId());
-                    studentSubjectContent.add("studentId",responseStudent.getBody().getId());
-                    HttpEntity<MultiValueMap<String,Integer>> requestStudentSubject = new HttpEntity<>(studentSubjectContent,headers);
-                    ResponseEntity<ResponseModel> studentSubjectResponse = restTemplate.exchange(STUDENT_SUBJECT_URL + "findStudentSubjectBySubjectIdAndStudentId", HttpMethod.POST,requestStudentSubject,ResponseModel.class);
-                    String jsonStudentSubject = new ObjectMapper().writeValueAsString(studentSubjectResponse.getBody().getData());
-                    StudentSubject studentSubject = new ObjectMapper().readValue(jsonStudentSubject, StudentSubject.class);
-                    subjectView.setId(subject.getId());
-                    subjectView.setSubject_name(subject.getSubjectName());
-                    subjectView.setSubject_code(subject.getSubjectCode());
-                    subjectView.setStatus(studentSubject.getStatus());
-                    listSubjectView.add(subjectView);
+                if (!scheduleList.isEmpty()) {
+                    // Lấy subject
+                    MultiValueMap<String, Integer> subjectContent = new LinkedMultiValueMap<>();
+                    subjectContent.add("fromSemester", 1);
+                    subjectContent.add("toSemester", scheduleList.size());
+                    subjectContent.add("majorId", majorStudent.getMajorId());
+                    HttpEntity<MultiValueMap<String, Integer>> subjectRequest = new HttpEntity<>(subjectContent, headers);
+                    ResponseEntity<ResponseModel> responseSubject = restTemplate.exchange(SUBJECT_URL + "findSubjectBySemesterIdAndMajorId", HttpMethod.POST, subjectRequest, ResponseModel.class);
+                    String subjectJson = new ObjectMapper().writeValueAsString(responseSubject.getBody().getData());
+                    listSubject = new ObjectMapper().readValue(subjectJson, new TypeReference<List<Subject>>() {
+                    });
+                    for (Subject subject : listSubject) {
+                        SubjectView subjectView = new SubjectView();
+                        // Lấy student subject
+                        MultiValueMap<String, Integer> studentSubjectContent = new LinkedMultiValueMap<>();
+                        studentSubjectContent.add("subjectId", subject.getId());
+                        studentSubjectContent.add("studentId", responseStudent.getBody().getId());
+                        HttpEntity<MultiValueMap<String, Integer>> requestStudentSubject = new HttpEntity<>(studentSubjectContent, headers);
+                        ResponseEntity<ResponseModel> studentSubjectResponse = restTemplate.exchange(STUDENT_SUBJECT_URL + "findStudentSubjectBySubjectIdAndStudentId", HttpMethod.POST, requestStudentSubject, ResponseModel.class);
+                        String jsonStudentSubject = new ObjectMapper().writeValueAsString(studentSubjectResponse.getBody().getData());
+                        StudentSubject studentSubject = new ObjectMapper().readValue(jsonStudentSubject, StudentSubject.class);
+                        subjectView.setId(subject.getId());
+                        subjectView.setSubject_name(subject.getSubjectName());
+                        subjectView.setSubject_code(subject.getSubjectCode());
+                        subjectView.setStatus(studentSubject.getStatus());
+                        listSubjectView.add(subjectView);
+                    }
                 }
                 model.addAttribute("student", responseStudent.getBody());
                 model.addAttribute("listSubject", listSubjectView);
@@ -123,7 +115,7 @@ public class AttendanceClientController {
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            return "/login";
+            return "error/error";
         }
     }
 
@@ -139,28 +131,26 @@ public class AttendanceClientController {
                 listSumAttendance = new ArrayList<>();
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", "Bearer " + _token);
+                HttpEntity<String> request = new HttpEntity<>(headers);
 
                 // Lấy student class
-                HttpEntity<String> requestStudentClass = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "getClassByStudentId/" + studentId, HttpMethod.GET, requestStudentClass, ResponseModel.class);
+                ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "getClassesByStudentId/" + studentId, HttpMethod.GET, request, ResponseModel.class);
                 String studentClassJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
-                StudentClass studentClass = new ObjectMapper().readValue(studentClassJson, StudentClass.class);
+                List<StudentClass> studentClassList = new ObjectMapper().readValue(studentClassJson, new TypeReference<List<StudentClass>>() {
+                });
 
                 // Lấy class
-                HttpEntity<String> requestClass = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + studentClass.getClassId(), HttpMethod.GET, requestClass, ResponseModel.class);
+                ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + studentClassList.get(0).getClassId(), HttpMethod.GET, request, ResponseModel.class);
                 String classJson = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
                 Classses classses = new ObjectMapper().readValue(classJson, Classses.class);
 
                 // Lấy teacher
-                HttpEntity<String> requestTeacher = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseTeacher = restTemplate.exchange(TEACHER_URL + "get/" + classses.getTeacherId(), HttpMethod.GET, requestTeacher, ResponseModel.class);
+                ResponseEntity<ResponseModel> responseTeacher = restTemplate.exchange(TEACHER_URL + "get/" + classses.getTeacherId(), HttpMethod.GET, request, ResponseModel.class);
                 String teacherJson = new ObjectMapper().writeValueAsString(responseTeacher.getBody().getData());
                 Teacher teacher = new ObjectMapper().readValue(teacherJson, Teacher.class);
 
                 // Lấy schedule
-                HttpEntity<String> requestSchedule = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + studentClass.getClassId(), HttpMethod.GET, requestSchedule, ResponseModel.class);
+                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + studentClassList.get(0).getClassId(), HttpMethod.GET, request, ResponseModel.class);
                 String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
 
@@ -182,16 +172,16 @@ public class AttendanceClientController {
                 ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getOne", HttpMethod.POST, studentSubjectRequest, ResponseModel.class);
                 String studentSubjectJson = new ObjectMapper().writeValueAsString(responseStudentSubject.getBody().getData());
                 StudentSubject studentSubject = new ObjectMapper().readValue(studentSubjectJson, StudentSubject.class);
-
                 for (ScheduleDetail scheduleDetail : listScheduleDetail) {
                     SumAttendance sumAttendance = new SumAttendance();
                     // Lấy attendance
                     MultiValueMap<String, String> attendanceContent = new LinkedMultiValueMap<>();
                     attendanceContent.add("date", scheduleDetail.getDate());
                     attendanceContent.add("slot", String.valueOf(scheduleDetail.getSlot()));
-                    attendanceContent.add("student_subject", String.valueOf(studentSubject.getId()));
+                    attendanceContent.add("studentSubjectId", String.valueOf(studentSubject.getId()));
+                    attendanceContent.add("shift",classses.getShift());
                     HttpEntity<MultiValueMap<String, String>> attendanceRequest = new HttpEntity<>(attendanceContent, headers);
-                    ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "findAttendanceByDateSlotStudentSubject", HttpMethod.POST, attendanceRequest, ResponseModel.class);
+                    ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "findAttendanceByDateAndSlotAndStudentSubjectAndShift", HttpMethod.POST, attendanceRequest, ResponseModel.class);
                     String attendanceJson = new ObjectMapper().writeValueAsString(responseAttendance.getBody().getData());
                     Attendance attendance = new ObjectMapper().readValue(attendanceJson, Attendance.class);
                     if (attendance != null) {

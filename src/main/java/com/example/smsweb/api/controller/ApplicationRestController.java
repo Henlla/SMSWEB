@@ -11,12 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/application")
 public class ApplicationRestController extends GenericController<Application> {
     @Autowired
     public IApplication service;
+    List<Application> listApplication;
 
     @PostMapping(value = "/save")
     public ResponseEntity<?> post(@RequestParam("application") String applicationJson) {
@@ -25,7 +28,7 @@ public class ApplicationRestController extends GenericController<Application> {
             service.save(app);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Save success"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Save fail"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Post fail"));
         }
     }
 
@@ -36,7 +39,22 @@ public class ApplicationRestController extends GenericController<Application> {
             service.save(app);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Update success"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Error", LocalDate.now().toString(), "Update fail"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Error", LocalDate.now().toString(), "Put fail"));
+        }
+    }
+
+    @GetMapping("/finApplicationByStudentId/{id}")
+    public ResponseEntity<?> findApplicationByStudentId(@PathVariable("id") Integer id) {
+        try {
+            listApplication = new ArrayList<>();
+            listApplication = service.findApplicationByStudentId(id);
+            if (listApplication != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), listApplication));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any record"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Get fail"));
         }
     }
 }

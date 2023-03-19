@@ -86,4 +86,15 @@ public class SubjectStudentRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Cập nhật thất bại"));
         }
     }
+
+    @PostMapping("/updateAll")
+    public ResponseEntity<?> updateAll(@RequestParam("student_subject")String listStudent){
+        try {
+            List<StudentSubject> studentSubject = new ObjectMapper().readValue(listStudent, new TypeReference<List<StudentSubject>>() {});
+            service.updateAll(studentSubject);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), "Cập nhật thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Cập nhật thất bại"));
+        }
+    }
 }

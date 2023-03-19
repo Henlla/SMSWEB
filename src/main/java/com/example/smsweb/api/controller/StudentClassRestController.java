@@ -23,55 +23,56 @@ public class StudentClassRestController extends GenericController<StudentClass> 
     public IStudentClass service;
 
     @PostMapping("/save")
-    public ResponseEntity<?> post(@RequestParam("newStudentClass") String newStudentClass){
+    public ResponseEntity<?> post(@RequestParam("newStudentClass") String newStudentClass) {
         try {
             StudentClass studentClass = new ObjectMapper().readValue(newStudentClass, StudentClass.class);
             service.save(studentClass);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),newStudentClass));
-        }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(),"Save fail"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), newStudentClass));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), "Save fail"));
         }
     }
 
     @PutMapping("/put")
-    public ResponseEntity<?> put(@RequestParam("studentClass") String studentClass){
+    public ResponseEntity<?> put(@RequestParam("studentClass") String studentClass) {
         try {
             StudentClass studentClassConvert = new ObjectMapper().readValue(studentClass, StudentClass.class);
             service.save(studentClassConvert);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(),studentClass));
-        }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(),null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Sao lưu thành công", LocalTime.now().toString(), studentClass));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Sao lưu thất bại", LocalTime.now().toString(), null));
         }
     }
 
     @PostMapping("/saveAll")
     public ResponseEntity<?> saveAll(@RequestParam("listStudentClass") String listStudentClass) throws JsonProcessingException {
         try {
-            List<StudentClass> list = new ObjectMapper().readValue(listStudentClass, new TypeReference<List<StudentClass>>(){});
-            for (StudentClass item :list) {
+            List<StudentClass> list = new ObjectMapper().readValue(listStudentClass, new TypeReference<List<StudentClass>>() {
+            });
+            for (StudentClass item : list) {
                 service.save(item);
             }
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),list));
-        }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(),"Save fail"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), list));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), "Save fail"));
         }
     }
 
     @GetMapping("/getStudent/{id}")
-    public ResponseEntity<?> getStudent(@PathVariable("id")Integer id) throws JsonProcessingException {
+    public ResponseEntity<?> getStudent(@PathVariable("id") Integer id) throws JsonProcessingException {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),service.findClassIdByStudentId(id)));
-        }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(),null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), service.findClassIdByStudentId(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), null));
         }
     }
 
     @GetMapping("/get")
     public ResponseEntity<?> getAllStudentClass() throws JsonProcessingException {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(),service.findAll()));
-        }catch (Exception e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(),"Don't find any records"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalTime.now().toString(), service.findAll()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalTime.now().toString(), "Don't find any records"));
         }
     }
 
@@ -85,11 +86,20 @@ public class StudentClassRestController extends GenericController<StudentClass> 
     }
 
     @GetMapping("/getClassByStudentId/{id}")
-    public ResponseEntity<?> findClassByStudent(@PathVariable("id")Integer id){
+    public ResponseEntity<?> findClassByStudent(@PathVariable("id") Integer id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),service.findClassByStudent(id)));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Don't find any records"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByStudent(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @GetMapping("/getClassesByStudentId/{id}")
+    public ResponseEntity<?> findClassesByStudent(@PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassesByStudentId(id)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
         }
     }
     @GetMapping("/findStudentClassesByStudentId/{id}")

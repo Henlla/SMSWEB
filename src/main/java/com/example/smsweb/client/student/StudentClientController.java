@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -41,15 +40,35 @@ public class StudentClientController {
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
     private final String SCHEDULE_DETAIL_URL = "http://localhost:8080/api/schedules_detail/";
+    private final String NEWS_URL = "http://localhost:8080/api/news/";
 
     @GetMapping("/index")
-    public String index() {
-        return "student/index";
+    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) throws JsonProcessingException {
+        String isExpired = JWTUtils.isExpired(_token);
+        if (!isExpired.toLowerCase().equals("token expired")) {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseModel> response = restTemplate.getForEntity(NEWS_URL + "list", ResponseModel.class);
+            String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
+            List<News> newsList = new ObjectMapper().readValue(json, new TypeReference<List<News>>() {
+            });
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            model.addAttribute("listNews", newsList
+                    .stream()
+                    .filter(news -> news.getIsActive().equals(true))
+                    .map(news -> {
+                        news.setPost_date(LocalDate.parse(news.getPost_date()).format(dateTimeFormatter).toString());
+                        return news;
+                    })
+                    .toList());
+            return "student/index";
+        } else {
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/viewSchedule")
     public String viewSchedule(@CookieValue(name = "_token", defaultValue = "") String _token, Model model,
-            Authentication auth) throws JsonProcessingException {
+                               Authentication auth) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             HttpHeaders headers = new HttpHeaders();
@@ -91,8 +110,8 @@ public class StudentClientController {
 
     @GetMapping("/viewSchedule/{classCode}")
     public String viewSchedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-            Model model,
-            @PathVariable("classCode") String classCode) throws JsonProcessingException {
+                               Model model,
+                               @PathVariable("classCode") String classCode) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             HttpHeaders headers = new HttpHeaders();
@@ -110,8 +129,8 @@ public class StudentClientController {
             LocalDate now = LocalDate.now(); // 2015-11-23
             LocalDate firstDay = now.with(firstDayOfYear()); // 2015-01-01
             LocalDate lastDay = now.with(lastDayOfYear()); // 2015-12-31
-            int weekOfFirstDay = firstDay.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-            int weekOfLastDay = lastDay.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+            int weekOfFirstDay = firstDay.get(WeekFields.of(Locale.getDefault()).weekOfYear());
+            int weekOfLastDay = lastDay.get(WeekFields.of(Locale.getDefault()).weekOfYear());
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM");
             List<WeekOfYear> weekOfYearList = new ArrayList<>();
             for (int i = weekOfFirstDay; i <= weekOfLastDay; i++) {
@@ -149,8 +168,8 @@ public class StudentClientController {
     @PostMapping("/getScheduleDetails")
     @ResponseBody
     public Object getScheduleDetails(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("classId") Integer classId,
-            @RequestParam("semester") String semester) throws JsonProcessingException {
+                                     @RequestParam("classId") Integer classId,
+                                     @RequestParam("semester") String semester) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -297,9 +316,9 @@ public class StudentClientController {
     @PostMapping("/viewScheduleByWeek")
     @ResponseBody
     public Object viewScheduleByWeek(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("classId") Integer classId,
-            @RequestParam("semester") String semester,
-            @RequestParam("week") Integer week) throws JsonProcessingException {
+                                     @RequestParam("classId") Integer classId,
+                                     @RequestParam("semester") String semester,
+                                     @RequestParam("week") Integer week) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -449,4 +468,89 @@ public class StudentClientController {
         }
     }
 
+    @GetMapping("/profile")
+    public String profile(@CookieValue(name = "_token", defaultValue = "") String _token, Model model,
+                          Authentication auth) throws JsonProcessingException {
+        String isExpired = JWTUtils.isExpired(_token);
+        if (!isExpired.toLowerCase().equals("token expired")) {
+            HttpHeaders headers = new HttpHeaders();
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            Account studentAccount = (Account) auth.getPrincipal();
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            ResponseEntity<Profile> profileResponse = restTemplate
+                    .exchange(PROFILE_URL + "get/" + studentAccount.getId(), HttpMethod.GET, request, Profile.class);
+
+            ResponseEntity<Student> studentResponse = restTemplate.exchange(
+                    STUDENT_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET, request,
+                    Student.class);
+
+            ResponseEntity<ResponseModel> studentClassResponse = restTemplate.exchange(
+                    STUDENT_CLASS_URL + "getStudent/" + studentResponse.getBody().getId(), HttpMethod.GET, request,
+                    ResponseModel.class);
+            String jsonStudentClass = objectMapper.writeValueAsString(studentClassResponse.getBody().getData());
+            List<StudentClass> studentClassList = objectMapper.readValue(jsonStudentClass,
+                    new TypeReference<List<StudentClass>>() {
+                    });
+            List<Classses> listClass = new ArrayList<>();
+
+            for (StudentClass studentClass : studentClassList) {
+                ResponseEntity<ResponseModel> classResponse = restTemplate.exchange(
+                        CLASS_URL + "getClass/" + studentClass.getClassId(), HttpMethod.GET, request,
+                        ResponseModel.class);
+                String jsonClass = objectMapper.writeValueAsString(classResponse.getBody().getData());
+                Classses classses = objectMapper.readValue(jsonClass, Classses.class);
+                listClass.add(classses);
+            }
+            model.addAttribute("listClass", listClass);
+            model.addAttribute("account", studentAccount);
+            model.addAttribute("student", studentResponse.getBody());
+            return "student/profile";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/change_password/{accountId}")
+    @ResponseBody
+    public Object change_password(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                  @RequestParam("oldPass") String oldPass,
+                                  @RequestParam("newPass") String newPass,
+                                  @PathVariable("accountId") Integer accountId) {
+        try {
+            JWTUtils.checkExpired(_token);
+            HttpHeaders headers = new HttpHeaders();
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+            params.add("password", oldPass);
+            params.add("newPassword", newPass);
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(ACCOUNT_URL + "changePassword/" + accountId, HttpMethod.PUT, request, ResponseModel.class);
+            return "success";
+        } catch (HttpClientErrorException ex) {
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return "error";
+            }
+        }
+    }
+
+    @GetMapping("/newsDetails/{newId}")
+    public String newsDetails(@CookieValue(name = "_token", defaultValue = "") String _token,
+                              @PathVariable("newId") Integer newId, Model model) {
+        try {
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseModel> response = restTemplate.getForEntity(NEWS_URL + "get/" + newId, ResponseModel.class);
+            model.addAttribute("news", response.getBody().getData());
+            return "student/newDetails";
+        } catch (Exception ex) {
+            return "redirect:/login";
+        }
+
+    }
 }

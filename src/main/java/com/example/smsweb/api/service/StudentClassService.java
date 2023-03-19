@@ -67,12 +67,17 @@ public class StudentClassService implements IStudentClass {
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new ErrorHandler("Không tìm thấy dữ liệu");
+            throw new ErrorHandler("Don't find any records");
         }
     }
 
     @Override
     public List<StudentClass> findStudentClassesByStudentId(int id) {
         return repository.findStudentClassesByStudentId(id);
+    }
+    
+    @Override
+    public List<StudentClass> findClassesByStudentId(Integer id) {
+        return repository.findStudentClassesByStudentId(id).orElseThrow(()->new ErrorHandler("Don't find any records"));
     }
 }

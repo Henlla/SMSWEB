@@ -33,6 +33,38 @@ var FormatHelper = (type, value, formatType) => {
             break;
     }
 }
+
 var GetExtension = (fileName) => {
     return fileName.split('.').pop();
+}
+
+// 1. Chuyển đổi image sang base64 string
+var toBase64 = (file) => new Promise((resolve, reject) => {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.replace("data:", "").replace(/^.+,/, ""));
+    reader.onerror = error => reject(error);
+});
+
+// 2. Chuyển đổi base64 string sang image
+async function base64ToImage(base64String) {
+    var base64Response = await fetch(`data:image/png;base64,${base64String}`);
+    return base64Response;
+}
+
+// Chuyển đổi base64 sang word
+async function base64ToWord(base64String) {
+    var base64Response = await fetch(`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${base64String}`);
+    return base64Response;
+}
+
+var urltoFile = (url, mimeType) => {
+    return (fetch(url)
+            .then(function (res) {
+                return res.arrayBuffer();
+            })
+            .then(function (buf) {
+                return new File([buf], {type: mimeType});
+            })
+    );
 }

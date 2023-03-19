@@ -12,5 +12,5 @@ public interface StudentClassRepository extends GenericRepository<StudentClass, 
     Optional<List<StudentClass>> findAllByStudentId(Integer id);
     Optional<List<StudentClass>> findAllByClassId(Integer id);
     StudentClass findStudentClassByStudentId(Integer id);
-    List<StudentClass> findStudentClassesByStudentId(int id);
+    Optional<List<StudentClass>> findStudentClassesByStudentId(Integer id);
 }

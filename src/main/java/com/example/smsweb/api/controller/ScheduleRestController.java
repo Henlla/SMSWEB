@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,8 @@ public class ScheduleRestController {
 
     @Autowired
     ISchedule iSchedule;
+
+    List<Schedule> listSchedule;
 
     @PostMapping("/post")
     public ResponseEntity<?> createSchedule(@RequestParam("schedule") String schedule) throws JsonProcessingException {
@@ -79,6 +82,21 @@ public class ScheduleRestController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDateTime.now().toString(), schedule));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDateTime.now().toString(), e.getMessage()));
+        }
+    }
+
+    @GetMapping("/findScheduleById/{scheduleId}")
+    public  ResponseEntity<?> findScheduleById(@PathVariable("scheduleId") Integer scheduleId){
+        try {
+            listSchedule = new ArrayList<>();
+            listSchedule = iSchedule.findScheduleById(scheduleId);
+            if(listSchedule != null){
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDateTime.now().toString(), listSchedule));
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDateTime.now().toString(), "Don't find any records"));
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDateTime.now().toString(), "Don't find any records"));
         }
     }
 }
