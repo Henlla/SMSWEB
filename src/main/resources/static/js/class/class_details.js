@@ -302,9 +302,9 @@ $(document).ready(function () {
                                 response = JSON.parse(response);
                                 Swal.fire({
                                     icon: 'question',
-                                    title: 'Chú ý',
-                                    html: 'Bạn có muốn thêm sinh viên: ' + response.studentByProfile.firstName + ' ' + response.studentByProfile.lastName +
-                                        '<br> ngày sinh: ' + response.studentByProfile.dob,
+                                    title: 'Warning',
+                                    html: 'Do you want to add this student: ' + response.studentByProfile.firstName + ' ' + response.studentByProfile.lastName +
+                                        '<br> Birth day: ' + response.studentByProfile.dob,
                                     showCancelButton: true,
                                     showDenyButton: false,
                                     confirmButtonColor: '#3085d6',

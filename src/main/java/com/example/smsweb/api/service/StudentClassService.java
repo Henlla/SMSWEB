@@ -70,4 +70,9 @@ public class StudentClassService implements IStudentClass {
             throw new ErrorHandler("Không tìm thấy dữ liệu");
         }
     }
+
+    @Override
+    public List<StudentClass> findStudentClassesByStudentId(int id) {
+        return repository.findStudentClassesByStudentId(id);
+    }
 }

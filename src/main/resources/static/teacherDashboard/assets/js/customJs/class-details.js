@@ -30,7 +30,7 @@ $(document).ready(function () {
             }
         },initComplete: function () {
             count = 0;
-            this.api().columns([1]).every(function (i) {
+            this.api().columns([2]).every(function (i) {
                 var title = this.header();
                 //replace spaces with dashes
                 title = $(title).html().replace(/[\W]/g, '');
@@ -76,4 +76,79 @@ $(document).ready(function () {
     $('.dataTables_filter input[type="search"]').css(
         {'width':'400px','display':'inline-block'}
     );
+    jQuery.validator.addMethod("checkExcelExtension",
+        function(value, element, params) {
+            if(/^.+xlsx$/.test(value)) return true;
+            else return false;
+        }, 'Only accept excel file !');
+
+    $("#form_import_mark").submit(function (event) {
+        event.preventDefault();
+        Swal.fire({
+            icon: 'question',
+            title: 'Confirm',
+            text: "Are you sure confirm this list",
+            showCancelButton: true,
+            showDenyButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Ok',
+        }).then((result)=>{
+            if(result.isConfirmed){
+                var file = $("#mark_list").get(0).files[0];
+                var data = new FormData();
+                data.append("mark_list", file);
+                data.append("classId",$("#classId").val())
+                data.append("teacherId",$("#teacherId").val())
+                let fileName = data.get("mark_list").name;
+
+                $('#form_import_mark').validate({
+                    rules: {
+                        mark_list: {
+                            required: true,
+                            checkExcelExtension: fileName
+                        }
+                    },
+                    messages: {
+                        mark_list: {
+                            required: "Please choose mark list !",
+                            checkExcelExtension:"Only accept excel file !"
+                        },
+                    },
+                })
+                if ($('#form_import_mark').valid()) {
+                    $.ajax({
+                        url: "/teacher/class/import-mark-list",
+                        method: "POST",
+                        data: data,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        enctype: "multipart/form-data",
+                        success: (response) => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Import mark list Success",
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            })
+                        },
+                        error: (error)=>{
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error.responseJSON.message,
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            })
+                        },
+                    });
+                }
+            }
+        })
+    })
 });

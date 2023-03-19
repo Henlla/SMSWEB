@@ -65,12 +65,14 @@
                                                             of Students:&nbsp;</b></h5></td>
                                                         <td><h5>
                                                             [[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]]
-                                                            học sinh</h5></td>
+                                                            Students</h5></td>
                                                     </tr>
                                                 </table>
                                             </td>
                                             <td class="d-flex justify-content-end">
-                                                <a data-target="#details_schedule" data-toggle="modal"
+                                                <a data-bs-target="#mark_score" data-bs-toggle="modal"
+                                                   class="btn btn-primary btn-sm me-1">Input mark</a>
+                                                <a data-bs-target="#details_schedule" data-bs-toggle="modal"
                                                    class="btn btn-primary btn-sm me-1">View time table</a>
                                                 <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
                                                    class="btn btn-success btn-sm">Download list student</a>
@@ -123,8 +125,106 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
+
+        <!-- Modal -->
+
+        <!--Timetable-->
+        <div class="modal fade" id="details_schedule" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">View Time Table</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="schedule_details_form">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="semesterSchedule">Semester:</label>
+                                        <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()" class="form-control" name="semesterSchedule" style="width: 100%;">
+                                            <option value="">-----Choose semester------</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="container">
+                            <div class="container">
+                                <div class="timetable-img text-center">
+                                    <img src="img/content/timetable.png" alt="">
+                                </div>
+                                <div class="float-right"><a id="btn_update_schedule" class="btn btn-info btn-sm">Edit</a></div>
+                                <a id="btnDownSchedule" class="btn btn-danger btn-sm">Download</a>
+                                <div class="table-responsive">
+                                    <table id="schedule_table" class="table table-bordered text-center">
+                                        <thead>
+                                        <tr class="bg-light-gray">
+                                            <th colspan="2" class="text-uppercase">Monday</th>
+                                            <th colspan="2" class="text-uppercase">Tuesday</th>
+                                            <th colspan="2" class="text-uppercase">Wednesday</th>
+                                            <th colspan="2" class="text-uppercase">Thursday</th>
+                                            <th colspan="2" class="text-uppercase">Friday</th>
+                                            <th colspan="2" class="text-uppercase">Saturday</th>
+                                            <th colspan="2" class="text-uppercase">Sunday</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Mark score-->
+        <div class="modal fade" id="mark_score" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mark Score</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="form_import_mark" enctype="multipart/form-data">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mark_list">Input mark list</label><a href="/TempExcel/mark-list.xlsx" download>Download example file</a>
+                                        <input type="file" accept=".xlsx" class="form-control" id="mark_list" name="mark_list">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control btn-primary" type="submit" value="Submit">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Input hidden-->
+        <input type="hidden" id="classId" th:value="${class.id}">
+        <input type="hidden" id="classCode" th:value="${class.classCode}">
+        <input type="hidden" id="teacherId" th:value="${class.teacher.getId()}">
     </div>
 </div>
 

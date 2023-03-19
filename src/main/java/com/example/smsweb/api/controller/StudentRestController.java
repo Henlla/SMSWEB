@@ -1,6 +1,7 @@
 package com.example.smsweb.api.controller;
 
 import com.example.smsweb.api.di.irepository.IStudent;
+import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Student;
 import com.fasterxml.jackson.databind.ObjectMapper;

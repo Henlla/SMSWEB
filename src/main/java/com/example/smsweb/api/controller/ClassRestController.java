@@ -56,7 +56,7 @@ public class ClassRestController extends GenericController<Classses> {
 
     @GetMapping("/getClass/{id}")
     public ResponseEntity<?> getClass(@PathVariable("id") Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Tìm thành công", LocalTime.now().toString(), service.findOne(id)));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(), service.findOne(id)));
     }
 
     @GetMapping("/get")
