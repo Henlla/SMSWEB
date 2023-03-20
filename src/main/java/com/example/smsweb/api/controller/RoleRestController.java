@@ -18,7 +18,7 @@ public class RoleRestController {
     private IRole iRole;
 
     @PostMapping("/")
-    public ResponseEntity<?> saveStudent(@ModelAttribute Role role){
+    public ResponseEntity<?> saveStudent(@ModelAttribute Role role) {
         iRole.save(role);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalTime.now().toString(),role));
     }

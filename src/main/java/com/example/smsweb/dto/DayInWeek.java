@@ -1,6 +1,7 @@
 package com.example.smsweb.dto;
 
 import com.example.smsweb.models.Subject;
+import com.example.smsweb.models.Teacher;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class DayInWeek {
     private Subject subject;
     private Integer subjectId;
     private String dayOfWeek;
+    private Teacher teacher;
     private Integer month;
     private Integer slot;
     private Integer week;

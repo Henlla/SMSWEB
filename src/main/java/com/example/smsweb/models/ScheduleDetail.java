@@ -37,6 +37,14 @@ public class ScheduleDetail {
     @Column(name = "day_of_week")
     private String dayOfWeek;
 
+    @Basic
+    @Column(name = "teacher_id")
+    private Integer teacherId;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id",insertable = false,updatable = false)
+    private Teacher teacherByScheduleDetail;
+
     @ManyToOne
 //    @JsonBackReference("subject_schedule_detail")
     @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)

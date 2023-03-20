@@ -57,6 +57,7 @@ public class ClassController {
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
     private final String SCHEDULE_DETAIL_URL = "http://localhost:8080/api/schedules_detail/";
     private final String HOLIDAY_URL = "https://holidayapi.com/v1/holidays?pretty&key=97662a7f-e120-4e95-b3a8-7c18d1c40717&country=VN&year=2022";
+    private final String URL_ROOM = "http://localhost:8080/api/room/";
     @Autowired
     private MailService mailService;
 
@@ -99,9 +100,12 @@ public class ClassController {
                 });
 
         ResponseModel listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
-
+        List<Room> listRoom = restTemplate.getForObject(URL_ROOM, ArrayList.class);
+        String json = new ObjectMapper().writeValueAsString(listRoom);
+        List<Room> l = new ObjectMapper().readValue(json, new TypeReference<List<Room>>(){});
         model.addAttribute("majors", listMajor.getData());
         model.addAttribute("teachers", teacherList);
+        model.addAttribute("roomList", l );
         return "dashboard/class/class_create";
     }
 
@@ -121,6 +125,7 @@ public class ClassController {
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             Classses classses = new ObjectMapper().readValue(json, Classses.class);
             HttpEntity<Object> request2 = new HttpEntity<>(headers);
+            Room room = restTemplate.getForObject(URL_ROOM+classses.getRoomId(), Room.class);
             ResponseEntity<ResponseModel> response2 = restTemplate.exchange(
                     CLASS_URL + "findClassByMajorId/" + classses.getMajorId(), HttpMethod.GET, request2,
                     ResponseModel.class);
@@ -128,6 +133,7 @@ public class ClassController {
             List<Classses> listClass = new ObjectMapper().readValue(json2, new TypeReference<List<Classses>>() {
             });
             model.addAttribute("class", classses);
+            model.addAttribute("room", room);
             model.addAttribute("classList",
                     listClass.stream().filter(classses1 -> !classses1.getClassCode().equals(classses.getClassCode()))
                             .collect(Collectors.toList()));
@@ -207,6 +213,7 @@ public class ClassController {
             @RequestParam("semester") Integer semester,
             @RequestParam("majorId") Integer majorId,
             @RequestParam("shift") String shift,
+            @RequestParam("teacher_id") Integer teacherId,
             @RequestParam("classId") Integer classId) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
@@ -279,6 +286,7 @@ public class ClassController {
                                             scheduleDetail.setDate(date.toString());
                                             scheduleDetail.setScheduleId(schedule.getId());
                                             scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setTeacherId(teacherId);
                                             scheduleDetail.setSlot(i);
                                             listScheduleDetails.add(scheduleDetail);
                                             slot++;
@@ -288,6 +296,7 @@ public class ClassController {
                                             scheduleDetail.setDate(date.toString());
                                             scheduleDetail.setScheduleId(schedule.getId());
                                             scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setTeacherId(teacherId);
                                             scheduleDetail.setSlot(i);
                                             listScheduleDetails.add(scheduleDetail);
                                             slot++;
@@ -334,6 +343,7 @@ public class ClassController {
                                             scheduleDetail.setDate(date.toString());
                                             scheduleDetail.setScheduleId(schedule.getId());
                                             scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setTeacherId(teacherId);
                                             scheduleDetail.setSlot(i);
                                             listScheduleDetails.add(scheduleDetail);
                                             slot++;
@@ -343,6 +353,7 @@ public class ClassController {
                                             scheduleDetail.setDate(date.toString());
                                             scheduleDetail.setScheduleId(schedule.getId());
                                             scheduleDetail.setSubjectId(subject.getId());
+                                            scheduleDetail.setTeacherId(teacherId);
                                             scheduleDetail.setSlot(i);
                                             listScheduleDetails.add(scheduleDetail);
                                             slot++;
@@ -462,6 +473,7 @@ public class ClassController {
                                                 scheduleDetail.setDate(date.toString());
                                                 scheduleDetail.setScheduleId(schedule.getId());
                                                 scheduleDetail.setSubjectId(subject.getId());
+                                                scheduleDetail.setTeacherId(subject.getId());
                                                 scheduleDetail.setSlot(i);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
@@ -641,6 +653,7 @@ public class ClassController {
                                 diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                                 diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                                diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                                 diw.setWeek(weekOfMonth);
                                 diw.setSlot(listSortDate.get(i).getSlot());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
@@ -656,6 +669,7 @@ public class ClassController {
                             diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                             diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                             diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                            diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                             diw.setSlot(listSortDate.get(i).getSlot());
                             diw.setWeek(weekOfMonth);
                             diw.setMonth(monthOfYear);
@@ -675,6 +689,7 @@ public class ClassController {
                             diw.setSubject(null);
                             diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
                             diw.setSubjectId(0);
+
                             diw.setSlot(1);
                             diw.setWeek(date.get(weekFields.weekOfMonth()));
                             diw.setMonth(date.getMonthValue());

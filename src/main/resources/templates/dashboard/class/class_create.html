@@ -93,6 +93,17 @@
                                    placeholder="Số Sinh viên tối đa">
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="roomList">Room</label>
+                            <select  class="form-control" name="roomList" id="roomList">
+                                <option value="">-----Choose room-----</option>
+                                <th:block th:each="room:${roomList}">
+                                    <option th:value="${room.getId()}">[[${room.roomCode}]]</option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </div>
                     <br>
                     <div class="col-6">
                         <div class="form-group">
