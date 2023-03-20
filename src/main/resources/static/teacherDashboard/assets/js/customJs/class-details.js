@@ -144,6 +144,7 @@ $(document).ready(function () {
         var data = new FormData();
         data.append("classId",$("#classId").val())
         data.append("teacherId",$("#teacherId").val())
+
         //Convert dataTable to blod(file)
         var wb = XLSX.utils.table_to_book(document.getElementById('myTable'),{sheet:'MARK_LIST'});
         var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type:'binary'})
