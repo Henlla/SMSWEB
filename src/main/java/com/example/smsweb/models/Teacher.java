@@ -33,4 +33,8 @@ public class Teacher {
     @JsonIgnore
     private List<Classses> teacherClass;
 
+    @OneToMany(mappedBy = "teacherByScheduleDetail")
+    @JsonIgnore
+    private List<ScheduleDetail> teacherScheduleDetail;
+
 }

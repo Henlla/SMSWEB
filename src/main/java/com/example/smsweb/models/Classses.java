@@ -1,5 +1,6 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,10 @@ public class Classses {
     @Column(name = "shift")
     private String shift;
 
+    @Basic
+    @Column(name = "room_id")
+    private Integer roomId;
+
     public Classses() {
         setDefaultValues();
     }
@@ -66,6 +71,12 @@ public class Classses {
     @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
     //@JsonManagedReference("teacherClass")
     private Teacher teacher;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", insertable = false, updatable = false)
+    //@JsonManagedReference("teacherClass")
+    @JsonIgnore
+    private Room classRoom;
 
 
     public void setDefaultValues() {

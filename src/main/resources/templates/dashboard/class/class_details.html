@@ -52,6 +52,10 @@
                                                 <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Number of student:&nbsp;</b></h5></td>
                                                 <td><h5>[[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]] student</h5></td>
                                             </tr>
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Room:&nbsp;</b></h5></td>
+                                                <td><h5>[[${room.roomCode}]]</h5></td>
+                                            </tr>
                                         </table>
                                     </td>
                                     <td class="d-flex justify-content-end">
@@ -494,6 +498,7 @@
         <input type="hidden" id="classId" th:value="${class.id}">
         <input type="hidden" id="classCode" th:value="${class.classCode}">
         <input type="hidden" id="shift" th:value="${class.getShift()}">
+        <input type="hidden" id="teacherId_v" th:value="${class.getTeacherId()}">
         <input type="hidden" id="availablePlace"
                th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
     </section>

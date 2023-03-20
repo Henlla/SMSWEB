@@ -170,7 +170,7 @@ public class StudentController {
             List<Subject> convertJsonSubject = new ObjectMapper().readValue(jsonSubjectMajor, new TypeReference<List<Subject>>() {
             });
             for(Subject subject : convertJsonSubject){
-                StudentSubject studentSubject = new StudentSubject(subject.getId(),studentResponse.getId(),"");
+                StudentSubject studentSubject = new StudentSubject(subject.getId(),studentResponse.getId(),"0");
                 studentSubjectList.add(studentSubject);
             }
             String studentSubjectListToJson = new ObjectMapper().writeValueAsString(studentSubjectList);
