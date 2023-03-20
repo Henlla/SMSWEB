@@ -59,7 +59,7 @@ public class MajorService implements IMajor {
 
     @Override
     public Major findOne(int id) {
-        return dao.findById(id).orElseThrow(() -> new ErrorHandler("Không tìm thấy dữ liệu"));
+        return dao.findById(id).orElseThrow(() -> new ErrorHandler("Find not found !"));
     }
 
     @Override
@@ -96,6 +96,11 @@ public class MajorService implements IMajor {
         } else {
             return "Vui lòng chọn file";
         }
+    }
+
+    @Override
+    public Major findMajorByMajorCode(String majorCode) {
+        return dao.findMajorByMajorCode(majorCode);
     }
 
     @Override

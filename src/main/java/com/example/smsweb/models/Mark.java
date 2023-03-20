@@ -2,16 +2,14 @@ package com.example.smsweb.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Mark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -61,31 +59,6 @@ public class Mark {
 
     public void setStudentSubjectId(Integer studentSubjectId) {
         this.studentSubjectId = studentSubjectId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Mark mark = (Mark) o;
-
-        if (id != mark.id) return false;
-        if (asm != null ? !asm.equals(mark.asm) : mark.asm != null) return false;
-        if (obj != null ? !obj.equals(mark.obj) : mark.obj != null) return false;
-        if (studentSubjectId != null ? !studentSubjectId.equals(mark.studentSubjectId) : mark.studentSubjectId != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (asm != null ? asm.hashCode() : 0);
-        result = 31 * result + (obj != null ? obj.hashCode() : 0);
-        result = 31 * result + (studentSubjectId != null ? studentSubjectId.hashCode() : 0);
-        return result;
     }
 
     public StudentSubject getStudentSubjectByStudentSubjectId() {

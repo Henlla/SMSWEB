@@ -1,6 +1,7 @@
 package com.example.smsweb.api.controller;
 
 import com.example.smsweb.api.di.irepository.IStudent;
+import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.models.Student;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,7 +56,7 @@ public class StudentRestController {
             List<Student> studentIdByRangeStudentCard = iStudent.findStudentIdByRangeStudentCard(stringList);
             return ResponseEntity.status(HttpStatus.OK).body(studentIdByRangeStudentCard);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            throw new ErrorHandler(e.getMessage());
         }
     }
 }
