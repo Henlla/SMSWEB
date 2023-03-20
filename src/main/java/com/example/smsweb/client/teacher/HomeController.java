@@ -334,7 +334,7 @@ public class HomeController {
                                 Principal principal,
                                 @PathVariable("classCode") String classCode) {
         try {
-            JWTUtils.checkExpired(_token);
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -358,8 +358,7 @@ public class HomeController {
                 return "redirect:/teacher/classes";
             }
         } catch (Exception ex) {
-            log.error(ex.getMessage());
-            return "redirect:/teacherDashboard/logout";
+            throw new ErrorHandler(ex.getMessage());
         }
     }
 

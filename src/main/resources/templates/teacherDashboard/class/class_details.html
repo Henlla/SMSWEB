@@ -37,7 +37,7 @@
                                                     <tr>
                                                         <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Class:&nbsp;</b>
                                                         </h5></td>
-                                                        <td><h5>[[${class.classCode}]]</h5></td>
+                                                        <td><h5 id="title_class_code">[[${class.classCode}]]</h5></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -74,8 +74,7 @@
                                                    class="btn btn-primary btn-sm me-1">Input mark</a>
                                                 <a data-bs-target="#details_schedule" data-bs-toggle="modal"
                                                    class="btn btn-primary btn-sm me-1">View time table</a>
-                                                <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
-                                                   class="btn btn-success btn-sm">Download list student</a>
+                                                <a id="export_student_excel" class="btn btn-success btn-sm">Download list student</a>
                                             </td>
                                         </tr>
                                     </table>

@@ -220,4 +220,13 @@ $(document).ready(function () {
         }
 
     })
+
+    //download student list
+    $("#export_student_excel").click(function (event){
+        event.preventDefault();
+
+        //Convert dataTable to blod(file)
+        var wb = XLSX.utils.table_to_book(document.getElementById('student-table'),{sheet:'STUDENT_LIST'});
+        XLSX.writeFile(wb, "Student_list_"+$("#title_class_code").html()+".xlsx")
+    })
 });
