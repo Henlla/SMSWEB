@@ -14,4 +14,5 @@ public class SubjectView {
     private String subject_code;
     private String subject_name;
     private String status;
+    private Integer semester;
 }
