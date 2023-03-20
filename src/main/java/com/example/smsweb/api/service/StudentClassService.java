@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -73,7 +74,13 @@ public class StudentClassService implements IStudentClass {
 
     @Override
     public List<StudentClass> findStudentClassesByStudentId(int id) {
-        return repository.findStudentClassesByStudentId(id);
+        try {
+            Optional<List<StudentClass>> studentClassesByStudentId = repository.findStudentClassesByStudentId(id);
+            if (studentClassesByStudentId.isPresent()) return studentClassesByStudentId.get();
+            else return null;
+        }catch (Exception e){
+            throw new ErrorHandler("Can not found any record");
+        }
     }
     
     @Override

@@ -87,8 +87,8 @@
                     <div class="row table-responsive">
                         <div class="col-12">
                             <div class="d-flex align-items-center mb-3 col-md-6">
-                                <label class="me-2">Find by Major :</label>
-                                <div class="mb-2" style="width: 100%" id="select-major"></div>
+<!--                                <label class="me-2">Find by Major :</label>-->
+<!--                                <div class="mb-2" style="width: 100%" id="select-major"></div>-->
                             </div>
                             <table id="student-table" class="table table-bordered">
                                 <thead>
@@ -215,6 +215,19 @@
                                     </div>
                                 </div>
                             </form>
+                            <table id="myTable" class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Numbers</th>
+                                    <th>Student code</th>
+                                    <th>Student name</th>
+                                    <th>Subject code</th>
+                                    <th>ASM mark</th>
+                                    <th>OBJ mark</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -229,6 +242,8 @@
 </div>
 
 <th:block layout:fragment="optional">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+<!--    <script src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>-->
     <script type="text/javascript" src="/teacherDashboard/assets/js/customJs/class-details.js"></script>
 </th:block>
 </body>

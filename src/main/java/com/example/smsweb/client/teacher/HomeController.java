@@ -7,7 +7,6 @@ import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
 import com.example.smsweb.utils.ExcelHelper;
 import com.example.smsweb.dto.TeachingCurrenDate;
-import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.Account;
 import com.example.smsweb.models.Classses;
 import com.example.smsweb.models.News;
@@ -17,15 +16,14 @@ import com.example.smsweb.models.ScheduleDetail;
 import com.example.smsweb.models.Student;
 import com.example.smsweb.models.Subject;
 import com.example.smsweb.models.Teacher;
+import com.example.smsweb.utils.StreamHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.bouncycastle.math.raw.Mod;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -47,11 +45,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.text.SimpleDateFormat;
+
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
 
@@ -80,10 +75,6 @@ public class HomeController {
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
     public RestTemplate restTemplate;
 
-    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -93,7 +84,7 @@ public class HomeController {
     public String index(@CookieValue(name = "_token") String _token,Authentication auth,Model model) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
-            if (!isExpired.toLowerCase().equals("token expired")) {
+            if (!isExpired.equalsIgnoreCase("token expired")) {
                 HttpHeaders headers = new HttpHeaders();
                 RestTemplate restTemplate = new RestTemplate();
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -101,10 +92,11 @@ public class HomeController {
                 Account teacherUser = (Account) auth.getPrincipal();
 
                 //Get class
-                ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "list", HttpMethod.GET, request, String.class);
+                HttpEntity<String> requestClass = new HttpEntity<>(headers);
+                ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "list", HttpMethod.GET, requestClass, String.class);
                 List<Classses> classList = objectMapper.readValue(response.getBody(), new TypeReference<>() {});
                 classList = classList.stream()
-                        .filter(p -> p.getTeacher().getProfileByProfileId().getAccountByAccountId().getUsername().equals(principal.getName()))
+                        .filter(p -> p.getTeacher().getProfileByProfileId().getAccountByAccountId().getUsername().equals(teacherUser.getUsername()))
                         .sorted(Comparator.comparingInt(Classses::getId))
                         .collect(Collectors.toList());
 
@@ -114,7 +106,7 @@ public class HomeController {
                     studentClassList.addAll(classs.getStudentClassById());
                 }
                 int totalStudent = studentClassList.stream()
-                        .filter(distinctByKey(StudentClass::getStudentId)).collect(Collectors.toList()).size();
+                        .filter(StreamHelper.distinctByKey(StudentClass::getStudentId)).toList().size();
 
 
                 // Lấy Profile
@@ -235,7 +227,7 @@ public class HomeController {
             studentClassList.forEach(studentClass -> studentList.add(studentClass.getClassStudentByStudent()));
 
             List<Student> collect = studentList.stream()
-                    .filter(distinctByKey(Student::getId))
+                    .filter(StreamHelper.distinctByKey(Student::getId))
                     .collect(Collectors.toList());
 
             model.addAttribute("students",collect);
@@ -256,7 +248,7 @@ public class HomeController {
             HttpHeaders headers = new HttpHeaders();
             responseModel = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
             model.addAttribute("listMajor", responseModel.getData());
-            return "teacherDashboard/major/marjor_index";
+            return "teacherDashboard/major/major_index";
         } catch (Exception e) {
             return "redirect:/teacherDashboard/login";
         }
@@ -371,6 +363,8 @@ public class HomeController {
         }
     }
 
+
+
     @PostMapping("class/import-mark-list")
     @ResponseBody
     public String importScoreList(Model model,
@@ -390,15 +384,15 @@ public class HomeController {
                 //get excel data to markList
                 XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
                 XSSFSheet sheet = workbook.getSheetAt(0);
-                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
+                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 1); rowIndex++) {
                     XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex < 2) {
+                    if (rowIndex < 1) {
                         continue;
                     }
                     String studentCode = ExcelHelper.getValue(row.getCell(1)).toString();
-                    String majorCode = ExcelHelper.getValue(row.getCell(2)).toString();
-                    String asmMark = ExcelHelper.getValue(row.getCell(3)).toString();
-                    String objMark = ExcelHelper.getValue(row.getCell(4)).toString();
+                    String majorCode = ExcelHelper.getValue(row.getCell(3)).toString();
+                    String asmMark = ExcelHelper.getValue(row.getCell(4)).toString();
+                    String objMark = ExcelHelper.getValue(row.getCell(5)).toString();
 
                     inputMarkList.add(new MarkList(studentCode, majorCode, Double.parseDouble(asmMark), Double.parseDouble(objMark)));
                 }
@@ -536,15 +530,15 @@ public class HomeController {
                 //get excel data to markList
                 XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
                 XSSFSheet sheet = workbook.getSheetAt(0);
-                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
+                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 1); rowIndex++) {
                     XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex < 2) {
+                    if (rowIndex < 1) {
                         continue;
                     }
                     String studentCode = ExcelHelper.getValue(row.getCell(1)).toString();
-                    String majorCode = ExcelHelper.getValue(row.getCell(2)).toString();
-                    String asmMark = ExcelHelper.getValue(row.getCell(3)).toString();
-                    String objMark = ExcelHelper.getValue(row.getCell(4)).toString();
+                    String majorCode = ExcelHelper.getValue(row.getCell(3)).toString();
+                    String asmMark = ExcelHelper.getValue(row.getCell(4)).toString();
+                    String objMark = ExcelHelper.getValue(row.getCell(5)).toString();
 
                     inputMarkList.add(new MarkList(studentCode, majorCode, Double.parseDouble(asmMark), Double.parseDouble(objMark)));
                 }
