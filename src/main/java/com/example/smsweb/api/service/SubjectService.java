@@ -126,6 +126,11 @@ public class SubjectService implements ISubject {
         }
     }
 
+    @Override
+    public Subject findSubjectBySubjectCode(String subjectCode) {
+        return subjectDao.findSubjectBySubjectCode(subjectCode).orElseThrow(()-> new ErrorHandler("Subject "+ subjectCode+" is not existed"));
+    }
+
     public List<Subject> findSubjectByMajorIdSemester(Integer majorId, Integer semester) {
         return subjectDao.findAllByMajorIdAndSemesterId(majorId, semester).orElseThrow(() -> new ErrorHandler("Cannot find subject with majorId = " + majorId + " semester " + semester));
     }

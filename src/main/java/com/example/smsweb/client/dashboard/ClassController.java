@@ -867,7 +867,7 @@ public class ClassController {
                 String convertToJson = objectMapper.writeValueAsString(student);
                 return convertToJson;
             } else {
-                throw new ErrorHandler("Không tìm thấy sinh viên: " + studentCard);
+                throw new ErrorHandler("Student: "+ studentCard+ " is not existed !");
             }
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
@@ -913,7 +913,7 @@ public class ClassController {
                 String convertToJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
                 return convertToJson;
             } else {
-                throw new ErrorHandler("Thêm sinh viên thất bại");
+                throw new ErrorHandler("Add students failed !");
             }
 
         } catch (JsonProcessingException e) {
@@ -939,12 +939,10 @@ public class ClassController {
                         throw new ErrorHandler(response.getMessage());
                     }
                 } catch (Exception e) {
-                    String message = e.getMessage().substring(e.getMessage().indexOf("\"") + 1,
-                            e.getMessage().lastIndexOf("\""));
-                    throw new ErrorHandler(message);
+                    throw new ErrorHandler(e.getMessage());
                 }
             } else {
-                throw new ErrorHandler("Không thể thêm danh sách trống");
+                throw new ErrorHandler("Can not import empty list !");
             }
         } catch (Exception ex) {
             throw new ErrorHandler(ex.getMessage());
@@ -1015,7 +1013,7 @@ public class ClassController {
                 XSSFSheet sheet = workbook.getSheetAt(0);
                 for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 1); rowIndex++) {
                     XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex == 0) {
+                    if (rowIndex > 0) {
                         continue;
                     }
                     String student_code = ExcelHelper.getValue(row.getCell(1)).toString();
@@ -1056,8 +1054,16 @@ public class ClassController {
                             });
                     String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
                     Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
+
                     List<StudentClass> studentClassList = new ArrayList<>();
                     for (Student student : listStudent) {
+                        for (StudentClass studentClass :classModel.getStudentClassById()){
+                            var card1= studentClass.getClassStudentByStudent().getStudentCard();
+                            var card2= student.getStudentCard();
+                            if( studentClass.getClassStudentByStudent().getStudentCard().equals(student.getStudentCard())){
+                                throw new ErrorHandler("Student: "+ student.getStudentByProfile().getFullName()+ " already in thís class !");
+                            }
+                        }
                         StudentClass studentClass = new StudentClass();
                         studentClass.setStudentId(student.getId());
                         studentClass.setClassId(classModel.getId());
@@ -1069,19 +1075,19 @@ public class ClassController {
                             .exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, request, ResponseModel.class);
                     if (responseStudentClass.getStatusCode().is2xxSuccessful()) {
                         return new ClassResponse("success",
-                                "Thêm thành công " + studentClassList.size() + " sinh viên");
+                                "Add " + studentClassList.size() + " students success");
                     } else {
-                        return new ClassResponse("error", "Thêm danh sách sinh viên thất bại");
+                        return new ClassResponse("error", "Import student list failed");
                     }
                 } else {
-                    return new ClassResponse("error", "Không thể thêm danh sách trống");
+                    return new ClassResponse("error", "Can not import empty list");
                 }
             } catch (Exception e) {
                 var s = e.getMessage();
                 throw new RuntimeException(e.getMessage());
             }
         }
-        return new ClassResponse("error", "Không thể thêm danh sách trống");
+        return new ClassResponse("error", "Can not import empty list");
     }
 
     @GetMapping("/export-student-excel/{ClassId}")

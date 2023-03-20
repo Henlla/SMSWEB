@@ -48,4 +48,12 @@ public class MajorRestController extends GenericController<Major> {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),"Don't find any records"));
         }
     }
+    @GetMapping("/findByMajorCode/{code}")
+    public ResponseEntity<?> findMajorById(@PathVariable("code") String majorCode){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findMajorByMajorCode(majorCode)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),"Don't find any records"));
+        }
+    }
 }
