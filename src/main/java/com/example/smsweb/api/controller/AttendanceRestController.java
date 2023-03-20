@@ -131,4 +131,15 @@ public class AttendanceRestController extends GenericController<Attendance> {
         }
     }
 
+    @PostMapping("/findAttendanceByDateSlotAndShift")
+    public ResponseEntity<?> findAttendanceByDateAndStudentSubjectAndShift(@RequestParam("date") String date,
+                                                                           @RequestParam("slot") Integer slot,
+                                                                           @RequestParam("shift") String shift) {
+        try {
+            listAttendance = service.findAttendanceByDateSlotAndShift(date, slot, shift);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), listAttendance));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
 }

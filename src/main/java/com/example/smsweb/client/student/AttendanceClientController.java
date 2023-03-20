@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -65,25 +67,21 @@ public class AttendanceClientController {
                 List<StudentClass> studentClassList = new ObjectMapper().readValue(studentClassJson, new TypeReference<List<StudentClass>>() {
                 });
 
-                //Lấy schedule
-                MultiValueMap<String, Integer> scheduleContent = new LinkedMultiValueMap<>();
-                scheduleContent.add("classId", studentClassList.get(0).getClassId());
-                HttpEntity<MultiValueMap<String, Integer>> scheduleRequest = new HttpEntity<>(scheduleContent, headers);
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClass", HttpMethod.POST, scheduleRequest, ResponseModel.class);
-                String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
-                List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
-                });
+                // Lấy class
+                ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + studentClassList.get(0).getClassId(), HttpMethod.GET, request, ResponseModel.class);
+                String classJson = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
+                Classses classses = new ObjectMapper().readValue(classJson, Classses.class);
 
                 // Lấy major_student by student
                 ResponseEntity<ResponseModel> majorStudentResponse = restTemplate.exchange(STUDENT_MAJOR + "findMajorStudentByStudentId/" + studentClassList.get(0).getStudentId(), HttpMethod.GET, request, ResponseModel.class);
                 String studentMajorJson = new ObjectMapper().writeValueAsString(majorStudentResponse.getBody().getData());
                 MajorStudent majorStudent = new ObjectMapper().readValue(studentMajorJson, MajorStudent.class);
 
-                if (!scheduleList.isEmpty()) {
+                if (!classses.getSchedulesById().isEmpty()) {
                     // Lấy subject
                     MultiValueMap<String, Integer> subjectContent = new LinkedMultiValueMap<>();
                     subjectContent.add("fromSemester", 1);
-                    subjectContent.add("toSemester", scheduleList.size());
+                    subjectContent.add("toSemester", classses.getSchedulesById().size());
                     subjectContent.add("majorId", majorStudent.getMajorId());
                     HttpEntity<MultiValueMap<String, Integer>> subjectRequest = new HttpEntity<>(subjectContent, headers);
                     ResponseEntity<ResponseModel> responseSubject = restTemplate.exchange(SUBJECT_URL + "findSubjectBySemesterIdAndMajorId", HttpMethod.POST, subjectRequest, ResponseModel.class);
@@ -101,12 +99,14 @@ public class AttendanceClientController {
                         String jsonStudentSubject = new ObjectMapper().writeValueAsString(studentSubjectResponse.getBody().getData());
                         StudentSubject studentSubject = new ObjectMapper().readValue(jsonStudentSubject, StudentSubject.class);
                         subjectView.setId(subject.getId());
+                        subjectView.setSemester(subject.getSemesterId());
                         subjectView.setSubject_name(subject.getSubjectName());
                         subjectView.setSubject_code(subject.getSubjectCode());
                         subjectView.setStatus(studentSubject.getStatus());
                         listSubjectView.add(subjectView);
                     }
                 }
+                Collections.sort(listSubjectView, Comparator.comparing(SubjectView::getSemester).thenComparing(SubjectView::getId));
                 model.addAttribute("student", responseStudent.getBody());
                 model.addAttribute("listSubject", listSubjectView);
                 return "student/attendance";
@@ -144,26 +144,6 @@ public class AttendanceClientController {
                 String classJson = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
                 Classses classses = new ObjectMapper().readValue(classJson, Classses.class);
 
-                // Lấy teacher
-                ResponseEntity<ResponseModel> responseTeacher = restTemplate.exchange(TEACHER_URL + "get/" + classses.getTeacherId(), HttpMethod.GET, request, ResponseModel.class);
-                String teacherJson = new ObjectMapper().writeValueAsString(responseTeacher.getBody().getData());
-                Teacher teacher = new ObjectMapper().readValue(teacherJson, Teacher.class);
-
-                // Lấy schedule
-                ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "getScheduleByClassId/" + studentClassList.get(0).getClassId(), HttpMethod.GET, request, ResponseModel.class);
-                String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
-                Schedule schedule = new ObjectMapper().readValue(scheduleJson, Schedule.class);
-
-                // Lấy Schedule Detail
-                MultiValueMap<String, Integer> scheduleDetailContent = new LinkedMultiValueMap<>();
-                scheduleDetailContent.add("scheduleId", schedule.getId());
-                scheduleDetailContent.add("subjectId", subjectId);
-                HttpEntity<MultiValueMap<String, Integer>> requestScheduleDetail = new HttpEntity<>(scheduleDetailContent, headers);
-                ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailByScheduleIdAndSubjectId", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
-                String scheduleDetailJson = new ObjectMapper().writeValueAsString(responseScheduleDetail.getBody().getData());
-                List<ScheduleDetail> listScheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, new TypeReference<List<ScheduleDetail>>() {
-                });
-
                 // Lấy student subject
                 MultiValueMap<String, Integer> studentSubjectContent = new LinkedMultiValueMap<>();
                 studentSubjectContent.add("studentId", studentId);
@@ -172,32 +152,36 @@ public class AttendanceClientController {
                 ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getOne", HttpMethod.POST, studentSubjectRequest, ResponseModel.class);
                 String studentSubjectJson = new ObjectMapper().writeValueAsString(responseStudentSubject.getBody().getData());
                 StudentSubject studentSubject = new ObjectMapper().readValue(studentSubjectJson, StudentSubject.class);
-                for (ScheduleDetail scheduleDetail : listScheduleDetail) {
-                    SumAttendance sumAttendance = new SumAttendance();
-                    // Lấy attendance
-                    MultiValueMap<String, String> attendanceContent = new LinkedMultiValueMap<>();
-                    attendanceContent.add("date", scheduleDetail.getDate());
-                    attendanceContent.add("slot", String.valueOf(scheduleDetail.getSlot()));
-                    attendanceContent.add("studentSubjectId", String.valueOf(studentSubject.getId()));
-                    attendanceContent.add("shift",classses.getShift());
-                    HttpEntity<MultiValueMap<String, String>> attendanceRequest = new HttpEntity<>(attendanceContent, headers);
-                    ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "findAttendanceByDateAndSlotAndStudentSubjectAndShift", HttpMethod.POST, attendanceRequest, ResponseModel.class);
-                    String attendanceJson = new ObjectMapper().writeValueAsString(responseAttendance.getBody().getData());
-                    Attendance attendance = new ObjectMapper().readValue(attendanceJson, Attendance.class);
-                    if (attendance != null) {
-                        sumAttendance.setDate(scheduleDetail.getDate());
-                        sumAttendance.setSlot(scheduleDetail.getSlot());
-                        sumAttendance.setClass_name(classses.getClassCode());
-                        sumAttendance.setTeacher_name(teacher.getProfileByProfileId().getFirstName() + " " + teacher.getProfileByProfileId().getLastName());
-                        sumAttendance.setStatus(String.valueOf(attendance.getStatus()));
-                    } else {
-                        sumAttendance.setDate(scheduleDetail.getDate());
-                        sumAttendance.setSlot(scheduleDetail.getSlot());
-                        sumAttendance.setClass_name(classses.getClassCode());
-                        sumAttendance.setTeacher_name(teacher.getProfileByProfileId().getFirstName() + " " + teacher.getProfileByProfileId().getLastName());
-                        sumAttendance.setStatus("FUTURE");
+                for (Schedule schedule : classses.getSchedulesById()) {
+                    for (ScheduleDetail scheduleDetail : schedule.getScheduleDetailsById()) {
+                        if (scheduleDetail.getSubjectId().equals(subjectId)) {
+                            SumAttendance sumAttendance = new SumAttendance();
+                            // Lấy attendance
+                            MultiValueMap<String, String> attendanceContent = new LinkedMultiValueMap<>();
+                            attendanceContent.add("date", scheduleDetail.getDate());
+                            attendanceContent.add("slot", String.valueOf(scheduleDetail.getSlot()));
+                            attendanceContent.add("studentSubjectId", String.valueOf(studentSubject.getId()));
+                            attendanceContent.add("shift", classses.getShift());
+                            HttpEntity<MultiValueMap<String, String>> attendanceRequest = new HttpEntity<>(attendanceContent, headers);
+                            ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "findAttendanceByDateAndSlotAndStudentSubjectAndShift", HttpMethod.POST, attendanceRequest, ResponseModel.class);
+                            String attendanceJson = new ObjectMapper().writeValueAsString(responseAttendance.getBody().getData());
+                            Attendance attendance = new ObjectMapper().readValue(attendanceJson, Attendance.class);
+                            if (attendance != null) {
+                                sumAttendance.setDate(scheduleDetail.getDate());
+                                sumAttendance.setSlot(scheduleDetail.getSlot());
+                                sumAttendance.setClass_name(classses.getClassCode());
+                                sumAttendance.setTeacher_name(classses.getTeacher().getProfileByProfileId().getFirstName() + " " + classses.getTeacher().getProfileByProfileId().getLastName());
+                                sumAttendance.setStatus(String.valueOf(attendance.getStatus()));
+                            } else {
+                                sumAttendance.setDate(scheduleDetail.getDate());
+                                sumAttendance.setSlot(scheduleDetail.getSlot());
+                                sumAttendance.setClass_name(classses.getClassCode());
+                                sumAttendance.setTeacher_name(classses.getTeacher().getProfileByProfileId().getFirstName() + " " + classses.getTeacher().getProfileByProfileId().getLastName());
+                                sumAttendance.setStatus("FUTURE");
+                            }
+                            listSumAttendance.add(sumAttendance);
+                        }
                     }
-                    listSumAttendance.add(sumAttendance);
                 }
                 return listSumAttendance;
             } else {
