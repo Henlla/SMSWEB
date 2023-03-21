@@ -18,7 +18,7 @@
           <div class="col-sm-12">
             <div class="page-sub-header">
               <h3 class="page-title">
-                View teaching schedule for [[${classses.classCode}]]
+                View teaching schedule
               </h3>
             </div>
           </div>
@@ -36,16 +36,16 @@
                       th:value="${scheduleList}"
                       id="scheduleList"
                     />
-                    <input
-                      type="hidden"
-                      th:value="${classses.classCode}"
-                      id="classCode"
-                    />
-                    <input
-                    type="hidden"
-                    th:value="${classses.shift}"
-                    id="shift"
-                  />
+<!--                    <input-->
+<!--                      type="hidden"-->
+<!--                      th:value="${classses.classCode}"-->
+<!--                      id="classCode"-->
+<!--                    />-->
+<!--                    <input-->
+<!--                    type="hidden"-->
+<!--                    th:value="${classses.shift}"-->
+<!--                    id="shift"-->
+<!--                  />-->
                     <label for="week">Select week</label>
                     <select
                       id="week"
@@ -92,9 +92,9 @@
                       <div class="dayOfWeek">
                         saturday <span class="date_saturday"></span>
                       </div>
-                      <div class="dayOfWeek">
-                        sunday <span class="date_sunday"></span>
-                      </div>
+<!--                      <div class="dayOfWeek">-->
+<!--                        sunday <span class="date_sunday"></span>-->
+<!--                      </div>-->
                     </div>
                     <div
                       class="time-interval"

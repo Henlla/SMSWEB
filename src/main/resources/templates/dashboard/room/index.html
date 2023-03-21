@@ -3,100 +3,201 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{dashboard/index}">
 <head>
-  <meta charset="UTF-8">
-  <title>List of staff</title>
-  <link rel="stylesheet" href="/css/custom.css">
-  <link rel="stylesheet" href="/css/teacher_details.css">
+    <meta charset="UTF-8">
+    <title>List of room</title>
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/teacher_details.css">
 </head>
 <body>
 <div layout:fragment="content">
-  <section>
-    <div class="content-wrapper">
-      <div class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h5 class="m-0">Room Manager</h5>
+    <section>
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h5 class="m-0">Room Manager</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="content-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="button" class="btn btn-info btn-sm" data-target="#room_create"
+                                   data-toggle="modal" value="Create">
+                        </div>
+                        <div class="col-12">
+                            <input type="button" class="btn btn-info btn-sm" data-target="#room_check"
+                                   data-toggle="modal" value="Check room">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table id="student-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>STT</th>
+                                    <th>Room code</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="room:${listRoom}">
+                                    <td><span
+                                            th:text="${listRoom.indexOf(room)+1}"></span>
+                                    </td>
+                                    <td><span
+                                            th:text="${room.getRoomCode()}"></span>
+                                    </td>
+                                    <td>
+                                        <a th:data-id="${room.id}" onclick="OnClickViewRoom(this.getAttribute('data-id'))" class="btn btn-primary"><i class="far fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="room_create" tabindex="-1"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create room</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <i class="fas fa-times fa-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container">
+                                        <form id="room_create-form">
+                                            <div class="form-group">
+                                                <label class="m-0" style="font-size: 13px">Room code</label>
+                                                <input type="text" name="room_code_validate" id="room_code"
+                                                       class="form-control form-control-sm">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                            class="fas fa-times"></i> Close
+                                    </button>
+                                    <button type="button" id="btn_create_room" class="btn btn-info btn-sm"><i
+                                            class="fas fa-plus"></i> Create
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="room_view" tabindex="-1"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">View room</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <i class="fas fa-times fa-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <i class="fas fa-dot-circle"></i> Shift M0 ( Morning - 2/4/6 ) :
+                                            </div>
+                                            <div class="col-6 m0">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <i class="fas fa-dot-circle"></i> Shift A0 ( Afternoon - 2/4/6 ) :
+                                            </div>
+                                            <div class="col-6 a0">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <i class="fas fa-dot-circle"></i> Shift E0 ( Evening - 2/4/6 ) :
+                                            </div>
+                                            <div class="col-6 e0">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <i class="fas fa-dot-circle"></i> Shift M1 ( Morning - 3/5/7 ) :
+                                            </div>
+                                            <div class="col-6 m1">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <i class="fas fa-dot-circle"></i> Shift A1 ( Afternoon - 3/5/7 ) :
+                                            </div>
+                                            <div class="col-6 a1">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <i class="fas fa-dot-circle"></i> Shift E1 ( Evening - 3/5/7 ) :
+                                            </div>
+                                            <div class="col-6 e1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                            class="fas fa-times"></i> Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="room_check" tabindex="-1"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Check room</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <i class="fas fa-times fa-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container">
+                                        <div class="form-group">
+                                            <label for="shift">Shift</label>
+                                            <select name="shift" id="shift" class="form-control" onchange="OnChangeShiftCheckRoom()">
+                                                <option value="M0">Morning - 2/4/6</option>
+                                                <option value="A0">Afternoon - 2/4/6</option>
+                                                <option value="E0">Evening - 2/4/6</option>
+                                                <option value="M1">Morning - 3/5/7</option>
+                                                <option value="A1">Afternoon - 3/5/7</option>
+                                                <option value="E1">Evening - 3/5/7</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="container data">
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                            class="fas fa-times"></i> Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="content-body">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-12">
-              <input type="button" class="btn btn-info btn-sm" data-target="#room_create"
-                     data-toggle="modal" value="Create">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <table id="student-table" class="table table-bordered">
-                <thead>
-                <tr class="text-center">
-                  <th>STT</th>
-                  <th>Room code</th>
-                  <th>Class in room</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="text-center" th:each="room:${listRoom}">
-                  <td><span
-                          th:text="${listRoom.indexOf(room)+1}"></span>
-                  </td>
-                  <td><span
-                          th:text="${room.getRoomCode()}"></span>
-                  </td>
-                  <td>
-                    <th:block th:each="classes:${room.getRoomClass()}">
-                        <span th:text="${classes.getClassCode()+' '}"></span>
-                    </th:block>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="modal fade" id="room_create" tabindex="-1"
-               aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Create room</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <i class="fas fa-times fa-sm"></i>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <div class="container">
-                    <form id="room_create-form">
-                      <div class="form-group">
-                        <label class="m-0" style="font-size: 13px">Room code</label>
-                        <input type="text" name="room_code_validate" id="room_code"
-                               class="form-control form-control-sm">
-                      </div>
-                    </form>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                          class="fas fa-times"></i> Close
-                  </button>
-                  <button type="button" id="btn_create_room" class="btn btn-info btn-sm"><i
-                          class="fas fa-plus"></i> Create
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 </div>
 <th:block layout:fragment="optional">
-  <script src="/js/room/index.js"></script>
+    <script src="/js/room/index.js"></script>
 </th:block>
 </body>
 </html>

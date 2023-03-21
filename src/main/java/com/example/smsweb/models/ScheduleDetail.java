@@ -34,6 +34,10 @@ public class ScheduleDetail {
     private Integer slot;
 
     @Basic
+    @Column(name = "shift")
+    private String shift;
+
+    @Basic
     @Column(name = "day_of_week")
     private String dayOfWeek;
 

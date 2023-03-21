@@ -64,7 +64,7 @@ $(()=>{
         var majorId = $('#majorId').val()
         var teacherId = $('#teacherId').val()
         var limitStudent = $('#limitStudent').val()
-
+        var room = $('#roomList').val()
         var newClass = {
             "id": "",
             "classCode" : classCode,
@@ -72,7 +72,8 @@ $(()=>{
             "teacherId" : teacherId,
             "shift" : selectShift.val()+selectDayOfWeek.val(),
             "limitStudent" : limitStudent,
-            "startDate": inputStartDate.val()
+            "startDate": inputStartDate.val(),
+            "roomId":room
         }
         var file = $("#studentList").get(0).files[0];
         var formData = new FormData();
@@ -136,7 +137,6 @@ $(()=>{
                 contentType: false,
                 enctype:"multipart/form-data",
                 success:(result)=>{
-                    console.log("sussess");
                     result = JSON.parse(result);
                     if (result.status == "success"){
                         $('#teacherId').val("").change();
@@ -144,13 +144,21 @@ $(()=>{
                         $('#classCode').val("");
                         selectDayOfWeek.val("").change();
                         selectShift.val("").change();
-                        toastr.success('Create success')
+                        Swal.fire(
+                            "",
+                            "Create class success",
+                            "success"
+                        )
                         if(result.message != null && result.message != ''){
                             toastr.warning(result.message)
                         }
                         $('#spinner-div').hide();
                     }else {
-                        toastr.error('Create fail')
+                        Swal.fire(
+                            "",
+                            "This room's class shift already exists.Try another room",
+                            "error"
+                        )
                         $('#spinner-div').hide();
                     }
                 },

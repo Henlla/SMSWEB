@@ -24,4 +24,6 @@ public interface ScheduleDetailsRepository extends JpaRepository<ScheduleDetail,
     List<ScheduleDetail> findScheduleDetailsByDateBetween(String fromDate, String toDate);
 
     List<ScheduleDetail> findScheduleDetailsByDateBetweenAndScheduleId(String fromdate, String toDate, Integer scheduleId);
+
+    List<ScheduleDetail> findAllByTeacherId(Integer teacher);
 }
