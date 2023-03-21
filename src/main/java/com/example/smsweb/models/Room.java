@@ -24,5 +24,6 @@ public class Room {
     private String roomCode;
 
     @OneToMany(mappedBy = "roomId")
+    @JsonIgnore
     private List<Classses> roomClass;
 }

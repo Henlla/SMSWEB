@@ -101,9 +101,9 @@ public class ScheduleExport {
         sheet.addMergedRegion(CellRangeAddress.valueOf("K4:L4"));
         sheet.setColumnWidth(10,30);
         createCell(row,10,"Thứ bảy",style);
-        sheet.addMergedRegion(CellRangeAddress.valueOf("M4:N4"));
-        sheet.setColumnWidth(12,30);
-        createCell(row,12,"Chủ nhật",style);
+//        sheet.addMergedRegion(CellRangeAddress.valueOf("M4:N4"));
+//        sheet.setColumnWidth(12,30);
+//        createCell(row,12,"Chủ nhật",style);
 
         List<String> arrTime = new ArrayList<>();
         String shift = classses.getShift().substring(0,1);
@@ -141,8 +141,8 @@ public class ScheduleExport {
         createCell(row,9,arrTime.get(1),style);
         createCell(row,10,arrTime.get(0),style);
         createCell(row,11,arrTime.get(1),style);
-        createCell(row,12,arrTime.get(0),style);
-        createCell(row,13,arrTime.get(1),style);
+//        createCell(row,12,arrTime.get(0),style);
+//        createCell(row,13,arrTime.get(1),style);
 
     }
 
@@ -220,8 +220,8 @@ public class ScheduleExport {
             createCell(row,9,"X",style);
             createCell(row,10,"X",style);
             createCell(row,11,"X",style);
-            createCell(row,12,"X",style);
-            createCell(row,13,"X",style);
+//            createCell(row,12,"X",style);
+//            createCell(row,13,"X",style);
             for (DayInWeek dayInWeek :value){
                 if(dayInWeek.getDayOfWeek().equals("MONDAY")){
                     style = workbook.createCellStyle();
@@ -337,26 +337,28 @@ public class ScheduleExport {
                     }else{
                         createCell(row,11,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
                     }
-                } else if (dayInWeek.getDayOfWeek().equals("SUNDAY")) {
-                    style = workbook.createCellStyle();
-                    font = workbook.createFont();
-                    font.setFontHeight(13);
-                    style.setFont(font);
-                    style.setAlignment(HorizontalAlignment.CENTER);
-                    style.setVerticalAlignment(VerticalAlignment.CENTER);
-                    style.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
-                    style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                    style.setBorderBottom(BorderStyle.THIN);
-                    style.setBorderTop(BorderStyle.THIN);
-                    style.setBorderLeft(BorderStyle.THIN);
-                    style.setBorderRight(BorderStyle.THIN);
-                    style.setWrapText(true);
-                    if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,12,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
-                    }else{
-                        createCell(row,13,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
-                    }
-                } else if (dayInWeek.getDayOfWeek().equals("1")) {
+                }
+//                else if (dayInWeek.getDayOfWeek().equals("SUNDAY")) {
+//                    style = workbook.createCellStyle();
+//                    font = workbook.createFont();
+//                    font.setFontHeight(13);
+//                    style.setFont(font);
+//                    style.setAlignment(HorizontalAlignment.CENTER);
+//                    style.setVerticalAlignment(VerticalAlignment.CENTER);
+//                    style.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
+//                    style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//                    style.setBorderBottom(BorderStyle.THIN);
+//                    style.setBorderTop(BorderStyle.THIN);
+//                    style.setBorderLeft(BorderStyle.THIN);
+//                    style.setBorderRight(BorderStyle.THIN);
+//                    style.setWrapText(true);
+//                    if(dayInWeek.getSlot().equals(1)){
+//                        createCell(row,12,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+//                    }else{
+//                        createCell(row,13,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+//                    }
+//                }
+                else if (dayInWeek.getDayOfWeek().equals("1")) {
                     style = workbook.createCellStyle();
                     font = workbook.createFont();
                     font.setFontHeight(13);
@@ -464,25 +466,26 @@ public class ScheduleExport {
                     }else{
                         createCell(row,11,"X",style);
                     }
-                }else if (dayInWeek.getDayOfWeek().equals("7")) {
-                    style = workbook.createCellStyle();
-                    font = workbook.createFont();
-                    font.setFontHeight(13);
-                    style.setFont(font);
-                    style.setAlignment(HorizontalAlignment.CENTER);
-                    style.setVerticalAlignment(VerticalAlignment.CENTER);
-                    style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
-                    style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                    style.setBorderBottom(BorderStyle.THIN);
-                    style.setBorderTop(BorderStyle.THIN);
-                    style.setBorderLeft(BorderStyle.THIN);
-                    style.setBorderRight(BorderStyle.THIN);
-                    if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,12,"X",style);
-                    }else{
-                        createCell(row,13,"X",style);
-                    }
                 }
+//                else if (dayInWeek.getDayOfWeek().equals("7")) {
+//                    style = workbook.createCellStyle();
+//                    font = workbook.createFont();
+//                    font.setFontHeight(13);
+//                    style.setFont(font);
+//                    style.setAlignment(HorizontalAlignment.CENTER);
+//                    style.setVerticalAlignment(VerticalAlignment.CENTER);
+//                    style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+//                    style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//                    style.setBorderBottom(BorderStyle.THIN);
+//                    style.setBorderTop(BorderStyle.THIN);
+//                    style.setBorderLeft(BorderStyle.THIN);
+//                    style.setBorderRight(BorderStyle.THIN);
+//                    if(dayInWeek.getSlot().equals(1)){
+//                        createCell(row,12,"X",style);
+//                    }else{
+//                        createCell(row,13,"X",style);
+//                    }
+//                }
             }
         }
     }

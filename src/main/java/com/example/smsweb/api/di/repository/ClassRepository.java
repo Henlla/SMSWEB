@@ -22,4 +22,6 @@ public interface ClassRepository extends GenericRepository<Classses, Integer> {
     Optional<Classses> findClasssesByTeacherIdAndId(Integer teacherId, Integer scheduleId);
     Optional<List<Classses>> findAllByMajorId(Integer majorId);
 
+    List<Classses> findAllByRoomId(Integer roomId);
+
 }
