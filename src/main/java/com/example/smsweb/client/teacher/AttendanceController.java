@@ -3,7 +3,7 @@ package com.example.smsweb.client.teacher;
 import com.example.smsweb.dto.*;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
-import com.example.smsweb.utils.FormatDate;
+import com.example.smsweb.utils.Format;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -55,6 +54,25 @@ public class AttendanceController {
     List<Attendance> existsAttendance;
     List<Integer> countAbsent;
 
+    String mSTime = "07:30", mETime = "11:40";
+    String aSTime = "12:30", aETime = "17:40";
+    String eSTime = "17:30", eETime = "21:40";
+
+//  String mSTime = "00:00", mETime = "23:59";
+//  String aSTime = "00:00", aETime = "23:59";
+//  String eSTime = "00:00",  eETime = "23:59";
+
+    DateTimeFormatter formatTime = DateTimeFormatter.ofPattern("HH:mm");
+    LocalTime startTime;
+    LocalTime endTime;
+    LocalTime onTime;
+
+    DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    LocalDate startDate;
+    LocalDate endDate;
+    LocalDate currentDate;
+    LocalDate previousDate;
+
     @GetMapping("/index")
     public String attendance(@CookieValue(name = "_token", defaultValue = "") String _token, Model model, Authentication auth) {
         try {
@@ -75,11 +93,10 @@ public class AttendanceController {
                 HttpEntity<String> request = new HttpEntity<>(headers);
 
                 MultiValueMap<String, String> content = new LinkedMultiValueMap<String, String>();
-                String toDate = FormatDate.dateFormat(LocalDate.now(), "yyyy-mm-dd");
-                String[] date = toDate.split("-");
-                String fromDate = FormatDate.dateFormat(LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]) - 2), "yyyy-mm-dd");
-                content.add("fromDate", fromDate);
-                content.add("toDate", toDate);
+                LocalDate toDate = LocalDate.parse(LocalDate.now().format(formatDate));
+                LocalDate fromDate = toDate.minusDays(2);
+                content.add("fromDate", fromDate.toString());
+                content.add("toDate", toDate.toString());
                 HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(content, headers);
 
                 //Lấy Schedule Detail từ ngày đến ngày
@@ -128,23 +145,18 @@ public class AttendanceController {
                         List<Schedule> scheduleList = new ObjectMapper().readValue(scheduleJson, new TypeReference<List<Schedule>>() {
                         });
 
-                        String to_date = FormatDate.dateFormat(LocalDate.now(), "yyyy-mm-dd");
-                        String[] formatDate = to_date.split("-");
-                        String from_date = FormatDate.dateFormat(LocalDate.of(Integer.parseInt(formatDate[0]), Integer.parseInt(formatDate[1]), Integer.parseInt(formatDate[2]) - 2), "yyyy-mm-dd");
+                        LocalDate to_date = LocalDate.parse(LocalDate.now().format(formatDate));
+                        LocalDate from_date = to_date.minusDays(2);
                         List<ScheduleDetail> scheduleDetailList = new ArrayList<>();
                         for (Schedule schedule : scheduleList) {
-                            String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
-                            String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
-                            String year = String.valueOf(LocalDate.now().getYear());
-                            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                            LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
-                            LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
-                            LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                            startDate = LocalDate.parse(schedule.getStartDate(), formatDate);
+                            endDate = LocalDate.parse(schedule.getEndDate(), formatDate);
+                            currentDate = LocalDate.parse(LocalDate.now().format(formatDate));
                             if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                                 // Lấy schedule detail theo schedule
                                 MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
-                                scheduleDetailContent.add("fromDate", from_date);
-                                scheduleDetailContent.add("toDate", to_date);
+                                scheduleDetailContent.add("fromDate", from_date.toString());
+                                scheduleDetailContent.add("toDate", to_date.toString());
                                 scheduleDetailContent.add("scheduleId", String.valueOf(schedule.getId()));
                                 HttpEntity<MultiValueMap<String, String>> scheduleDetailRequest = new HttpEntity<>(scheduleDetailContent, headers);
                                 ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailByDateBetweenAndScheduleId", HttpMethod.POST, scheduleDetailRequest, ResponseModel.class);
@@ -191,28 +203,13 @@ public class AttendanceController {
                             }
                             if (existsAttendance.size() != 0) {
                                 attendanceView = new AttendanceView();
-                                DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");
-                                LocalTime startTime;
-                                LocalTime endTime;
-                                LocalTime onTime;
-                                int hour = LocalDateTime.now().getHour();
-                                int minute = LocalDateTime.now().getMinute();
-                                String currentTime = (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
-
-                                String mSTime = "07:30", mETime = "11:40";
-                                String aSTime = "12:30", aETime = "17:40";
-                                String eSTime = "17:30", eETime = "21:40";
-
-//                              String mSTime = "12:00", mETime = "23:59";
-//                              String aSTime = "12:00", aETime = "23:59";
-//                              String eSTime = "12:00",  eETime = "23:59";
-
+                                String currentTime = LocalTime.now().format(formatTime);
                                 String shift = classes.getShift().substring(0, 1);
                                 switch (shift) {
                                     case "M":
-                                        startTime = LocalTime.parse(mSTime, format);
-                                        endTime = LocalTime.parse(mETime, format);
-                                        onTime = LocalTime.parse(currentTime, format);
+                                        startTime = LocalTime.parse(mSTime, formatTime);
+                                        endTime = LocalTime.parse(mETime, formatTime);
+                                        onTime = LocalTime.parse(currentTime, formatTime);
                                         if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
@@ -220,9 +217,9 @@ public class AttendanceController {
                                         }
                                         break;
                                     case "A":
-                                        startTime = LocalTime.parse(aSTime, format);
-                                        endTime = LocalTime.parse(aETime, format);
-                                        onTime = LocalTime.parse(currentTime, format);
+                                        startTime = LocalTime.parse(aSTime, formatTime);
+                                        endTime = LocalTime.parse(aETime, formatTime);
+                                        onTime = LocalTime.parse(currentTime, formatTime);
                                         if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
@@ -230,9 +227,9 @@ public class AttendanceController {
                                         }
                                         break;
                                     case "E":
-                                        startTime = LocalTime.parse(eSTime, format);
-                                        endTime = LocalTime.parse(eETime, format);
-                                        onTime = LocalTime.parse(currentTime, format);
+                                        startTime = LocalTime.parse(eSTime, formatTime);
+                                        endTime = LocalTime.parse(eETime, formatTime);
+                                        onTime = LocalTime.parse(currentTime, formatTime);
                                         if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
@@ -241,8 +238,7 @@ public class AttendanceController {
                                         break;
                                 }
 
-                                String[] splitDate = scheduleDetail.getDate().split("-");
-                                String attendanceDate = splitDate[2] + "/" + splitDate[1] + "/" + splitDate[0];
+                                String attendanceDate = Format.dateFormat(scheduleDetail.getDate(),"dd/mm/yyyy");
                                 String showClassName = classes.getClassCode() + " (" + attendanceDate + " - "
                                         + scheduleDetail.getSubjectBySubjectId().getSubjectName() + " - "
                                         + scheduleDetail.getSubjectBySubjectId().getSubjectCode() + " - "
@@ -257,28 +253,13 @@ public class AttendanceController {
                                 existsAttendance.clear();
                             } else {
                                 attendanceView = new AttendanceView();
-                                DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");
-                                LocalTime startTime;
-                                LocalTime endTime;
-                                LocalTime onTime;
-                                int hour = LocalDateTime.now().getHour();
-                                int minute = LocalDateTime.now().getMinute();
-                                String currentTime = (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
-
-                                String mSTime = "07:30", mETime = "11:40";
-                                String aSTime = "12:30", aETime = "17:40";
-                                String eSTime = "17:30", eETime = "21:40";
-
-//                              String mSTime = "12:00", mETime = "23:59";
-//                              String aSTime = "12:00", aETime = "23:59";
-//                              String eSTime = "12:00", eETime = "23:59";
-
+                                String currentTime = Format.timeFormat(LocalTime.now().toString()).toString();
                                 String shift = classes.getShift().substring(0, 1);
                                 switch (shift) {
                                     case "M":
-                                        startTime = LocalTime.parse(mSTime, format);
-                                        endTime = LocalTime.parse(mETime, format);
-                                        onTime = LocalTime.parse(currentTime, format);
+                                        startTime = Format.timeFormat(mSTime);
+                                        endTime = Format.timeFormat(eSTime);
+                                        onTime = Format.timeFormat(currentTime);
                                         if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
@@ -286,9 +267,9 @@ public class AttendanceController {
                                         }
                                         break;
                                     case "A":
-                                        startTime = LocalTime.parse(aSTime, format);
-                                        endTime = LocalTime.parse(aETime, format);
-                                        onTime = LocalTime.parse(currentTime, format);
+                                        startTime = Format.timeFormat(aSTime);
+                                        endTime = Format.timeFormat(aETime);
+                                        onTime = Format.timeFormat(currentTime);
                                         if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
@@ -296,9 +277,9 @@ public class AttendanceController {
                                         }
                                         break;
                                     case "E":
-                                        startTime = LocalTime.parse(eSTime, format);
-                                        endTime = LocalTime.parse(eETime, format);
-                                        onTime = LocalTime.parse(currentTime, format);
+                                        startTime = Format.timeFormat(eSTime);
+                                        endTime = Format.timeFormat(eETime);
+                                        onTime = Format.timeFormat(currentTime);
                                         if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
@@ -306,8 +287,10 @@ public class AttendanceController {
                                         }
                                         break;
                                 }
-                                String[] splitDate = scheduleDetail.getDate().split("-");
-                                String attendanceDate = splitDate[2] + "/" + splitDate[1] + "/" + splitDate[0];
+                                currentDate = LocalDate.parse(Format.dateFormat(LocalDate.now().toString(),"yyyy-mm-dd"));
+                                previousDate = currentDate.minusDays(1);
+
+                                String attendanceDate = Format.dateFormat(scheduleDetail.getDate(),"dd/mm/yyyy");
                                 String showClassName = classes.getClassCode() + " (" + attendanceDate + " - "
                                         + scheduleDetail.getSubjectBySubjectId().getSubjectName() + " - "
                                         + scheduleDetail.getSubjectBySubjectId().getSubjectCode() + " - "
@@ -391,13 +374,9 @@ public class AttendanceController {
 
                 ScheduleDetail scheduleDetail = new ScheduleDetail();
                 for (Schedule schedule : scheduleList) {
-                    String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
-                    String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
-                    String year = String.valueOf(LocalDate.now().getYear());
-                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
-                    LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
-                    LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                    startDate = LocalDate.parse(schedule.getStartDate(), formatDate);
+                    endDate = LocalDate.parse(schedule.getEndDate(), formatDate);
+                    currentDate = LocalDate.parse(LocalDate.now().format(formatDate));
                     if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                         // Lấy Schedule detail
                         MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
@@ -679,13 +658,9 @@ public class AttendanceController {
 
                 ScheduleDetail scheduleDetail = new ScheduleDetail();
                 for (Schedule schedule : scheduleList) {
-                    String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
-                    String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
-                    String year = String.valueOf(LocalDate.now().getYear());
-                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
-                    LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
-                    LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                    startDate = LocalDate.parse(schedule.getStartDate(), formatDate);
+                    endDate = LocalDate.parse(schedule.getEndDate(), formatDate);
+                    currentDate = LocalDate.parse(LocalDate.now().format(formatDate));
                     if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                         // Lấy Schedule detail
                         MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
