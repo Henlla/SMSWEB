@@ -46,19 +46,13 @@
                                                 <th:block th:if="${items.onTime == 0}">
                                                     <button th:data-name="${items.class_id}" disabled onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
                                                         <i class="fas fa-user-edit"></i></button>
-                                                    <button disabled th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
-                                                        <i class="fas fa-edit"></i></button>
                                                 </th:block>
                                                 <th:block th:if="${items.onTime == 1}">
                                                     <button th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
                                                         <i class="fas fa-user-edit"></i></button>
-                                                    <button disabled th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
-                                                        <i class="fas fa-edit"></i></button>
                                                 </th:block>
                                             </th:block>
                                             <th:block th:if="${items.isAttendance == 1}">
-                                                <button disabled th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-user-edit"></i></button>
                                                 <button th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
                                                     <i class="fas fa-edit"></i></button>
                                                 <button th:data-name="${items.class_id}" class="btn btn-info btn-sm" onclick="OnViewAttendance(this.getAttribute('data-name'))">
