@@ -19,13 +19,11 @@ public interface IScheduleDetails {
     List<ScheduleDetail> findScheduleDetailByScheduleIdAndSubjectId(Integer scheduleId, Integer subjectId);
 
     List<ScheduleDetail> findScheduleDetailByDateBetween(String fromDate, String toDate);
-<<<<<<< Updated upstream
-    List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleId(String fromDate,String toDate,Integer scheduleId);
-
-    List<ScheduleDetail> findScheduleDetailByTeacher(Integer teacherId);
-=======
 
     List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleId(String fromDate, String toDate, Integer scheduleId);
+
+    List<ScheduleDetail> findScheduleDetailByTeacher(Integer teacherId);
+
 
     List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleIdAndTeacherId(String fromDate, String toDate, Integer scheduleId, Integer teacherId);
 
@@ -34,5 +32,4 @@ public interface IScheduleDetails {
     List<ScheduleDetail> findScheduleDetailsByDateAndTeacherId(String date, Integer teacherId);
 
     List<ScheduleDetail> findScheduleDetailsByDateAndScheduleIdAndTeacherId(String date, Integer scheduleId, Integer teacherId);
->>>>>>> Stashed changes
 }

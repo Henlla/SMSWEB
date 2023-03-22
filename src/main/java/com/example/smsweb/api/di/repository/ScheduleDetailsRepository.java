@@ -21,12 +21,9 @@ public interface ScheduleDetailsRepository extends JpaRepository<ScheduleDetail,
 
     List<ScheduleDetail> findScheduleDetailsByDateBetween(String fromDate, String toDate);
 
-<<<<<<< Updated upstream
     List<ScheduleDetail> findScheduleDetailsByDateBetweenAndScheduleId(String fromdate, String toDate, Integer scheduleId);
 
     List<ScheduleDetail> findAllByTeacherId(Integer teacher);
-=======
-    List<ScheduleDetail> findScheduleDetailsByDateBetweenAndScheduleId(String fromDate, String toDate, Integer scheduleId);
 
     List<ScheduleDetail> findScheduleDetailsByDateBetweenAndScheduleIdAndTeacherId(String fromDate, String toDate, Integer scheduleId, Integer teacherId);
 
@@ -35,5 +32,4 @@ public interface ScheduleDetailsRepository extends JpaRepository<ScheduleDetail,
     List<ScheduleDetail> findScheduleDetailsByDateAndTeacherId(String date, Integer teacherId);
 
     List<ScheduleDetail> findScheduleDetailsByDateAndScheduleIdAndTeacherId(String date, Integer scheduleId, Integer teacherId);
->>>>>>> Stashed changes
 }

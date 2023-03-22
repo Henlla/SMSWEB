@@ -482,10 +482,7 @@ public class ClassController {
                                                 scheduleDetail.setScheduleId(schedule.getId());
                                                 scheduleDetail.setSubjectId(subject.getId());
                                                 scheduleDetail.setTeacherId(teacherId);
-<<<<<<< Updated upstream
                                                 scheduleDetail.setShift(shift);
-=======
->>>>>>> Stashed changes
                                                 scheduleDetail.setSlot(i);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
@@ -496,10 +493,7 @@ public class ClassController {
                                                 scheduleDetail.setScheduleId(schedule.getId());
                                                 scheduleDetail.setSubjectId(subject.getId());
                                                 scheduleDetail.setTeacherId(teacherId);
-<<<<<<< Updated upstream
                                                 scheduleDetail.setShift(shift);
-=======
->>>>>>> Stashed changes
                                                 scheduleDetail.setSlot(i);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
@@ -548,10 +542,7 @@ public class ClassController {
                                                 scheduleDetail.setScheduleId(schedule.getId());
                                                 scheduleDetail.setSubjectId(subject.getId());
                                                 scheduleDetail.setTeacherId(teacherId);
-<<<<<<< Updated upstream
                                                 scheduleDetail.setShift(shift);
-=======
->>>>>>> Stashed changes
                                                 scheduleDetail.setSlot(i);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
