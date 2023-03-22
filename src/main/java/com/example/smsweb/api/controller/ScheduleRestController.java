@@ -86,16 +86,12 @@ public class ScheduleRestController {
     }
 
     @GetMapping("/findScheduleById/{scheduleId}")
-    public  ResponseEntity<?> findScheduleById(@PathVariable("scheduleId") Integer scheduleId){
+    public ResponseEntity<?> findScheduleById(@PathVariable("scheduleId") Integer scheduleId) {
         try {
             listSchedule = new ArrayList<>();
             listSchedule = iSchedule.findScheduleById(scheduleId);
-            if(listSchedule != null){
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDateTime.now().toString(), listSchedule));
-            }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDateTime.now().toString(), "Don't find any records"));
-            }
-        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDateTime.now().toString(), listSchedule));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDateTime.now().toString(), "Don't find any records"));
         }
     }
