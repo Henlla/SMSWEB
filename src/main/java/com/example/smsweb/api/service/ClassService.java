@@ -71,5 +71,14 @@ public class ClassService implements IClass {
         return repository.findAllByMajorId(majorId).orElseThrow(() -> new ErrorHandler("Cannot find class with majorId = " + majorId));
     }
 
+    @Override
+    public List<Classses> findClassByRoom(Integer roomId) {
+        List<Classses> list = repository.findAllByRoomId(roomId);
+        if(list.isEmpty()){
+            return null;
+        }
+        return repository.findAllByRoomId(roomId);
+    }
+
 
 }

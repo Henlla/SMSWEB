@@ -245,7 +245,7 @@
                                             <th colspan="2" class="text-uppercase">Thursday</th>
                                             <th colspan="2" class="text-uppercase">Friday</th>
                                             <th colspan="2" class="text-uppercase">Saturday</th>
-                                            <th colspan="2" class="text-uppercase">Sunday</th>
+<!--                                            <th colspan="2" class="text-uppercase">Sunday</th>-->
                                         </tr>
                                         </thead>
                                     </table>
@@ -355,6 +355,47 @@
                                 class="fas fa-times"></i> Close
                         </button>
                         <button type="button" class="btn btn-success btn-sm" id="btn_submitTeacher"><i class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="change_teacher_schedule" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change teacher for <span id="date"></span> - slot <span id="slot_2"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <input type="hidden" id="schedule_detail_id">
+                                    <input type="hidden" id="date_change">
+                                    <input type="hidden" id="slot_I">
+                                    <div class="form-group">
+                                        <label>Teacher :</label>
+                                        <select id="teacher_schedule_change" class="form-control select2" name="teacher_schedule_change"
+                                                style="width: 100%;">
+                                            <option selected="selected" value="">----- Choose teacher------</option>
+                                            <th:block th:each="teacher : ${listTeacher}">
+                                                <option th:value="${teacher.getTeacherCard()}">[[${teacher.profileByProfileId.firstName +' '+teacher.profileByProfileId.lastName+' - '+teacher.teacherCard}]]</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                        <button type="button" disabled="true" class="btn btn-success btn-sm" id="btn_submitTeacher_schedule"><i class="fas fa-check"></i> Change
                         </button>
                     </div>
                 </div>

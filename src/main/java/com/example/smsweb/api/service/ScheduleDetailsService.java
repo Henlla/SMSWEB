@@ -99,6 +99,11 @@ public class ScheduleDetailsService implements IScheduleDetails {
         }
     }
 
+    @Override
+    public List<ScheduleDetail> findScheduleDetailByTeacher(Integer teacherId) {
+        return repository.findAllByTeacherId(teacherId);
+    }
+
     public void putScheduleDetails(ScheduleDetail scheduleDetail) {
         try {
             repository.save(scheduleDetail);

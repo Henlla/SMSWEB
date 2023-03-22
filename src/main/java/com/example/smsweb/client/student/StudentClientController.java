@@ -43,15 +43,44 @@ public class StudentClientController {
     private final String NEWS_URL = "http://localhost:8080/api/news/";
 
     @GetMapping("/index")
-    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) throws JsonProcessingException {
+    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model, Authentication auth) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
             ResponseEntity<ResponseModel> response = restTemplate.getForEntity(NEWS_URL + "list", ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             List<News> newsList = new ObjectMapper().readValue(json, new TypeReference<List<News>>() {
             });
+            Account studentAccount = (Account) auth.getPrincipal();
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            ResponseEntity<Profile> profileResponse = restTemplate
+                    .exchange(PROFILE_URL + "get/" + studentAccount.getId(), HttpMethod.GET, request, Profile.class);
+
+            ResponseEntity<Student> studentResponse = restTemplate.exchange(
+                    STUDENT_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET, request,
+                    Student.class);
+
+            ResponseEntity<ResponseModel> studentClassResponse = restTemplate.exchange(
+                    STUDENT_CLASS_URL + "getStudent/" + studentResponse.getBody().getId(), HttpMethod.GET, request,
+                    ResponseModel.class);
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            String jsonStudentClass = objectMapper.writeValueAsString(studentClassResponse.getBody().getData());
+            List<StudentClass> studentClassList = objectMapper.readValue(jsonStudentClass,
+                    new TypeReference<List<StudentClass>>() {
+                    });
+            List<Classses> listClass = new ArrayList<>();
+
+            for (StudentClass studentClass : studentClassList) {
+                ResponseEntity<ResponseModel> classResponse = restTemplate.exchange(
+                        CLASS_URL + "getClass/" + studentClass.getClassId(), HttpMethod.GET, request,
+                        ResponseModel.class);
+                String jsonClass = objectMapper.writeValueAsString(classResponse.getBody().getData());
+                Classses classses = objectMapper.readValue(jsonClass, Classses.class);
+                listClass.add(classses);
+            }
             model.addAttribute("listNews", newsList
                     .stream()
                     .filter(news -> news.getIsActive().equals(true))
@@ -60,6 +89,12 @@ public class StudentClientController {
                         return news;
                     })
                     .toList());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL");
+            LocalDate currentDate = LocalDate.now();
+            model.addAttribute("student",studentResponse.getBody());
+            model.addAttribute("classList",listClass);
+            model.addAttribute("currentDate", currentDate.format(formatter));
+            model.addAttribute("major",studentResponse.getBody().getMajorStudentsById().get(0));
             return "student/index";
         } else {
             return "redirect:/login";
@@ -219,6 +254,7 @@ public class StudentClientController {
                                 diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                                 diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                                diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                                 diw.setWeek(weekOfMonth);
                                 diw.setSlot(listSortDate.get(i).getSlot());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
@@ -235,6 +271,7 @@ public class StudentClientController {
                             diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                             diw.setSubjectId(listSortDate.get(i).getSubjectId());
                             diw.setSlot(listSortDate.get(i).getSlot());
+                            diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                             diw.setWeek(weekOfMonth);
                             diw.setMonth(monthOfYear);
                             diw.setWeekOfYear(weekOfYear);
@@ -368,6 +405,7 @@ public class StudentClientController {
                                 diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                                 diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                                diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                                 diw.setWeek(weekOfMonth);
                                 diw.setSlot(listSortDate.get(i).getSlot());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
@@ -383,6 +421,7 @@ public class StudentClientController {
                             diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                             diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                             diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                            diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                             diw.setSlot(listSortDate.get(i).getSlot());
                             diw.setWeek(weekOfMonth);
                             diw.setMonth(monthOfYear);

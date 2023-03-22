@@ -129,4 +129,9 @@ public class ScheduleDetailsRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Don't find any records"));
         }
     }
+
+    @GetMapping("/findScheduleByTeacher/{teacherId}")
+    public ResponseEntity<?> findScheduleByTeacher(@PathVariable("teacherId")Integer teacherId){
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success",LocalDate.now().toString(),scheduleDetailsService.findScheduleDetailByTeacher(teacherId)));
+    }
 }
