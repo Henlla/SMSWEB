@@ -83,7 +83,7 @@ public class LoginController {
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                model.addAttribute("msg", "Login success");
+                model.addAttribute("msg", "Login fail");
                 return "dashboard/login/login";
             }
             return null;

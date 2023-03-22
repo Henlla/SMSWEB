@@ -17,4 +17,5 @@ public class AttendanceView {
     private Integer slot;
     private String shift;
     private Integer onTime;
+    private Integer onDate;
 }

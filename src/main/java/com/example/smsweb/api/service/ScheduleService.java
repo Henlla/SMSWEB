@@ -21,7 +21,7 @@ public class ScheduleService implements ISchedule {
         try {
             dao.save(schedule);
         } catch (Exception e) {
-            throw new ErrorHandler("Create faile");
+            throw new ErrorHandler("Create fail");
         }
     }
 
@@ -78,11 +78,7 @@ public class ScheduleService implements ISchedule {
         try {
             listSchedule = new ArrayList<>();
             listSchedule = dao.findSchedulesById(scheduleId);
-            if (listSchedule.isEmpty()) {
-                return null;
-            } else {
-                return listSchedule;
-            }
+           return  listSchedule;
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any data");
         }

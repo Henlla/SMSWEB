@@ -555,6 +555,7 @@ public class ClassController {
                                                 scheduleDetail.setTeacherId(teacherId);
                                                 scheduleDetail.setShift(shift);
                                                 scheduleDetail.setSlot(i);
+                                                scheduleDetail.setTeacherId(teacherId);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
                                                 if (subject.getSlot() == slot) {
