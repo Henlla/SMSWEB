@@ -1,3 +1,71 @@
+let addSubject = function () {
+    let selectSubject = $("#mark_select_subject");
+    selectSubject.empty();
+    $.ajax({
+        url: "/teacher/class/get-all-subject/"+$("#classId").val(),
+        method: "GET",
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: (response) => {
+            let parse = JSON.parse(response);
+            if(parse.length == 0){
+                $('<option value="">'+'This class has no subject'+'</option>').appendTo(selectSubject);
+            }else {
+                $('<option value="">'+'--Select--'+'</option>').appendTo(selectSubject);
+                parse.forEach(p => {
+                    $('<option value="'+ p.id +'">'+ p.subjectName +'</option>').appendTo(selectSubject);
+                })
+            }
+
+        },
+        error: (error)=>{
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.responseJSON.message,
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            })
+        },
+    });
+}
+let check_input_mark = function (){
+    $(".check_numberic_0_100").each(function (){
+        let data = $(this).val();
+        if (/^0$|^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|^100$/.test(data) == false){
+            if(/^0[1-9]{1}$/.test(data)){
+                $(this).val(data.toString().slice(1));
+            }
+            $(this).val('').focus();
+        }
+    })
+}
+let check_input_mark_not_null = function (){
+    var isValid = true;
+    $("input[class='check_numberic_0_100']").each(function (){
+        let data = $(this).val();
+        if(data == null || data == '') isValid = false
+    })
+    return isValid;
+}
+function check_numberic_0_100(e){
+    let val = e.target.value
+    const reg = new RegExp('^0$|^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|^100$');
+    if (!reg.test(val)){
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Mark must in range[0-100]',
+            showDenyButton: false,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ok',
+        });
+        check_input_mark();
+    }
+}
+
 $(document).ready(function () {
     $('.select2').select2({
         theme: 'bootstrap4'
@@ -82,36 +150,33 @@ $(document).ready(function () {
             else return false;
         }, 'Only accept excel file !');
 
-    $('#myTable').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
-        var data = this.innerText;
-        this.innerText = "";
-        $('<input type="text" value="'+ data +'"/>').appendTo(this);
-        var strLength = data.length * 2;
-
-        $(this).children("input:first").focus();
-        $(this).children("input:first")[0].setSelectionRange(strLength, strLength);
-    } );
-    $('#myTable tbody tr td input').keyup(function(e){
-        if(e.keyCode == 13)
-        {
-            let input = $("#myTable tbody tr td input")
-            let td = $("#myTable tbody tr td:has(input)")
-            var  data = input.val();
-
-            td.children().remove();
-            td.addClass("text-info").html(data);
-        }
-    });
-    $("#myTable").click( function (e){
-        let input = $("#myTable tbody tr td input")
-        let td = $("#myTable tbody tr td:has(input)")
-        var  data = input.val();
-
-        td.children().remove();
-        td.addClass("text-info").html(data);
+    // $('#mark_table').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
+    //     var data = this.innerText;
+    //     this.innerText = "";
+    //     $('<input type="text" value="'+ data +'"/>').appendTo(this);
+    //     var strLength = data.length * 2;
+    //
+    //     $(this).children("input:first").focus();
+    //     $(this).children("input:first")[0].setSelectionRange(strLength, strLength);
+    // } );
+    //
+    // $("#mark_table").click( function (e){
+    //     let input = $("#mark_table tbody tr td input")
+    //     let td = $("#mark_table tbody tr td:has(input)")
+    //     var  data = input.val();
+    //
+    //     td.children().remove();
+    //     td.addClass("text-info").html(data);
+    // })
+    $("#mark_list").click(function (e) {
+        $(this).val('');
     })
-
     $("#mark_list").change(function (e){
+
+        $("#mark_select_subject").val('');
+        //Clear Database
+        $('#mark_table tbody').empty();
+
         // Đọc file Excel
         var file = $("#mark_list").get(0).files[0];
         var reader = new FileReader();
@@ -123,16 +188,61 @@ $(document).ready(function () {
             var Sheet1 = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {range:0});
 
             // Hiển thị dữ liệu trong DataTable jQuery
-            $('#myTable').DataTable({
+            $('#mark_table').DataTable({
                 data: Sheet1,
                 columns: [
-                    {data: "Numbers"},
-                    {data: "Student code"},
-                    {data: "Student name"},
-                    {data: "Subject code"},
-                    {data: "ASM mark"},
-                    {data: "OBJ mark"}
+                    {
+                    data: "Student Id",
+                        render: function (data) {
+                            return `<input style="border: none" type="text" value="${data}" hidden readonly/>`
+                        },
+                    }, {
+                        data: "Subject Id",
+                        render: function (data) {
+                            return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
+                        }
+                    },{
+                        data: "StudentSubject Id",
+                        render: function (data) {
+                            return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
+                        }
+                    }, {data: "Student Name",
+                        render: function (data) {
+                            return `<input style="border: none" type="text" value="${data}" readonly/>`;
+                        }
+                    },{
+                    data: "Subject Name",
+                        render: function (data) {
+                            return `<input style="border: none" type="text" value="${data}" readonly/>`;
+                        }
+                    },{
+                    data: "ASM mark",
+                        render: function (data) {
+                            return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                        }
+                    },{
+                    data: "OBJ mark",
+                        render: function (data) {
+                            return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                        }
+                    }
                 ],
+                columnDefs: [
+                    {
+                        target: 0,
+                        visible: false,
+                        searchable: false,
+                    }, {
+                        target: 1,
+                        visible: false,
+                        searchable: false,
+                    }, {
+                        target: 2,
+                        visible: false,
+                        searchable: false,
+                    },
+                ],
+
             });
         };
     })
@@ -146,7 +256,7 @@ $(document).ready(function () {
         data.append("teacherId",$("#teacherId").val())
 
         //Convert dataTable to blod(file)
-        var wb = XLSX.utils.table_to_book(document.getElementById('myTable'),{sheet:'MARK_LIST'});
+        var wb = XLSX.utils.table_to_book(document.getElementById('mark_table'),{sheet:'MARK_LIST'});
         var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type:'binary'})
         var buf = new ArrayBuffer(wbout.length);
         var view = new Uint8Array(buf);
@@ -229,4 +339,276 @@ $(document).ready(function () {
         var wb = XLSX.utils.table_to_book(document.getElementById('student-table'),{sheet:'STUDENT_LIST'});
         XLSX.writeFile(wb, "Student_list_"+$("#title_class_code").html()+".xlsx")
     })
+
+    let selectSubject = $("#mark_select_subject");
+    selectSubject.change(function (event) {
+        $("#mark_list").val('');
+        //Clear Database
+
+        if(selectSubject.val() != '' && selectSubject != null){
+            var data = new FormData();
+            data.append("subjectId", selectSubject.val());
+            data.append("classId", $('#classId').val());
+            $.ajax({
+                url: "/teacher/class/get-student-list",
+                method: "POST",
+                data:data,
+                cache: false,
+                processData: false,
+                contentType: false,
+                enctype: "multipart/form-data",
+                success: (response) => {
+                    /*
+                    $('#mark_table').DataTable({
+                        scrollY: '200px',
+                        scrollCollapse: true,
+                        paging: false,
+                        data: JSON.parse(response),
+                        columns: [
+                            {
+                                title:'Student Id',
+                                data: 'studentId',
+                                render: function (data, type){
+                                    return '<input style="border: none" type="text" value="'+data+'" hidden readonly/>';
+                                }
+                            }, {
+                                title: 'Student Code',
+                                data: 'studentCode',
+                                render: function (data, type){
+                                    return '<input type="text" style="border: none" value="'+data+'" readonly/>';
+                                }
+                            }, {
+                                title: 'Full Name',
+                                data: 'fullName',
+                                render: function (data, type){
+                                    return '<input type="text" style="border: none" value="'+data+'" readonly/>';
+                                }
+                            }, {
+                                title: 'Subject Id',
+                                data: 'subjectId',
+                                render: function (data, type){
+                                    return '<input type="text" style="border: none" value="'+data+'" hidden readonly/>';
+                                }
+                            }, {
+                                title: 'ASM Mark',
+                                data: 'asmMark',
+                                render: function (data){
+                                    return '<input type="number" style="border: none" class="asmMark" value="'+data+'" min="0" max="100" required/>';
+                                }
+                            }, {
+                                title: 'OBJ Mark',
+                                data: 'objMark',
+                                render: function (data){
+                                    return '<input type="number" style="border: none;"  class="objMark" value="'+data+'" min="0" max="100" required/>';
+                                }
+                            }
+                        ],
+
+                        columnDefs: [
+                            {
+                                target: 0,
+                                visible: false,
+                                searchable: false,
+                            }, {
+                                target: 3,
+                                visible: false,
+                                searchable: false,
+                            },
+                        ],
+
+                    });
+
+                     */
+                    var data = JSON.parse(response);
+                    $('#mark_table tbody').empty();
+                    data.forEach(d =>{
+                        $(`
+                    <tr>
+                        <td style="display:none;"><input style="border: none" type="text" value="${d.studentId}" hidden readonly/></td>
+                        <td style="display:none;"><input style="border: none" type="text" value="${d.studentSubjectId}" hidden readonly/></td>
+                        <td style="display:none;"><input style="border: none" type="text" value="${d.subjectId}" hidden readonly/></td>
+                        <td><input style="border: none" type="text" value="${d.fullName}" readonly/></td>
+                        <td><input style="border: none" type="text" value="${d.subjectName}" readonly/></td>
+                        <td><input class="check_numberic_0_100" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" /></td>
+                        <td><input class="check_numberic_0_100" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" /></td>
+                    </tr>
+                `).appendTo('#mark_table tbody')
+                    })
+                },
+                error: (error)=>{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.responseJSON.message,
+                        showDenyButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok',
+                    })
+                },
+            });
+        }else {
+            $('#mark_table tbody').empty();
+        }
+    });
+
+    let formInputMark = $('#form_input_mark');
+    formInputMark.click(function (event) {
+        event.preventDefault();
+
+        if(check_input_mark_not_null()){
+            $("#mark_table tbody tr td input").each(function () {
+                $(this).replaceWith($(this).val());
+            });
+
+            var jsonRowsTable= '';
+            let array = $("#mark_table").DataTable().rows().data().toArray();
+            jsonRowsTable+='[';
+            for (let index = 0; index < array.length; index++) {
+                jsonRowsTable += `{"studentId":${array[index][0]},"fullName":"${array[index][3]}","subjectId":${array[index][1]},"studentSubjectId":"${array[index][2]}","subjectName":"${array[index][4]}","asmMark":${array[index][5]},"objMark":${array[index][6]}}`;
+                if (index != array.length - 1){
+                    jsonRowsTable += ','
+                }
+            }
+            jsonRowsTable+=']';
+            console.log(jsonRowsTable);
+            var data = new FormData();
+            data.append("teacherId",$("#teacherId").val());
+            data.append("classId",$("#classId").val());
+            data.append("mark_list",jsonRowsTable);
+
+            Swal.fire({
+                icon: 'question',
+                title: 'Confirm',
+                text: "Are you sure confirm this list",
+                showCancelButton: true,
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Ok',
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    $.ajax({
+                        url: "/teacher/class/input-mark",
+                        method: "POST",
+                        data:data,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        enctype: "multipart/form-data",
+                        success: (response) => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Import mark list Success",
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            });
+                            $('#mark_table tbody').empty();
+                        },
+                        error: (error)=>{
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error.responseJSON.message,
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            })
+                        },
+                    });
+                }
+            })
+        }else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'please field all mark',
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            })
+        }
+    })
+
+    //Download teamplate
+    $("#download_template").click(function (event) {
+        event.preventDefault();
+        let selectSubject = $("#mark_select_subject");
+        if(selectSubject.val() == "" || selectSubject.val() == null){
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please select subject',
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            })
+        }else {
+            /*
+            $.ajax({
+                url: "/teacher/class/download_template/"+$("#classId").val()+"/"+selectSubject.val(),
+                method: "GET",
+                cache: false,
+                processData: false,
+                contentType: false,
+                enctype: "multipart/form-data",
+                success: (response) => {
+                    $('#mark_table tbody').empty();
+                },
+                error: (error) =>{
+
+                }
+            });
+             */
+
+            $.ajax({
+                type: 'GET',
+                cache: false,
+                url: "/teacher/class/download_template/"+$("#classId").val()+"/"+selectSubject.val(),
+
+                xhrFields: {
+                    // make sure the response knows we're expecting a binary type in return.
+                    // this is important, without it the excel file is marked corrupted.
+                    responseType: 'arraybuffer'
+                }
+            })
+                .done(function (data, status, xmlHeaderRequest) {
+                    var downloadLink = document.createElement('a');
+                    var blob = new Blob([data],
+                        {
+                            type: xmlHeaderRequest.getResponseHeader('Content-Type')
+                        });
+                    var url = window.URL || window.webkitURL;
+                    var downloadUrl = url.createObjectURL(blob);
+                    var fileName = '';
+
+
+
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        if (fileName) {
+                            if (typeof downloadLink.download === 'undefined') {
+                                window.location = downloadUrl;
+                            } else {
+                                downloadLink.href = downloadUrl;
+                                downloadLink.download = fileName;
+                                document.body.appendChild(downloadLink);
+                                downloadLink.click();
+                            }
+                        } else {
+                            window.location = downloadUrl;
+                        }
+
+                        setTimeout(function () {
+                                url.revokeObjectURL(downloadUrl);
+                            },
+                            100);
+                    }
+                });
+        }
+    })
+    
 });

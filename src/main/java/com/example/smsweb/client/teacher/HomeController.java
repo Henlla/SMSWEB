@@ -1,10 +1,14 @@
 package com.example.smsweb.client.teacher;
 
+import com.example.smsweb.api.di.repository.MarkRepository;
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.teacher.InputMarkModel;
 import com.example.smsweb.dto.teacher.MarkList;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
+import com.example.smsweb.utils.ExcelExport.ClassExport;
+import com.example.smsweb.utils.ExcelExport.ImportMarkExport;
 import com.example.smsweb.utils.ExcelHelper;
 import com.example.smsweb.dto.TeachingCurrenDate;
 import com.example.smsweb.models.Account;
@@ -19,7 +23,10 @@ import com.example.smsweb.models.Teacher;
 import com.example.smsweb.utils.StreamHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -61,6 +68,7 @@ import java.util.List;
 public class HomeController {
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
+    private final String CLASS_SUBJECT_URL = "http://localhost:8080/api/class-subject/";
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
     private final String SCHEDULE_DETAIL_URL = "http://localhost:8080/api/schedules_detail/";
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
@@ -716,4 +724,225 @@ public class HomeController {
             }
         }
     }
+
+    @GetMapping("/class/get-all-subject/{classId}")
+    @ResponseBody
+    public Object getAllSubjectByClassId(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                  @PathVariable("classId") int classId){
+        try {
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<String> requestGET;
+
+            List<Student> studentList = new ArrayList<>();
+
+            //Get Class by classId
+            requestGET= new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "getClass/"+ classId,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModel = new ObjectMapper().readValue(response.getBody(), new TypeReference<ResponseModel>() {});
+            String json = new ObjectMapper().writeValueAsString(responseModel.getData());
+            Classses classModel = new ObjectMapper().readValue(json, Classses.class);
+
+            //filter ListSubjects
+            List<Subject> subjects = classModel.getMajor().getSubjectsById().stream().sorted(Comparator.comparingInt(Subject::getId)).toList();
+            //Convert to Json
+            String subjectJson = new ObjectMapper().writeValueAsString(subjects);
+
+            //Get Student by classId with StudentClass model
+            for (StudentClass studentClass : classModel.getStudentClassById()) {
+                Student student = studentClass.getClassStudentByStudent();
+                studentList.add(student);
+            }
+
+            return subjectJson;
+
+        } catch (Exception ex) {
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/class/get-student-list")
+    @ResponseBody
+    public Object getStudentListSubject(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                        @RequestParam("classId") int classId,
+                                        @RequestParam("subjectId")int subjectId){
+        try {
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<String> requestGET;
+
+            List<Student> studentList = new ArrayList<>();
+            List<InputMarkModel> inputMarkModelList = new ArrayList<>();
+
+            //Get Class by classId
+            requestGET= new HttpEntity<>(headers);
+            ResponseEntity<String> responseStudent = restTemplate.exchange(CLASS_URL + "getClass/"+ classId,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModelStudent = new ObjectMapper().readValue(responseStudent.getBody(), new TypeReference<ResponseModel>() {});
+            String jsonClass = new ObjectMapper().writeValueAsString(responseModelStudent.getData());
+            Classses classModel = new ObjectMapper().readValue(jsonClass, Classses.class);
+
+            //Get Subject by subjectId
+            requestGET= new HttpEntity<>(headers);
+            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/"+ subjectId,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {});
+            String jsonSubject = new ObjectMapper().writeValueAsString(responseModelSubject.getData());
+            Subject subject = new ObjectMapper().readValue(jsonSubject, Subject.class);
+
+
+            //Get Student by classId with StudentClass model
+            for (StudentClass studentClass : classModel.getStudentClassById()) {
+                Student student = studentClass.getClassStudentByStudent();
+                studentList.add(student);
+                inputMarkModelList.add(new InputMarkModel(student, subject));
+            }
+
+            String inputMarkJson = new ObjectMapper().writeValueAsString(inputMarkModelList);
+
+            return inputMarkJson;
+
+        } catch (Exception ex) {
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/class/input-mark")
+    @ResponseBody
+    public Object getStudentListSubject(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                        @RequestParam("teacherId") int teacherId,
+                                        @RequestParam("mark_list") String mark_list,
+                                        @RequestParam("classId")int classId){
+        try{
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            List<Mark> markList = new ArrayList<>();
+
+            List<InputMarkModel> inputMarkModelList = objectMapper.readValue(mark_list, new TypeReference<>() {});
+
+            if (inputMarkModelList.size() != 0 ){
+                //Get class
+                ResponseEntity<String> responseClass = restTemplate.exchange(
+                        CLASS_URL + "getClass/" + classId,
+                        HttpMethod.GET, request, String.class);
+                ResponseModel responseModelClass  = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {});
+                String classJson = objectMapper.writeValueAsString(responseModelClass.getData());
+                Classses classs = objectMapper.readValue(classJson, new TypeReference<>() {});
+
+                for (InputMarkModel item : inputMarkModelList) {
+                    //Check existed mark in database
+                    ResponseEntity<Mark> responseMark = restTemplate.exchange(
+                            MARK_URL + "findMarkByStudentSubjectId/" + item.getStudentSubjectId(),
+                            HttpMethod.GET, request, Mark.class);
+                    Mark body = responseMark.getBody();
+                    if (body != null) {
+                        throw new ErrorHandler(item.getFullName() + " already have a record of mark in " + item.getSubjectName() + "!");
+                    }
+                    //Check permission mark a student
+                    if (classs.getStudentClassById().stream().filter(studentClass -> studentClass.getStudentId() == item.getStudentId()).collect(Collectors.toList()).size() == 0) {
+                        throw new ErrorHandler("You have no permission to mark this student: " + item.getFullName());
+                    }
+
+                    //Check existed subject and subject existed in this class
+                    if (classs.getMajor().getSubjectsById().stream().filter(s -> s.getId() == item.getSubjectId()).collect(Collectors.toList()).size() == 0) {
+                        throw new ErrorHandler("You have no permission to mark this subject: " + item.getSubjectName());
+                    }
+
+                    markList.add(new Mark(0, item.getAsmMark(), item.getAsmMark(), item.getStudentSubjectId(), null));
+                }
+
+                //Save markList
+                content.add("markList", markList);
+                HttpEntity<MultiValueMap<String, Object>> requestMark = new HttpEntity<>(content, headers);
+                ResponseEntity<ResponseModel> responseMark = restTemplate.exchange(MARK_URL + "saveAll",
+                        HttpMethod.POST, requestMark, ResponseModel.class);
+                content.remove("markList");
+                if (responseMark.getStatusCode().is2xxSuccessful()){
+                    return "success";
+                }else {
+                    throw new ErrorHandler("Save mark list failed");
+                }
+            }else{
+                throw new ErrorHandler("Empty list");
+            }
+        } catch (Exception e) {
+            throw new ErrorHandler(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/class/download_template/{classId}/{subjectId}")
+    @ResponseBody
+    public HttpEntity<?> downloadTemplate(HttpServletResponse response,
+                                   @CookieValue(name = "_token", defaultValue = "") String _token,
+                                 @PathVariable("classId") int classId,
+                                 @PathVariable("subjectId")int subjectId){
+        try{
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            List<InputMarkModel> inputMarkModelList = new ArrayList<>();
+
+            ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId,
+                    HttpMethod.GET, request, String.class);
+            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),new TypeReference<>() {});
+            String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
+
+            Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
+
+            //Get Subject by subjectId
+            request= new HttpEntity<>(headers);
+            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/"+ subjectId,
+                    HttpMethod.GET, request, String.class);
+            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {});
+            String jsonSubject = new ObjectMapper().writeValueAsString(responseModelSubject.getData());
+            Subject subject = new ObjectMapper().readValue(jsonSubject, Subject.class);
+
+            //Get Student by classId with StudentClass model
+            for (StudentClass studentClass : classModel.getStudentClassById()) {
+                Student student = studentClass.getClassStudentByStudent();
+                inputMarkModelList.add(new InputMarkModel(student, subject));
+            }
+
+            response.setContentType("application/octet-stream");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=import_mark_" + classModel.getClassCode() + ".xlsx";
+            response.setHeader(headerKey, headerValue);
+
+            ImportMarkExport importMarkExport = new ImportMarkExport(inputMarkModelList);
+            return importMarkExport.generateExcelFile(response);
+
+//            XSSFWorkbook file = excelUploadService.downloadDocument();
+//            String filename = "Export.xlsx";
+//            String filetype = "xlsx";
+//            response.addHeader("Content-disposition", "attachment;filename=" + filename);
+//            response.setContentType(filetype);
+//            // Copy the stream to the response's output stream.
+//
+//            file.write(response.getOutputStream());
+//            response.flushBuffer();
+
+        }catch (Exception e){
+            throw new ErrorHandler(e.getMessage());
+        }
+    }
+
 }

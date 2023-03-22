@@ -1103,11 +1103,10 @@ public class ClassController {
             headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ObjectMapper objectMapper = new ObjectMapper();
+
             ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId,
                     HttpMethod.GET, request, String.class);
-            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),
-                    new TypeReference<ResponseModel>() {
-                    });
+            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),new TypeReference<>() {});
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
 
             Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
