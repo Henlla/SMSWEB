@@ -104,3 +104,67 @@
     border-radius: 5px;
 }
 
+.calendar-details{
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    width: 40%;
+    margin-left: 35px;
+}
+
+.calendar-box{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.normal-bg:before {
+    background: #3D5EE1;
+}
+
+.calendar-box:before {
+    content: "";
+    position: absolute;
+    background: #3D5EE1;
+    width: 4px;
+    height: 100%;
+    border-radius: 25px;
+}
+
+.calendar-event-name {
+    padding-left: 10px;
+}
+
+.calendar-details p {
+    font-size: 12px;
+    font-weight: 500;
+    color: #777777;
+    margin-bottom: 0;
+    margin-right: 10px;
+    flex: none;
+}
+
+.calendar-event-name h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+
+.calendar-event-name h5 {
+    font-size: 12px;
+    font-weight: 400;
+    color: #747474;
+    margin-bottom: 0;
+}
+
+.calendar-box span {
+    color: #888888;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: auto;
+}

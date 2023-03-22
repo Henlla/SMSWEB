@@ -789,9 +789,7 @@ public class ClassController {
             if (responseSchedule.getStatusCode().is2xxSuccessful()) {
                 String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
-                String[] splitDate = currenDate.split("/");
-                String formatDate = splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0];
-                LocalDate date = LocalDate.parse(formatDate);
+                LocalDate date = LocalDate.parse(currenDate);
                 int getDate = date.getDayOfMonth();
                 int getMonth = date.getMonthValue();
                 boolean isSameDate = schedule.getScheduleDetailsById().stream()
@@ -827,16 +825,16 @@ public class ClassController {
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
             headers.set("Authorization", "Bearer " + _token);
-            String[] splitDate = newDate.split("/");
-            String formatDate = splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0];
+//            String[] splitDate = newDate.split("/");
+//            String formatDate = splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0];
             HttpEntity<Object> requestScheduleDetails = new HttpEntity<>(headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(
                     SCHEDULE_DETAIL_URL + "get/" + Integer.parseInt(schedule_details_id), HttpMethod.GET,
                     requestScheduleDetails, ResponseModel.class);
             String jsonScheduleDetails = objectMapper.writeValueAsString(response.getBody().getData());
             ScheduleDetail scheduleDetail = objectMapper.readValue(jsonScheduleDetails, ScheduleDetail.class);
-            String dayOfWeek = String.valueOf(LocalDate.parse(formatDate).getDayOfWeek());
-            scheduleDetail.setDate(formatDate);
+            String dayOfWeek = String.valueOf(LocalDate.parse(newDate).getDayOfWeek());
+            scheduleDetail.setDate(newDate);
             scheduleDetail.setDayOfWeek(dayOfWeek);
             scheduleDetail.setSlot(slot);
             String convertToJson = objectMapper.writeValueAsString(scheduleDetail);
@@ -1162,26 +1160,28 @@ public class ClassController {
         }
     }
 
-    @GetMapping("/getTeacherByCard/{card}")
+    @PostMapping("/checkTeacherChange")
     @ResponseBody
-    public Object getTeacherByCard(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @PathVariable("card") String card) {
+    public Object checkTeacherChange(@CookieValue(name = "_token", defaultValue = "") String _token,
+            @RequestParam("card")String card,@RequestParam("shift")String shift) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
+            ObjectMapper objectMapper = new ObjectMapper();
             headers.add("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ResponseEntity<Teacher> response = restTemplate.exchange(TEACHER_URL + "getByCard/" + card, HttpMethod.GET,
                     request, Teacher.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                if (response.getBody() == null) {
-                    return "null";
-                } else {
-                    return response.getBody();
-                }
-            } else {
+            ResponseEntity<ResponseModel> responseListClass = restTemplate.exchange(CLASS_URL+"findClassByTeacher/"+response.getBody().getId(),HttpMethod.GET,request, ResponseModel.class);
+            String json = objectMapper.writeValueAsString(responseListClass.getBody().getData());
+            List<Classses> classsesList = objectMapper.readValue(json, new TypeReference<List<Classses>>() {
+            });
+            boolean isCheck = classsesList.stream().anyMatch(classses -> classses.getShift().equals(shift));
+            if(isCheck){
                 return "error";
+            }else{
+                return "success";
             }
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
