@@ -22,6 +22,13 @@
                          width="50" height="50">
                     <span style="font-weight: bold"
                           th:text="${student.getStudentByProfile().getFirstName()+' '+student.getStudentByProfile().getLastName()}"></span>
+                    <div class="dropdown show">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" th:href="@{'/logout'}">Logout</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,6 +89,26 @@
                     <div class="right-box">
                         <span style="color:#6C787F;font-weight: bold" class="title-info">Study today's - [[${currentDate}]]</span>
                         <hr>
+                        <th:block th:if="${not #lists.isEmpty(currentStudy)}">
+                            <th:block th:each="event:${currentStudy}">
+                                <div class="calendar-details">
+                                    <p th:text="${event.startTime}"></p>
+                                    <div class="calendar-box normal-bg">
+                                        <div class="calendar-event-name">
+                                            <h4 th:text="${event.subject.subjectName}"></h4>
+                                            <h5 th:text="${'Class: '+event.classCode}"></h5>
+                                            <h5 th:text="${'Room '+event.roomCode}"></h5>
+                                        </div>
+                                        <span th:text="${event.time}"></span>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+                        <th:block th:unless="${not #lists.isEmpty(currentStudy)}">
+                            <div class="calendar-details">
+                                <span>Nothing event today's</span>
+                            </div>
+                        </th:block>
                     </div>
                 </div>
             </div>
@@ -111,7 +138,7 @@
                         </div>
                     </div>
                     <div class="col-1"></div>
-                    <div class="col-7">
+                    <div class="col-6">
                         <div class="row">
                             <div class="box-all-function">
                                 <div class="col-2 box-function">
@@ -137,6 +164,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-1"></div>
                 </div>
             </div>
         </div>

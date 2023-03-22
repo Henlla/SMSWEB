@@ -61,6 +61,9 @@ $(document).ready(function () {
     });
     $('#btn_update_schedule').css('display', 'none')
     $('#btnDownSchedule').hide()
+    $('#btn_create_schedule').hide()
+    $('#btn_submitChangeDate').hide()
+    $('#btn_submitTeacher').hide()
     $("#student-table").DataTable({
         pageLength: 5,
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
@@ -449,22 +452,34 @@ $(document).ready(function () {
     })
     $('#teacher_change').on('change', () => {
         let card = $('#teacher_change').val()
+        let shift = $('#shift').val()
+        let data = new FormData()
+        data.append("card",card)
+        data.append("shift",shift)
         $.ajax({
-            url: `/dashboard/class/getTeacherByCard/${card}`,
-            method: "GET",
+            url: `/dashboard/class/checkTeacherChange`,
+            method: "POST",
+            data:data,
+            contentType: false,
+            cache: false,
+            processData: false,
             success: (res) => {
                 console.log(res)
-                if (res.id == null) {
-                    Swal.fire({
-                        title: "Don't find given teacher",
-                        showDenyButton: false,
-                        showCancelButton: false,
-                        confirmButtonText: 'Ok',
-                    })
-                } else {
-                    let data = res.teacherCard + " (" + res.profileByProfileId.firstName + " " + res.profileByProfileId.lastName + ")"
-                    $('#teacher_change').val(data)
-                }
+               if(res.toLowerCase()==="success"){
+                   Swal.fire(
+                       "",
+                       `You can swap this teacher !`,
+                       "success"
+                   )
+                   $('#btn_submitTeacher').show()
+               }else{
+                   Swal.fire(
+                       "",
+                       `This time the teacher has a class !`,
+                       "error"
+                   )
+                   $('#btn_submitTeacher').hide()
+               }
             }, error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 $("#student_update").modal("hide");
@@ -500,8 +515,8 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 let data = new FormData()
                 data.append("classId", $('#classId').val())
-                let teacherCard = $('#teacher_change').val().split(" ")
-                data.append("teacherCard", teacherCard[0])
+                let teacherCard = $('#teacher_change').val()
+                data.append("teacherCard", teacherCard)
                 $.ajax({
                     url: "/dashboard/class/change_teacher",
                     method: "POST",
@@ -515,6 +530,7 @@ $(document).ready(function () {
                             title: 'Change teacher success',
                             showDenyButton: false,
                             showCancelButton: false,
+                            icon: 'success',
                             confirmButtonText: 'Ok',
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -559,14 +575,14 @@ $(document).ready(function () {
             data: data,
             success: () => {
                 Swal.fire(
-                    'Send time table success',
-                    'success'
+                    "",
+                    "Send time table success",
+                    "success"
                 )
-                $('#modal_import_file').modal("hide")
+                $('#send_schedule').modal("hide")
             }, error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 if (err.message.toLowerCase() === "token expired") {
-                    $('#spinner-divI').hide()
                     Swal.fire({
                         title: 'End of login session please login again',
                         showDenyButton: false,
@@ -640,7 +656,7 @@ $(document).ready(function () {
                     });
                 } else {
                     Swal.fire(
-                        'Send fail',
+                        'Change fail',
                         'error'
                     )
                 }
@@ -701,7 +717,30 @@ $(document).ready(function () {
 
     })
 
+    $('#startDate').on('change',()=>{
+        console.log($('#startDate').val())
+        console.log(isFutureDate($('#startDate').val()))
+        if(!isFutureDate($('#startDate').val())){
+            $('#btn_create_schedule').hide()
+            $('.error-choose_day').html('Cannot choose day is past . Try again!')
+        }else{
+            $('#btn_create_schedule').show()
+            $('.error-choose_day').html('')
+        }
+    })
+
+    $('.newDate').on('change',()=>{
+        if(!isFutureDate($('.newDate').val())){
+            $('#btn_submitChangeDate').hide()
+            $('.error-choose_day').html('Cannot choose day is past . Try again!')
+        }else{
+            $('#btn_submitChangeDate').show()
+            $('.error-choose_day').html('')
+        }
+    })
+
 });
+
 
 var OnUpdateDate = (id, date, slot) => {
     // console.log(id)
@@ -795,14 +834,14 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                           <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}</div>
+                                      <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}</div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
                                     break;
@@ -812,14 +851,14 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
-                                     <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                     <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -832,7 +871,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -840,7 +879,7 @@ var OnChangeSemesterSchedule = () => {
                                         td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -852,7 +891,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -860,7 +899,7 @@ var OnChangeSemesterSchedule = () => {
                                         td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -874,7 +913,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -882,7 +921,7 @@ var OnChangeSemesterSchedule = () => {
                                         td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -894,7 +933,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -902,7 +941,7 @@ var OnChangeSemesterSchedule = () => {
                                         td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -916,7 +955,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -924,7 +963,7 @@ var OnChangeSemesterSchedule = () => {
                                         td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                      </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -936,7 +975,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -944,7 +983,7 @@ var OnChangeSemesterSchedule = () => {
                                         td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -959,7 +998,7 @@ var OnChangeSemesterSchedule = () => {
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a>
                                      </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a>
                                               </div>
@@ -968,7 +1007,7 @@ var OnChangeSemesterSchedule = () => {
                                         td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                      </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -980,7 +1019,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -988,7 +1027,7 @@ var OnChangeSemesterSchedule = () => {
                                         td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -1002,7 +1041,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -1010,7 +1049,7 @@ var OnChangeSemesterSchedule = () => {
                                         td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
@@ -1022,7 +1061,7 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -1030,7 +1069,7 @@ var OnChangeSemesterSchedule = () => {
                                         td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }

@@ -48,7 +48,7 @@ public class SubjectStudentRestController {
         }
     }
 
-    @GetMapping("/getByStudentId/{id}")
+        @GetMapping("/getByStudentId/{id}")
     public ResponseEntity<?> getByStudentId(@PathVariable("id") Integer id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findStudentSubjectByStudentId(id)));

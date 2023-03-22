@@ -362,7 +362,7 @@ var OnChangeWeek = ()=>{
                                     if(i.slot==1){
                                         $('.r5_1').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
                                     }else{
-                                        $('.r6_1').html(` <div class="accent-cyan-gradientt" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                                        $('.r6_1').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
                                     }
                                 }
                                 break;

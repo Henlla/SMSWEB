@@ -85,6 +85,9 @@ $(()=>{
                 classCode:{
                     required: true
                 },
+                limitStudent:{
+                    range:[18,26]
+                },
                 majorId: {
                     required: true
                 },
@@ -106,6 +109,9 @@ $(()=>{
             messages:{
                 classCode : {
                     required:"Please enter class code"
+                },
+                limitStudent:{
+                    range:"Limit student just from 18 between 26"
                 },
                 majorId : {
                     required:"Please enter major"

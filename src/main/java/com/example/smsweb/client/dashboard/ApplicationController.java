@@ -93,6 +93,7 @@ public class ApplicationController {
                 HttpEntity<Object> requestStudent = new HttpEntity<>(headers);
                 ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL+"get/"+application.getStudentId(),HttpMethod.GET,requestStudent,ResponseModel.class);
                 String json = objectMapper.writeValueAsString(responseStudent.getBody().getData());
+
                 Student student = objectMapper.readValue(json,Student.class);
                 String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
                 List<String> listDeviceToken = new ArrayList<>();

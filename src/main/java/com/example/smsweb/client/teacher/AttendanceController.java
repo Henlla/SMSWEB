@@ -39,6 +39,7 @@ public class AttendanceController {
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private final String SUBJECT_URL = "http://localhost:8080/api/subject/";
     private final String ATTENDANCE_TRACKING_URL = "http://localhost:8080/api/attendance_tracking/";
+    private final String URL_FCM = "http://localhost:8080/fcm/";
 
     RestTemplate restTemplate;
     List<Schedule> listSchedule;
@@ -155,7 +156,7 @@ public class AttendanceController {
                             startDate = LocalDate.parse(schedule.getStartDate(), formatDate);
                             endDate = LocalDate.parse(schedule.getEndDate(), formatDate);
                             currentDate = LocalDate.parse(LocalDate.now().format(formatDate));
-                            if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                            if (currentDate.equals(startDate) && currentDate.isBefore(endDate)) {
                                 // Lấy schedule detail theo schedule
                                 MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
                                 scheduleDetailContent.add("fromDate", from_date.toString());
@@ -422,7 +423,7 @@ public class AttendanceController {
                     startDate = LocalDate.parse(schedule.getStartDate(), formatDate);
                     endDate = LocalDate.parse(schedule.getEndDate(), formatDate);
                     currentDate = LocalDate.parse(LocalDate.now().format(formatDate));
-                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                    if (currentDate.equals(startDate) && currentDate.isBefore(endDate)) {
                         // Lấy Schedule detail
                         MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
                         scheduleDetailContent.add("date", date);
@@ -451,6 +452,31 @@ public class AttendanceController {
                     ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getOne", HttpMethod.POST, requestStudentSubject, ResponseModel.class);
                     String studentSubjectJson = new ObjectMapper().writeValueAsString(responseStudentSubject.getBody().getData());
                     StudentSubject studentSubject = new ObjectMapper().readValue(studentSubjectJson, StudentSubject.class);
+                    if(attend.getStatus().equals("Absent")){
+                        ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL+"get/"+studentSubject.getStudentId(),HttpMethod.GET,request,ResponseModel.class);
+                        String json = new ObjectMapper().writeValueAsString(responseStudent.getBody().getData());
+                        Student student = new ObjectMapper().readValue(json,Student.class);
+                        String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
+                        List<String> listDeviceToken = new ArrayList<>();
+                        listDeviceToken.add(tokenDevices);
+
+                        MulticastMessageRepresentation message = new MulticastMessageRepresentation();
+
+                        DataNotification dataNotification = new DataNotification();
+                        dataNotification.setContent("Today , you have absent "+scheduleDetail.getSubjectBySubjectId().getSubjectCode());
+                        dataNotification.setAction("Attendance");
+
+                        String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
+                        message.setTitle("Announcement");
+                        message.setData(jsonData);
+                        message.setRegistrationTokens(listDeviceToken);
+
+                        String messageJson = new ObjectMapper().writeValueAsString(message);
+                        MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
+                        params.add("message", messageJson);
+                        HttpEntity<MultiValueMap<String, Object>> requestFCM = new HttpEntity<>(params, headers);
+                        ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
+                    }
                     Attendance attendance = new Attendance();
                     attendance.setStudentSubjectId(studentSubject.getId());
                     attendance.setNote(attend.getNote());
@@ -591,7 +617,7 @@ public class AttendanceController {
                     LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
                     LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
                     LocalDate currentDate = LocalDate.parse(LocalDate.now().format(format));
-                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                    if (currentDate.equals(startDate) && currentDate.isBefore(endDate)) {
                         // Lấy Schedule detail
                         MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
                         scheduleDetailContent.add("date", date);
@@ -703,7 +729,7 @@ public class AttendanceController {
                     startDate = LocalDate.parse(schedule.getStartDate(), formatDate);
                     endDate = LocalDate.parse(schedule.getEndDate(), formatDate);
                     currentDate = LocalDate.parse(LocalDate.now().format(formatDate));
-                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                    if (currentDate.equals(startDate) && currentDate.isBefore(endDate)) {
                         // Lấy Schedule detail
                         MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
                         scheduleDetailContent.add("date", date);
@@ -841,7 +867,7 @@ public class AttendanceController {
                     LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
                     LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
                     LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
-                    if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
+                    if (currentDate.equals(startDate) && currentDate.isBefore(endDate)) {
                         // Lấy Schedule detail
                         MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
                         scheduleDetailContent.add("date", date);
