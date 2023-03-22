@@ -482,7 +482,10 @@ public class ClassController {
                                                 scheduleDetail.setScheduleId(schedule.getId());
                                                 scheduleDetail.setSubjectId(subject.getId());
                                                 scheduleDetail.setTeacherId(teacherId);
+<<<<<<< Updated upstream
                                                 scheduleDetail.setShift(shift);
+=======
+>>>>>>> Stashed changes
                                                 scheduleDetail.setSlot(i);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
@@ -493,7 +496,10 @@ public class ClassController {
                                                 scheduleDetail.setScheduleId(schedule.getId());
                                                 scheduleDetail.setSubjectId(subject.getId());
                                                 scheduleDetail.setTeacherId(teacherId);
+<<<<<<< Updated upstream
                                                 scheduleDetail.setShift(shift);
+=======
+>>>>>>> Stashed changes
                                                 scheduleDetail.setSlot(i);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
@@ -542,7 +548,10 @@ public class ClassController {
                                                 scheduleDetail.setScheduleId(schedule.getId());
                                                 scheduleDetail.setSubjectId(subject.getId());
                                                 scheduleDetail.setTeacherId(teacherId);
+<<<<<<< Updated upstream
                                                 scheduleDetail.setShift(shift);
+=======
+>>>>>>> Stashed changes
                                                 scheduleDetail.setSlot(i);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
@@ -555,6 +564,7 @@ public class ClassController {
                                                 scheduleDetail.setTeacherId(teacherId);
                                                 scheduleDetail.setShift(shift);
                                                 scheduleDetail.setSlot(i);
+                                                scheduleDetail.setTeacherId(teacherId);
                                                 listScheduleDetails.add(scheduleDetail);
                                                 slot++;
                                                 if (subject.getSlot() == slot) {

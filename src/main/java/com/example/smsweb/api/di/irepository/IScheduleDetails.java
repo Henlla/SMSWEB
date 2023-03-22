@@ -7,14 +7,32 @@ import java.util.List;
 public interface IScheduleDetails {
 
     void addScheduleList(List<ScheduleDetail> list);
-    List<ScheduleDetail> findScheduleDetailsByScheduleId(Integer id);
+
     List<ScheduleDetail> findScheduleByDate(String date);
-    List<ScheduleDetail> findScheduleDetail(String date,String scheduleId);
+
+    List<ScheduleDetail> findScheduleDetail(String date, String scheduleId);
+
     ScheduleDetail findScheduleDetailById(Integer id);
-    ScheduleDetail findScheduleDetailBySlot(String date,String scheduleId,String slot);
-    List<ScheduleDetail> findScheduleDetailByScheduleIdAndSubjectId(Integer scheduleId,Integer subjectId);
+
+    ScheduleDetail findScheduleDetailBySlot(String date, String scheduleId, String slot);
+
+    List<ScheduleDetail> findScheduleDetailByScheduleIdAndSubjectId(Integer scheduleId, Integer subjectId);
+
     List<ScheduleDetail> findScheduleDetailByDateBetween(String fromDate, String toDate);
+<<<<<<< Updated upstream
     List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleId(String fromDate,String toDate,Integer scheduleId);
 
     List<ScheduleDetail> findScheduleDetailByTeacher(Integer teacherId);
+=======
+
+    List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleId(String fromDate, String toDate, Integer scheduleId);
+
+    List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleIdAndTeacherId(String fromDate, String toDate, Integer scheduleId, Integer teacherId);
+
+    List<ScheduleDetail> findScheduleDetailsByDateBetweenAndTeacherId(String fromDate, String toDate, Integer teacherId);
+
+    List<ScheduleDetail> findScheduleDetailsByDateAndTeacherId(String date, Integer teacherId);
+
+    List<ScheduleDetail> findScheduleDetailsByDateAndScheduleIdAndTeacherId(String date, Integer scheduleId, Integer teacherId);
+>>>>>>> Stashed changes
 }
