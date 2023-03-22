@@ -1,13 +1,13 @@
 package com.example.smsweb.client.dashboard;
 
+import com.example.smsweb.dto.AttendanceEdit;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
-import com.example.smsweb.models.Classses;
-import com.example.smsweb.models.Schedule;
-import com.example.smsweb.models.ScheduleDetail;
+import com.example.smsweb.models.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,12 +31,21 @@ public class AttendanceAdminController {
     private final String URL_SCHEDULE_DETAIL = "http://localhost:8080/api/schedules_detail/";
     private final String URL_SCHEDULE = "http://localhost:8080/api/schedules/";
     private final String URL_CLASS = "http://localhost:8080/api/classes/";
+    private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
+    private final String CLASS_URL = "http://localhost:8080/api/classes/";
+    private final String SCHEDULE_DETAIL_URL = "http://localhost:8080/api/schedules_detail/";
+    private final String STUDENT_SUBJECT_URL = "http://localhost:8080/api/student-subject/";
+    private final String ATTENDANCE_URL = "http://localhost:8080/api/attendance/";
+    private final String STUDENT_URL = "http://localhost:8080/api/students/";
 
     RestTemplate restTemplate;
-
     List<ScheduleDetail> listScheduleDetail;
     List<Schedule> listSchedule;
     List<Classses> listClass;
+    List<Attendance> listAttendance;
+    List<StudentSubject> listStudentSubject;
+    List<Student> listStudent;
+    List<AttendanceEdit> listEditAttendance;
 
     @GetMapping("/index")
     public Object index(@CookieValue("_token") String _token, Model model) {
@@ -55,7 +64,8 @@ public class AttendanceAdminController {
 
     @GetMapping("/findScheduleDetailByDate")
     @ResponseBody
-    public Object findScheduleDetailByDate(@CookieValue(name = "_token") String _token, @RequestParam("date") String date) {
+    public Object findScheduleDetailByDate(@CookieValue(name = "_token") String _token,
+                                           @RequestParam("date") String date) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
@@ -105,6 +115,44 @@ public class AttendanceAdminController {
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<String>("Something wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/findAttendanceByDate")
+    @ResponseBody
+    public Object findAttendanceByDate(@CookieValue(name = "_token") String _token,
+                                       @RequestParam("date") String date,
+                                       @RequestParam("classId") String classId,
+                                       @RequestParam("slot") String slot) {
+        try {
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                listStudentSubject = new ArrayList<>();
+                listStudent = new ArrayList<>();
+                listEditAttendance = new ArrayList<>();
+                listAttendance = new ArrayList<>();
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + _token);
+                HttpEntity<String> request = new HttpEntity<>(headers);
+
+                int dd = Integer.parseInt(date.split("/")[0]);
+                int mm = Integer.parseInt(date.split("/")[1]);
+                int yy = Integer.parseInt(date.split("/")[2]);
+                LocalDate day = LocalDate.parse(LocalDate.of(yy, mm, dd).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+                // Lấy schedule detail theo date
+                MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
+                scheduleDetailContent.add("date", day.toString());
+                HttpEntity<MultiValueMap<String, String>> scheduleDetailRequest = new HttpEntity<>(scheduleDetailContent, headers);
+                return "";
+
+            } else {
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<String>("Don't find any records", HttpStatus.NOT_FOUND);
         }
     }
 }

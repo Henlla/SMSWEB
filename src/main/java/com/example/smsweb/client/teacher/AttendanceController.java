@@ -76,7 +76,8 @@ public class AttendanceController {
     LocalDate detailDate;
 
     @GetMapping("/index")
-    public String attendance(@CookieValue(name = "_token", defaultValue = "") String _token, Model model, Authentication auth) {
+    public String attendance(@CookieValue(name = "_token", defaultValue = "") String _token,
+                             Model model, Authentication auth) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
@@ -172,7 +173,6 @@ public class AttendanceController {
 
                     for (ScheduleDetail scheduleDetail : scheduleDetailList) {
                         listStudentSubject.clear();
-
                         // Lấy schedule theo id
                         ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "get/" + scheduleDetail.getScheduleId(), HttpMethod.POST, request, ResponseModel.class);
                         String scheduleJson = new ObjectMapper().writeValueAsString(responseSchedule.getBody().getData());
@@ -587,13 +587,10 @@ public class AttendanceController {
 
                 ScheduleDetail scheduleDetail = new ScheduleDetail();
                 for (Schedule schedule : scheduleList) {
-                    String day = LocalDate.now().getDayOfMonth() < 10 ? "0" + LocalDate.now().getDayOfMonth() : String.valueOf(LocalDate.now().getDayOfMonth());
-                    String month = LocalDate.now().getMonthValue() < 10 ? "0" + LocalDate.now().getMonthValue() : String.valueOf(LocalDate.now().getMonthValue());
-                    String year = String.valueOf(LocalDate.now().getYear());
                     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     LocalDate startDate = LocalDate.parse(schedule.getStartDate(), format);
                     LocalDate endDate = LocalDate.parse(schedule.getEndDate(), format);
-                    LocalDate currentDate = LocalDate.parse(year + "-" + month + "-" + day, format);
+                    LocalDate currentDate = LocalDate.parse(LocalDate.now().format(format));
                     if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
                         // Lấy Schedule detail
                         MultiValueMap<String, String> scheduleDetailContent = new LinkedMultiValueMap<>();
