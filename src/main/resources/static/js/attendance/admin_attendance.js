@@ -1,6 +1,11 @@
 $(() => {
-    $("#date").datetimepicker({
-        format: "DD/MM/YYYY"
+    $("#date_time").val(null);
+    $(".select2").select2({
+        theme:"bootstrap4"
+    })
+    $('#date').datetimepicker({
+        format: "DD/MM/YYYY",
+        maxDate: new Date()
     });
     $("#attendance_table").DataTable({
         paging: false,
@@ -50,11 +55,12 @@ $(() => {
             }
         }
     });
+
     $("#date").on("change.datetimepicker", () => {
         let date = $("#date_time").val();
         $("#class_select").removeClass("d-none");
-        $(".select2").empty().trigger("change");
-        $(".select2").select2({
+        // $(".class_select2").empty().trigger("change");
+        $(".class_select2").select2({
             theme: "bootstrap4",
             ajax: {
                 url: "/dashboard/attendance/findScheduleDetailByDate",
@@ -68,7 +74,6 @@ $(() => {
                 },processResults: function (response) {
                     let dataArray = [];
                     for (const dataKey of response) {
-                        console.log(dataKey);
                         let data1 = {
                             "id" : dataKey.id,
                             "text":dataKey.classCode
@@ -78,8 +83,58 @@ $(() => {
                     return {
                         results: dataArray
                     };
+                },error : (data)=>{
+                    if (data.responseText.toLowerCase() === "token expired") {
+                        Swal.fire({
+                            title: 'End of login session please login again',
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: 'Confirm',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/dashboard/login";
+                            }
+                        });
+                    } else {
+                        toastr.error(data.responseText);
+                    }
                 }
             }
         });
     });
+    $("#class").on("change",()=>{
+        $("#slot_select").removeClass("d-none");
+    });
+    $("#slot_select").on("change", () =>{
+        let date = $("#date_time").val();
+        let classId = $("#class").val();
+        let slot = $("#slot").val();
+        $.ajax({
+            url:"/dashboard/attendance/findAttendanceByDate",
+            method:"POST",
+            data:{
+                date: date,
+                classId:classId,
+                slot: slot
+            },
+            success:(response)=>{
+                console.log(response);
+            },error : (data)=>{
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                } else {
+                    toastr.error(data.responseText);
+                }
+            }
+        })
+    })
 })
