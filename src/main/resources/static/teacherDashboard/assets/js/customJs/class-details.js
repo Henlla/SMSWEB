@@ -51,7 +51,7 @@ let check_input_mark_not_null = function (){
     return isValid;
 }
 function check_numberic_0_100(e){
-    let val = e.target.value
+    let val = e.target.value;
     const reg = new RegExp('^0$|^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|^100$');
     if (!reg.test(val)){
         Swal.fire({
@@ -149,25 +149,6 @@ $(document).ready(function () {
             if(/^.+xlsx$/.test(value)) return true;
             else return false;
         }, 'Only accept excel file !');
-
-    // $('#mark_table').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
-    //     var data = this.innerText;
-    //     this.innerText = "";
-    //     $('<input type="text" value="'+ data +'"/>').appendTo(this);
-    //     var strLength = data.length * 2;
-    //
-    //     $(this).children("input:first").focus();
-    //     $(this).children("input:first")[0].setSelectionRange(strLength, strLength);
-    // } );
-    //
-    // $("#mark_table").click( function (e){
-    //     let input = $("#mark_table tbody tr td input")
-    //     let td = $("#mark_table tbody tr td:has(input)")
-    //     var  data = input.val();
-    //
-    //     td.children().remove();
-    //     td.addClass("text-info").html(data);
-    // })
     $("#mark_list").click(function (e) {
         $(this).val('');
     })
@@ -175,7 +156,7 @@ $(document).ready(function () {
 
         $("#mark_select_subject").val('');
         //Clear Database
-        $('#mark_table tbody').empty();
+        $("#mark_table tbody").empty();
 
         // Đọc file Excel
         var file = $("#mark_list").get(0).files[0];
@@ -187,8 +168,41 @@ $(document).ready(function () {
             var sheet_name_list = workbook.SheetNames;
             var Sheet1 = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {range:0});
 
+
             // Hiển thị dữ liệu trong DataTable jQuery
+            dataArray = Sheet1;
+            console.log(Sheet1);
+            for (let i = 0; i < dataArray.length; i++) {
+                var studentId = dataArray[i]['Student Id'];
+                var subjectId = dataArray[i]['Subject Id'];
+                var studentSubjectId = dataArray[i]['StudentSubject Id'];
+                var fullName = dataArray[i]['Student Name'];
+                var subjectName = dataArray[i]['Subject Name'];
+                var asmMark =dataArray[i]['ASM mark'];
+                var objMark = dataArray[i]['OBJ mark'];
+                $(`<tr>
+                            <td style="display:none;">
+                                <input style="border: none" type="text" value="${studentId}" hidden readonly/>
+                            </td><td style="display:none;">
+                                <input style="border: none" type="text" value="${subjectId}" hidden readonly/>
+                            </td><td style="display:none;">
+                                <input style="border: none" type="text" value="${studentSubjectId}" hidden readonly/>
+                            </td><td>
+                                <input style="border: none" type="text" value="${fullName}" readonly/>
+                            </td><td>
+                                <input style="border: none" type="text" value="${subjectName}" readonly/>
+                            </td><td>
+                                <input class="check_numberic_0_100" value="${asmMark == null || asmMark == 'null' || asmMark == undefined ? '': asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                            </td><td>
+                                <input class="check_numberic_0_100" value="${objMark == null || objMark == 'null' || objMark == undefined ? '': objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                            </td>
+                        </tr>`).appendTo("#mark_table tbody");
+            }
+            /*
             $('#mark_table').DataTable({
+                destroy: true,
+                scroll:true,
+                paging: false,
                 data: Sheet1,
                 columns: [
                     {
@@ -218,12 +232,23 @@ $(document).ready(function () {
                     },{
                     data: "ASM mark",
                         render: function (data) {
-                            return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                            if (data == null || data == undefined || data =="" || data =="null"){
+                                return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                            }else {
+                                return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+
+                            }
+                            return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
                         }
                     },{
                     data: "OBJ mark",
                         render: function (data) {
-                            return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                            if (data == null || data == undefined || data =="" || data =="null"){
+                                return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                            }else {
+                                return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                            }
+                            return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
                         }
                     }
                 ],
@@ -244,6 +269,9 @@ $(document).ready(function () {
                 ],
 
             });
+
+             */
+
         };
     })
 
@@ -344,6 +372,7 @@ $(document).ready(function () {
     selectSubject.change(function (event) {
         $("#mark_list").val('');
         //Clear Database
+        $("#mark_table tbody").empty();
 
         if(selectSubject.val() != '' && selectSubject != null){
             var data = new FormData();
@@ -358,59 +387,101 @@ $(document).ready(function () {
                 contentType: false,
                 enctype: "multipart/form-data",
                 success: (response) => {
+                    console.log(JSON.parse(response));
+                    // if ( $.fn.dataTable.isDataTable( '#mark_table' ) ) {
+                    //     $("#mark_table").DataTable().destroy();
+                    // }
+                    dataArray = JSON.parse(response);
+                    for (let i = 0; i < dataArray.length; i++) {
+                        $(`<tr>
+                            <td style="display:none;">
+                                <input style="border: none" type="text" value="${dataArray[i].studentId}" hidden readonly/>
+                            </td><td style="display:none;">
+                                <input style="border: none" type="text" value="${dataArray[i].subjectId}" hidden readonly/>
+                            </td><td style="display:none;">
+                                <input style="border: none" type="text" value="${dataArray[i].studentSubjectId}" hidden readonly/>
+                            </td><td>
+                                <input style="border: none" type="text" value="${dataArray[i].fullName}" readonly/>
+                            </td><td>
+                                <input style="border: none" type="text" value="${dataArray[i].subjectName}" readonly/>
+                            </td><td>
+                                <input class="check_numberic_0_100" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                            </td><td>
+                                <input class="check_numberic_0_100" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                            </td>
+                        </tr>`).appendTo("#mark_table tbody");
+                    }
+
                     /*
                     $('#mark_table').DataTable({
+                        destroy: true,
+                        scroll:true,
+                        paging: false,
                         scrollY: '200px',
                         scrollCollapse: true,
                         paging: false,
+                        search: false,
+                        editables:  true,
                         data: JSON.parse(response),
                         columns: [
                             {
-                                title:'Student Id',
-                                data: 'studentId',
-                                render: function (data, type){
-                                    return '<input style="border: none" type="text" value="'+data+'" hidden readonly/>';
-                                }
+                                data: "studentId",
+                                render: function (data) {
+                                    return `<input style="border: none" type="text" value="${data}" hidden readonly/>`
+                                },
                             }, {
-                                title: 'Student Code',
-                                data: 'studentCode',
-                                render: function (data, type){
-                                    return '<input type="text" style="border: none" value="'+data+'" readonly/>';
+                                data: "subjectId",
+                                render: function (data) {
+                                    return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
                                 }
-                            }, {
-                                title: 'Full Name',
-                                data: 'fullName',
-                                render: function (data, type){
-                                    return '<input type="text" style="border: none" value="'+data+'" readonly/>';
+                            },{
+                                data: "studentSubjectId",
+                                render: function (data) {
+                                    return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
                                 }
-                            }, {
-                                title: 'Subject Id',
-                                data: 'subjectId',
-                                render: function (data, type){
-                                    return '<input type="text" style="border: none" value="'+data+'" hidden readonly/>';
+                            }, {data: "fullName",
+                                render: function (data) {
+                                    return `<input style="border: none" type="text" value="${data}" readonly/>`;
                                 }
-                            }, {
-                                title: 'ASM Mark',
-                                data: 'asmMark',
-                                render: function (data){
-                                    return '<input type="number" style="border: none" class="asmMark" value="'+data+'" min="0" max="100" required/>';
+                            },{
+                                data: "subjectName",
+                                render: function (data) {
+                                    return `<input style="border: none" type="text" value="${data}" readonly/>`;
                                 }
-                            }, {
-                                title: 'OBJ Mark',
-                                data: 'objMark',
-                                render: function (data){
-                                    return '<input type="number" style="border: none;"  class="objMark" value="'+data+'" min="0" max="100" required/>';
+                            },{
+                                data: "asmMark",
+                                render: function (data) {
+                                    if (data == null || data == undefined || data =="" || data =="null"){
+                                        return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                                    }else {
+                                        return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+
+                                    }
+                                    return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                                }
+                            },{
+                                data: "objMark",
+                                render: function (data) {
+                                    if (data == null || data == undefined || data =="" || data =="null"){
+                                        return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                                    }else {
+                                        return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
+                                    }
+                                    return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
                                 }
                             }
                         ],
-
                         columnDefs: [
                             {
                                 target: 0,
                                 visible: false,
                                 searchable: false,
                             }, {
-                                target: 3,
+                                target: 1,
+                                visible: false,
+                                searchable: false,
+                            }, {
+                                target: 2,
                                 visible: false,
                                 searchable: false,
                             },
@@ -419,21 +490,6 @@ $(document).ready(function () {
                     });
 
                      */
-                    var data = JSON.parse(response);
-                    $('#mark_table tbody').empty();
-                    data.forEach(d =>{
-                        $(`
-                    <tr>
-                        <td style="display:none;"><input style="border: none" type="text" value="${d.studentId}" hidden readonly/></td>
-                        <td style="display:none;"><input style="border: none" type="text" value="${d.studentSubjectId}" hidden readonly/></td>
-                        <td style="display:none;"><input style="border: none" type="text" value="${d.subjectId}" hidden readonly/></td>
-                        <td><input style="border: none" type="text" value="${d.fullName}" readonly/></td>
-                        <td><input style="border: none" type="text" value="${d.subjectName}" readonly/></td>
-                        <td><input class="check_numberic_0_100" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" /></td>
-                        <td><input class="check_numberic_0_100" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" /></td>
-                    </tr>
-                `).appendTo('#mark_table tbody')
-                    })
                 },
                 error: (error)=>{
                     Swal.fire({
@@ -461,16 +517,24 @@ $(document).ready(function () {
             });
 
             var jsonRowsTable= '';
-            let array = $("#mark_table").DataTable().rows().data().toArray();
+            let array = $("#mark_table").DataTable({
+                destroy: true,
+                scroll:true,
+                paging: false,
+                search: false,
+                "searching": false
+            }).rows().data().toArray();
+            console.log(array)
             jsonRowsTable+='[';
             for (let index = 0; index < array.length; index++) {
-                jsonRowsTable += `{"studentId":${array[index][0]},"fullName":"${array[index][3]}","subjectId":${array[index][1]},"studentSubjectId":"${array[index][2]}","subjectName":"${array[index][4]}","asmMark":${array[index][5]},"objMark":${array[index][6]}}`;
+                jsonRowsTable += `{"studentId":${array[index][0]},"subjectId":${array[index][1]},"studentSubjectId":"${array[index][2]}","fullName":"${array[index][3]}","subjectName":"${array[index][4]}","asmMark":${array[index][5]},"objMark":${array[index][6]}}`;
                 if (index != array.length - 1){
                     jsonRowsTable += ','
                 }
             }
             jsonRowsTable+=']';
-            console.log(jsonRowsTable);
+            console.log(jsonRowsTable)
+
             var data = new FormData();
             data.append("teacherId",$("#teacherId").val());
             data.append("classId",$("#classId").val());
@@ -546,68 +610,7 @@ $(document).ready(function () {
                 confirmButtonText: 'Ok',
             })
         }else {
-            /*
-            $.ajax({
-                url: "/teacher/class/download_template/"+$("#classId").val()+"/"+selectSubject.val(),
-                method: "GET",
-                cache: false,
-                processData: false,
-                contentType: false,
-                enctype: "multipart/form-data",
-                success: (response) => {
-                    $('#mark_table tbody').empty();
-                },
-                error: (error) =>{
-
-                }
-            });
-             */
-
-            $.ajax({
-                type: 'GET',
-                cache: false,
-                url: "/teacher/class/download_template/"+$("#classId").val()+"/"+selectSubject.val(),
-
-                xhrFields: {
-                    // make sure the response knows we're expecting a binary type in return.
-                    // this is important, without it the excel file is marked corrupted.
-                    responseType: 'arraybuffer'
-                }
-            })
-                .done(function (data, status, xmlHeaderRequest) {
-                    var downloadLink = document.createElement('a');
-                    var blob = new Blob([data],
-                        {
-                            type: xmlHeaderRequest.getResponseHeader('Content-Type')
-                        });
-                    var url = window.URL || window.webkitURL;
-                    var downloadUrl = url.createObjectURL(blob);
-                    var fileName = '';
-
-
-
-                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                        window.navigator.msSaveBlob(blob, fileName);
-                    } else {
-                        if (fileName) {
-                            if (typeof downloadLink.download === 'undefined') {
-                                window.location = downloadUrl;
-                            } else {
-                                downloadLink.href = downloadUrl;
-                                downloadLink.download = fileName;
-                                document.body.appendChild(downloadLink);
-                                downloadLink.click();
-                            }
-                        } else {
-                            window.location = downloadUrl;
-                        }
-
-                        setTimeout(function () {
-                                url.revokeObjectURL(downloadUrl);
-                            },
-                            100);
-                    }
-                });
+            window.location.href = "/teacher/class/download_template/"+$("#classId").val()+"/"+selectSubject.val();
         }
     })
     

@@ -33,6 +33,8 @@ public class ImportMarkExport {
         font.setBold(true);
         font.setFontHeight(16);
         style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
         createCell(row, 0,"Student Id",style);
         createCell(row, 1, "Subject Id", style);
         createCell(row, 2, "StudentSubject Id", style);
@@ -67,7 +69,9 @@ public class ImportMarkExport {
         font = workbook.createFont();
         font.setFontHeight(12);
         style.setFont(font);
-        int rowCount = 2;
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        int rowCount = 1;
         for (InputMarkModel item:inputMarkModelList) {
             row = sheet.createRow(rowCount++);
             createCell(row, 0, item.getStudentId(), style);
@@ -80,15 +84,12 @@ public class ImportMarkExport {
         }
     }
 
-    public HttpEntity<?> generateExcelFile(HttpServletResponse response) throws IOException {
+    public void generateExcelFile(HttpServletResponse response) throws IOException {
         writeHeader();
         writeData();
-        try (ServletOutputStream output = response.getOutputStream()){
-            workbook.write(output);
-            output.flush();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.close();
     }
 }
