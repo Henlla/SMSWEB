@@ -115,7 +115,7 @@ public class TeachingScheduleController {
                 });
 
                 LocalDate now = LocalDate.now();
-                Integer week = now.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                Integer week = now.get(WeekFields.of(Locale.getDefault()).weekOfYear());
                 List<TeachingCurrenDate> teachingCurrenDateList = new ArrayList<>();
                 for (ScheduleDetail scheduleDetail:scheduleDetails){
                     if (LocalDate.parse(scheduleDetail.getDate())
