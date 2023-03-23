@@ -69,30 +69,30 @@ $(() => {
 
     function readURL(input) {
         if (input.files && input.files[0]) {
-            if (GetExtension(input.files[0].name) === "png" ||
-                GetExtension(input.files[0].name) === "jpg" ||
-                GetExtension(input.files[0].name) === "jpeg") {
+            if(GetExtension(input.files[0].name) === "png" ||
+                GetExtension(input.files[0].name) ==="jpg" ||
+                GetExtension(input.files[0].name) ==="jpeg") {
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     $('.background-choose_image').attr('src', e.target.result);
                 }
                 reader.readAsDataURL(input.files[0]);
                 return true;
-            } else {
+            }else{
                 return false;
             }
         }
     }
 
-    $("#avatar").change(function () {
-        if (readURL(this)) {
-            $('.icon-choose_image').css("display", "none")
-            $('.icon-cancel_image').css("display", "block")
-            $('.background-choose_image').css("filter", "blur(0px)")
-            $('.errorAvatar').css("display", "none")
-        } else {
-            $('.errorAvatar').css("display", "block")
-            $('.errorAvatar').html("Please choose image file (png,jpg,jpeg)")
+    $("#avatar").change(function(){
+        if(readURL(this)){
+            $('.icon-choose_image').css("display","none")
+            $('.icon-cancel_image').css("display","block")
+            $('.background-choose_image').css("filter","blur(0px)")
+            $('.errorAvatar').css("display","none")
+        }else{
+            $('.errorAvatar').css("display","block")
+            $('.errorAvatar').html("Please choose image (png,jpg,jpeg)")
         }
     });
 
@@ -139,20 +139,6 @@ $(() => {
 
     }
 
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            if (GetExtension(input.files[0].name) === "docx") {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                }
-                reader.readAsDataURL(input.files[0]);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
     $("#file_import").change(function () {
         if (readURL(this)) {
 
@@ -168,9 +154,9 @@ var OnImportFile = () => {
     $('#modal_import_file').modal("show")
 }
 
-var OnImportFileSubmit = ()=>{
+var OnImportFileSubmit = () => {
     let data = new FormData();
-    data.append("file",$("#file_import").get(0).files[0])
+    data.append("file", $("#file_import").get(0).files[0])
     $.ajax({
         url: "/dashboard/news/import_file_excel",
         enctype: 'multipart/form-data',
@@ -185,7 +171,7 @@ var OnImportFileSubmit = ()=>{
                 'success'
             )
             $('#modal_import_file').modal("hide")
-        }, error:(xhr, status, error)=>{
+        }, error: (xhr, status, error) => {
             var err = eval("(" + xhr.responseText + ")");
             if (err.message.toLowerCase() === "token expired") {
                 $('#spinner-divI').hide()
@@ -199,7 +185,7 @@ var OnImportFileSubmit = ()=>{
                         location.href = "/dashboard/login";
                     }
                 });
-            }else{
+            } else {
                 Swal.fire(
                     'Import fail',
                     'error'

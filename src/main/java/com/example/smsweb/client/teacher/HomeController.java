@@ -1,13 +1,14 @@
 package com.example.smsweb.client.teacher;
 
 import com.example.smsweb.api.exception.ErrorHandler;
+import com.example.smsweb.dto.*;
+import com.example.smsweb.dto.teacher.MarkList;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.dto.teacher.InputMarkModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
 import com.example.smsweb.utils.ExcelExport.ImportMarkExport;
 import com.example.smsweb.utils.ExcelHelper;
-import com.example.smsweb.dto.TeachingCurrenDate;
 import com.example.smsweb.models.Account;
 import com.example.smsweb.models.Classses;
 import com.example.smsweb.models.News;
@@ -18,9 +19,11 @@ import com.example.smsweb.models.Student;
 import com.example.smsweb.models.Subject;
 import com.example.smsweb.models.Teacher;
 import com.example.smsweb.utils.StreamHelper;
+import com.example.smsweb.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -48,6 +51,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,6 +83,7 @@ public class HomeController {
     private final String NEWS_URL = "http://localhost:8080/api/news/";
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
+    private final String ATTENDANCE_TRACKING_URL = "http://localhost:8080/api/attendance_tracking/";
     public RestTemplate restTemplate;
 
     @GetMapping("/login")
@@ -94,7 +101,6 @@ public class HomeController {
                 ObjectMapper objectMapper = new ObjectMapper();
                 headers.set("Authorization", "Bearer " + _token);
                 Account teacherUser = (Account) auth.getPrincipal();
-
                 //Get class
                 HttpEntity<String> requestClass = new HttpEntity<>(headers);
                 ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "list", HttpMethod.GET, requestClass, String.class);
@@ -104,7 +110,6 @@ public class HomeController {
                         .filter(p -> p.getTeacher().getProfileByProfileId().getAccountByAccountId().getUsername().equals(teacherUser.getUsername()))
                         .sorted(Comparator.comparingInt(Classses::getId))
                         .collect(Collectors.toList());
-
                 //Get total students
                 List<StudentClass> studentClassList = new ArrayList<>();
                 for (Classses classs : classList) {
@@ -112,8 +117,6 @@ public class HomeController {
                 }
                 int totalStudent = studentClassList.stream()
                         .filter(StreamHelper.distinctByKey(StudentClass::getStudentId)).toList().size();
-
-
                 // Lấy Profile
                 HttpEntity<String> request = new HttpEntity<>(headers);
                 ResponseEntity<Profile> profileResponse = restTemplate.exchange(
@@ -186,11 +189,97 @@ public class HomeController {
                         lCurrenDates.add(currentDateTeaching);
                     }
                 }
+                
+                ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL+"findByTeacherId/"+teacherResponse.getBody().getId(),HttpMethod.GET,request,ResponseModel.class);
+                int currentMonth = LocalDate.now().getMonthValue();
+                int currentYear = LocalDate.now().getYear();
+                DateTimeFormatter monthYear = DateTimeFormatter.ofPattern("yyyy-MM");
+                String month = LocalDate.now().format(monthYear);
+                String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
+                List<AttendanceTracking> attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
+                });
+
+                List<AttendanceTracking> listChart = attendanceTrackingList;
+                attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth &&LocalDate.parse(attendanceTracking.getDate()).getYear()==currentYear).collect(Collectors.toList());
+
+                LocalDate firstDayOfMonth = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth() );
+                LocalDate lastDayOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth() );
+
+                List<AttendanceTrackingModel> trackingList = new ArrayList<>();
+                for (LocalDate i = firstDayOfMonth;i.isBefore(lastDayOfMonth.plusDays(1));i = i.plusDays(1)){
+                    LocalDate finalI = i;
+                    List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
+                    if(!attendanceTracking.isEmpty()){
+                        for (AttendanceTracking att : attendanceTracking){
+                            AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                            attendanceTrackingModel.setDate(att.getDate());
+                            attendanceTrackingModel.setCount(1);
+                            trackingList.add(attendanceTrackingModel);
+                        }
+                    }else{
+                        AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                        attendanceTrackingModel.setDate(finalI.toString());
+                        attendanceTrackingModel.setCount(0);
+                        trackingList.add(attendanceTrackingModel);
+                    }
+                }
+
+                HashMap<String, List<AttendanceTrackingModel>> hashMap = new HashMap<String, List<AttendanceTrackingModel>>();
+                for (AttendanceTrackingModel att : trackingList) {
+                    String key = att.getDate();
+                    if (hashMap.containsKey(key)) {
+                        List<AttendanceTrackingModel> list = hashMap.get(key);
+                        list.add(att);
+
+                    } else {
+                        List<AttendanceTrackingModel> list = new ArrayList<AttendanceTrackingModel>();
+                        list.add(att);
+                        hashMap.put(key, list);
+                    }
+                }
+                List<AttendanceTrackingModel>list = new ArrayList<>();
+                for (String key : hashMap.keySet()){
+                    AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                    attendanceTrackingModel.setDate(key);
+                    List<AttendanceTrackingModel> trackingModels = hashMap.get(key);
+                    int i = 0;
+                    for (AttendanceTrackingModel att :trackingModels){
+                        if(att.getCount().equals(1)){
+                            i++;
+                        }
+                    }
+                    attendanceTrackingModel.setCount(i);
+                    list.add(attendanceTrackingModel);
+                }
+
+                List<AttendanceTrackingChart> chartList = new ArrayList<>();
+                for (int i =1 ; i <= 12;i++){
+                    AttendanceTrackingChart attendanceTrackingChart = new AttendanceTrackingChart();
+//                    String monthValue = i < 10 ? String.valueOf("0"+i):String.valueOf(i);
+                    int finalI = i;
+
+                    attendanceTrackingChart.setX(StringUtils.theMonth(finalI - 1));
+                    int total = 0;
+                    List<AttendanceTracking> list1 = listChart.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == finalI && LocalDate.parse(attendanceTracking.getDate()).getYear() == currentYear).toList();
+                    if(!list1.isEmpty()){
+                        total = list1.size();
+                        attendanceTrackingChart.setY(total * 2);
+                    }else{
+                        attendanceTrackingChart.setY(total);
+                    }
+                    chartList.add(attendanceTrackingChart);
+                }
+
+                list =list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
+                model.addAttribute("currentMonthTotalAttendanceTracking", attendanceTrackingList.stream().count() * 2);
                 model.addAttribute("listCurrenTeachingDate", lCurrenDates);
+                model.addAttribute("month", month);
+                model.addAttribute("chartList", new ObjectMapper().writeValueAsString(chartList));
+                model.addAttribute("teacherId", teacherResponse.getBody().getId());
+                model.addAttribute("listAttendanceCurrenMonth", new ObjectMapper().writeValueAsString(list));
                 model.addAttribute("currentDate", currentDate.format(formatter));
                 model.addAttribute("totalClass", classList.size());
                 model.addAttribute("totalStudent", totalStudent);
-
                 return "teacherDashboard/home";
             } else {
                 return "redirect:/logout";
@@ -429,6 +518,91 @@ public class HomeController {
         }
     }
 
+
+    @PostMapping("/getAttendanceTrackingByMonth")
+    @ResponseBody
+    public Object getAttendanceTrackingByMonth(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                               @RequestParam("month")String monthValue,@RequestParam("teacherId")Integer teacherId) throws JsonProcessingException {
+        try {
+            JWTUtils.checkExpired(_token);
+            HttpHeaders headers = new HttpHeaders();
+            restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL+"findByTeacherId/"+teacherId,HttpMethod.GET,request,ResponseModel.class);
+            int currentMonth = Integer.parseInt(String.valueOf(monthValue.split("-")[1].charAt(1)));
+            int currentYear = Integer.parseInt(String.valueOf(monthValue.split("-")[0]));
+
+            String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
+            List<AttendanceTracking> attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
+            });
+            attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth).collect(Collectors.toList());
+
+            LocalDate now = LocalDate.parse(monthValue+"-01");
+
+            LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth() );
+            LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth() );
+
+            List<AttendanceTrackingModel> trackingList = new ArrayList<>();
+            for (LocalDate i = firstDayOfMonth;i.isBefore(lastDayOfMonth.plusDays(1));i = i.plusDays(1)){
+                LocalDate finalI = i;
+                List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
+                if(!attendanceTracking.isEmpty()){
+                    for (AttendanceTracking att : attendanceTracking){
+                        AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                        attendanceTrackingModel.setDate(att.getDate());
+                        attendanceTrackingModel.setCount(1);
+                        trackingList.add(attendanceTrackingModel);
+                    }
+                }else{
+                    AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                    attendanceTrackingModel.setDate(finalI.toString());
+                    attendanceTrackingModel.setCount(0);
+                    trackingList.add(attendanceTrackingModel);
+                }
+            }
+
+            HashMap<String, List<AttendanceTrackingModel>> hashMap = new HashMap<String, List<AttendanceTrackingModel>>();
+            for (AttendanceTrackingModel att : trackingList) {
+                String key = att.getDate();
+                if (hashMap.containsKey(key)) {
+                    List<AttendanceTrackingModel> list = hashMap.get(key);
+                    list.add(att);
+
+                } else {
+                    List<AttendanceTrackingModel> list = new ArrayList<AttendanceTrackingModel>();
+                    list.add(att);
+                    hashMap.put(key, list);
+                }
+            }
+            List<AttendanceTrackingModel>list = new ArrayList<>();
+            for (String key : hashMap.keySet()){
+                AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                attendanceTrackingModel.setDate(key);
+                List<AttendanceTrackingModel> trackingModels = hashMap.get(key);
+                int i = 0;
+                for (AttendanceTrackingModel att :trackingModels){
+                    if(att.getCount().equals(1)){
+                        i++;
+                    }
+                }
+                attendanceTrackingModel.setCount(i);
+                list.add(attendanceTrackingModel);
+            }
+
+            list =list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
+            return list;
+        } catch (HttpClientErrorException ex) {
+            log.error(ex.getMessage());
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return "error";
+            }
+        }
+    }
+
     @GetMapping("/class/get-all-subject/{classId}")
     @ResponseBody
     public Object getAllSubjectByClassId(@CookieValue(name = "_token", defaultValue = "") String _token,
@@ -639,5 +813,6 @@ public class HomeController {
             throw new ErrorHandler(e.getMessage());
         }
     }
+
 
 }

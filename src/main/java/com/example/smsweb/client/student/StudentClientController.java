@@ -238,7 +238,7 @@ public class StudentClientController {
             for (int i = weekOfFirstDay; i <= weekOfLastDay; i++) {
                 StringBuilder toDate = new StringBuilder();
                 for (LocalDate date = firstDay; date.isBefore(lastDay.plusDays(1)); date = date.plusDays(1)) {
-                    int weekOfYear = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                    int weekOfYear = date.get(WeekFields.of(Locale.getDefault()).weekOfYear());
                     if (i == weekOfYear) {
                         DayOfWeek firstDayOfWeek = WeekFields.of(Locale.getDefault()).getFirstDayOfWeek();
                         LocalDate startOfCurrentWeek = date.with(TemporalAdjusters.previousOrSame(firstDayOfWeek));
