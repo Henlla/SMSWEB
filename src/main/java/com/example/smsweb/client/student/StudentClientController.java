@@ -1,10 +1,13 @@
 package com.example.smsweb.client.student;
 
+import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.*;
+import com.example.smsweb.dto.teacher.InputMarkModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,6 +37,7 @@ public class StudentClientController {
     private final String PROFILE_URL = "http://localhost:8080/api/profiles/";
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
+    private final String SUBJECT_URL = "http://localhost:8080/api/subject/";
     private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
@@ -656,5 +661,62 @@ public class StudentClientController {
             return "redirect:/login";
         }
 
+    }
+
+
+    @GetMapping("/marks")
+    public String viewMarks(@CookieValue("_token")String _token){
+        try{
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+            return "student/marks";
+        }catch (Exception e){
+            return "redirect:/login";
+        }
+    }
+    @GetMapping("/get-marks-list")
+    @ResponseBody
+    public String getMarksList(@CookieValue(name = "_token", defaultValue = "")String _token,
+                           Authentication auth){
+        try {
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            HttpHeaders headers = new HttpHeaders();
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            Account studentAccount = (Account) auth.getPrincipal();
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            ResponseEntity<Profile> profileResponse = restTemplate
+                    .exchange(PROFILE_URL + "get/" + studentAccount.getId(), HttpMethod.GET, request, Profile.class);
+
+            ResponseEntity<Student> studentResponse = restTemplate.exchange(
+                    STUDENT_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET, request,
+                    Student.class);
+            Student student = studentResponse.getBody();
+
+            //Get Subject import to InputMarkModel(student, subject)
+            List<InputMarkModel> listStudentSubject = new ArrayList<>();
+
+            for (StudentSubject item : student.getStudentSubjectsById()) {
+                //Get Subject by subjectId
+                request = new HttpEntity<>(headers);
+                ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/" + item.getSubjectId(),
+                        HttpMethod.GET, request, String.class);
+                ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {});
+                String jsonSubject = new ObjectMapper().writeValueAsString(responseModelSubject.getData());
+                Subject subject = new ObjectMapper().readValue(jsonSubject, Subject.class);
+
+                InputMarkModel inputMarkModel = new InputMarkModel(student, subject);
+                Mark itemMark = item.getMarksById().stream().filter(mark -> mark.getStudentSubjectId() == item.getId()).findFirst().orElse(null);
+                inputMarkModel.setAsmMark(itemMark.getAsm());
+                inputMarkModel.setObjMark(itemMark.getObj());
+
+                listStudentSubject.add(inputMarkModel);
+            }
+            String jsonMarks = objectMapper.writeValueAsString(listStudentSubject);
+            return jsonMarks;
+        } catch (Exception e) {
+            throw new ErrorHandler(e.getMessage());
+        }
     }
 }

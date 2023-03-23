@@ -53,6 +53,7 @@ public class ClassController {
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
+    private final String STUDENT_SUBJECT_URL = "http://localhost:8080/api/student-subject/";
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
     private final String URL_ROOM = "http://localhost:8080/api/room/";
@@ -909,19 +910,63 @@ public class ClassController {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<String> requestGET;
+            HttpEntity<MultiValueMap<String, String>> requestPOST;
+            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            List<StudentSubject> studentSubjectList = new ArrayList<>();
+
+            //Get Class by classId
+            requestGET= new HttpEntity<>(headers);
+            ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "getClass/"+ classId,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModelClass = new ObjectMapper().readValue(responseClass.getBody(), new TypeReference<ResponseModel>() {});
+            String jsonClass = new ObjectMapper().writeValueAsString(responseModelClass.getData());
+            Classses classModel = new ObjectMapper().readValue(jsonClass, Classses.class);
+
+            //Add value to studentSubjectList
+            for(Subject subject:classModel.getMajor().getSubjectsById()){
+                StudentSubject studentSubject = new StudentSubject();
+                studentSubject.setStudentId(studentId);
+                studentSubject.setSubjectId(subject.getId());
+
+                content.add("subjectId", String.valueOf(subject.getId()));
+                content.add("studentId", String.valueOf(studentId));
+                requestPOST = new HttpEntity<>(content, headers);
+                ResponseEntity<String> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "findStudentSubjectBySubjectIdAndStudentId",
+                        HttpMethod.POST, requestPOST, String.class);
+                ResponseModel responseModelStudentSubject = objectMapper.readValue(responseStudentSubject.getBody(), new TypeReference<>(){});
+                if (responseModelStudentSubject.getData() != null){
+                    String jsonStudentSubject = objectMapper.writeValueAsString(responseModelStudentSubject.getData());
+                    StudentSubject studentSubjectModel = objectMapper.readValue(jsonStudentSubject, StudentSubject.class);
+                    studentSubject.setId(studentSubjectModel.getId());
+                }
+                content.remove("subjectId");
+                content.remove("studentId");
+
+                studentSubjectList.add(studentSubject);
+            }
+
+            content.add("student_subject", objectMapper.writeValueAsString(studentSubjectList));
+            requestPOST = new HttpEntity<>(content, headers);
+            ResponseEntity<ResponseModel> responseStudentSubject = restTemplate
+                    .exchange(STUDENT_SUBJECT_URL + "updateAll", HttpMethod.POST, requestPOST, ResponseModel.class);
+            content.remove("student_subject");
+
+            if (!responseStudentSubject.getStatusCode().is2xxSuccessful()) {
+                throw new ErrorHandler("Add students failed !");
+            }
 
             StudentClass studentClass = new StudentClass();
             studentClass.setStudentId(studentId);
             studentClass.setClassId(classId);
 
-            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+            requestPOST = new HttpEntity<>(content, headers);
             content.add("newStudentClass", objectMapper.writeValueAsString(studentClass));
-            request = new HttpEntity<>(content, headers);
+            requestPOST = new HttpEntity<>(content, headers);
             ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "save",
-                    HttpMethod.POST, request, ResponseModel.class);
+                    HttpMethod.POST, requestPOST, ResponseModel.class);
 
             if (responseStudentClass.getStatusCode().is2xxSuccessful()) {
                 String convertToJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
@@ -1060,6 +1105,10 @@ public class ClassController {
                     HttpHeaders headers = new HttpHeaders();
                     headers.set("Authorization", "Bearer " + _token);
 
+                    //List
+                    List<StudentClass> studentClassList = new ArrayList<>();
+                    List<StudentSubject> studentSubjectList = new ArrayList<>();
+
                     MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
                     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -1069,9 +1118,7 @@ public class ClassController {
                             STUDENT_URL + "findStudentIdByRangeStudentCard/"
                                     + new ObjectMapper().writeValueAsString(listStudentCard),
                             HttpMethod.GET, request, String.class);
-                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(),
-                            new TypeReference<List<Student>>() {
-                            });
+                    List<Student> listStudent = objectMapper.readValue(responseStudent.getBody(), new TypeReference<>() {});
                     if (listStudent.size() > availablePlace) {
                         return new ClassResponse("error", "Chỉ được thêm " + availablePlace + " vào lớp");
                     }
@@ -1082,12 +1129,10 @@ public class ClassController {
                             HttpMethod.POST, request, String.class);
                     content.remove("classCode");
                     ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),
-                            new TypeReference<ResponseModel>() {
-                            });
+                            new TypeReference<ResponseModel>() {});
                     String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
                     Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
 
-                    List<StudentClass> studentClassList = new ArrayList<>();
                     for (Student student : listStudent) {
                         for (StudentClass studentClass :classModel.getStudentClassById()){
                             var card1= studentClass.getClassStudentByStudent().getStudentCard();
@@ -1100,11 +1145,50 @@ public class ClassController {
                         studentClass.setStudentId(student.getId());
                         studentClass.setClassId(classModel.getId());
                         studentClassList.add(studentClass);
+
+                        //Add value to studentSubjectList
+                        for(Subject subject:classModel.getMajor().getSubjectsById()){
+                            StudentSubject studentSubject = new StudentSubject();
+                            studentSubject.setStudentId(student.getId());
+                            studentSubject.setSubjectId(subject.getId());
+
+                            content.add("subjectId", String.valueOf(subject.getId()));
+                            content.add("studentId", String.valueOf(student.getId()));
+                            request = new HttpEntity<>(content, headers);
+
+                            ResponseEntity<String> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "findStudentSubjectBySubjectIdAndStudentId",
+                                    HttpMethod.POST, request, String.class);
+                            ResponseModel responseModelStudentSubject = objectMapper.readValue(responseStudentSubject.getBody(), new TypeReference<>(){});
+                            if (responseModelStudentSubject.getData() != null){
+                                String jsonStudentSubject = objectMapper.writeValueAsString(responseModelStudentSubject.getData());
+                                StudentSubject studentSubjectModel = objectMapper.readValue(jsonStudentSubject, StudentSubject.class);
+                                studentSubject.setId(studentSubjectModel.getId());
+                            }
+                            content.remove("subjectId");
+                            content.remove("studentId");
+
+                            studentSubjectList.add(studentSubject);
+                        }
                     }
+
+                    //POST ALL STUDENT SUBJECT
+                    content.add("student_subject", objectMapper.writeValueAsString(studentSubjectList));
+                    request = new HttpEntity<>(content, headers);
+                    ResponseEntity<ResponseModel> responseStudentSubject = restTemplate
+                            .exchange(STUDENT_SUBJECT_URL + "updateAll", HttpMethod.POST, request, ResponseModel.class);
+                    content.remove("student_subject");
+
+                    if (!responseStudentSubject.getStatusCode().is2xxSuccessful()) {
+                        return new ClassResponse("error", "Import student list failed");
+                    }
+
+                    //Post All StudentClass to DB
                     content.add("listStudentClass", objectMapper.writeValueAsString(studentClassList));
                     request = new HttpEntity<>(content, headers);
                     ResponseEntity<ResponseModel> responseStudentClass = restTemplate
                             .exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, request, ResponseModel.class);
+                    content.remove("listStudentClass");
+
                     if (responseStudentClass.getStatusCode().is2xxSuccessful()) {
                         return new ClassResponse("success",
                                 "Add " + studentClassList.size() + " students success");
