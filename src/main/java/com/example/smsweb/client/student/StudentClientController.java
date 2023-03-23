@@ -1,9 +1,6 @@
 package com.example.smsweb.client.student;
 
-import com.example.smsweb.dto.DayInWeek;
-import com.example.smsweb.dto.ResponseModel;
-import com.example.smsweb.dto.ScheduleModel;
-import com.example.smsweb.dto.WeekOfYear;
+import com.example.smsweb.dto.*;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,15 +40,108 @@ public class StudentClientController {
     private final String NEWS_URL = "http://localhost:8080/api/news/";
 
     @GetMapping("/index")
-    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) throws JsonProcessingException {
+    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model, Authentication auth) throws JsonProcessingException {
         String isExpired = JWTUtils.isExpired(_token);
         if (!isExpired.toLowerCase().equals("token expired")) {
             RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
             ResponseEntity<ResponseModel> response = restTemplate.getForEntity(NEWS_URL + "list", ResponseModel.class);
             String json = new ObjectMapper().writeValueAsString(response.getBody().getData());
             List<News> newsList = new ObjectMapper().readValue(json, new TypeReference<List<News>>() {
             });
+            Account studentAccount = (Account) auth.getPrincipal();
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            ResponseEntity<Profile> profileResponse = restTemplate
+                    .exchange(PROFILE_URL + "get/" + studentAccount.getId(), HttpMethod.GET, request, Profile.class);
+
+            ResponseEntity<Student> studentResponse = restTemplate.exchange(
+                    STUDENT_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET, request,
+                    Student.class);
+
+            ResponseEntity<ResponseModel> studentClassResponse = restTemplate.exchange(
+                    STUDENT_CLASS_URL + "getStudent/" + studentResponse.getBody().getId(), HttpMethod.GET, request,
+                    ResponseModel.class);
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            String jsonStudentClass = objectMapper.writeValueAsString(studentClassResponse.getBody().getData());
+            List<StudentClass> studentClassList = objectMapper.readValue(jsonStudentClass,
+                    new TypeReference<List<StudentClass>>() {
+                    });
+            List<Classses> listClass = new ArrayList<>();
+
+            for (StudentClass studentClass : studentClassList) {
+                ResponseEntity<ResponseModel> classResponse = restTemplate.exchange(
+                        CLASS_URL + "getClass/" + studentClass.getClassId(), HttpMethod.GET, request,
+                        ResponseModel.class);
+                String jsonClass = objectMapper.writeValueAsString(classResponse.getBody().getData());
+                Classses classses = objectMapper.readValue(jsonClass, Classses.class);
+                listClass.add(classses);
+            }
+
+            LocalDate now = LocalDate.now();
+            List<TeachingCurrenDate> lCurrenDates = new ArrayList<>();
+            for(Classses classses: listClass){
+                for (Schedule schedule : classses.getSchedulesById()){
+                    for (ScheduleDetail scheduleDetail:schedule.getScheduleDetailsById()){
+                        if(LocalDate.parse(scheduleDetail.getDate()).equals(now)){
+                            TeachingCurrenDate currentDateTeaching = new TeachingCurrenDate();
+                            if (classses.getShift().substring(0, 1).equals("M")) {
+                                if (scheduleDetail.getSlot().equals(1)) {
+                                    currentDateTeaching.setClassCode(classses.getClassCode());
+                                    currentDateTeaching.setDate(scheduleDetail.getDate());
+                                    currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                    currentDateTeaching.setTime("7:30 - 9:30");
+                                    currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
+                                    currentDateTeaching.setStartTime("7:30");
+                                } else {
+                                    currentDateTeaching.setClassCode(classses.getClassCode());
+                                    currentDateTeaching.setDate(scheduleDetail.getDate());
+                                    currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                    currentDateTeaching.setTime("9:30 - 11:30");
+                                    currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
+                                    currentDateTeaching.setStartTime("9:30");
+
+                                }
+                            } else if (classses.getShift().substring(0, 1).equals("A")) {
+                                if (scheduleDetail.getSlot().equals(1)) {
+                                    currentDateTeaching.setClassCode(classses.getClassCode());
+                                    currentDateTeaching.setDate(scheduleDetail.getDate());
+                                    currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                    currentDateTeaching.setTime("12:30 - 15:30");
+                                    currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
+                                    currentDateTeaching.setStartTime("12:30");
+                                } else {
+                                    currentDateTeaching.setClassCode(classses.getClassCode());
+                                    currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()).toString());
+                                    currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                    currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
+                                    currentDateTeaching.setTime("15:30 - 17:30");
+                                    currentDateTeaching.setStartTime("15:30");
+                                }
+                            } else {
+                                if (scheduleDetail.getSlot().equals(1)) {
+                                    currentDateTeaching.setClassCode(classses.getClassCode());
+                                    currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()).toString());
+                                    currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                    currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
+                                    currentDateTeaching.setTime("17:30 - 19:30");
+                                    currentDateTeaching.setStartTime("17:30");
+                                } else {
+                                    currentDateTeaching.setClassCode(classses.getClassCode());
+                                    currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()).toString());
+                                    currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                    currentDateTeaching.setTime("19:30 - 21:30");
+                                    currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
+                                    currentDateTeaching.setStartTime("19:30");
+                                }
+                            }
+                            lCurrenDates.add(currentDateTeaching);
+                        }
+                    }
+                }
+            }
+
             model.addAttribute("listNews", newsList
                     .stream()
                     .filter(news -> news.getIsActive().equals(true))
@@ -60,6 +150,13 @@ public class StudentClientController {
                         return news;
                     })
                     .toList());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL");
+            LocalDate currentDate = LocalDate.now();
+            model.addAttribute("student",studentResponse.getBody());
+            model.addAttribute("classList",listClass);
+            model.addAttribute("currentStudy",lCurrenDates);
+            model.addAttribute("currentDate", currentDate.format(formatter));
+            model.addAttribute("major",studentResponse.getBody().getMajorStudentsById().get(0));
             return "student/index";
         } else {
             return "redirect:/login";
@@ -186,6 +283,9 @@ public class StudentClientController {
             if (responseSchedule.getStatusCode().is2xxSuccessful()) {
                 String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+                if(schedule==null){
+                    return null;
+                }
                 ScheduleModel scheduleModel = new ScheduleModel();
                 List<DayInWeek> dayInWeekList = new ArrayList<>();
                 boolean flag = false;
@@ -219,6 +319,7 @@ public class StudentClientController {
                                 diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                                 diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                                diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                                 diw.setWeek(weekOfMonth);
                                 diw.setSlot(listSortDate.get(i).getSlot());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
@@ -235,6 +336,7 @@ public class StudentClientController {
                             diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                             diw.setSubjectId(listSortDate.get(i).getSubjectId());
                             diw.setSlot(listSortDate.get(i).getSlot());
+                            diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                             diw.setWeek(weekOfMonth);
                             diw.setMonth(monthOfYear);
                             diw.setWeekOfYear(weekOfYear);
@@ -368,6 +470,7 @@ public class StudentClientController {
                                 diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                                 diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                                diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                                 diw.setWeek(weekOfMonth);
                                 diw.setSlot(listSortDate.get(i).getSlot());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
@@ -383,6 +486,7 @@ public class StudentClientController {
                             diw.setSubject(listSortDate.get(i).getSubjectBySubjectId());
                             diw.setDayOfWeek(listSortDate.get(i).getDayOfWeek());
                             diw.setSubjectId(listSortDate.get(i).getSubjectId());
+                            diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                             diw.setSlot(listSortDate.get(i).getSlot());
                             diw.setWeek(weekOfMonth);
                             diw.setMonth(monthOfYear);

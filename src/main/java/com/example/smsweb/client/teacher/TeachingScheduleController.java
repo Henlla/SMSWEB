@@ -1,5 +1,6 @@
 package com.example.smsweb.client.teacher;
 
+import com.example.smsweb.dto.TeachingCurrenDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
@@ -87,9 +88,8 @@ public class TeachingScheduleController {
 
     }
 
-    @GetMapping("view_teaching_schedule/{classCode}")
-    public String view_teaching_schedule(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @PathVariable("classCode") String classCode,
+    @GetMapping("view_teaching_schedule")
+    public String view_teaching_schedule(@CookieValue(name = "_token", defaultValue = "") String _token,Authentication auth,
             Model model) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
@@ -98,27 +98,47 @@ public class TeachingScheduleController {
                 RestTemplate restTemplate = new RestTemplate();
                 ObjectMapper objectMapper = new ObjectMapper();
                 headers.set("Authorization", "Bearer " + _token);
-                MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-                params.add("classCode", classCode);
-                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "findClassCode",
-                        HttpMethod.POST, request, ResponseModel.class);
-                String json = objectMapper.writeValueAsString(response.getBody().getData());
-                Classses classses = objectMapper.readValue(json, Classses.class);
+                Account teacherUser = (Account) auth.getPrincipal();
+                // Lấy Profile
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                ResponseEntity<Profile> profileResponse = restTemplate.exchange(
+                        PROFILE_URL + "get/" + teacherUser.getId(), HttpMethod.GET, request, Profile.class);
+                // Lấy teacher theo profile id
+                ResponseEntity<Teacher> teacherResponse = restTemplate.exchange(
+                        TEACHER_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET,
+                        request, Teacher.class);
 
-                List<Schedule> listSchedule = classses.getSchedulesById();
+                ResponseEntity<ResponseModel> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL+"findScheduleByTeacher/"+teacherResponse.getBody().getId(),HttpMethod.GET,request,ResponseModel.class);
+
+                String jsonScheduleDetails = objectMapper.writeValueAsString(responseScheduleDetails.getBody().getData());
+                List<ScheduleDetail> scheduleDetails = objectMapper.readValue(jsonScheduleDetails, new TypeReference<List<ScheduleDetail>>() {
+                });
+
                 LocalDate now = LocalDate.now();
                 Integer week = now.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                List<ScheduleDetail> newList = new ArrayList<>();
-                for (Schedule schedule : listSchedule) {
-                    for (ScheduleDetail scheduleDetails : schedule.getScheduleDetailsById()) {
-                        if (LocalDate.parse(scheduleDetails.getDate())
-                                .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()) == week) {
-                            newList.add(scheduleDetails);
-                        }
+                List<TeachingCurrenDate> teachingCurrenDateList = new ArrayList<>();
+                for (ScheduleDetail scheduleDetail:scheduleDetails){
+                    if (LocalDate.parse(scheduleDetail.getDate())
+                            .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()) == week) {
+                        ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL+"get/"+scheduleDetail.getScheduleId(),HttpMethod.POST,request,ResponseModel.class);
+                        String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
+                        Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+                        ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"getClass/"+schedule.getClassId(),HttpMethod.GET,request,ResponseModel.class);
+                        String jsonClass = objectMapper.writeValueAsString(responseClass.getBody().getData());
+                        Classses classses = objectMapper.readValue(jsonClass,Classses.class);
+                        TeachingCurrenDate teachingCurrenDate = new TeachingCurrenDate();
+                        teachingCurrenDate.setDate(scheduleDetail.getDate());
+                        teachingCurrenDate.setClassCode(classses.getClassCode());
+                        teachingCurrenDate.setShift(classses.getShift());
+                        teachingCurrenDate.setSlot(scheduleDetail.getSlot());
+                        teachingCurrenDate.setSubject(scheduleDetail.getSubjectBySubjectId());
+                        teachingCurrenDate.setDayOfWeek(scheduleDetail.getDayOfWeek());
+                        teachingCurrenDate.setRoomCode(classses.getClassRoom().getRoomCode());
+                        teachingCurrenDateList.add(teachingCurrenDate);
                     }
                 }
-                newList = newList.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
+
+                teachingCurrenDateList = teachingCurrenDateList.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
 
                 LocalDate firstDay = now.with(firstDayOfYear()); // 2015-01-01
                 LocalDate lastDay = now.with(lastDayOfYear()); // 2015-12-31
@@ -151,9 +171,8 @@ public class TeachingScheduleController {
                     }
                 }
                 model.addAttribute("listWeek", weekOfYearList);
-                model.addAttribute("scheduleList", new ObjectMapper().writeValueAsString(newList));
+                model.addAttribute("scheduleList", new ObjectMapper().writeValueAsString(teachingCurrenDateList));
                 model.addAttribute("currenWeek", week);
-                model.addAttribute("classses", classses);
                 return "teacherDashboard/teaching_schedule/view_teaching_schedule";
             } else {
                 return "redirect:/login";
@@ -166,7 +185,7 @@ public class TeachingScheduleController {
     @PostMapping("viewTeachingScheduleByWeek")
     @ResponseBody
     public Object viewTeachingScheduleByWeek(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("classCode") String classCode,
+            Authentication auth,
             @RequestParam("week") int week,
             Model model) {
         try {
@@ -176,29 +195,48 @@ public class TeachingScheduleController {
                 RestTemplate restTemplate = new RestTemplate();
                 ObjectMapper objectMapper = new ObjectMapper();
                 headers.set("Authorization", "Bearer " + _token);
-                MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-                params.add("classCode", classCode);
-                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "findClassCode",
-                        HttpMethod.POST, request, ResponseModel.class);
-                String json = objectMapper.writeValueAsString(response.getBody().getData());
-                Classses classses = objectMapper.readValue(json, Classses.class);
+                Account teacherUser = (Account) auth.getPrincipal();
+                // Lấy Profile
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                ResponseEntity<Profile> profileResponse = restTemplate.exchange(
+                        PROFILE_URL + "get/" + teacherUser.getId(), HttpMethod.GET, request, Profile.class);
+                // Lấy teacher theo profile id
+                ResponseEntity<Teacher> teacherResponse = restTemplate.exchange(
+                        TEACHER_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET,
+                        request, Teacher.class);
 
-                List<Schedule> listSchedule = classses.getSchedulesById();
-                List<ScheduleDetail> newList = new ArrayList<>();
-                for (Schedule schedule : listSchedule) {
-                    for (ScheduleDetail scheduleDetails : schedule.getScheduleDetailsById()) {
-                        if (LocalDate.parse(scheduleDetails.getDate())
-                                .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()) == week) {
-                            newList.add(scheduleDetails);
-                        }
+                ResponseEntity<ResponseModel> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL+"findScheduleByTeacher/"+teacherResponse.getBody().getId(),HttpMethod.GET,request,ResponseModel.class);
+
+                String jsonScheduleDetails = objectMapper.writeValueAsString(responseScheduleDetails.getBody().getData());
+                List<ScheduleDetail> scheduleDetails = objectMapper.readValue(jsonScheduleDetails, new TypeReference<List<ScheduleDetail>>() {
+                });
+                LocalDate now = LocalDate.now();
+                List<TeachingCurrenDate> teachingCurrenDateList = new ArrayList<>();
+                for (ScheduleDetail scheduleDetail:scheduleDetails){
+                    if (LocalDate.parse(scheduleDetail.getDate())
+                            .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()) == week) {
+                        ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL+"get/"+scheduleDetail.getScheduleId(),HttpMethod.POST,request,ResponseModel.class);
+                        String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
+                        Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+                        ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"getClass/"+schedule.getClassId(),HttpMethod.GET,request,ResponseModel.class);
+                        String jsonClass = objectMapper.writeValueAsString(responseClass.getBody().getData());
+                        Classses classses = objectMapper.readValue(jsonClass,Classses.class);
+                        TeachingCurrenDate teachingCurrenDate = new TeachingCurrenDate();
+                        teachingCurrenDate.setDate(scheduleDetail.getDate());
+                        teachingCurrenDate.setClassCode(classses.getClassCode());
+                        teachingCurrenDate.setShift(classses.getShift());
+                        teachingCurrenDate.setSlot(scheduleDetail.getSlot());
+                        teachingCurrenDate.setSubject(scheduleDetail.getSubjectBySubjectId());
+                        teachingCurrenDate.setDayOfWeek(scheduleDetail.getDayOfWeek());
+                        teachingCurrenDate.setRoomCode(classses.getClassRoom().getRoomCode());
+                        teachingCurrenDateList.add(teachingCurrenDate);
                     }
                 }
-                if(newList.isEmpty()){
+                if(teachingCurrenDateList.isEmpty()){
                     return "error";
                 }else{
-                    newList = newList.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
-                    return newList;
+                    teachingCurrenDateList = teachingCurrenDateList.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).toList();
+                    return teachingCurrenDateList;
                 }
             } else {
                 return "token expired";

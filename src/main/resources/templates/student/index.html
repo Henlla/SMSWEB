@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{index}">
 <head>
@@ -8,69 +8,218 @@
     <link rel="stylesheet" href="/css/student/header.css">
     <link rel="stylesheet" href="/css/student/index.css">
 </head>
-<body>
+<body style="background-color: #D9DEE1">
 <section layout:fragment="content">
-    <section class="container">
-        <div class="row">
-            <div class="col-md-8" style="display: flex;justify-content: center;align-items: center;">
-                <h2 class="font-weight-bold">HKT - ACADEMY Portal</h2>
-            </div>
-            <div class="col-md-4">
-                <h2 class="font-weight-bold">
-                    <img src="/teacherDashboard/assets/img/logo.png" alt="Logo" width="200" height="100">
-                </h2>
+    <section class="container-fluid">
+        <div class="container-fluid" style="background-color: white;margin-bottom: 30px">
+            <div class="row" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
+                <div class="col-md-4">
+                    <img style="margin-left: 100px" src="/teacherDashboard/assets/img/logo.png" alt="Logo" width="150"
+                         height="50">
+                </div>
+                <div class="col-md-8" style="display: flex;justify-content: end; align-items: center">
+                    <img style="border-radius: 50%" th:src="${student.getStudentByProfile().getAvartarUrl()}" alt=""
+                         width="50" height="50">
+                    <span style="font-weight: bold"
+                          th:text="${student.getStudentByProfile().getFirstName()+' '+student.getStudentByProfile().getLastName()}"></span>
+                    <div class="dropdown show">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" th:href="@{'/logout'}">Logout</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-12 bread-crumb">
-                <div class="navigation">
-                    <a th:href="@{'/student/index'}">Home</a>
-                </div>
-                <div class="divUser">
-                    <span class="label label-success" th:text="${#authentication.getPrincipal().username}"></span>
-                     | 
-                    <a class="label label-success" th:href="${'/logout'}">Logout</a>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-5">
-                <div class="row">
-                    <div class="news box">
-                        <h3 class="blueTitle" style="width: 100%;float:left;display: flex;justify-content: center;">News</h3>
-                        <div class="listBoxWrapper">
-                            <div class="listNews">
-                                <ul>
-                                    <th:block th:each="news : ${listNews}">
-                                        <li>
-                                            <em class="date" th:text="${news.post_date+' - '}"></em>
-                                            <a class="new" th:href="${'/student/newsDetails/'+news.id}" th:text="${news.sub_title}"></a>
-                                        </li>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-6">
+                    <div class="box-info">
+                        <span style="color:#6C787F;font-weight: bold" class="title-info">Information student</span>
+                        <hr>
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-3" style="    display: flex;justify-content: center;align-items: center;">
+                                <img style="border-radius: 50%"
+                                     th:src="${student.getStudentByProfile().getAvartarUrl()}" alt=""
+                                     width="100" height="100">
+                            </div>
+                            <div class="col-4">
+                                <div>
+                                    <span style="color:#6C787F">Student card: </span><span
+                                        style="color:#6C787F;font-weight: bold">[[${student.studentCard}]]</span>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span style="color:#6C787F">Full Name: </span><span
+                                        style="color:#6C787F;font-weight: bold">[[${student.getStudentByProfile().getFirstName()+' '+student.getStudentByProfile().getLastName()}]]</span>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span style="color:#6C787F">Gender: </span><span
+                                        style="color:#6C787F;font-weight: bold">[[${student.getStudentByProfile().sex}]]</span>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span style="color:#6C787F">Date of birth: </span><span
+                                        style="color:#6C787F;font-weight: bold">[[${student.getStudentByProfile().dob}]]</span>
+                                </div>
+                                <!--                                <div style="margin-top: 10px">-->
+                                <!--                                    <span style="color:#6C787F">Address: </span><span-->
+                                <!--                                        style="color:#6C787F;font-weight: bold">[[${student.getStudentByProfile().address +' '+student.getStudentByProfile().wardByWardId.name+' '+student.getStudentByProfile().districtByDistrictId.name+' '+student.getStudentByProfile().profileProvince.name}]]</span>-->
+                                <!--                                </div>-->
+                            </div>
+                            <div class="col-4">
+                                <div>
+                                    <span style="color:#6C787F">Major: </span><span
+                                        style="color:#6C787F;font-weight: bold">[[${major.majorByMajorId.majorName}]]</span>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span style="color:#6C787F">Class: </span><span
+                                        style="color:#6C787F;font-weight: bold">
+                                    <th:block th:each="classs:${classList}">
+                                        [[${classs.classCode}]]
                                     </th:block>
-                                    
-                                </ul>
+                                </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-7">
-                <div class="row">
-                    <div class="box" style="float:right;width: 90%;">
-                        <h3 class="orangeTitle">Academic Information</h3>
-                        <div class="listBoxWrapper">
-                            <ul>
-                                <li><a href="/student/attendance/index">Attendance </a>(Xem điểm danh)</li>
-                                <li><a href="/student/application/sendIndex">Send application </a>(Gửi đơn)</li>
-                                <li><a href="/student/application/index">View application </a>(Xem đơn gửi)</li>
-                                <li><a href="/student/viewSchedule">View schedule </a>(Xem thời khóa biểu)</li>
-                                <li><a href="/student/profile">View student profile </a>(Xem thông tin cá nhân)</li>
-                            </ul>
-                        </div>
+                <div class="col-5">
+                    <div class="right-box">
+                        <span style="color:#6C787F;font-weight: bold" class="title-info">Study today's - [[${currentDate}]]</span>
+                        <hr>
+                        <th:block th:if="${not #lists.isEmpty(currentStudy)}">
+                            <th:block th:each="event:${currentStudy}">
+                                <div class="calendar-details">
+                                    <p th:text="${event.startTime}"></p>
+                                    <div class="calendar-box normal-bg">
+                                        <div class="calendar-event-name">
+                                            <h4 th:text="${event.subject.subjectName}"></h4>
+                                            <h5 th:text="${'Class: '+event.classCode}"></h5>
+                                            <h5 th:text="${'Room '+event.roomCode}"></h5>
+                                        </div>
+                                        <span th:text="${event.time}"></span>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+                        <th:block th:unless="${not #lists.isEmpty(currentStudy)}">
+                            <div class="calendar-details">
+                                <span>Nothing event today's</span>
+                            </div>
+                        </th:block>
                     </div>
                 </div>
             </div>
+            <div class="container-fluid" style="margin-top: 30px">
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-3" >
+                        <div class="row" >
+                            <div class="news box" style="background-color: white">
+                                <h3 class="blueTitle" style="width: 100%;float:left;display: flex;justify-content: center;">
+                                    News</h3>
+                                <div class="listBoxWrapper">
+                                    <div class="listNews">
+                                        <ul>
+                                            <th:block th:each="news : ${listNews}">
+                                                <li>
+                                                    <em class="date" th:text="${news.post_date+' - '}"></em>
+                                                    <a class="new" th:href="${'/student/newsDetails/'+news.id}"
+                                                       th:text="${news.sub_title}"></a>
+                                                </li>
+                                            </th:block>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="box-all-function">
+                                <div class="col-2 box-function">
+                                    <i class="fas fa-id-card" style="color: #3172e3;font-size: 32px"></i>
+                                    <a href="/student/profile" class="title-function">Information</a>
+                                </div>
+                                <div class="col-2 box-function">
+                                    <i class="fas fa-calendar-alt" style="color: #3172e3;font-size: 32px"></i>
+                                    <a href="/student/viewSchedule" class="title-function">Timetable</a>
+                                </div>
+                                <div class="col-2 box-function">
+                                    <i class="fas fa-book" style="color: #3172e3;font-size: 32px"></i>
+                                    <a href="#" class="title-function">Check mark</a>
+                                </div>
+                                <div class="col-2 box-function">
+                                    <i class="fas fa-sticky-note" style="color: #3172e3;font-size: 32px"></i>
+                                    <a href="/student/application/index" class="title-function">View Application</a>
+                                </div>
+                                <div class="col-2 box-function">
+                                    <i class="fas fa-paper-plane" style="color: #3172e3;font-size: 32px"></i>
+                                    <a href="/student/application/sendIndex" class="title-function">Send Application</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+            </div>
         </div>
+        <!--        <div class="row">-->
+        <!--            <div class="col-sm-12 bread-crumb">-->
+        <!--                <div class="navigation">-->
+        <!--                    <a th:href="@{'/student/index'}">Home</a>-->
+        <!--                </div>-->
+        <!--                <div class="divUser">-->
+        <!--                    <span class="label label-success" th:text="${#authentication.getPrincipal().username}"></span>-->
+        <!--                    |-->
+        <!--                    <a class="label label-success" th:href="${'/logout'}">Logout</a>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--        <div class="row">-->
+        <!--            <div class="col-md-5">-->
+        <!--                <div class="row">-->
+        <!--                    <div class="news box">-->
+        <!--                        <h3 class="blueTitle" style="width: 100%;float:left;display: flex;justify-content: center;">-->
+        <!--                            News</h3>-->
+        <!--                        <div class="listBoxWrapper">-->
+        <!--                            <div class="listNews">-->
+        <!--                                <ul>-->
+        <!--                                    <th:block th:each="news : ${listNews}">-->
+        <!--                                        <li>-->
+        <!--                                            <em class="date" th:text="${news.post_date+' - '}"></em>-->
+        <!--                                            <a class="new" th:href="${'/student/newsDetails/'+news.id}"-->
+        <!--                                               th:text="${news.sub_title}"></a>-->
+        <!--                                        </li>-->
+        <!--                                    </th:block>-->
+
+        <!--                                </ul>-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--            <div class="col-md-7">-->
+        <!--                <div class="row">-->
+        <!--                    <div class="box" style="float:right;width: 90%;">-->
+        <!--                        <h3 class="orangeTitle">Academic Information</h3>-->
+        <!--                        <div class="listBoxWrapper">-->
+        <!--                            <ul>-->
+        <!--                                <li><a href="/student/attendance/index">Attendance </a>(Xem điểm danh)</li>-->
+        <!--                                <li><a href="/student/application/sendIndex">Send application </a>(Gửi đơn)</li>-->
+        <!--                                <li><a href="/student/application/index">View application </a>(Xem đơn gửi)</li>-->
+        <!--                                <li><a href="/student/viewSchedule">View schedule </a>(Xem thời khóa biểu)</li>-->
+        <!--                                <li><a href="/student/profile">View student profile </a>(Xem thông tin cá nhân)</li>-->
+        <!--                            </ul>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
     </section>
 </section>
 <th:block layout:fragment="optional">

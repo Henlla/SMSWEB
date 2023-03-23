@@ -42,7 +42,7 @@ public class ClassExport {
     }
     private void writeHeader(){
         sheet = workbook.createSheet("FeedBack");
-        Row row = sheet.createRow(0);
+        Row row = sheet.createRow(1);
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
@@ -91,15 +91,15 @@ public class ClassExport {
         for (StudentClass studentClass:classModel.getStudentClassById()) {
             row = sheet.createRow(rowCount++);
             createCell(row, 0, rowIndex++, style);
-            createCell(row, 0, studentClass.getClassStudentByStudent().getStudentCard(), style);
-            createCell(row, 1,studentClass.getClassStudentByStudent().getStudentByProfile().getFirstName()+ " "
+            createCell(row, 1, studentClass.getClassStudentByStudent().getStudentCard(), style);
+            createCell(row, 2,studentClass.getClassStudentByStudent().getStudentByProfile().getFirstName()+ " "
                             + studentClass.getClassStudentByStudent().getStudentByProfile().getLastName(),
                     style);
-            createCell(row, 2, studentClass.getClassStudentByStudent().getStudentByProfile().getSex(), style);
-            createCell(row, 3, studentClass.getClassStudentByStudent().getStudentByProfile().getDob(), style);
-            createCell(row, 4, studentClass.getClassStudentByStudent().getStudentByProfile().getPhone(), style);
-            createCell(row, 5, studentClass.getClassStudentByStudent().getStudentByProfile().getEmail(), style);
-            createCell(row, 6, studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince().getName(), style);
+            createCell(row, 3, studentClass.getClassStudentByStudent().getStudentByProfile().getSex(), style);
+            createCell(row, 4, studentClass.getClassStudentByStudent().getStudentByProfile().getDob(), style);
+            createCell(row, 5, studentClass.getClassStudentByStudent().getStudentByProfile().getPhone(), style);
+            createCell(row, 6, studentClass.getClassStudentByStudent().getStudentByProfile().getEmail(), style);
+            createCell(row, 7, studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince().getName(), style);
         }
     }
 

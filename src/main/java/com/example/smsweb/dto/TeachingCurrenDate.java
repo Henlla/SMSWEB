@@ -14,9 +14,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeachingCurrenDate {
-    private LocalDate date;
+    private String date;
+    private String dayOfWeek;
     private String classCode;
     private Subject subject;
+    private String roomCode;
+    private String shift;
+    private Integer slot;
     private String time;
     private String startTime;
 }

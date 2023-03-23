@@ -75,7 +75,6 @@ public class Classses {
     @ManyToOne
     @JoinColumn(name = "room_id", insertable = false, updatable = false)
     //@JsonManagedReference("teacherClass")
-    @JsonIgnore
     private Room classRoom;
 
 

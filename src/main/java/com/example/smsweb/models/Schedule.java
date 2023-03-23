@@ -40,8 +40,4 @@ public class Schedule {
     @JsonManagedReference
     private Collection<ScheduleDetail> scheduleDetailsById;
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
 }

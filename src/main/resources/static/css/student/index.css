@@ -57,3 +57,114 @@
     background-color: #ef8d01;
 }
 
+.box-info{
+    width: 100%;
+    height: 250px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.title-info{
+    color: #6C787F;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    font-size: 25px;
+    margin-left: 20px;
+
+}
+
+.box-function{
+    width: 100%;
+    height: 100px;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.box-all-function{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-function{
+    color:#6C787F;
+}
+
+.right-box{
+    width: 100%;
+    height: 250px;
+    background-color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    border-radius: 5px;
+}
+
+.calendar-details{
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    width: 40%;
+    margin-left: 35px;
+}
+
+.calendar-box{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.normal-bg:before {
+    background: #3D5EE1;
+}
+
+.calendar-box:before {
+    content: "";
+    position: absolute;
+    background: #3D5EE1;
+    width: 4px;
+    height: 100%;
+    border-radius: 25px;
+}
+
+.calendar-event-name {
+    padding-left: 10px;
+}
+
+.calendar-details p {
+    font-size: 12px;
+    font-weight: 500;
+    color: #777777;
+    margin-bottom: 0;
+    margin-right: 10px;
+    flex: none;
+}
+
+.calendar-event-name h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+
+.calendar-event-name h5 {
+    font-size: 12px;
+    font-weight: 400;
+    color: #747474;
+    margin-bottom: 0;
+}
+
+.calendar-box span {
+    color: #888888;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: auto;
+}

@@ -51,6 +51,7 @@ import java.security.Principal;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
@@ -85,7 +86,7 @@ public class HomeController {
     }
 
     @GetMapping("/index")
-    public String index(@CookieValue(name = "_token") String _token,Authentication auth,Model model) {
+    public String index(@CookieValue(name = "_token") String _token, Authentication auth, Model model) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.equalsIgnoreCase("token expired")) {
@@ -98,7 +99,8 @@ public class HomeController {
                 //Get class
                 HttpEntity<String> requestClass = new HttpEntity<>(headers);
                 ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "list", HttpMethod.GET, requestClass, String.class);
-                List<Classses> classList = objectMapper.readValue(response.getBody(), new TypeReference<>() {});
+                List<Classses> classList = objectMapper.readValue(response.getBody(), new TypeReference<>() {
+                });
                 classList = classList.stream()
                         .filter(p -> p.getTeacher().getProfileByProfileId().getAccountByAccountId().getUsername().equals(teacherUser.getUsername()))
                         .sorted(Comparator.comparingInt(Classses::getId))
@@ -114,80 +116,79 @@ public class HomeController {
 
 
                 // Lấy Profile
-                HttpEntity<String> requestProfile = new HttpEntity<>(headers);
+                HttpEntity<String> request = new HttpEntity<>(headers);
                 ResponseEntity<Profile> profileResponse = restTemplate.exchange(
-                        PROFILE_URL + "get/" + teacherUser.getId(), HttpMethod.GET, requestProfile, Profile.class);
+                        PROFILE_URL + "get/" + teacherUser.getId(), HttpMethod.GET, request, Profile.class);
                 // Lấy teacher theo profile id
-                HttpEntity<String> requestTeacher = new HttpEntity<>(headers);
                 ResponseEntity<Teacher> teacherResponse = restTemplate.exchange(
                         TEACHER_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET,
-                        requestTeacher, Teacher.class);
-                HttpEntity<Object> requestLisClass = new HttpEntity<Object>(headers);
-                ResponseEntity<ResponseModel> listClassResponse = restTemplate.exchange(
-                        CLASS_URL + "findClassByTeacher/" + teacherResponse.getBody().getId(), HttpMethod.GET,
-                        requestLisClass, ResponseModel.class);
-                String json = objectMapper.writeValueAsString(listClassResponse.getBody().getData());
-                List<Classses> listClass = objectMapper.readValue(json, new TypeReference<List<Classses>>() {
+                        request, Teacher.class);
+                ResponseEntity<ResponseModel> responseScheduleDetails = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleByTeacher/" + teacherResponse.getBody().getId(), HttpMethod.GET, request, ResponseModel.class);
+
+                String jsonScheduleDetails = objectMapper.writeValueAsString(responseScheduleDetails.getBody().getData());
+                List<ScheduleDetail> scheduleDetails = objectMapper.readValue(jsonScheduleDetails, new TypeReference<List<ScheduleDetail>>() {
                 });
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL");
                 LocalDate currentDate = LocalDate.now();
                 List<TeachingCurrenDate> lCurrenDates = new ArrayList<>();
-                for(Classses classses:listClass){
-                    for(Schedule schedule: classses.getSchedulesById()){
-                        for(ScheduleDetail scheduleDetail: schedule.getScheduleDetailsById()){
-                            if(LocalDate.parse(scheduleDetail.getDate()).equals(currentDate)){
-                                TeachingCurrenDate currentDateTeaching = new TeachingCurrenDate();
-                                if(classses.getShift().substring(0,1).equals("M")){
-                                    if(scheduleDetail.getSlot().equals(1)){
-                                        currentDateTeaching.setClassCode(classses.getClassCode());
-                                        currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                                        currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                        currentDateTeaching.setTime("7:30 - 9:30");
-                                        currentDateTeaching.setStartTime("7:30");
-                                    }else{
-                                        currentDateTeaching.setClassCode(classses.getClassCode());
-                                        currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                                        currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                        currentDateTeaching.setTime("9:30 - 11:30");
-                                        currentDateTeaching.setStartTime("9:30");
+                for (ScheduleDetail scheduleDetail : scheduleDetails) {
+                    if (LocalDate.parse(scheduleDetail.getDate()).equals(currentDate)) {
+                        ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL+"get/"+scheduleDetail.getScheduleId(),HttpMethod.POST,request,ResponseModel.class);
+                        String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
+                        Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
+                        ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"getClass/"+schedule.getClassId(),HttpMethod.GET,request,ResponseModel.class);
+                        String jsonClass = objectMapper.writeValueAsString(responseClass.getBody().getData());
+                        Classses classses = objectMapper.readValue(jsonClass,Classses.class);
+                        TeachingCurrenDate currentDateTeaching = new TeachingCurrenDate();
+                        if (classses.getShift().substring(0, 1).equals("M")) {
+                            if (scheduleDetail.getSlot().equals(1)) {
+                                currentDateTeaching.setClassCode(classses.getClassCode());
+                                currentDateTeaching.setDate(scheduleDetail.getDate());
+                                currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                currentDateTeaching.setTime("7:30 - 9:30");
+                                currentDateTeaching.setStartTime("7:30");
+                            } else {
+                                currentDateTeaching.setClassCode(classses.getClassCode());
+                                currentDateTeaching.setDate(scheduleDetail.getDate());
+                                currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                currentDateTeaching.setTime("9:30 - 11:30");
+                                currentDateTeaching.setStartTime("9:30");
 
-                                    }
-                                }else if(classses.getShift().substring(0,1).equals("A")){
-                                    if(scheduleDetail.getSlot().equals(1)){
-                                        currentDateTeaching.setClassCode(classses.getClassCode());
-                                        currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                                        currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                        currentDateTeaching.setTime("12:30 - 15:30");
-                                        currentDateTeaching.setStartTime("12:30");
-                                    }else{
-                                        currentDateTeaching.setClassCode(classses.getClassCode());
-                                        currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                                        currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                        currentDateTeaching.setTime("15:30 - 17:30");
-                                        currentDateTeaching.setStartTime("15:30");
-                                    }
-                                }else{
-                                    if(scheduleDetail.getSlot().equals(1)){
-                                        currentDateTeaching.setClassCode(classses.getClassCode());
-                                        currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                                        currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                        currentDateTeaching.setTime("17:30 - 19:30");
-                                        currentDateTeaching.setStartTime("17:30");
-                                    }else{
-                                        currentDateTeaching.setClassCode(classses.getClassCode());
-                                        currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()));
-                                        currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                        currentDateTeaching.setTime("19:30 - 21:30");
-                                        currentDateTeaching.setStartTime("19:30");
-                                    }
-                                }
-                                lCurrenDates.add(currentDateTeaching);
+                            }
+                        } else if (classses.getShift().substring(0, 1).equals("A")) {
+                            if (scheduleDetail.getSlot().equals(1)) {
+                                currentDateTeaching.setClassCode(classses.getClassCode());
+                                currentDateTeaching.setDate(scheduleDetail.getDate());
+                                currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                currentDateTeaching.setTime("12:30 - 15:30");
+                                currentDateTeaching.setStartTime("12:30");
+                            } else {
+                                currentDateTeaching.setClassCode(classses.getClassCode());
+                                currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()).toString());
+                                currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                currentDateTeaching.setTime("15:30 - 17:30");
+                                currentDateTeaching.setStartTime("15:30");
+                            }
+                        } else {
+                            if (scheduleDetail.getSlot().equals(1)) {
+                                currentDateTeaching.setClassCode(classses.getClassCode());
+                                currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()).toString());
+                                currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                currentDateTeaching.setTime("17:30 - 19:30");
+                                currentDateTeaching.setStartTime("17:30");
+                            } else {
+                                currentDateTeaching.setClassCode(classses.getClassCode());
+                                currentDateTeaching.setDate(LocalDate.parse(scheduleDetail.getDate()).toString());
+                                currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
+                                currentDateTeaching.setTime("19:30 - 21:30");
+                                currentDateTeaching.setStartTime("19:30");
                             }
                         }
+                        lCurrenDates.add(currentDateTeaching);
                     }
                 }
                 model.addAttribute("listCurrenTeachingDate", lCurrenDates);
-                model.addAttribute("currentDate",currentDate.format(formatter));
+                model.addAttribute("currentDate", currentDate.format(formatter));
                 model.addAttribute("totalClass", classList.size());
                 model.addAttribute("totalStudent", totalStudent);
 
@@ -214,7 +215,8 @@ public class HomeController {
             HttpEntity<Object> request = new HttpEntity<>(headers);
 
             ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "list", HttpMethod.GET, request, String.class);
-            List<Classses> classList = new ObjectMapper().readValue(response.getBody(), new TypeReference<>() {});
+            List<Classses> classList = new ObjectMapper().readValue(response.getBody(), new TypeReference<>() {
+            });
             classList = classList.stream()
                     .filter(p -> p.getTeacher()
                             .getProfileByProfileId()
@@ -234,7 +236,7 @@ public class HomeController {
                     .filter(StreamHelper.distinctByKey(Student::getId))
                     .collect(Collectors.toList());
 
-            model.addAttribute("students",collect);
+            model.addAttribute("students", collect);
 
             return "teacherDashboard/student/student_index";
         } catch (Exception ex) {
@@ -283,7 +285,7 @@ public class HomeController {
 
     @GetMapping("/news")
     public String news(Model model,
-            @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
+                       @CookieValue(name = "_token", defaultValue = "") String _token) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
@@ -293,8 +295,8 @@ public class HomeController {
             });
             model.addAttribute("news", newsList);
             return "teacherDashboard/news/new_index";
-        }catch (Exception ex){
-            if (ex.getMessage().equalsIgnoreCase("Token expired")){
+        } catch (Exception ex) {
+            if (ex.getMessage().equalsIgnoreCase("Token expired")) {
                 return "redirect:/login";
             }
             throw new ErrorHandler(ex.getMessage());
@@ -305,7 +307,7 @@ public class HomeController {
     public String classes(Model model,
                           @CookieValue(name = "_token", defaultValue = "") String _token,
                           Principal principal) {
-        try{
+        try {
             if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
 
             RestTemplate restTemplate = new RestTemplate();
@@ -354,10 +356,10 @@ public class HomeController {
                     .getProfileByProfileId()
                     .getAccountByAccountId()
                     .getUsername()
-                    .equals(principal.getName())){
+                    .equals(principal.getName())) {
                 model.addAttribute("class", classModel);
                 return "teacherDashboard/class/class_details";
-            }else {
+            } else {
                 model.addAttribute("msg", "You have no permission");
                 return "redirect:/teacher/classes";
             }
@@ -365,9 +367,10 @@ public class HomeController {
             throw new ErrorHandler(ex.getMessage());
         }
     }
+    
     @GetMapping("/profile")
     public String profile(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
-            Authentication auth) {
+                          Authentication auth) {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -402,9 +405,9 @@ public class HomeController {
     @PostMapping("/change_password/{accountId}")
     @ResponseBody
     public Object change_password(@CookieValue(name = "_token", defaultValue = "") String _token,
-            @RequestParam("oldPass") String oldPass,
-             @RequestParam("newPass") String newPass,
-            @PathVariable("accountId")Integer accountId) {
+                                  @RequestParam("oldPass") String oldPass,
+                                  @RequestParam("newPass") String newPass,
+                                  @PathVariable("accountId") Integer accountId) {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -414,8 +417,8 @@ public class HomeController {
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             params.add("password", oldPass);
             params.add("newPassword", newPass);
-            HttpEntity<MultiValueMap<String, Object>> request=  new HttpEntity<>(params,headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(ACCOUNT_URL+"changePassword/"+accountId, HttpMethod.PUT,request,ResponseModel.class);
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(ACCOUNT_URL + "changePassword/" + accountId, HttpMethod.PUT, request, ResponseModel.class);
             return "success";
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
