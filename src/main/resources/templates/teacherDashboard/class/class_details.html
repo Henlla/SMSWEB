@@ -70,7 +70,7 @@
                                                 </table>
                                             </td>
                                             <td class="d-flex justify-content-end">
-                                                <a data-bs-target="#mark_score" data-bs-toggle="modal"
+                                                <a data-bs-target="#mark_score" onclick="addSubject()" data-bs-toggle="modal"
                                                    class="btn btn-primary btn-sm me-1">Input mark</a>
                                                 <a id="export_student_excel" class="btn btn-success btn-sm">Download list student</a>
                                             </td>
@@ -130,42 +130,52 @@
 
         <!--Timetable-->
         <!--Mark score-->
+
         <div class="modal fade" id="mark_score" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Mark Score</h5>
+                        <h5 class="modal-title">Input Mark</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times fa-sm"></i>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="container">
-                            <form id="form_import_mark" enctype="multipart/form-data">
-                                <div class="col">
+                            <div class="col">
+                                <form>
                                     <div class="form-group">
-                                        <label for="mark_list">Input mark list</label><a href="/TempExcel/mark-list.xlsx" download>Download example file</a>
+                                        <label for="mark_select_subject">Input mark list</label>
+                                        <select class="form-control" id="mark_select_subject" name="mark_select_subject">
+                                            <option value="">--Select--</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mark_list">Input mark list</label>&nbsp;<a href="#" id="download_template" download>Download example file</a>
                                         <input type="file" accept=".xlsx" class="form-control" id="mark_list" name="mark_list">
                                     </div>
-                                    <div class="form-group">
-                                        <input class="form-control btn-primary" type="submit" value="Submit">
-                                    </div>
+                                </form>
+                            </div>
+                            <form>
+                                <table id="mark_table" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none;">Student Id</th>
+                                            <th style="display:none;">Subject Id</th>
+                                            <th style="display:none;">StudentSubject Id</th>
+                                            <th>Student Name</th>
+                                            <th>Subject Name</th>
+                                            <th>ASM mark</th>
+                                            <th>OBJ mark</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <div class="form-group">
+                                    <input id="form_input_mark" class="form-control btn-primary text-white" type="submit" value="Submit">
                                 </div>
                             </form>
-                            <table id="myTable" class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Numbers</th>
-                                    <th>Student code</th>
-                                    <th>Student name</th>
-                                    <th>Subject code</th>
-                                    <th>ASM mark</th>
-                                    <th>OBJ mark</th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
                         </div>
                     </div>
                 </div>

@@ -31,7 +31,7 @@ public class StudentExport {
     }
 
     private void writeHeader(){
-        sheet = workbook.createSheet("FeedBack");
+        sheet = workbook.createSheet("StudentList");
         Row row = sheet.createRow(0);
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();

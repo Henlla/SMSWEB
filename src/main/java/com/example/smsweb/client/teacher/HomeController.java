@@ -1,12 +1,14 @@
 package com.example.smsweb.client.teacher;
 
 import com.example.smsweb.api.exception.ErrorHandler;
-import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.*;
 import com.example.smsweb.dto.teacher.MarkList;
+import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.teacher.InputMarkModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
+import com.example.smsweb.utils.ExcelExport.ImportMarkExport;
 import com.example.smsweb.utils.ExcelHelper;
-import com.example.smsweb.dto.TeachingCurrenDate;
 import com.example.smsweb.models.Account;
 import com.example.smsweb.models.Classses;
 import com.example.smsweb.models.News;
@@ -17,9 +19,12 @@ import com.example.smsweb.models.Student;
 import com.example.smsweb.models.Subject;
 import com.example.smsweb.models.Teacher;
 import com.example.smsweb.utils.StreamHelper;
+import com.example.smsweb.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -46,6 +51,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,6 +70,7 @@ import java.util.List;
 public class HomeController {
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private final String STUDENT_CLASS_URL = "http://localhost:8080/api/student-class/";
+    private final String CLASS_SUBJECT_URL = "http://localhost:8080/api/class-subject/";
     private final String SCHEDULE_URL = "http://localhost:8080/api/schedules/";
     private final String SCHEDULE_DETAIL_URL = "http://localhost:8080/api/schedules_detail/";
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
@@ -74,6 +83,7 @@ public class HomeController {
     private final String NEWS_URL = "http://localhost:8080/api/news/";
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
+    private final String ATTENDANCE_TRACKING_URL = "http://localhost:8080/api/attendance_tracking/";
     public RestTemplate restTemplate;
 
     @GetMapping("/login")
@@ -91,7 +101,6 @@ public class HomeController {
                 ObjectMapper objectMapper = new ObjectMapper();
                 headers.set("Authorization", "Bearer " + _token);
                 Account teacherUser = (Account) auth.getPrincipal();
-
                 //Get class
                 HttpEntity<String> requestClass = new HttpEntity<>(headers);
                 ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "list", HttpMethod.GET, requestClass, String.class);
@@ -101,7 +110,6 @@ public class HomeController {
                         .filter(p -> p.getTeacher().getProfileByProfileId().getAccountByAccountId().getUsername().equals(teacherUser.getUsername()))
                         .sorted(Comparator.comparingInt(Classses::getId))
                         .collect(Collectors.toList());
-
                 //Get total students
                 List<StudentClass> studentClassList = new ArrayList<>();
                 for (Classses classs : classList) {
@@ -109,8 +117,6 @@ public class HomeController {
                 }
                 int totalStudent = studentClassList.stream()
                         .filter(StreamHelper.distinctByKey(StudentClass::getStudentId)).toList().size();
-
-
                 // Lấy Profile
                 HttpEntity<String> request = new HttpEntity<>(headers);
                 ResponseEntity<Profile> profileResponse = restTemplate.exchange(
@@ -183,11 +189,97 @@ public class HomeController {
                         lCurrenDates.add(currentDateTeaching);
                     }
                 }
+                
+                ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL+"findByTeacherId/"+teacherResponse.getBody().getId(),HttpMethod.GET,request,ResponseModel.class);
+                int currentMonth = LocalDate.now().getMonthValue();
+                int currentYear = LocalDate.now().getYear();
+                DateTimeFormatter monthYear = DateTimeFormatter.ofPattern("yyyy-MM");
+                String month = LocalDate.now().format(monthYear);
+                String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
+                List<AttendanceTracking> attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
+                });
+
+                List<AttendanceTracking> listChart = attendanceTrackingList;
+                attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth &&LocalDate.parse(attendanceTracking.getDate()).getYear()==currentYear).collect(Collectors.toList());
+
+                LocalDate firstDayOfMonth = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth() );
+                LocalDate lastDayOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth() );
+
+                List<AttendanceTrackingModel> trackingList = new ArrayList<>();
+                for (LocalDate i = firstDayOfMonth;i.isBefore(lastDayOfMonth.plusDays(1));i = i.plusDays(1)){
+                    LocalDate finalI = i;
+                    List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
+                    if(!attendanceTracking.isEmpty()){
+                        for (AttendanceTracking att : attendanceTracking){
+                            AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                            attendanceTrackingModel.setDate(att.getDate());
+                            attendanceTrackingModel.setCount(1);
+                            trackingList.add(attendanceTrackingModel);
+                        }
+                    }else{
+                        AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                        attendanceTrackingModel.setDate(finalI.toString());
+                        attendanceTrackingModel.setCount(0);
+                        trackingList.add(attendanceTrackingModel);
+                    }
+                }
+
+                HashMap<String, List<AttendanceTrackingModel>> hashMap = new HashMap<String, List<AttendanceTrackingModel>>();
+                for (AttendanceTrackingModel att : trackingList) {
+                    String key = att.getDate();
+                    if (hashMap.containsKey(key)) {
+                        List<AttendanceTrackingModel> list = hashMap.get(key);
+                        list.add(att);
+
+                    } else {
+                        List<AttendanceTrackingModel> list = new ArrayList<AttendanceTrackingModel>();
+                        list.add(att);
+                        hashMap.put(key, list);
+                    }
+                }
+                List<AttendanceTrackingModel>list = new ArrayList<>();
+                for (String key : hashMap.keySet()){
+                    AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                    attendanceTrackingModel.setDate(key);
+                    List<AttendanceTrackingModel> trackingModels = hashMap.get(key);
+                    int i = 0;
+                    for (AttendanceTrackingModel att :trackingModels){
+                        if(att.getCount().equals(1)){
+                            i++;
+                        }
+                    }
+                    attendanceTrackingModel.setCount(i);
+                    list.add(attendanceTrackingModel);
+                }
+
+                List<AttendanceTrackingChart> chartList = new ArrayList<>();
+                for (int i =1 ; i <= 12;i++){
+                    AttendanceTrackingChart attendanceTrackingChart = new AttendanceTrackingChart();
+//                    String monthValue = i < 10 ? String.valueOf("0"+i):String.valueOf(i);
+                    int finalI = i;
+
+                    attendanceTrackingChart.setX(StringUtils.theMonth(finalI - 1));
+                    int total = 0;
+                    List<AttendanceTracking> list1 = listChart.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == finalI && LocalDate.parse(attendanceTracking.getDate()).getYear() == currentYear).toList();
+                    if(!list1.isEmpty()){
+                        total = list1.size();
+                        attendanceTrackingChart.setY(total * 2);
+                    }else{
+                        attendanceTrackingChart.setY(total);
+                    }
+                    chartList.add(attendanceTrackingChart);
+                }
+
+                list =list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
+                model.addAttribute("currentMonthTotalAttendanceTracking", attendanceTrackingList.stream().count() * 2);
                 model.addAttribute("listCurrenTeachingDate", lCurrenDates);
+                model.addAttribute("month", month);
+                model.addAttribute("chartList", new ObjectMapper().writeValueAsString(chartList));
+                model.addAttribute("teacherId", teacherResponse.getBody().getId());
+                model.addAttribute("listAttendanceCurrenMonth", new ObjectMapper().writeValueAsString(list));
                 model.addAttribute("currentDate", currentDate.format(formatter));
                 model.addAttribute("totalClass", classList.size());
                 model.addAttribute("totalStudent", totalStudent);
-
                 return "teacherDashboard/home";
             } else {
                 return "redirect:/logout";
@@ -363,312 +455,7 @@ public class HomeController {
             throw new ErrorHandler(ex.getMessage());
         }
     }
-
-
-    @PostMapping("class/import-mark-list")
-    @ResponseBody
-    public String importScoreList(Model model,
-                                  @CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @RequestParam("teacherId") int teacherId,
-                                  @RequestParam("classId") int classId,
-                                  @RequestParam(name = "mark_list", required = false) MultipartFile file) {
-        try {
-            JWTUtils.checkExpired(_token);
-
-            if (file != null) {
-                List<MarkList> inputMarkList = new ArrayList<>();
-                List<Student> studentList = new ArrayList<>();
-                List<StudentSubject> studentSubjectList = new ArrayList<>();
-                List<Mark> markList = new ArrayList<>();
-
-                //get excel data to markList
-                XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-                XSSFSheet sheet = workbook.getSheetAt(0);
-                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 1); rowIndex++) {
-                    XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex < 1) {
-                        continue;
-                    }
-                    String studentCode = ExcelHelper.getValue(row.getCell(1)).toString();
-                    String majorCode = ExcelHelper.getValue(row.getCell(3)).toString();
-                    String asmMark = ExcelHelper.getValue(row.getCell(4)).toString();
-                    String objMark = ExcelHelper.getValue(row.getCell(5)).toString();
-
-                    inputMarkList.add(new MarkList(studentCode, majorCode, Double.parseDouble(asmMark), Double.parseDouble(objMark)));
-                }
-                RestTemplate restTemplate = new RestTemplate();
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", "Bearer " + _token);
-                HttpEntity<Object> request = new HttpEntity<>(headers);
-                MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
-                ObjectMapper objectMapper = new ObjectMapper();
-
-                //Get class
-                ResponseEntity<String> responseClass = restTemplate.exchange(
-                        CLASS_URL + "getClass/" + classId,
-                        HttpMethod.GET, request, String.class);
-                ResponseModel responseModelClass = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {
-                });
-                String classJson = objectMapper.writeValueAsString(responseModelClass.getData());
-                Classses classs = objectMapper.readValue(classJson, new TypeReference<>() {
-                });
-
-
-                //Check valid data and validate exception
-                for (MarkList inputMark : inputMarkList) {
-                    try {
-                        //Check student, check student in class and add to studentList
-                        ResponseEntity<String> responseStudent = restTemplate.exchange(
-                                STUDENT_URL + "findStudentByStudentCard/" + inputMark.getStudentCode(),
-                                HttpMethod.GET, request, String.class);
-                        Student student = objectMapper.readValue(responseStudent.getBody(), new TypeReference<>() {
-                        });
-
-                        ResponseEntity<String> responseStudentClass = restTemplate.exchange(
-                                STUDENT_CLASS_URL + "findStudentClassesByStudentId/" + student.getId(),
-                                HttpMethod.GET, request, String.class);
-                        ResponseModel responseModelStudentClass = objectMapper.readValue(responseStudentClass.getBody(), new TypeReference<>() {
-                        });
-                        String studentClassJson = objectMapper.writeValueAsString(responseModelStudentClass.getData());
-                        List<StudentClass> studentClassList = objectMapper.readValue(studentClassJson, new TypeReference<>() {
-                        });
-
-                        if (studentClassList.stream().filter(studentClass -> studentClass.getClassId() == classId).collect(Collectors.toList()).size() == 0) {
-                            throw new ErrorHandler("You have no permission to mark this student: " + student.getStudentCard());
-                        }
-                        ;
-                        studentList.add(student);
-
-                        //Check existed subject and subject existed in this class
-                        ResponseEntity<String> responseSubject = restTemplate.exchange(
-                                SUBJECT_URL + "findSubjectBySubjectCode/" + inputMark.getSubjectCode(),
-                                HttpMethod.GET, request, String.class);
-                        ResponseModel responseModelMajor = objectMapper.readValue(responseSubject.getBody(), new TypeReference<>() {
-                        });
-                        String majorJson = objectMapper.writeValueAsString(responseModelMajor.getData());
-                        Subject subject = objectMapper.readValue(majorJson, Subject.class);
-                        if (classs.getMajor().getSubjectsById().stream().filter(s -> s.getId() == subject.getId()).collect(Collectors.toList()).size() == 0) {
-                            throw new ErrorHandler("You have no permission to mark this subject: " + subject.getSubjectCode());
-                        }
-
-
-                        //Check existed StudentSubject add to studentSubjectList
-                        content.add("studentId", student.getId());
-                        content.add("subjectId", subject.getId());
-                        HttpEntity<MultiValueMap<String, Object>> requestStudentSubject = new HttpEntity<>(content, headers);
-                        ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "findStudentSubjectBySubjectIdAndStudentId",
-                                HttpMethod.POST, requestStudentSubject, ResponseModel.class);
-                        content.remove("studentId");
-                        content.remove("subjectId");
-
-                        String studentSubjectJson = objectMapper.writeValueAsString(responseStudentSubject.getBody().getData());
-                        if (studentSubjectJson == null || studentSubjectJson == "") {
-                            throw new ErrorHandler("Student " + student.getStudentCard() + " have not learned " + subject.getSubjectCode() + " yet !");
-                        }
-                        StudentSubject studentSubject = objectMapper.readValue(studentSubjectJson, StudentSubject.class);
-                        studentSubjectList.add(studentSubject);
-
-                        //field studentId, subjectId to markList
-                        inputMark.setStudentCode(student.getId().toString());
-                        inputMark.setSubjectCode(String.valueOf(subject.getId()));
-
-                        //Add markList
-                        MarkList first = inputMarkList.stream()
-                                .filter(p -> p.getSubjectCode().equals(studentSubject.getSubjectId().toString()))
-                                .filter(p -> p.getStudentCode().equals(studentSubject.getStudentId().toString()))
-                                .findFirst()
-                                .orElseThrow(() -> new ErrorHandler("Student " + student.getStudentCard() + " have not learned " + subject.getSubjectCode() + " yet !"));
-
-                        Mark mark = new Mark(0, first.getAsmMark(), first.getObjMark(), studentSubject.getId(), null);
-                        //Check existed mark in database
-                        ResponseEntity<Mark> responseMark = restTemplate.exchange(
-                                MARK_URL + "findMarkByStudentSubjectId/" + mark.getStudentSubjectId(),
-                                HttpMethod.GET, request, Mark.class);
-                        Mark body = responseMark.getBody();
-                        if (body != null) {
-                            throw new ErrorHandler(student.getStudentCard() + " already have a record of mark in " + subject.getSubjectCode() + "!");
-                            //mark.setId(body.getId());
-                        }
-                        markList.add(mark);
-
-                    } catch (Exception e) {
-                        throw new ErrorHandler(e.getMessage());
-                    }
-                }
-
-
-                //Save markList
-                String markListJson = objectMapper.writeValueAsString(markList);
-                content.add("markList", markListJson);
-                HttpEntity<MultiValueMap<String, Object>> requestMark = new HttpEntity<>(content, headers);
-                ResponseEntity<ResponseModel> responseMark = restTemplate.exchange(MARK_URL + "saveAll",
-                        HttpMethod.POST, requestMark, ResponseModel.class);
-                content.remove("markList");
-                if (responseMark.getStatusCode().is2xxSuccessful()) {
-                    return "success";
-                } else {
-                    throw new ErrorHandler("Save mark list failed");
-                }
-            } else {
-                throw new ErrorHandler("Empty list");
-            }
-        } catch (Exception e) {
-            throw new ErrorHandler(e.getMessage());
-        }
-    }
-
-    @PostMapping("class/update-mark-list")
-    @ResponseBody
-    public String updateScoreList(Model model,
-                                  @CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @RequestParam("teacherId") int teacherId,
-                                  @RequestParam("classId") int classId,
-                                  @RequestParam(name = "mark_list", required = false) MultipartFile file) {
-        try {
-            JWTUtils.checkExpired(_token);
-
-            if (file != null) {
-                List<MarkList> inputMarkList = new ArrayList<>();
-                List<Student> studentList = new ArrayList<>();
-                List<StudentSubject> studentSubjectList = new ArrayList<>();
-                List<Mark> markList = new ArrayList<>();
-
-                //get excel data to markList
-                XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-                XSSFSheet sheet = workbook.getSheetAt(0);
-                for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 1); rowIndex++) {
-                    XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex < 1) {
-                        continue;
-                    }
-                    String studentCode = ExcelHelper.getValue(row.getCell(1)).toString();
-                    String majorCode = ExcelHelper.getValue(row.getCell(3)).toString();
-                    String asmMark = ExcelHelper.getValue(row.getCell(4)).toString();
-                    String objMark = ExcelHelper.getValue(row.getCell(5)).toString();
-
-                    inputMarkList.add(new MarkList(studentCode, majorCode, Double.parseDouble(asmMark), Double.parseDouble(objMark)));
-                }
-                RestTemplate restTemplate = new RestTemplate();
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", "Bearer " + _token);
-                HttpEntity<Object> request = new HttpEntity<>(headers);
-                MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
-                ObjectMapper objectMapper = new ObjectMapper();
-
-                //Get class
-                ResponseEntity<String> responseClass = restTemplate.exchange(
-                        CLASS_URL + "getClass/" + classId,
-                        HttpMethod.GET, request, String.class);
-                ResponseModel responseModelClass = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {
-                });
-                String classJson = objectMapper.writeValueAsString(responseModelClass.getData());
-                Classses classs = objectMapper.readValue(classJson, new TypeReference<>() {
-                });
-
-
-                //Check valid data and validate exception
-                for (MarkList inputMark : inputMarkList) {
-                    try {
-                        //Check student, check student in class and add to studentList
-                        ResponseEntity<String> responseStudent = restTemplate.exchange(
-                                STUDENT_URL + "findStudentByStudentCard/" + inputMark.getStudentCode(),
-                                HttpMethod.GET, request, String.class);
-                        Student student = objectMapper.readValue(responseStudent.getBody(), new TypeReference<>() {
-                        });
-
-                        ResponseEntity<String> responseStudentClass = restTemplate.exchange(
-                                STUDENT_CLASS_URL + "findStudentClassesByStudentId/" + student.getId(),
-                                HttpMethod.GET, request, String.class);
-                        ResponseModel responseModelStudentClass = objectMapper.readValue(responseStudentClass.getBody(), new TypeReference<>() {
-                        });
-                        String studentClassJson = objectMapper.writeValueAsString(responseModelStudentClass.getData());
-                        List<StudentClass> studentClassList = objectMapper.readValue(studentClassJson, new TypeReference<>() {
-                        });
-
-                        if (studentClassList.stream().filter(studentClass -> studentClass.getClassId() == classId).collect(Collectors.toList()).size() == 0) {
-                            throw new ErrorHandler("You have no permission to mark this student: " + student.getStudentCard());
-                        }
-                        ;
-                        studentList.add(student);
-
-                        //Check existed subject and subject existed in this class
-                        ResponseEntity<String> responseSubject = restTemplate.exchange(
-                                SUBJECT_URL + "findSubjectBySubjectCode/" + inputMark.getSubjectCode(),
-                                HttpMethod.GET, request, String.class);
-                        ResponseModel responseModelMajor = objectMapper.readValue(responseSubject.getBody(), new TypeReference<>() {
-                        });
-                        String majorJson = objectMapper.writeValueAsString(responseModelMajor.getData());
-                        Subject subject = objectMapper.readValue(majorJson, Subject.class);
-                        if (classs.getMajor().getSubjectsById().stream().filter(s -> s.getId() == subject.getId()).collect(Collectors.toList()).size() == 0) {
-                            throw new ErrorHandler("You have no permission to mark this subject: " + subject.getSubjectCode());
-                        }
-
-
-                        //Check existed StudentSubject add to studentSubjectList
-                        content.add("studentId", student.getId());
-                        content.add("subjectId", subject.getId());
-                        HttpEntity<MultiValueMap<String, Object>> requestStudentSubject = new HttpEntity<>(content, headers);
-                        ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "findStudentSubjectBySubjectIdAndStudentId",
-                                HttpMethod.POST, requestStudentSubject, ResponseModel.class);
-                        content.remove("studentId");
-                        content.remove("subjectId");
-
-                        String studentSubjectJson = objectMapper.writeValueAsString(responseStudentSubject.getBody().getData());
-                        if (studentSubjectJson == null || studentSubjectJson == "") {
-                            throw new ErrorHandler("Student " + student.getStudentCard() + " have not learned " + subject.getSubjectCode() + " yet !");
-                        }
-                        StudentSubject studentSubject = objectMapper.readValue(studentSubjectJson, StudentSubject.class);
-                        studentSubjectList.add(studentSubject);
-
-                        //field studentId, subjectId to markList
-                        inputMark.setStudentCode(student.getId().toString());
-                        inputMark.setSubjectCode(String.valueOf(subject.getId()));
-
-                        //Add markList
-                        MarkList first = inputMarkList.stream()
-                                .filter(p -> p.getSubjectCode().equals(studentSubject.getSubjectId().toString()))
-                                .filter(p -> p.getStudentCode().equals(studentSubject.getStudentId().toString()))
-                                .findFirst()
-                                .orElseThrow(() -> new ErrorHandler("Student " + student.getStudentCard() + " have not learned " + subject.getSubjectCode() + " yet !"));
-
-                        Mark mark = new Mark(0, first.getAsmMark(), first.getObjMark(), studentSubject.getId(), null);
-                        //Check existed mark in database
-                        ResponseEntity<Mark> responseMark = restTemplate.exchange(
-                                MARK_URL + "findMarkByStudentSubjectId/" + mark.getStudentSubjectId(),
-                                HttpMethod.GET, request, Mark.class);
-                        Mark body = responseMark.getBody();
-                        if (body == null) {
-                            throw new ErrorHandler(student.getStudentCard() + " dont have record of mark in " + subject.getSubjectCode() + "!");
-                        }
-                        mark.setId(body.getId());
-                        markList.add(mark);
-
-                    } catch (Exception e) {
-                        throw new ErrorHandler(e.getMessage());
-                    }
-                }
-
-
-                //Save markList
-                String markListJson = objectMapper.writeValueAsString(markList);
-                content.add("markList", markListJson);
-                HttpEntity<MultiValueMap<String, Object>> requestMark = new HttpEntity<>(content, headers);
-                ResponseEntity<ResponseModel> responseMark = restTemplate.exchange(MARK_URL + "saveAll",
-                        HttpMethod.POST, requestMark, ResponseModel.class);
-                content.remove("markList");
-                if (responseMark.getStatusCode().is2xxSuccessful()) {
-                    return "success";
-                } else {
-                    throw new ErrorHandler("Update mark list failed");
-                }
-            } else {
-                throw new ErrorHandler("Empty list");
-            }
-        } catch (Exception e) {
-            throw new ErrorHandler(e.getMessage());
-        }
-    }
-
+    
     @GetMapping("/profile")
     public String profile(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
                           Authentication auth) {
@@ -730,4 +517,302 @@ public class HomeController {
             }
         }
     }
+
+
+    @PostMapping("/getAttendanceTrackingByMonth")
+    @ResponseBody
+    public Object getAttendanceTrackingByMonth(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                               @RequestParam("month")String monthValue,@RequestParam("teacherId")Integer teacherId) throws JsonProcessingException {
+        try {
+            JWTUtils.checkExpired(_token);
+            HttpHeaders headers = new HttpHeaders();
+            restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL+"findByTeacherId/"+teacherId,HttpMethod.GET,request,ResponseModel.class);
+            int currentMonth = Integer.parseInt(String.valueOf(monthValue.split("-")[1].charAt(1)));
+            int currentYear = Integer.parseInt(String.valueOf(monthValue.split("-")[0]));
+
+            String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
+            List<AttendanceTracking> attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
+            });
+            attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth).collect(Collectors.toList());
+
+            LocalDate now = LocalDate.parse(monthValue+"-01");
+
+            LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth() );
+            LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth() );
+
+            List<AttendanceTrackingModel> trackingList = new ArrayList<>();
+            for (LocalDate i = firstDayOfMonth;i.isBefore(lastDayOfMonth.plusDays(1));i = i.plusDays(1)){
+                LocalDate finalI = i;
+                List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
+                if(!attendanceTracking.isEmpty()){
+                    for (AttendanceTracking att : attendanceTracking){
+                        AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                        attendanceTrackingModel.setDate(att.getDate());
+                        attendanceTrackingModel.setCount(1);
+                        trackingList.add(attendanceTrackingModel);
+                    }
+                }else{
+                    AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                    attendanceTrackingModel.setDate(finalI.toString());
+                    attendanceTrackingModel.setCount(0);
+                    trackingList.add(attendanceTrackingModel);
+                }
+            }
+
+            HashMap<String, List<AttendanceTrackingModel>> hashMap = new HashMap<String, List<AttendanceTrackingModel>>();
+            for (AttendanceTrackingModel att : trackingList) {
+                String key = att.getDate();
+                if (hashMap.containsKey(key)) {
+                    List<AttendanceTrackingModel> list = hashMap.get(key);
+                    list.add(att);
+
+                } else {
+                    List<AttendanceTrackingModel> list = new ArrayList<AttendanceTrackingModel>();
+                    list.add(att);
+                    hashMap.put(key, list);
+                }
+            }
+            List<AttendanceTrackingModel>list = new ArrayList<>();
+            for (String key : hashMap.keySet()){
+                AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                attendanceTrackingModel.setDate(key);
+                List<AttendanceTrackingModel> trackingModels = hashMap.get(key);
+                int i = 0;
+                for (AttendanceTrackingModel att :trackingModels){
+                    if(att.getCount().equals(1)){
+                        i++;
+                    }
+                }
+                attendanceTrackingModel.setCount(i);
+                list.add(attendanceTrackingModel);
+            }
+
+            list =list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
+            return list;
+        } catch (HttpClientErrorException ex) {
+            log.error(ex.getMessage());
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return "error";
+            }
+        }
+    }
+
+    @GetMapping("/class/get-all-subject/{classId}")
+    @ResponseBody
+    public Object getAllSubjectByClassId(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                  @PathVariable("classId") int classId){
+        try {
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<String> requestGET;
+
+            List<Student> studentList = new ArrayList<>();
+
+            //Get Class by classId
+            requestGET= new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "getClass/"+ classId,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModel = new ObjectMapper().readValue(response.getBody(), new TypeReference<ResponseModel>() {});
+            String json = new ObjectMapper().writeValueAsString(responseModel.getData());
+            Classses classModel = new ObjectMapper().readValue(json, Classses.class);
+
+            //filter ListSubjects
+            List<Subject> subjects = classModel.getMajor().getSubjectsById().stream().sorted(Comparator.comparingInt(Subject::getId)).toList();
+            //Convert to Json
+            String subjectJson = new ObjectMapper().writeValueAsString(subjects);
+
+            //Get Student by classId with StudentClass model
+            for (StudentClass studentClass : classModel.getStudentClassById()) {
+                Student student = studentClass.getClassStudentByStudent();
+                studentList.add(student);
+            }
+
+            return subjectJson;
+
+        } catch (Exception ex) {
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/class/get-student-list")
+    @ResponseBody
+    public Object getStudentListSubject(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                        @RequestParam("classId") int classId,
+                                        @RequestParam("subjectId")int subjectId){
+        try {
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<String> requestGET;
+
+            List<Student> studentList = new ArrayList<>();
+            List<InputMarkModel> inputMarkModelList = new ArrayList<>();
+
+            //Get Class by classId
+            requestGET= new HttpEntity<>(headers);
+            ResponseEntity<String> responseStudent = restTemplate.exchange(CLASS_URL + "getClass/"+ classId,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModelStudent = new ObjectMapper().readValue(responseStudent.getBody(), new TypeReference<ResponseModel>() {});
+            String jsonClass = new ObjectMapper().writeValueAsString(responseModelStudent.getData());
+            Classses classModel = new ObjectMapper().readValue(jsonClass, Classses.class);
+
+            //Get Subject by subjectId
+            requestGET= new HttpEntity<>(headers);
+            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/"+ subjectId,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {});
+            String jsonSubject = new ObjectMapper().writeValueAsString(responseModelSubject.getData());
+            Subject subject = new ObjectMapper().readValue(jsonSubject, Subject.class);
+
+
+            //Get Student by classId with StudentClass model
+            for (StudentClass studentClass : classModel.getStudentClassById()) {
+                Student student = studentClass.getClassStudentByStudent();
+                studentList.add(student);
+                inputMarkModelList.add(new InputMarkModel(student, subject));
+            }
+
+            String inputMarkJson = new ObjectMapper().writeValueAsString(inputMarkModelList);
+
+            return inputMarkJson;
+
+        } catch (Exception ex) {
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/class/input-mark")
+    @ResponseBody
+    public Object getStudentListSubject(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                        @RequestParam("teacherId") int teacherId,
+                                        @RequestParam("mark_list") String mark_list,
+                                        @RequestParam("classId")int classId){
+        try{
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            List<Mark> markList = new ArrayList<>();
+
+            List<InputMarkModel> inputMarkModelList = objectMapper.readValue(mark_list, new TypeReference<>() {});
+
+            if (inputMarkModelList.size() != 0 ){
+                //Get class
+                ResponseEntity<String> responseClass = restTemplate.exchange(
+                        CLASS_URL + "getClass/" + classId,
+                        HttpMethod.GET, request, String.class);
+                ResponseModel responseModelClass  = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {});
+                String classJson = objectMapper.writeValueAsString(responseModelClass.getData());
+                Classses classs = objectMapper.readValue(classJson, new TypeReference<>() {});
+
+                for (InputMarkModel item : inputMarkModelList) {
+                    //Check existed mark in database
+                    ResponseEntity<Mark> responseMark = restTemplate.exchange(
+                            MARK_URL + "findMarkByStudentSubjectId/" + item.getStudentSubjectId(),
+                            HttpMethod.GET, request, Mark.class);
+                    Mark body = responseMark.getBody();
+                    if (body != null) {
+                        throw new ErrorHandler(item.getFullName() + " already have a record of mark in " + item.getSubjectName() + "!");
+                    }
+                    //Check permission mark a student
+                    if (classs.getStudentClassById().stream().filter(studentClass -> studentClass.getStudentId() == item.getStudentId()).collect(Collectors.toList()).size() == 0) {
+                        throw new ErrorHandler("You have no permission to mark this student: " + item.getFullName());
+                    }
+
+                    //Check existed subject and subject existed in this class
+                    if (classs.getMajor().getSubjectsById().stream().filter(s -> s.getId() == item.getSubjectId()).collect(Collectors.toList()).size() == 0) {
+                        throw new ErrorHandler("You have no permission to mark this subject: " + item.getSubjectName());
+                    }
+
+                    markList.add(new Mark(0, item.getAsmMark(), item.getAsmMark(), item.getStudentSubjectId(), null));
+                }
+
+                //Save markList
+                content.add("markList", markList);
+                HttpEntity<MultiValueMap<String, Object>> requestMark = new HttpEntity<>(content, headers);
+                ResponseEntity<ResponseModel> responseMark = restTemplate.exchange(MARK_URL + "saveAll",
+                        HttpMethod.POST, requestMark, ResponseModel.class);
+                content.remove("markList");
+                if (responseMark.getStatusCode().is2xxSuccessful()){
+                    return "success";
+                }else {
+                    throw new ErrorHandler("Save mark list failed");
+                }
+            }else{
+                throw new ErrorHandler("Empty list");
+            }
+        } catch (Exception e) {
+            throw new ErrorHandler(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/class/download_template/{classId}/{subjectId}")
+    @ResponseBody
+    public void downloadTemplate(HttpServletResponse response,
+                                   @CookieValue(name = "_token", defaultValue = "") String _token,
+                                   @PathVariable("classId") int classId,
+                                   @PathVariable("subjectId")int subjectId){
+        try{
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            List<InputMarkModel> inputMarkModelList = new ArrayList<>();
+
+            ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId,
+                    HttpMethod.GET, request, String.class);
+            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),new TypeReference<>() {});
+            String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
+
+            Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
+
+            //Get Subject by subjectId
+            request= new HttpEntity<>(headers);
+            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/"+ subjectId,
+                    HttpMethod.GET, request, String.class);
+            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {});
+            String jsonSubject = new ObjectMapper().writeValueAsString(responseModelSubject.getData());
+            Subject subject = new ObjectMapper().readValue(jsonSubject, Subject.class);
+
+            //Get Student by classId with StudentClass model
+            for (StudentClass studentClass : classModel.getStudentClassById()) {
+                Student student = studentClass.getClassStudentByStudent();
+                inputMarkModelList.add(new InputMarkModel(student, subject));
+            }
+
+            response.setContentType("application/octet-stream");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=import_mark_" + classModel.getClassCode() + ".xlsx";
+            response.setHeader(headerKey, headerValue);
+
+            ImportMarkExport importMarkExport = new ImportMarkExport(inputMarkModelList);
+            importMarkExport.generateExcelFile(response);
+            //return bytes;
+
+        }catch (Exception e){
+            throw new ErrorHandler(e.getMessage());
+        }
+    }
+
+
 }

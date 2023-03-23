@@ -65,7 +65,7 @@ public class SubjectService implements ISubject {
 
     @Override
     public Subject findOne(int id) {
-        return subjectDao.findById(id).orElseThrow(() -> new ErrorHandler("Không tìm thấy dữ liệu"));
+        return subjectDao.findById(id).orElseThrow(() -> new ErrorHandler("do not found any subject with id: "+id));
     }
 
     @Override
