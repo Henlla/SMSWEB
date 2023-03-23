@@ -97,7 +97,6 @@ public class ApplicationClientController {
         }
     }
 
-
     @PostMapping("/sendApplication")
     @ResponseBody
     public Object SendApplication(@CookieValue(name = "_token") String _token, @RequestBody Application application) {

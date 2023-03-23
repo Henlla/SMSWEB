@@ -42,6 +42,7 @@
         <section class="row mb-3">
           <div class="col-12">
             <input type="text" hidden id="classCode" th:value="${classses.classCode}">
+            <input type="text" hidden id="classRoom" th:value="${classses.getClassRoom().getRoomCode()}">
             <input type="text" hidden id="classId" th:value="${classses.getId()}">
             <input type="text" hidden id="shift" th:value="${classses.getShift()}">
           </div>
@@ -76,7 +77,7 @@
             <div class="timetable-img text-center">
               <img src="img/content/timetable.png" alt="">
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive mb-3">
               <table id="schedule_table" class="table table-bordered text-center">
                 <thead>
                 <tr class="bg-light-gray" style="background-color:#6b90da ">

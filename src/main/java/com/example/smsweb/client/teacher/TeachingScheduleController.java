@@ -115,11 +115,11 @@ public class TeachingScheduleController {
                 });
 
                 LocalDate now = LocalDate.now();
-                Integer week = now.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                Integer week = now.get(WeekFields.of(Locale.getDefault()).weekOfYear());
                 List<TeachingCurrenDate> teachingCurrenDateList = new ArrayList<>();
                 for (ScheduleDetail scheduleDetail:scheduleDetails){
                     if (LocalDate.parse(scheduleDetail.getDate())
-                            .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()) == week) {
+                            .get(WeekFields.of(Locale.getDefault()).weekOfYear()) == week) {
                         ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL+"get/"+scheduleDetail.getScheduleId(),HttpMethod.POST,request,ResponseModel.class);
                         String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                         Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
@@ -142,14 +142,14 @@ public class TeachingScheduleController {
 
                 LocalDate firstDay = now.with(firstDayOfYear()); // 2015-01-01
                 LocalDate lastDay = now.with(lastDayOfYear()); // 2015-12-31
-                int weekOfFirstDay = firstDay.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                int weekOfLastDay = lastDay.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                int weekOfFirstDay = firstDay.get(WeekFields.of(Locale.getDefault()).weekOfYear());
+                int weekOfLastDay = lastDay.get(WeekFields.of(Locale.getDefault()).weekOfYear());
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM");
                 List<WeekOfYear> weekOfYearList = new ArrayList<>();
                 for (int i = weekOfFirstDay; i <= weekOfLastDay; i++) {
                     StringBuilder toDate = new StringBuilder();
                     for (LocalDate date = firstDay; date.isBefore(lastDay.plusDays(1)); date = date.plusDays(1)) {
-                        int weekOfYear = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                        int weekOfYear = date.get(WeekFields.of(Locale.getDefault()).weekOfYear());
                         if (i == weekOfYear) {
                             DayOfWeek firstDayOfWeek = WeekFields.of(Locale.getDefault()).getFirstDayOfWeek();
                             LocalDate startOfCurrentWeek = date.with(TemporalAdjusters.previousOrSame(firstDayOfWeek));

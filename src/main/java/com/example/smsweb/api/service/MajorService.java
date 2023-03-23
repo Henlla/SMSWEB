@@ -83,18 +83,18 @@ public class MajorService implements IMajor {
                     if (!listMajor.isEmpty()) {
                         dao.saveAll(listMajor);
                     } else {
-                        return "File excel không có dữ liệu";
+                        return "Excel don't have data";
                     }
                     return "";
                 } catch (Exception e) {
                     log.error("Import Major: " + e.getMessage());
-                    return "Đỗ dữ liệu thất bại";
+                    return "Import data fail";
                 }
             } else {
-                return "Vui lòng chọn file excel";
+                return "Please choose excel file";
             }
         } else {
-            return "Vui lòng chọn file";
+            return "Please choose file";
         }
     }
 

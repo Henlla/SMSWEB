@@ -32,4 +32,6 @@ public interface ScheduleDetailsRepository extends JpaRepository<ScheduleDetail,
     List<ScheduleDetail> findScheduleDetailsByDateAndTeacherId(String date, Integer teacherId);
 
     List<ScheduleDetail> findScheduleDetailsByDateAndScheduleIdAndTeacherId(String date, Integer scheduleId, Integer teacherId);
+
+    List<ScheduleDetail> findScheduleDetailsByDateAndSlotAndShift(String date, Integer slot, String shift);
 }

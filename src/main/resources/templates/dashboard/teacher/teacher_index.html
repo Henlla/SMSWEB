@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>List teacher</title>
-<!--    <link rel="stylesheet" href="/css/custom.css">-->
+    <!--    <link rel="stylesheet" href="/css/custom.css">-->
     <link rel="stylesheet" href="/css/teacher_details.css">
 </head>
 <body>
@@ -18,6 +18,12 @@
                         <div class="col-sm-6">
                             <h5 class="m-0">Teacher Manager</h5>
                         </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">List teachers</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -25,7 +31,9 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:href="@{'/dashboard/teacher/create-teacher'}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="btn btn-info btn-sm">Create</a>
+                            <a th:href="@{'/dashboard/teacher/create-teacher'}"
+                               th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                               class="btn btn-info btn-sm">Create</a>
                         </div>
                     </div>
                     <div class="row">
@@ -58,7 +66,8 @@
                                         <a class="mr-3" th:data-name="${teacher.id}"
                                            onclick="OnDetails(this.getAttribute('data-name'))"><i
                                                 class="fas fa-eye indigo-text"></i></a>
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="mr-3" th:data-name="${teacher.id}"
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           class="mr-3" th:data-name="${teacher.id}"
                                            onclick="OnUpdate(this.getAttribute('data-name'))"><i
                                                 class="fas fa-pencil-alt"></i></a>
                                     </td>
@@ -242,7 +251,7 @@
                                                 <input type="text" id="identityCard_u"
                                                        placeholder="Enter identity card..."
                                                        class="form-control form-control-sm"
-                                                       >
+                                                >
                                             </div>
                                             <div class="col-12">
                                                 <label class="m-0" style="font-size: 13px">Email :</label>

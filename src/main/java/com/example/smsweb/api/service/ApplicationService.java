@@ -50,13 +50,7 @@ public class ApplicationService implements IApplication {
 
     @Override
     public List<Application> findApplicationByStudentId(Integer id) {
-        listApplication = new ArrayList<>();
-        listApplication = dao.findApplicationsByStudentId(id);
-        if (!listApplication.isEmpty()) {
-            return dao.findApplicationsByStudentId(id);
-        } else {
-            return null;
-        }
+        return dao.findApplicationsByStudentId(id);
     }
 
 }

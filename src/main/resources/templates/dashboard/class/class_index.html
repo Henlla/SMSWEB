@@ -17,6 +17,12 @@
                         <div class="col-sm-6">
                             <h5 class="m-0">List class</h5>
                         </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">List Class</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -54,8 +60,10 @@
                                     <td><span th:text="${class.studentClassById.size()}"></span></td>
                                     <td><span th:text="${class.getLimitStudent()}"></span></td>
                                     <td class="text-center">
-                                        <a class="mr-3" th:href="${'/dashboard/class/class-details/'+ class.getClassCode()}" ><i class="fas fa-eye indigo-text"></i></a>
-<!--                                        <a class="mr-3" th:data-name="${class.getId()}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>-->
+                                        <a class="mr-3"
+                                           th:href="${'/dashboard/class/class-details/'+ class.getClassCode()}"><i
+                                                class="fas fa-eye indigo-text"></i></a>
+                                        <!--                                        <a class="mr-3" th:data-name="${class.getId()}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>-->
                                     </td>
                                 </tr>
                                 </tbody>
