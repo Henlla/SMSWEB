@@ -48,9 +48,18 @@ public class SubjectRestController extends GenericController<Subject> {
         }
     }
     @GetMapping("/findSubjectBySubjectCode/{code}")
-    public ResponseEntity<?> findSubjectBySubjectCode(@PathVariable("code") String subjecctCode){
+    public ResponseEntity<?> findSubjectBySubjectCode(@PathVariable("code") String subjectCode){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findSubjectBySubjectCode(subjecctCode)));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findSubjectBySubjectCode(subjectCode)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getSubjectBySubjectId/{id}")
+    public ResponseEntity<?> findSubjectBySubjectCode(@PathVariable("id") int id){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findOne(id)));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(),e.getMessage()));
         }
