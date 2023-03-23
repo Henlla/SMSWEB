@@ -1045,7 +1045,7 @@ public class ClassController {
                 XSSFSheet sheet = workbook.getSheetAt(0);
                 for (int rowIndex = 0; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 1); rowIndex++) {
                     XSSFRow row = sheet.getRow(rowIndex);
-                    if (rowIndex > 0) {
+                    if (rowIndex < 1) {
                         continue;
                     }
                     String student_code = ExcelHelper.getValue(row.getCell(1)).toString();
