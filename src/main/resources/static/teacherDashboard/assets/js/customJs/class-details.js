@@ -512,34 +512,6 @@ $(document).ready(function () {
         event.preventDefault();
 
         if(check_input_mark_not_null()){
-            $("#mark_table tbody tr td input").each(function () {
-                $(this).replaceWith($(this).val());
-            });
-
-            var jsonRowsTable= '';
-            let array = $("#mark_table").DataTable({
-                destroy: true,
-                scroll:true,
-                paging: false,
-                search: false,
-                "searching": false
-            }).rows().data().toArray();
-            console.log(array)
-            jsonRowsTable+='[';
-            for (let index = 0; index < array.length; index++) {
-                jsonRowsTable += `{"studentId":${array[index][0]},"subjectId":${array[index][1]},"studentSubjectId":"${array[index][2]}","fullName":"${array[index][3]}","subjectName":"${array[index][4]}","asmMark":${array[index][5]},"objMark":${array[index][6]}}`;
-                if (index != array.length - 1){
-                    jsonRowsTable += ','
-                }
-            }
-            jsonRowsTable+=']';
-            console.log(jsonRowsTable)
-
-            var data = new FormData();
-            data.append("teacherId",$("#teacherId").val());
-            data.append("classId",$("#classId").val());
-            data.append("mark_list",jsonRowsTable);
-
             Swal.fire({
                 icon: 'question',
                 title: 'Confirm',
@@ -552,6 +524,38 @@ $(document).ready(function () {
                 confirmButtonText: 'Ok',
             }).then((result)=>{
                 if(result.isConfirmed){
+                    $("#mark_table tbody tr td input").each(function () {
+                        $(this).replaceWith($(this).val());
+                    });
+
+                    var jsonRowsTable= '';
+                    let array = $("#mark_table").DataTable({
+                        destroy: true,
+                        scroll:true,
+                        paging: false,
+                        search: false,
+                        "searching": false
+                    }).rows().data().toArray();
+
+                    if ( $.fn.DataTable.isDataTable('#mark_table') ) {
+                        $('#mark_table').DataTable().destroy();
+                    }
+                    $('#mark_table tbody').empty();
+
+                    jsonRowsTable+='[';
+                    for (let index = 0; index < array.length; index++) {
+                        jsonRowsTable += `{"studentId":${array[index][0]},"subjectId":${array[index][1]},"studentSubjectId":"${array[index][2]}","fullName":"${array[index][3]}","subjectName":"${array[index][4]}","asmMark":${array[index][5]},"objMark":${array[index][6]}}`;
+                        if (index != array.length - 1){
+                            jsonRowsTable += ','
+                        }
+                    }
+                    jsonRowsTable+=']';
+
+                    var data = new FormData();
+                    data.append("teacherId",$("#teacherId").val());
+                    data.append("classId",$("#classId").val());
+                    data.append("mark_list",jsonRowsTable);
+
                     $.ajax({
                         url: "/teacher/class/input-mark",
                         method: "POST",

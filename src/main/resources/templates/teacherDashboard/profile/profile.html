@@ -28,7 +28,7 @@
             <div class="card-body">
               <div class="row table-responsive">
                 <div class="col-4">
-                  <img
+                  <img width="100%" height="100%"
                     th:src="${teacher.getProfileByProfileId().getAvartarUrl()}"
                     alt=""
                   />
@@ -36,51 +36,43 @@
                 <div class="col-8">
                   <div class="row">
                     <div class="col-6">
-                      <label for=""> Full Name : </label>
-                      <b
-                        th:text="${teacher.profileByProfileId.firstName +' '+teacher.profileByProfileId.lastName}"
-                      ></b>
+                      <label> Full Name : </label>
+                      <b th:text="${teacher.profileByProfileId.firstName +' '+teacher.profileByProfileId.lastName}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Teacher Card : </label>
+                      <label> Teacher Card : </label>
                       <b th:text="${teacher.teacherCard}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Gender : </label>
+                      <label> Gender : </label>
                       <b th:text="${teacher.profileByProfileId.sex}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Date of birth : </label>
+                      <label> Date of birth : </label>
                       <b th:text="${teacher.profileByProfileId.dob}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Email : </label>
+                      <label> Email : </label>
                       <b th:text="${teacher.profileByProfileId.email}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Phone : </label>
+                      <label> Phone : </label>
                       <b th:text="${teacher.profileByProfileId.phone}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Identity card : </label>
-                      <b
-                        th:text="${teacher.profileByProfileId.identityCard}"
-                      ></b>
+                      <label> Identity card : </label>
+                      <b th:text="${teacher.profileByProfileId.identityCard}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Account : </label>
-                      <b
-                        th:text="${#authentication.getPrincipal().username}"
-                      ></b>
+                      <label> Account : </label>
+                      <b th:text="${#authentication.getPrincipal().username}"></b>
                     </div>
                     <div class="col-12">
-                      <label for=""> Address : </label>
-                      <b
-                        th:text="${teacher.profileByProfileId.address+' , '+teacher.profileByProfileId.wardByWardId.name+' , '+teacher.profileByProfileId.districtByDistrictId.name+' , '+teacher.profileByProfileId.profileProvince.name}"
-                      ></b>
+                      <label> Address : </label>
+                      <b th:text="${teacher.profileByProfileId.address+' , '+teacher.profileByProfileId.wardByWardId.name+' , '+teacher.profileByProfileId.districtByDistrictId.name+' , '+teacher.profileByProfileId.profileProvince.name}"></b>
                     </div>
                     <div class="col-6">
-                      <label for=""> Teaching class : </label>
+                      <label> Teaching class : </label>
                       <th:block th:if="${#lists.isEmpty(classList)}">
                         <b> None </b>
                       </th:block>
@@ -102,72 +94,71 @@
                   </div>
                 </div>
               </div>
-              <div
-                class="modal fade"
-                id="change_password"
-                tabindex="-1"
-                aria-labelledby="exampleModalLabel"
-                aria-hidden="true"
-              >
-                <div class="modal-dialog modal-lg">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">
-                        Change password
-                      </h5>
+            </div>
+          </div>
+
+          <div
+                  class="modal fade"
+                  id="change_password"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">
+                    Change password
+                  </h5>
+                </div>
+                <div class="modal-body">
+                  <form id="form_change_password">
+                    <div class="container">
+                      <input type="hidden" id="accountId" th:value="${account.id}">
+                      <div class="form-group">
+                        <label for="oldPass">Old password :</label>
+                        <input
+                                type="password"
+                                name="oldPass"
+                                id="oldPass"
+                                class="form-control"
+                                placeholder=""
+                                aria-describedby="oldPass"
+                        />
+                        <small id="mess_oldPass" class="text-muted"
+                        ></small
+                        >
+                      </div>
+                      <div class="form-group">
+                        <label for="newPass">New password</label>
+                        <input
+                                type="password"
+                                name="newPass"
+                                id="newPass"
+                                class="form-control"
+                                placeholder=""
+                                aria-describedby="newPass"
+                        />
+                        <small id="mess_newPass" class="text-muted"></small
+                        >
+                      </div>
                     </div>
-                    <div class="modal-body">
-                      <form id="form_change_password">
-                        <div class="container">
-                            <input type="hidden" id="accountId" th:value="${account.id}">
-                          <div class="form-group">
-                            <label for="oldPass">Old password :</label>
-                            <input
-                              type="password"
-                              name="oldPass"
-                              id="oldPass"
-                              class="form-control"
-                              placeholder=""
-                              aria-describedby="oldPass"
-                            />
-                            <small id="mess_oldPass" class="text-muted"
-                              ></small
-                            >
-                          </div>
-                          <div class="form-group">
-                            <label for="newPass">New password</label>
-                            <input
-                              type="password"
-                              name="newPass"
-                              id="newPass"
-                              class="form-control"
-                              placeholder=""
-                              aria-describedby="newPass"
-                            />
-                            <small id="newPass" class="text-muted"
-                              ></small
-                            >
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button
-                            type="button"
-                            class="btn btn-danger btn-sm"
-                            data-dismiss="modal"
-                          >
-                            <i class="fas fa-times"></i> Close
-                          </button>
-                          <button
-                            type="submit"
-                            id="submitChange"
-                            class="btn btn-success btn-sm"
-                          >
-                            <i class="fas fa-times"></i> Change
-                          </button>
-                        </div>
-                      </form>
+                    <div class="modal-footer">
+                      <button
+                              type="button"
+                              class="btn btn-danger btn-sm"
+                              data-dismiss="modal"
+                      >
+                        <i class="fas fa-times"></i> Close
+                      </button>
+                      <button
+                              type="submit"
+                              id="submitChange"
+                              class="btn btn-success btn-sm"
+                      >
+                        <i class="fas fa-times"></i> Change
+                      </button>
                     </div>
-                  </div>
+                  </form>
                 </div>
               </div>
             </div>
