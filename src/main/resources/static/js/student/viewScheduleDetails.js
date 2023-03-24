@@ -1,5 +1,6 @@
 $(()=>{
     $('.timetable').hide()
+    $('#week').select2()
 })
 
 

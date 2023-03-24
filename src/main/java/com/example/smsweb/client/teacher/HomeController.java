@@ -9,6 +9,15 @@ import com.example.smsweb.dto.teacher.InputMarkModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
 import com.example.smsweb.utils.ExcelExport.ImportMarkExport;
+import com.example.smsweb.models.Account;
+import com.example.smsweb.models.Classses;
+import com.example.smsweb.models.News;
+import com.example.smsweb.models.Profile;
+import com.example.smsweb.models.Schedule;
+import com.example.smsweb.models.ScheduleDetail;
+import com.example.smsweb.models.Student;
+import com.example.smsweb.models.Subject;
+import com.example.smsweb.models.Teacher;
 import com.example.smsweb.utils.StreamHelper;
 import com.example.smsweb.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -107,12 +116,12 @@ public class HomeController {
                 List<TeachingCurrenDate> lCurrenDates = new ArrayList<>();
                 for (ScheduleDetail scheduleDetail : scheduleDetails) {
                     if (LocalDate.parse(scheduleDetail.getDate()).equals(currentDate)) {
-                        ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL+"get/"+scheduleDetail.getScheduleId(),HttpMethod.POST,request,ResponseModel.class);
+                        ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL + "get/" + scheduleDetail.getScheduleId(), HttpMethod.POST, request, ResponseModel.class);
                         String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                         Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
-                        ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL+"getClass/"+schedule.getClassId(),HttpMethod.GET,request,ResponseModel.class);
+                        ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + schedule.getClassId(), HttpMethod.GET, request, ResponseModel.class);
                         String jsonClass = objectMapper.writeValueAsString(responseClass.getBody().getData());
-                        Classses classses = objectMapper.readValue(jsonClass,Classses.class);
+                        Classses classses = objectMapper.readValue(jsonClass, Classses.class);
                         TeachingCurrenDate currentDateTeaching = new TeachingCurrenDate();
                         if (classses.getShift().substring(0, 1).equals("M")) {
                             if (scheduleDetail.getSlot().equals(1)) {
@@ -161,40 +170,56 @@ public class HomeController {
                         lCurrenDates.add(currentDateTeaching);
                     }
                 }
-                
-                ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL+"findByTeacherId/"+teacherResponse.getBody().getId(),HttpMethod.GET,request,ResponseModel.class);
                 int currentMonth = LocalDate.now().getMonthValue();
                 int currentYear = LocalDate.now().getYear();
                 DateTimeFormatter monthYear = DateTimeFormatter.ofPattern("yyyy-MM");
                 String month = LocalDate.now().format(monthYear);
-                String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
-                List<AttendanceTracking> attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
-                });
-
-                List<AttendanceTracking> listChart = attendanceTrackingList;
-                attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth &&LocalDate.parse(attendanceTracking.getDate()).getYear()==currentYear).collect(Collectors.toList());
-
-                LocalDate firstDayOfMonth = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth() );
-                LocalDate lastDayOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth() );
-
+                ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL + "findByTeacherId/" + teacherResponse.getBody().getId(), HttpMethod.GET, request, ResponseModel.class);
                 List<AttendanceTrackingModel> trackingList = new ArrayList<>();
-                for (LocalDate i = firstDayOfMonth;i.isBefore(lastDayOfMonth.plusDays(1));i = i.plusDays(1)){
-                    LocalDate finalI = i;
-                    List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
-                    if(!attendanceTracking.isEmpty()){
-                        for (AttendanceTracking att : attendanceTracking){
+
+                LocalDate firstDayOfMonth = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+                LocalDate lastDayOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
+                List<AttendanceTracking> listChart = new ArrayList<>();
+
+                List<AttendanceTracking> attendanceTrackingList = new ArrayList<>();
+
+                if (responseAttendanceTracking.getBody().getData() != null) {
+                    String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
+                    attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
+                    });
+
+                    listChart = attendanceTrackingList;
+                    attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth && LocalDate.parse(attendanceTracking.getDate()).getYear() == currentYear).collect(Collectors.toList());
+
+
+                    for (LocalDate i = firstDayOfMonth; i.isBefore(lastDayOfMonth.plusDays(1)); i = i.plusDays(1)) {
+                        LocalDate finalI = i;
+                        List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
+                        if (!attendanceTracking.isEmpty()) {
+                            for (AttendanceTracking att : attendanceTracking) {
+                                AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                                attendanceTrackingModel.setDate(att.getDate());
+                                attendanceTrackingModel.setCount(1);
+                                trackingList.add(attendanceTrackingModel);
+                            }
+                        } else {
                             AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
-                            attendanceTrackingModel.setDate(att.getDate());
-                            attendanceTrackingModel.setCount(1);
+                            attendanceTrackingModel.setDate(finalI.toString());
+                            attendanceTrackingModel.setCount(0);
                             trackingList.add(attendanceTrackingModel);
                         }
-                    }else{
+                    }
+
+                } else {
+                    for (LocalDate i = firstDayOfMonth; i.isBefore(lastDayOfMonth.plusDays(1)); i = i.plusDays(1)) {
+                        LocalDate finalI = i;
                         AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
                         attendanceTrackingModel.setDate(finalI.toString());
                         attendanceTrackingModel.setCount(0);
                         trackingList.add(attendanceTrackingModel);
                     }
                 }
+
 
                 HashMap<String, List<AttendanceTrackingModel>> hashMap = new HashMap<String, List<AttendanceTrackingModel>>();
                 for (AttendanceTrackingModel att : trackingList) {
@@ -209,14 +234,15 @@ public class HomeController {
                         hashMap.put(key, list);
                     }
                 }
-                List<AttendanceTrackingModel>list = new ArrayList<>();
-                for (String key : hashMap.keySet()){
+
+                List<AttendanceTrackingModel> list = new ArrayList<>();
+                for (String key : hashMap.keySet()) {
                     AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
                     attendanceTrackingModel.setDate(key);
                     List<AttendanceTrackingModel> trackingModels = hashMap.get(key);
                     int i = 0;
-                    for (AttendanceTrackingModel att :trackingModels){
-                        if(att.getCount().equals(1)){
+                    for (AttendanceTrackingModel att : trackingModels) {
+                        if (att.getCount().equals(1)) {
                             i++;
                         }
                     }
@@ -225,7 +251,7 @@ public class HomeController {
                 }
 
                 List<AttendanceTrackingChart> chartList = new ArrayList<>();
-                for (int i =1 ; i <= 12;i++){
+                for (int i = 1; i <= 12; i++) {
                     AttendanceTrackingChart attendanceTrackingChart = new AttendanceTrackingChart();
 //                    String monthValue = i < 10 ? String.valueOf("0"+i):String.valueOf(i);
                     int finalI = i;
@@ -233,16 +259,16 @@ public class HomeController {
                     attendanceTrackingChart.setX(StringUtils.theMonth(finalI - 1));
                     int total = 0;
                     List<AttendanceTracking> list1 = listChart.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == finalI && LocalDate.parse(attendanceTracking.getDate()).getYear() == currentYear).toList();
-                    if(!list1.isEmpty()){
+                    if (!list1.isEmpty()) {
                         total = list1.size();
                         attendanceTrackingChart.setY(total * 2);
-                    }else{
+                    } else {
                         attendanceTrackingChart.setY(total);
                     }
                     chartList.add(attendanceTrackingChart);
                 }
 
-                list =list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
+                list = list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
                 model.addAttribute("currentMonthTotalAttendanceTracking", attendanceTrackingList.stream().count() * 2);
                 model.addAttribute("listCurrenTeachingDate", lCurrenDates);
                 model.addAttribute("month", month);
@@ -427,7 +453,7 @@ public class HomeController {
             throw new ErrorHandler(ex.getMessage());
         }
     }
-    
+
     @GetMapping("/profile")
     public String profile(Model model, @CookieValue(name = "_token", defaultValue = "") String _token,
                           Authentication auth) {
@@ -494,7 +520,7 @@ public class HomeController {
     @PostMapping("/getAttendanceTrackingByMonth")
     @ResponseBody
     public Object getAttendanceTrackingByMonth(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                               @RequestParam("month")String monthValue,@RequestParam("teacherId")Integer teacherId) throws JsonProcessingException {
+                                               @RequestParam("month") String monthValue, @RequestParam("teacherId") Integer teacherId) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             HttpHeaders headers = new HttpHeaders();
@@ -502,38 +528,51 @@ public class HomeController {
             ObjectMapper objectMapper = new ObjectMapper();
             headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL+"findByTeacherId/"+teacherId,HttpMethod.GET,request,ResponseModel.class);
             int currentMonth = Integer.parseInt(String.valueOf(monthValue.split("-")[1].charAt(1)));
             int currentYear = Integer.parseInt(String.valueOf(monthValue.split("-")[0]));
+            LocalDate now = LocalDate.parse(monthValue + "-01");
 
-            String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
-            List<AttendanceTracking> attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
-            });
-            attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth).collect(Collectors.toList());
-
-            LocalDate now = LocalDate.parse(monthValue+"-01");
-
-            LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth() );
-            LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth() );
-
+            LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth());
+            LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth());
+            ResponseEntity<ResponseModel> responseAttendanceTracking = restTemplate.exchange(ATTENDANCE_TRACKING_URL + "findByTeacherId/" + teacherId, HttpMethod.GET, request, ResponseModel.class);
+            List<AttendanceTracking> attendanceTrackingList = new ArrayList<>();
             List<AttendanceTrackingModel> trackingList = new ArrayList<>();
-            for (LocalDate i = firstDayOfMonth;i.isBefore(lastDayOfMonth.plusDays(1));i = i.plusDays(1)){
-                LocalDate finalI = i;
-                List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
-                if(!attendanceTracking.isEmpty()){
-                    for (AttendanceTracking att : attendanceTracking){
+            if (responseAttendanceTracking.getBody().getData() != null) {
+                String jsonAttendanceTracking = objectMapper.writeValueAsString(responseAttendanceTracking.getBody().getData());
+                attendanceTrackingList = objectMapper.readValue(jsonAttendanceTracking, new TypeReference<List<AttendanceTracking>>() {
+                });
+                attendanceTrackingList = attendanceTrackingList.stream().filter(attendanceTracking -> LocalDate.parse(attendanceTracking.getDate()).getMonthValue() == currentMonth).collect(Collectors.toList());
+
+
+                trackingList = new ArrayList<>();
+                for (LocalDate i = firstDayOfMonth; i.isBefore(lastDayOfMonth.plusDays(1)); i = i.plusDays(1)) {
+                    LocalDate finalI = i;
+                    List<AttendanceTracking> attendanceTracking = attendanceTrackingList.stream().filter(attendanceTracking1 -> LocalDate.parse(attendanceTracking1.getDate()).equals(finalI)).collect(Collectors.toList());
+                    if (!attendanceTracking.isEmpty()) {
+                        for (AttendanceTracking att : attendanceTracking) {
+                            AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
+                            attendanceTrackingModel.setDate(att.getDate());
+                            attendanceTrackingModel.setCount(1);
+                            trackingList.add(attendanceTrackingModel);
+                        }
+                    } else {
                         AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
-                        attendanceTrackingModel.setDate(att.getDate());
-                        attendanceTrackingModel.setCount(1);
+                        attendanceTrackingModel.setDate(finalI.toString());
+                        attendanceTrackingModel.setCount(0);
                         trackingList.add(attendanceTrackingModel);
                     }
-                }else{
+                }
+            } else {
+                trackingList = new ArrayList<>();
+                for (LocalDate i = firstDayOfMonth; i.isBefore(lastDayOfMonth.plusDays(1)); i = i.plusDays(1)) {
+                    LocalDate finalI = i;
                     AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
                     attendanceTrackingModel.setDate(finalI.toString());
                     attendanceTrackingModel.setCount(0);
                     trackingList.add(attendanceTrackingModel);
                 }
             }
+
 
             HashMap<String, List<AttendanceTrackingModel>> hashMap = new HashMap<String, List<AttendanceTrackingModel>>();
             for (AttendanceTrackingModel att : trackingList) {
@@ -548,14 +587,15 @@ public class HomeController {
                     hashMap.put(key, list);
                 }
             }
-            List<AttendanceTrackingModel>list = new ArrayList<>();
-            for (String key : hashMap.keySet()){
+            
+            List<AttendanceTrackingModel> list = new ArrayList<>();
+            for (String key : hashMap.keySet()) {
                 AttendanceTrackingModel attendanceTrackingModel = new AttendanceTrackingModel();
                 attendanceTrackingModel.setDate(key);
                 List<AttendanceTrackingModel> trackingModels = hashMap.get(key);
                 int i = 0;
-                for (AttendanceTrackingModel att :trackingModels){
-                    if(att.getCount().equals(1)){
+                for (AttendanceTrackingModel att : trackingModels) {
+                    if (att.getCount().equals(1)) {
                         i++;
                     }
                 }
@@ -563,7 +603,7 @@ public class HomeController {
                 list.add(attendanceTrackingModel);
             }
 
-            list =list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
+            list = list.stream().sorted((a, b) -> LocalDate.parse(a.getDate()).compareTo(LocalDate.parse(b.getDate()))).collect(Collectors.toList());
             return list;
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
@@ -578,7 +618,7 @@ public class HomeController {
     @GetMapping("/class/get-all-subject/{classId}")
     @ResponseBody
     public Object getAllSubjectByClassId(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                  @PathVariable("classId") int classId){
+                                         @PathVariable("classId") int classId) {
         try {
             if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
 
@@ -590,10 +630,11 @@ public class HomeController {
             List<Student> studentList = new ArrayList<>();
 
             //Get Class by classId
-            requestGET= new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "getClass/"+ classId,
+            requestGET = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId,
                     HttpMethod.GET, requestGET, String.class);
-            ResponseModel responseModel = new ObjectMapper().readValue(response.getBody(), new TypeReference<ResponseModel>() {});
+            ResponseModel responseModel = new ObjectMapper().readValue(response.getBody(), new TypeReference<ResponseModel>() {
+            });
             String json = new ObjectMapper().writeValueAsString(responseModel.getData());
             Classses classModel = new ObjectMapper().readValue(json, Classses.class);
 
@@ -619,7 +660,7 @@ public class HomeController {
     @ResponseBody
     public Object getStudentListSubject(@CookieValue(name = "_token", defaultValue = "") String _token,
                                         @RequestParam("classId") int classId,
-                                        @RequestParam("subjectId")int subjectId){
+                                        @RequestParam("subjectId") int subjectId) {
         try {
             if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
 
@@ -632,18 +673,20 @@ public class HomeController {
             List<InputMarkModel> inputMarkModelList = new ArrayList<>();
 
             //Get Class by classId
-            requestGET= new HttpEntity<>(headers);
-            ResponseEntity<String> responseStudent = restTemplate.exchange(CLASS_URL + "getClass/"+ classId,
+            requestGET = new HttpEntity<>(headers);
+            ResponseEntity<String> responseStudent = restTemplate.exchange(CLASS_URL + "getClass/" + classId,
                     HttpMethod.GET, requestGET, String.class);
-            ResponseModel responseModelStudent = new ObjectMapper().readValue(responseStudent.getBody(), new TypeReference<ResponseModel>() {});
+            ResponseModel responseModelStudent = new ObjectMapper().readValue(responseStudent.getBody(), new TypeReference<ResponseModel>() {
+            });
             String jsonClass = new ObjectMapper().writeValueAsString(responseModelStudent.getData());
             Classses classModel = new ObjectMapper().readValue(jsonClass, Classses.class);
 
             //Get Subject by subjectId
-            requestGET= new HttpEntity<>(headers);
-            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/"+ subjectId,
+            requestGET = new HttpEntity<>(headers);
+            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/" + subjectId,
                     HttpMethod.GET, requestGET, String.class);
-            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {});
+            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {
+            });
             String jsonSubject = new ObjectMapper().writeValueAsString(responseModelSubject.getData());
             Subject subject = new ObjectMapper().readValue(jsonSubject, Subject.class);
 
@@ -669,8 +712,8 @@ public class HomeController {
     public Object getStudentListSubject(@CookieValue(name = "_token", defaultValue = "") String _token,
                                         @RequestParam("teacherId") int teacherId,
                                         @RequestParam("mark_list") String mark_list,
-                                        @RequestParam("classId")int classId){
-        try{
+                                        @RequestParam("classId") int classId) {
+        try {
             if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
 
             RestTemplate restTemplate = new RestTemplate();
@@ -682,16 +725,19 @@ public class HomeController {
 
             List<Mark> markList = new ArrayList<>();
 
-            List<InputMarkModel> inputMarkModelList = objectMapper.readValue(mark_list, new TypeReference<>() {});
+            List<InputMarkModel> inputMarkModelList = objectMapper.readValue(mark_list, new TypeReference<>() {
+            });
 
-            if (inputMarkModelList.size() != 0 ){
+            if (inputMarkModelList.size() != 0) {
                 //Get class
                 ResponseEntity<String> responseClass = restTemplate.exchange(
                         CLASS_URL + "getClass/" + classId,
                         HttpMethod.GET, request, String.class);
-                ResponseModel responseModelClass  = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {});
+                ResponseModel responseModelClass = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {
+                });
                 String classJson = objectMapper.writeValueAsString(responseModelClass.getData());
-                Classses classs = objectMapper.readValue(classJson, new TypeReference<>() {});
+                Classses classs = objectMapper.readValue(classJson, new TypeReference<>() {
+                });
 
                 for (InputMarkModel item : inputMarkModelList) {
                     //Check existed mark in database
@@ -721,12 +767,12 @@ public class HomeController {
                 ResponseEntity<ResponseModel> responseMark = restTemplate.exchange(MARK_URL + "saveAll",
                         HttpMethod.POST, requestMark, ResponseModel.class);
                 content.remove("markList");
-                if (responseMark.getStatusCode().is2xxSuccessful()){
+                if (responseMark.getStatusCode().is2xxSuccessful()) {
                     return "success";
-                }else {
+                } else {
                     throw new ErrorHandler("Save mark list failed");
                 }
-            }else{
+            } else {
                 throw new ErrorHandler("Empty list");
             }
         } catch (Exception e) {
@@ -738,10 +784,10 @@ public class HomeController {
     @GetMapping("/class/download_template/{classId}/{subjectId}")
     @ResponseBody
     public void downloadTemplate(HttpServletResponse response,
-                                   @CookieValue(name = "_token", defaultValue = "") String _token,
-                                   @PathVariable("classId") int classId,
-                                   @PathVariable("subjectId")int subjectId){
-        try{
+                                 @CookieValue(name = "_token", defaultValue = "") String _token,
+                                 @PathVariable("classId") int classId,
+                                 @PathVariable("subjectId") int subjectId) {
+        try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -753,16 +799,18 @@ public class HomeController {
 
             ResponseEntity<String> responseClass = restTemplate.exchange(CLASS_URL + "findOne/" + classId,
                     HttpMethod.GET, request, String.class);
-            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(),new TypeReference<>() {});
+            ResponseModel responseModel = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {
+            });
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
 
             Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
 
             //Get Subject by subjectId
-            request= new HttpEntity<>(headers);
-            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/"+ subjectId,
+            request = new HttpEntity<>(headers);
+            ResponseEntity<String> responseSubject = restTemplate.exchange(SUBJECT_URL + "getSubjectBySubjectId/" + subjectId,
                     HttpMethod.GET, request, String.class);
-            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {});
+            ResponseModel responseModelSubject = new ObjectMapper().readValue(responseSubject.getBody(), new TypeReference<ResponseModel>() {
+            });
             String jsonSubject = new ObjectMapper().writeValueAsString(responseModelSubject.getData());
             Subject subject = new ObjectMapper().readValue(jsonSubject, Subject.class);
 
@@ -781,7 +829,7 @@ public class HomeController {
             importMarkExport.generateExcelFile(response);
             //return bytes;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ErrorHandler(e.getMessage());
         }
     }

@@ -49,9 +49,15 @@ public class AttendanceTrackingRestController {
     @GetMapping("/findByTeacherId/{id}")
     public ResponseEntity<?> findByTeacherId(@PathVariable("id") Integer teacherId) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findByTeacherId(teacherId)));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Get fail"));
+            attendanceTrackingList = new ArrayList<>();
+            attendanceTrackingList = service.findByTeacherId(teacherId);
+            if(attendanceTrackingList != null){
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),attendanceTrackingList));
+            }else{
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Error",LocalDate.now().toString(),null));
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Get fail"));
         }
     }
 }

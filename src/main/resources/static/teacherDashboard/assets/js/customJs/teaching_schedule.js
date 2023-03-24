@@ -1,5 +1,6 @@
 $(()=>{
     let data = JSON.parse($('#scheduleList').val())
+    $('#week').select2()
     console.log(data)
     let shift =""
     for(let i of data){
