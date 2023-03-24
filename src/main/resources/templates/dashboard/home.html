@@ -22,7 +22,7 @@
             <section class="container-fluid">
                 <div class="row">
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-info">
+                        <div onclick="location.href='/dashboard/student/index-student'" class="small-box bg-info">
                             <div class="inner">
                                 <h3>[[${chartTotal.totalStudent}]]</h3>
                                 <p>Total students</p>
@@ -36,8 +36,7 @@
                     </div>
 
                     <div class="col-lg-3 col-6">
-
-                        <div class="small-box bg-success">
+                        <div onclick="location.href='/dashboard/class/class-index'" class="small-box bg-success">
                             <div class="inner">
                                 <h3>[[${chartTotal.totalClass}]]</h3>
                                 <p>Total class</p>
@@ -51,8 +50,7 @@
                     </div>
 
                     <div class="col-lg-3 col-6">
-
-                        <div class="small-box bg-secondary">
+                        <div onclick="location.href='/dashboard/teacher/index-teacher'" class="small-box bg-secondary">
                             <div class="inner">
                                 <h3>[[${chartTotal.totalTeacher}]]</h3>
                                 <p>Total teachers</p>
@@ -66,7 +64,7 @@
                     </div>
 
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-danger">
+                        <div onclick="location.href='/dashboard/room/index'" class="small-box bg-danger">
                             <div class="inner">
                                 <h3>[[${chartTotal.totalRoom}]]</h3>
                                 <p>Total rooms</p>
