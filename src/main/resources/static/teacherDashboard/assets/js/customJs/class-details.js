@@ -181,97 +181,25 @@ $(document).ready(function () {
                 var asmMark =dataArray[i]['ASM mark'];
                 var objMark = dataArray[i]['OBJ mark'];
                 $(`<tr>
-                            <td style="display:none;">
-                                <input style="border: none" type="text" value="${studentId}" hidden readonly/>
-                            </td><td style="display:none;">
-                                <input style="border: none" type="text" value="${subjectId}" hidden readonly/>
-                            </td><td style="display:none;">
-                                <input style="border: none" type="text" value="${studentSubjectId}" hidden readonly/>
-                            </td><td>
-                                <input style="border: none" type="text" value="${fullName}" readonly/>
-                            </td><td>
-                                <input style="border: none" type="text" value="${subjectName}" readonly/>
-                            </td><td>
-                                <input class="check_numberic_0_100" value="${asmMark == null || asmMark == 'null' || asmMark == undefined ? '': asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
-                            </td><td>
-                                <input class="check_numberic_0_100" value="${objMark == null || objMark == 'null' || objMark == undefined ? '': objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
-                            </td>
-                        </tr>`).appendTo("#mark_table tbody");
+                        <td style="display:none;">
+                            <input style="border: none" type="text" value="${studentId}" hidden readonly/>
+                        </td><td style="display:none;">
+                            <input style="border: none" type="text" value="${subjectId}" hidden readonly/>
+                        </td><td style="display:none;">
+                            <input style="border: none" type="text" value="${studentSubjectId}" hidden readonly/>
+                        </td><td>
+                            <input style="border: none" type="text" value="${fullName}" readonly/>
+                        </td><td>
+                            <input style="border: none" type="text" value="${subjectName}" readonly/>
+                        </td><td>
+                            <input class="check_numberic_0_100" value="${asmMark == null || asmMark == 'null' || asmMark == undefined ? '': asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                        </td><td>
+                            <input class="check_numberic_0_100" value="${objMark == null || objMark == 'null' || objMark == undefined ? '': objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                        </td>
+                    </tr>`).appendTo("#mark_table tbody");
             }
-            /*
-            $('#mark_table').DataTable({
-                destroy: true,
-                scroll:true,
-                paging: false,
-                data: Sheet1,
-                columns: [
-                    {
-                    data: "Student Id",
-                        render: function (data) {
-                            return `<input style="border: none" type="text" value="${data}" hidden readonly/>`
-                        },
-                    }, {
-                        data: "Subject Id",
-                        render: function (data) {
-                            return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
-                        }
-                    },{
-                        data: "StudentSubject Id",
-                        render: function (data) {
-                            return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
-                        }
-                    }, {data: "Student Name",
-                        render: function (data) {
-                            return `<input style="border: none" type="text" value="${data}" readonly/>`;
-                        }
-                    },{
-                    data: "Subject Name",
-                        render: function (data) {
-                            return `<input style="border: none" type="text" value="${data}" readonly/>`;
-                        }
-                    },{
-                    data: "ASM mark",
-                        render: function (data) {
-                            if (data == null || data == undefined || data =="" || data =="null"){
-                                return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                            }else {
-                                return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
 
-                            }
-                            return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                        }
-                    },{
-                    data: "OBJ mark",
-                        render: function (data) {
-                            if (data == null || data == undefined || data =="" || data =="null"){
-                                return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                            }else {
-                                return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                            }
-                            return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                        }
-                    }
-                ],
-                columnDefs: [
-                    {
-                        target: 0,
-                        visible: false,
-                        searchable: false,
-                    }, {
-                        target: 1,
-                        visible: false,
-                        searchable: false,
-                    }, {
-                        target: 2,
-                        visible: false,
-                        searchable: false,
-                    },
-                ],
-
-            });
-
-             */
-
+            check_input_mark();
         };
     })
 
@@ -411,85 +339,6 @@ $(document).ready(function () {
                             </td>
                         </tr>`).appendTo("#mark_table tbody");
                     }
-
-                    /*
-                    $('#mark_table').DataTable({
-                        destroy: true,
-                        scroll:true,
-                        paging: false,
-                        scrollY: '200px',
-                        scrollCollapse: true,
-                        paging: false,
-                        search: false,
-                        editables:  true,
-                        data: JSON.parse(response),
-                        columns: [
-                            {
-                                data: "studentId",
-                                render: function (data) {
-                                    return `<input style="border: none" type="text" value="${data}" hidden readonly/>`
-                                },
-                            }, {
-                                data: "subjectId",
-                                render: function (data) {
-                                    return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
-                                }
-                            },{
-                                data: "studentSubjectId",
-                                render: function (data) {
-                                    return `<input style="border: none" type="text" value="${data}" hidden readonly/>`;
-                                }
-                            }, {data: "fullName",
-                                render: function (data) {
-                                    return `<input style="border: none" type="text" value="${data}" readonly/>`;
-                                }
-                            },{
-                                data: "subjectName",
-                                render: function (data) {
-                                    return `<input style="border: none" type="text" value="${data}" readonly/>`;
-                                }
-                            },{
-                                data: "asmMark",
-                                render: function (data) {
-                                    if (data == null || data == undefined || data =="" || data =="null"){
-                                        return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                                    }else {
-                                        return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-
-                                    }
-                                    return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                                }
-                            },{
-                                data: "objMark",
-                                render: function (data) {
-                                    if (data == null || data == undefined || data =="" || data =="null"){
-                                        return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                                    }else {
-                                        return `<input class="check_numberic_0_100" value="${data}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                                    }
-                                    return `<input class="check_numberic_0_100" value="" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />`;
-                                }
-                            }
-                        ],
-                        columnDefs: [
-                            {
-                                target: 0,
-                                visible: false,
-                                searchable: false,
-                            }, {
-                                target: 1,
-                                visible: false,
-                                searchable: false,
-                            }, {
-                                target: 2,
-                                visible: false,
-                                searchable: false,
-                            },
-                        ],
-
-                    });
-
-                     */
                 },
                 error: (error)=>{
                     Swal.fire({
