@@ -60,7 +60,7 @@ public class AttendanceTrackingRestController {
             if(attendanceTrackingList != null){
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),attendanceTrackingList));
             }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Not Found"));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Error",LocalDate.now().toString(),null));
             }
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Get fail"));
