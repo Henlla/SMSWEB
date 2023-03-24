@@ -1,68 +1,40 @@
 package com.example.smsweb.client.teacher;
 
 import com.example.smsweb.api.exception.ErrorHandler;
-import com.example.smsweb.dto.*;
-import com.example.smsweb.dto.teacher.MarkList;
+import com.example.smsweb.dto.AttendanceTrackingChart;
+import com.example.smsweb.dto.AttendanceTrackingModel;
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.TeachingCurrenDate;
 import com.example.smsweb.dto.teacher.InputMarkModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.*;
 import com.example.smsweb.utils.ExcelExport.ImportMarkExport;
-import com.example.smsweb.utils.ExcelHelper;
-import com.example.smsweb.models.Account;
-import com.example.smsweb.models.Classses;
-import com.example.smsweb.models.News;
-import com.example.smsweb.models.Profile;
-import com.example.smsweb.models.Schedule;
-import com.example.smsweb.models.ScheduleDetail;
-import com.example.smsweb.models.Student;
-import com.example.smsweb.models.Subject;
-import com.example.smsweb.models.Teacher;
 import com.example.smsweb.utils.StreamHelper;
 import com.example.smsweb.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.Authentication;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j

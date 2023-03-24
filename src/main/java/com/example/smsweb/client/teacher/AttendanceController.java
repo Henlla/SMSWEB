@@ -220,7 +220,11 @@ public class AttendanceController {
                                     if (detailDate.isEqual(previousDate)) {
                                         attendanceView.setOnTime(1);
                                     } else if (detailDate.isEqual(currentDate)) {
-                                        attendanceView.setOnTime(1);
+                                        if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                            attendanceView.setOnTime(1);
+                                        } else {
+                                            attendanceView.setOnTime(0);
+                                        }
                                     } else {
                                         if (detailDate.plusDays(1).isEqual(previousDate)) {
                                             attendanceView.setOnTime(1);
@@ -240,7 +244,11 @@ public class AttendanceController {
                                     if (detailDate.isEqual(previousDate)) {
                                         attendanceView.setOnTime(1);
                                     } else if (detailDate.isEqual(currentDate)) {
-                                        attendanceView.setOnTime(1);
+                                        if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                            attendanceView.setOnTime(1);
+                                        } else {
+                                            attendanceView.setOnTime(0);
+                                        }
                                     } else {
                                         if (detailDate.plusDays(1).isEqual(previousDate)) {
                                             attendanceView.setOnTime(1);
@@ -260,7 +268,11 @@ public class AttendanceController {
                                     if (detailDate.isEqual(previousDate)) {
                                         attendanceView.setOnTime(1);
                                     } else if (detailDate.isEqual(currentDate)) {
-                                        attendanceView.setOnTime(1);
+                                        if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                            attendanceView.setOnTime(1);
+                                        } else {
+                                            attendanceView.setOnTime(0);
+                                        }
                                     } else {
                                         if (detailDate.plusDays(1).isEqual(previousDate)) {
                                             attendanceView.setOnTime(1);
@@ -463,7 +475,7 @@ public class AttendanceController {
                             String jsonAttendance = new ObjectMapper().writeValueAsString(attendanceResponse.getBody().getData());
                             List<Attendance> listAttendance = new ObjectMapper().readValue(jsonAttendance, new TypeReference<List<Attendance>>() {
                             });
-                            double absentCount = listAttendance.stream().filter(a->a.getStatus() == 0).count();
+                            double absentCount = listAttendance.stream().filter(a -> a.getStatus() == 0).count();
                             double countSlot = subject.getSlot();
                             int sumSlot = (int) Math.floor((absentCount / countSlot) * 100);
                             studentSubject.setStatus(String.valueOf(sumSlot));
@@ -507,6 +519,7 @@ public class AttendanceController {
             return new ResponseEntity<String>("Attendance fail", HttpStatus.BAD_REQUEST);
         }
     }
+
     @PostMapping("/findAttendanceByDate")
     @ResponseBody
     public Object findAttendanceByDate(@CookieValue(name = "_token") String _token,
@@ -722,7 +735,7 @@ public class AttendanceController {
                     List<Attendance> listAttendance = new ObjectMapper().readValue(jsonAttendance, new TypeReference<List<Attendance>>() {
                     });
 
-                    double absentCount = listAttendance.stream().filter(a->a.getStatus() == 0).count();
+                    double absentCount = listAttendance.stream().filter(a -> a.getStatus() == 0).count();
                     double countSlot = subject.getSlot();
                     int sumSlot = (int) Math.floor((absentCount / countSlot) * 100);
                     studentSubject.setStatus(String.valueOf(sumSlot));
