@@ -220,10 +220,14 @@ public class AttendanceController {
                                     if (detailDate.isEqual(previousDate)) {
                                         attendanceView.setOnTime(1);
                                     } else if (detailDate.isEqual(currentDate)) {
-                                        if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                        if (onTime.isAfter(startTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
-                                            attendanceView.setOnTime(0);
+                                            if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                                attendanceView.setOnTime(1);
+                                            } else {
+                                                attendanceView.setOnTime(0);
+                                            }
                                         }
                                     } else {
                                         if (detailDate.plusDays(1).isEqual(previousDate)) {
@@ -244,10 +248,14 @@ public class AttendanceController {
                                     if (detailDate.isEqual(previousDate)) {
                                         attendanceView.setOnTime(1);
                                     } else if (detailDate.isEqual(currentDate)) {
-                                        if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                        if (onTime.isAfter(startTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
-                                            attendanceView.setOnTime(0);
+                                            if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                                attendanceView.setOnTime(1);
+                                            } else {
+                                                attendanceView.setOnTime(0);
+                                            }
                                         }
                                     } else {
                                         if (detailDate.plusDays(1).isEqual(previousDate)) {
@@ -268,10 +276,14 @@ public class AttendanceController {
                                     if (detailDate.isEqual(previousDate)) {
                                         attendanceView.setOnTime(1);
                                     } else if (detailDate.isEqual(currentDate)) {
-                                        if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                        if (onTime.isAfter(startTime)) {
                                             attendanceView.setOnTime(1);
                                         } else {
-                                            attendanceView.setOnTime(0);
+                                            if (onTime.isAfter(startTime) && onTime.isBefore(endTime)) {
+                                                attendanceView.setOnTime(1);
+                                            } else {
+                                                attendanceView.setOnTime(0);
+                                            }
                                         }
                                     } else {
                                         if (detailDate.plusDays(1).isEqual(previousDate)) {
