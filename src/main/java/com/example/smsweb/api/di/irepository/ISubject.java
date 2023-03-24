@@ -12,4 +12,5 @@ public interface ISubject extends IGenericRepository<Subject> {
     List<Subject> findSubjectBySemesterIdAndMajorId(Integer fromSemester, Integer toSemester, Integer majorId);
     String importExcelData(MultipartFile file);
     Subject findSubjectBySubjectCode(String subjectCode);
+
 }

@@ -12,4 +12,5 @@ public interface SubjectResponsitory extends GenericRepository<Subject,Integer> 
     List<Subject> findSubjectsBySemesterIdIn(List<Integer> semesterId);
     List<Subject> findSubjectsBySemesterIdBetweenAndMajorId(Integer fromSemester,Integer toSemester,Integer majorId);
     Optional<Subject> findSubjectBySubjectCode(String subjecctCode);
+
 }

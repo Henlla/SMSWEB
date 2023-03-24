@@ -712,7 +712,7 @@ public class HomeController {
                         throw new ErrorHandler("You have no permission to mark this subject: " + item.getSubjectName());
                     }
 
-                    markList.add(new Mark(0, item.getAsmMark(), item.getAsmMark(), item.getStudentSubjectId(), null));
+                    markList.add(new Mark(0, item.getAsmMark(), item.getObjMark(), item.getStudentSubjectId(), null));
                 }
 
                 //Save markList

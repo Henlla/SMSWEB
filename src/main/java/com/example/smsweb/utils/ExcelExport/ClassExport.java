@@ -25,24 +25,9 @@ public class ClassExport {
         this.classModel = classModel;
         workbook = new XSSFWorkbook();
     }
-    //Create Title
-    private void createTitle(){
-        sheet = workbook.createSheet("CLASS "+ classModel.getClassCode());
-        sheet.addMergedRegion(new CellRangeAddress(0,0,0,6));
-        row = sheet.createRow(0);
-        style = workbook.createCellStyle();
-        font = workbook.createFont();
-        font.setBold(true);
-        font.setFontHeight(20);
-        style.setFont(font);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        createCell(row, 0, "STUDENTS OF CLASS "+classModel.getClassCode(), style);
-    }
     private void writeHeader(){
-        sheet = workbook.createSheet("FeedBack");
-        Row row = sheet.createRow(1);
+        sheet = workbook.createSheet("CLASS "+ classModel.getClassCode());
+        row = sheet.createRow(1);
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
@@ -56,6 +41,21 @@ public class ClassExport {
         createCell(row, 5, "Số điện thoại", style);
         createCell(row, 6, "Email", style);
         createCell(row, 7, "Tỉnh", style);
+    }
+
+    //Create Title
+    private void createTitle(){
+        sheet.addMergedRegion(new CellRangeAddress(0,0,0,6));
+        row = sheet.createRow(0);
+        style = workbook.createCellStyle();
+        font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeight(20);
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        createCell(row, 0, "STUDENTS OF CLASS "+classModel.getClassCode(), style);
     }
 
     private void createCell(Row row, int columnCount, Object valueOfCell,CellStyle cellStyle){
@@ -89,8 +89,8 @@ public class ClassExport {
         int rowCount = 2;
         int rowIndex = 1;
         for (StudentClass studentClass:classModel.getStudentClassById()) {
-            row = sheet.createRow(rowCount++);
-            createCell(row, 0, rowIndex++, style);
+            row = sheet.createRow(rowCount);
+            createCell(row, 0, rowIndex, style);
             createCell(row, 1, studentClass.getClassStudentByStudent().getStudentCard(), style);
             createCell(row, 2,studentClass.getClassStudentByStudent().getStudentByProfile().getFirstName()+ " "
                             + studentClass.getClassStudentByStudent().getStudentByProfile().getLastName(),
@@ -100,6 +100,8 @@ public class ClassExport {
             createCell(row, 5, studentClass.getClassStudentByStudent().getStudentByProfile().getPhone(), style);
             createCell(row, 6, studentClass.getClassStudentByStudent().getStudentByProfile().getEmail(), style);
             createCell(row, 7, studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince().getName(), style);
+            rowCount++;
+            rowIndex++;
         }
     }
 
