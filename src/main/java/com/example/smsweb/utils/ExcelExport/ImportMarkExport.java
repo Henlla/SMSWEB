@@ -35,13 +35,12 @@ public class ImportMarkExport {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        createCell(row, 0,"Student Id",style);
-        createCell(row, 1, "Subject Id", style);
-        createCell(row, 2, "StudentSubject Id", style);
-        createCell(row, 3, "Student Name", style);
-        createCell(row, 4, "Subject Name", style);
-        createCell(row, 5, "ASM mark", style);
-        createCell(row, 6, "OBJ mark", style);
+        createCell(row, 0,"Student Code",style);
+        createCell(row, 1, "Subject Code", style);
+        createCell(row, 2, "Student Name", style);
+        createCell(row, 3, "Subject Name", style);
+        createCell(row, 4, "ASM mark", style);
+        createCell(row, 5, "OBJ mark", style);
     }
 
     private void createCell(Row row, int columnCount, Object valueOfCell,CellStyle cellStyle){
@@ -74,13 +73,12 @@ public class ImportMarkExport {
         int rowCount = 1;
         for (InputMarkModel item:inputMarkModelList) {
             row = sheet.createRow(rowCount++);
-            createCell(row, 0, item.getStudentId(), style);
-            createCell(row, 1, item.getSubjectId(), style);
-            createCell(row, 2, item.getStudentSubjectId(), style);
-            createCell(row, 3, item.getFullName(), style);
-            createCell(row, 4, item.getSubjectName(), style);
+            createCell(row, 0, item.getStudentCode(), style);
+            createCell(row, 1, item.getSubjectCode(), style);
+            createCell(row, 2, item.getFullName(), style);
+            createCell(row, 3, item.getSubjectName(), style);
+            createCell(row, 4, "null", style);
             createCell(row, 5, "null", style);
-            createCell(row, 6, "null", style);
         }
     }
 
