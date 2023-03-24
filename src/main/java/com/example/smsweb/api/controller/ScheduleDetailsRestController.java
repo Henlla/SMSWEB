@@ -113,7 +113,8 @@ public class ScheduleDetailsRestController {
     }
 
     @PostMapping("/findScheduleDetailByDateBetween")
-    public ResponseEntity<?> findScheduleDetailByDateBetween(@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+    public ResponseEntity<?> findScheduleDetailByDateBetween(@RequestParam("fromDate") String fromDate,
+                                                             @RequestParam("toDate") String toDate) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetailByDateBetween(fromDate, toDate)));
         } catch (Exception e) {
@@ -180,5 +181,16 @@ public class ScheduleDetailsRestController {
     @GetMapping("/findScheduleByTeacher/{teacherId}")
     public ResponseEntity<?> findScheduleByTeacher(@PathVariable("teacherId")Integer teacherId){
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success",LocalDate.now().toString(),scheduleDetailsService.findScheduleDetailByTeacher(teacherId)));
+    }
+
+    @PostMapping("/findScheduleDetailByDateSlotAndShift")
+    public ResponseEntity<?> findScheduleDetailByDateSlotAndShift(@RequestParam("date")String date,
+                                                                  @RequestParam("slot")Integer slot,
+                                                                  @RequestParam("shift")String shift){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDateTime.now().toString(), scheduleDetailsService.findScheduleDetailByDateSlotAndShift(date, slot, shift)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
     }
 }

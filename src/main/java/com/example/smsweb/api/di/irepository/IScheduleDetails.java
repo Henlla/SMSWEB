@@ -32,4 +32,6 @@ public interface IScheduleDetails {
     List<ScheduleDetail> findScheduleDetailsByDateAndTeacherId(String date, Integer teacherId);
 
     List<ScheduleDetail> findScheduleDetailsByDateAndScheduleIdAndTeacherId(String date, Integer scheduleId, Integer teacherId);
+
+    List<ScheduleDetail> findScheduleDetailByDateSlotAndShift(String date, Integer slot, String shift);
 }

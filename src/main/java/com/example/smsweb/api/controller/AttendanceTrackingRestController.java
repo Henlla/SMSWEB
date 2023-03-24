@@ -36,24 +36,18 @@ public class AttendanceTrackingRestController {
     }
 
     @PostMapping("/findByDateAndTeacher")
-    public ResponseEntity<?> findByDateAndTeacher(@RequestParam("fromDate")String fromDate,
-                                                  @RequestParam("toDate")String toDate,
-                                                  @RequestParam("teacherId")Integer teacherId){
+    public ResponseEntity<?> findByDateAndTeacher(@RequestParam("fromDate") String fromDate,
+                                                  @RequestParam("toDate") String toDate,
+                                                  @RequestParam("teacherId") Integer teacherId) {
         try {
-            attendanceTrackingList = new ArrayList<>();
-            attendanceTrackingList = service.findByDateBetweenAndTeacherId(fromDate, toDate, teacherId);
-            if(attendanceTrackingList != null){
-                return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Not found"));
-            }else{
-                return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),attendanceTrackingList));
-            }
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Don't find any records"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findByDateBetweenAndTeacherId(fromDate, toDate, teacherId)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
         }
     }
 
     @GetMapping("/findByTeacherId/{id}")
-    public ResponseEntity<?> findByTeacherId(@PathVariable("id")Integer teacherId){
+    public ResponseEntity<?> findByTeacherId(@PathVariable("id") Integer teacherId) {
         try {
             attendanceTrackingList = new ArrayList<>();
             attendanceTrackingList = service.findByTeacherId(teacherId);

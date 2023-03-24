@@ -46,13 +46,7 @@ public class ApplicationRestController extends GenericController<Application> {
     @GetMapping("/finApplicationByStudentId/{id}")
     public ResponseEntity<?> findApplicationByStudentId(@PathVariable("id") Integer id) {
         try {
-            listApplication = new ArrayList<>();
-            listApplication = service.findApplicationByStudentId(id);
-            if (listApplication != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), listApplication));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any record"));
-            }
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findApplicationByStudentId(id)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(), "Get fail"));
         }

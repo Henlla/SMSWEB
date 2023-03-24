@@ -12,21 +12,21 @@ $(()=>{
                 $('.date_monday').html(formatDate)
                 if(shift==="M"){
                     if(i.slot==1){
-                        $('.r1_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r1_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r2_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r2_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="A"){
                     if(i.slot==1){
-                        $('.r3_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r3_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r4_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r4_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="E"){
                     if(i.slot==1){
-                        $('.r5_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r5_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r6_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r6_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }
                 break;
@@ -38,21 +38,21 @@ $(()=>{
 
                 if(shift==="M"){
                     if(i.slot==1){
-                        $('.r1_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r1_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r2_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r2_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="A"){
                     if(i.slot==1){
-                        $('.r3_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r3_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r4_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r4_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="E"){
                     if(i.slot==1){
-                        $('.r5_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r5_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r6_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r6_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }
                 break;
@@ -63,21 +63,21 @@ $(()=>{
                 $('.date_wednesday').html(formatDate)
                 if(shift==="M"){
                     if(i.slot==1){
-                        $('.r1_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r1_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r2_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r2_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="A"){
                     if(i.slot==1){
-                        $('.r3_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r3_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r4_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r4_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="E"){
                     if(i.slot==1){
-                        $('.r5_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r5_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r6_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r6_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }
                 break;
@@ -88,21 +88,21 @@ $(()=>{
                 $('.date_thursday').html(formatDate)
                 if(shift==="M"){
                     if(i.slot==1){
-                        $('.r1_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r1_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r2_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r2_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="A"){
                     if(i.slot==1){
-                        $('.r3_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r3_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r4_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r4_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="E"){
                     if(i.slot==1){
-                        $('.r5_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r5_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r6_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r6_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }
                 break;
@@ -113,21 +113,21 @@ $(()=>{
                 $('.date_friday').html(formatDate)
                 if(shift==="M"){
                     if(i.slot==1){
-                        $('.r1_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r1_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r2_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r2_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="A"){
                     if(i.slot==1){
-                        $('.r3_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                        $('.r3_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r4_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                        $('.r4_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="E"){
                     if(i.slot==1){
-                        $('.r5_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                        $('.r5_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r6_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                        $('.r6_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }
                 break;
@@ -138,49 +138,49 @@ $(()=>{
                 $('.date_saturday').html(formatDate)
                 if(shift==="M"){
                     if(i.slot==1){
-                        $('.r1_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r1_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r2_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r2_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="A"){
                     if(i.slot==1){
-                        $('.r3_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r3_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r4_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r4_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }else if(shift==="E"){
                     if(i.slot==1){
-                        $('.r5_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r5_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }else{
-                        $('.r6_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                        $('.r6_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                     }
                 }
                 break;
-            case "SUNDAY":
-                arrDate = i.date.split("-")
-                formatDate = arrDate[2] + "/"+arrDate[1]
-                shift = i.shift.substring(0,1)
-                $('.date_sunday').html(formatDate)
-                    if(shift==="M"){
-                        if(i.slot==1){
-                            $('.r1_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                        }else{
-                            $('.r2_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                        }
-                    }else if(shift==="A"){
-                        if(i.slot==1){
-                            $('.r3_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                        }else{
-                            $('.r4_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                        }
-                    }else if(shift==="E"){
-                        if(i.slot==1){
-                            $('.r5_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                        }else{
-                            $('.r6_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                        }
-                    }
-                    break;
+            // case "SUNDAY":
+            //     arrDate = i.date.split("-")
+            //     formatDate = arrDate[2] + "/"+arrDate[1]
+            //     shift = i.shift.substring(0,1)
+            //     $('.date_sunday').html(formatDate)
+            //         if(shift==="M"){
+            //             if(i.slot==1){
+            //                 $('.r1_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+            //             }else{
+            //                 $('.r2_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+            //             }
+            //         }else if(shift==="A"){
+            //             if(i.slot==1){
+            //                 $('.r3_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+            //             }else{
+            //                 $('.r4_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+            //             }
+            //         }else if(shift==="E"){
+            //             if(i.slot==1){
+            //                 $('.r5_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+            //             }else{
+            //                 $('.r6_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+            //             }
+            //         }
+            //         break;
         }
     }
     
@@ -287,21 +287,21 @@ let OnChangeWeek = ()=>{
                             $('.date_monday').html(formatDate)
                             if(shift==="M"){
                                 if(i.slot==1){
-                                    $('.r1_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r1_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r2_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r2_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="A"){
                                 if(i.slot==1){
-                                    $('.r3_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r3_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r4_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r4_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="E"){
                                 if(i.slot==1){
-                                    $('.r5_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r5_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r6_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r6_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }
                             break;
@@ -313,21 +313,21 @@ let OnChangeWeek = ()=>{
 
                             if(shift==="M"){
                                 if(i.slot==1){
-                                    $('.r1_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r1_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r2_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r2_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="A"){
                                 if(i.slot==1){
-                                    $('.r3_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r3_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r4_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r4_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="E"){
                                 if(i.slot==1){
-                                    $('.r5_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r5_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r6_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r6_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }
                             break;
@@ -338,21 +338,21 @@ let OnChangeWeek = ()=>{
                             $('.date_wednesday').html(formatDate)
                             if(shift==="M"){
                                 if(i.slot==1){
-                                    $('.r1_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r1_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r2_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r2_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="A"){
                                 if(i.slot==1){
-                                    $('.r3_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r3_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r4_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r4_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="E"){
                                 if(i.slot==1){
-                                    $('.r5_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r5_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r6_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r6_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }
                             break;
@@ -363,21 +363,21 @@ let OnChangeWeek = ()=>{
                             $('.date_thursday').html(formatDate)
                             if(shift==="M"){
                                 if(i.slot==1){
-                                    $('.r1_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r1_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r2_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r2_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="A"){
                                 if(i.slot==1){
-                                    $('.r3_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r3_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r4_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r4_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="E"){
                                 if(i.slot==1){
-                                    $('.r5_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r5_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r6_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r6_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }
                             break;
@@ -388,21 +388,21 @@ let OnChangeWeek = ()=>{
                             $('.date_friday').html(formatDate)
                             if(shift==="M"){
                                 if(i.slot==1){
-                                    $('.r1_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r1_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r2_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r2_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="A"){
                                 if(i.slot==1){
-                                    $('.r3_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                                    $('.r3_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r4_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                                    $('.r4_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="E"){
                                 if(i.slot==1){
-                                    $('.r5_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                                    $('.r5_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r6_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
+                                    $('.r6_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }
                             break;
@@ -413,49 +413,49 @@ let OnChangeWeek = ()=>{
                             $('.date_saturday').html(formatDate)
                             if(shift==="M"){
                                 if(i.slot==1){
-                                    $('.r1_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r1_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r2_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r2_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="A"){
                                 if(i.slot==1){
-                                    $('.r3_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r3_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r4_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r4_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }else if(shift==="E"){
                                 if(i.slot==1){
-                                    $('.r5_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r5_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }else{
-                                    $('.r6_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectName}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
+                                    $('.r6_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Class:${i.classCode}</span><span>Room:${i.roomCode}</span></div>`)
                                 }
                             }
                             break;
-                        case "SUNDAY":
-                            arrDate = i.date.split("-")
-                            formatDate = arrDate[2] + "/"+arrDate[1]
-                            shift = i.shift.substring(0,1)
-                            $('.date_sunday').html(formatDate)
-                            if(shift==="M"){
-                                if(i.slot==1){
-                                    $('.r1_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                                }else{
-                                    $('.r2_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                                }
-                            }else if(shift==="A"){
-                                if(i.slot==1){
-                                    $('.r3_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                                }else{
-                                    $('.r4_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                                }
-                            }else if(shift==="E"){
-                                if(i.slot==1){
-                                    $('.r5_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                                }else{
-                                    $('.r6_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectName}</div>`)
-                                }
-                            }
-                            break;
+                        // case "SUNDAY":
+                        //     arrDate = i.date.split("-")
+                        //     formatDate = arrDate[2] + "/"+arrDate[1]
+                        //     shift = i.shift.substring(0,1)
+                        //     $('.date_sunday').html(formatDate)
+                        //     if(shift==="M"){
+                        //         if(i.slot==1){
+                        //             $('.r1_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+                        //         }else{
+                        //             $('.r2_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+                        //         }
+                        //     }else if(shift==="A"){
+                        //         if(i.slot==1){
+                        //             $('.r3_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+                        //         }else{
+                        //             $('.r4_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+                        //         }
+                        //     }else if(shift==="E"){
+                        //         if(i.slot==1){
+                        //             $('.r5_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+                        //         }else{
+                        //             $('.r6_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center">${i.subject.subjectCode}</div>`)
+                        //         }
+                        //     }
+                        //     break;
                     }
                 }
             }

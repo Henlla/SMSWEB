@@ -51,9 +51,7 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleDetailByScheduleIdAndSubjectId(Integer scheduleId, Integer subjectId) {
         try {
-            listScheduleDetail = new ArrayList<>();
-            listScheduleDetail = repository.findScheduleDetailByScheduleIdAndSubjectId(scheduleId, subjectId);
-            return listScheduleDetail;
+            return repository.findScheduleDetailByScheduleIdAndSubjectId(scheduleId, subjectId);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ErrorHandler("Don't find any records");
@@ -63,9 +61,7 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleDetailByDateBetween(String fromDate, String toDate) {
         try {
-            listScheduleDetail = new ArrayList<>();
-            listScheduleDetail = repository.findScheduleDetailsByDateBetween(fromDate, toDate);
-            return listScheduleDetail;
+            return repository.findScheduleDetailsByDateBetween(fromDate, toDate);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }
@@ -74,9 +70,7 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleId(String fromDate, String toDate, Integer scheduleId) {
         try {
-            listScheduleDetail = new ArrayList<>();
-            listScheduleDetail = repository.findScheduleDetailsByDateBetweenAndScheduleId(fromDate, toDate, scheduleId);
-            return listScheduleDetail;
+            return repository.findScheduleDetailsByDateBetweenAndScheduleId(fromDate, toDate, scheduleId);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }
@@ -85,9 +79,7 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleDetailByDateBetweenAndScheduleIdAndTeacherId(String fromDate, String toDate, Integer scheduleId, Integer teacherId) {
         try {
-            listScheduleDetail = new ArrayList<>();
-            listScheduleDetail = repository.findScheduleDetailsByDateBetweenAndScheduleIdAndTeacherId(fromDate, toDate, scheduleId, teacherId);
-            return listScheduleDetail;
+            return repository.findScheduleDetailsByDateBetweenAndScheduleIdAndTeacherId(fromDate, toDate, scheduleId, teacherId);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }
@@ -96,9 +88,7 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleDetailsByDateBetweenAndTeacherId(String fromDate, String toDate, Integer teacherId) {
         try {
-            listScheduleDetail = new ArrayList<>();
-            listScheduleDetail = repository.findScheduleDetailsByDateBetweenAndTeacherId(fromDate, toDate, teacherId);
-            return listScheduleDetail;
+            return repository.findScheduleDetailsByDateBetweenAndTeacherId(fromDate, toDate, teacherId);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }
@@ -107,9 +97,7 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleDetailsByDateAndTeacherId(String date, Integer teacherId) {
         try {
-            listScheduleDetail = new ArrayList<>();
-            listScheduleDetail = repository.findScheduleDetailsByDateAndTeacherId(date, teacherId);
-            return listScheduleDetail;
+            return repository.findScheduleDetailsByDateAndTeacherId(date, teacherId);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find nany records");
         }
@@ -118,9 +106,16 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleDetailsByDateAndScheduleIdAndTeacherId(String date, Integer scheduleId, Integer teacherId) {
         try {
-            listScheduleDetail = new ArrayList<>();
-            listScheduleDetail = repository.findScheduleDetailsByDateAndScheduleIdAndTeacherId(date, scheduleId, teacherId);
-            return listScheduleDetail;
+            return repository.findScheduleDetailsByDateAndScheduleIdAndTeacherId(date, scheduleId, teacherId);
+        } catch (Exception e) {
+            throw new ErrorHandler("Don't find any records");
+        }
+    }
+
+    @Override
+    public List<ScheduleDetail> findScheduleDetailByDateSlotAndShift(String date, Integer slot, String shift) {
+        try {
+            return repository.findScheduleDetailsByDateAndSlotAndShift(date, slot, shift);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }

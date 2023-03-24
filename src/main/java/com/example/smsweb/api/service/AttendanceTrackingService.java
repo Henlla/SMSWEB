@@ -39,13 +39,7 @@ public class AttendanceTrackingService implements IAttendanceTracking {
     @Override
     public List<AttendanceTracking> findByTeacherId(Integer teacherId) {
         try {
-            attendanceTrackingList = new ArrayList<>();
-            attendanceTrackingList = dao.findAttendanceTrackingsByTeacherId(teacherId);
-            if (attendanceTrackingList.isEmpty()) {
-                return null;
-            } else {
-                return attendanceTrackingList;
-            }
+            return dao.findAttendanceTrackingsByTeacherId(teacherId);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }
@@ -54,13 +48,7 @@ public class AttendanceTrackingService implements IAttendanceTracking {
     @Override
     public List<AttendanceTracking> findByDateBetweenAndTeacherId(String fromDate, String toDate, Integer teacherId) {
         try {
-            attendanceTrackingList = new ArrayList<>();
-            attendanceTrackingList = dao.findAttendanceTrackingsByDateBetweenAndTeacherId(fromDate, toDate, teacherId);
-            if (attendanceTrackingList.isEmpty()) {
-                return null;
-            } else {
-                return attendanceTrackingList;
-            }
+            return dao.findAttendanceTrackingsByDateBetweenAndTeacherId(fromDate, toDate, teacherId);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }

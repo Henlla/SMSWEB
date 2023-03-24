@@ -18,6 +18,12 @@
                         <div class="col-sm-6">
                             <h5 class="m-0">Room Manager</h5>
                         </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">List room</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -52,7 +58,9 @@
                                             th:text="${room.getRoomCode()}"></span>
                                     </td>
                                     <td>
-                                        <a th:data-id="${room.id}" onclick="OnClickViewRoom(this.getAttribute('data-id'))" class="btn btn-primary"><i class="far fa-eye"></i></a>
+                                        <a th:data-id="${room.id}"
+                                           onclick="OnClickViewRoom(this.getAttribute('data-id'))"
+                                           class="btn btn-primary"><i class="far fa-eye"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -169,7 +177,8 @@
                                     <div class="container">
                                         <div class="form-group">
                                             <label for="shift">Shift</label>
-                                            <select name="shift" id="shift" class="form-control" onchange="OnChangeShiftCheckRoom()">
+                                            <select name="shift" id="shift" class="form-control"
+                                                    onchange="OnChangeShiftCheckRoom()">
                                                 <option value="M0">Morning - 2/4/6</option>
                                                 <option value="A0">Afternoon - 2/4/6</option>
                                                 <option value="E0">Evening - 2/4/6</option>
