@@ -35,30 +35,34 @@ $(()=>{
                             title:'Status',
                             data:function(row, type, set) {
                                 if (typeof (row.asmMark) != "number" && typeof (row.objMark) != "number") {
-                                    return "Not started";
+                                    return `<span class="badge badge-secondary">Not started</span>`;
                                 }
                                 if ((typeof (row.asmMark) != "number" && typeof (row.objMark) == "number") || (row.asmMark < 40 || row.objMark < 40) || (typeof (row.objMark) != "number" && typeof (row.asmMark) == "number")) {
-                                    return "Not passed";
+                                    return `<span class="badge badge-warning">Not passed</span>`;
                                 }
-                                return "Passed"
+                                return `<span class="badge badge-success">Passed</span>`;
                             }
                         }
                     ],
                     columnDefs: [ {
-                        targets: 4,
+                        targets: [0,1,2,3,4],
                         createdCell: function (td, cellData, rowData, row, col) {
-                            if ( cellData =='Passed' ) {
-                                $(td).addClass('text-success')
-                            }else if ( cellData =='Not passed' ) {
-                                $(td).addClass('text-warning')
-                            }
+                            $(td).addClass('text-md')
                         }
                     } ]
                 })
             }
         },
         error: (error) => {
-
+            $("#listMark").DataTable({
+                columns:[
+                    {title:'Student Name'},
+                    {title:'Subject Name'},
+                    {title:'ASM Mark'},
+                    {title:'OBJ Mark'},
+                    {title:'Status'}
+                ]
+            })
         }
     })
 })

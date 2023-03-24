@@ -708,9 +708,13 @@ public class StudentClientController {
 
                 InputMarkModel inputMarkModel = new InputMarkModel(student, subject);
                 Mark itemMark = item.getMarksById().stream().filter(mark -> mark.getStudentSubjectId() == item.getId()).findFirst().orElse(null);
-                inputMarkModel.setAsmMark(itemMark.getAsm());
-                inputMarkModel.setObjMark(itemMark.getObj());
-
+                if (itemMark != null){
+                    if (itemMark.getAsm() != null)
+                        inputMarkModel.setAsmMark(itemMark.getAsm());
+                        else inputMarkModel.setAsmMark(null);
+                    if (itemMark.getObj() != null)inputMarkModel.setObjMark(itemMark.getObj());
+                        else inputMarkModel.setObjMark(null);
+                }
                 listStudentSubject.add(inputMarkModel);
             }
             String jsonMarks = objectMapper.writeValueAsString(listStudentSubject);

@@ -2,7 +2,6 @@ package com.example.smsweb.client.teacher;
 
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.*;
-import com.example.smsweb.dto.teacher.MarkList;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.dto.teacher.InputMarkModel;
 import com.example.smsweb.jwt.JWTUtils;
