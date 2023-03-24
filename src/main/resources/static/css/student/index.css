@@ -4,7 +4,14 @@
     margin-right: 15px;
     padding-right: 0;
 }
-
+.right-box ::-webkit-scrollbar {
+    width: 6px !important;
+}
+.right-box ::-webkit-scrollbar-thumb{
+    width: 1px !important;
+    background: #ccc !important;
+    border-radius: 20px !important;
+}
 .box h3{
     height: 34px;
     line-height: 34px;
@@ -115,10 +122,10 @@
 .calendar-box{
     display: -webkit-box;
     display: -ms-flexbox;
-    display: flex;
+    /*display: flex;*/
     -webkit-box-align: center;
     -ms-flex-align: center;
-    align-items: center;
+    /*align-items: center;*/
     position: relative;
     width: 100%;
 }
