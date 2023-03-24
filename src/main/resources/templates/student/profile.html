@@ -28,7 +28,7 @@
         </div>
             <div class="divUser">
                 <span class="label label-success" th:text="${#authentication.getPrincipal().username}"></span>
-                 | 
+                 |
                 <a class="label label-success" th:href="${'/logout'}">Logout</a>
             </div>
         </div>
@@ -134,7 +134,7 @@
                               name="oldPass"
                               id="oldPass"
                               class="form-control"
-                              placeholder=""
+                              placeholder="Enter old password"
                               aria-describedby="oldPass"
                             />
                             <small id="mess_oldPass" class="text-muted"
@@ -148,10 +148,10 @@
                               name="newPass"
                               id="newPass"
                               class="form-control"
-                              placeholder=""
+                              placeholder="Enter new password"
                               aria-describedby="newPass"
                             />
-                            <small id="newPass" class="text-muted"
+                            <small id="mess_newPass" class="text-muted"
                               ></small
                             >
                           </div>

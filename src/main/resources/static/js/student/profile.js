@@ -5,7 +5,12 @@ $(()=>{
 
     $('#oldPass').on('focus',()=>{
         $('#mess_oldPass').html('')
-    })
+    });
+
+    $("#change_password").on("hidden.bs.modal",()=>{
+        $("#oldPass").val("");
+        $("#newPass").val("");
+    });
 
     $('#submitChange').on('click',(e)=>{
         e.preventDefault()
