@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -16,15 +17,14 @@ import java.util.List;
 public class Major {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private int id;
     @Basic
-    @Column(name = "major_code")
+    @Column(name = "major_code", nullable = true, length = 45)
     private String majorCode;
     @Basic
-    @Column(name = "major_name")
+    @Column(name = "major_name", nullable = true, length = 45)
     private String majorName;
-
     @OneToMany(mappedBy = "majorByMajorId")
 //    @JsonManagedReference("major_major_student")
     @JsonIgnore
@@ -33,9 +33,13 @@ public class Major {
 //    @JsonManagedReference("subject_major")
 //    @JsonIgnore
     private List<Subject> subjectsById;
-
     @OneToMany(mappedBy = "major")
     @JsonIgnore
     private List<Classses> classesByMajorId;
-
+    @Basic
+    @Column(name = "apartment_id", nullable = true)
+    private Integer apartmentId;
+    @ManyToOne
+    @JoinColumn(name = "apartment_id", referencedColumnName = "id")
+    private Apartment apartmentByApartmentId;
 }
