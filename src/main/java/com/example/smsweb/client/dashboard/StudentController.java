@@ -163,24 +163,24 @@ public class StudentController {
             Student studentResponse = new ObjectMapper().readValue(studentResponseToJson,Student.class);
             //----------------------
 
-            //Save student-Subject
-            List<StudentSubject> studentSubjectList = new ArrayList<>();
-            ResponseModel subjectsByMajor = restTemplate.getForObject(SUBJECT_URL+"findByMajorId/"+majorId,ResponseModel.class);
-            String jsonSubjectMajor = new ObjectMapper().writeValueAsString(subjectsByMajor.getData());
-            List<Subject> convertJsonSubject = new ObjectMapper().readValue(jsonSubjectMajor, new TypeReference<List<Subject>>() {
-            });
-            for(Subject subject : convertJsonSubject){
-                StudentSubject studentSubject = new StudentSubject(subject.getId(),studentResponse.getId(),"0");
-                studentSubjectList.add(studentSubject);
-            }
-            String studentSubjectListToJson = new ObjectMapper().writeValueAsString(studentSubjectList);
-            HttpHeaders headersStudentSubject = new HttpHeaders();
-            headersStudentSubject.set("Content-Type", "multipart/form-data");
-            headersStudentSubject.set("Authorization","Bearer "+_token);
-            MultiValueMap<String, String> paramsStudentSubject = new LinkedMultiValueMap<>();
-            paramsStudentSubject.add("student_subjectList",studentSubjectListToJson);
-            HttpEntity<MultiValueMap<String, String>> requestEntityStudentSubject = new HttpEntity<>(paramsStudentSubject,headersStudentSubject);
-            ResponseEntity<ResponseModel> responseModelStudentSubject= restTemplate.exchange(STUDENT_SUBJECT_URL, HttpMethod.POST,requestEntityStudentSubject,ResponseModel.class);
+//            //Save student-Subject
+//            List<StudentSubject> studentSubjectList = new ArrayList<>();
+//            ResponseModel subjectsByMajor = restTemplate.getForObject(SUBJECT_URL+"findByMajorId/"+majorId,ResponseModel.class);
+//            String jsonSubjectMajor = new ObjectMapper().writeValueAsString(subjectsByMajor.getData());
+//            List<Subject> convertJsonSubject = new ObjectMapper().readValue(jsonSubjectMajor, new TypeReference<List<Subject>>() {
+//            });
+//            for(Subject subject : convertJsonSubject){
+//                StudentSubject studentSubject = new StudentSubject(subject.getId(),studentResponse.getId(),"0");
+//                studentSubjectList.add(studentSubject);
+//            }
+//            String studentSubjectListToJson = new ObjectMapper().writeValueAsString(studentSubjectList);
+//            HttpHeaders headersStudentSubject = new HttpHeaders();
+//            headersStudentSubject.set("Content-Type", "multipart/form-data");
+//            headersStudentSubject.set("Authorization","Bearer "+_token);
+//            MultiValueMap<String, String> paramsStudentSubject = new LinkedMultiValueMap<>();
+//            paramsStudentSubject.add("student_subjectList",studentSubjectListToJson);
+//            HttpEntity<MultiValueMap<String, String>> requestEntityStudentSubject = new HttpEntity<>(paramsStudentSubject,headersStudentSubject);
+//            ResponseEntity<ResponseModel> responseModelStudentSubject= restTemplate.exchange(STUDENT_SUBJECT_URL, HttpMethod.POST,requestEntityStudentSubject,ResponseModel.class);
             //-------------------
 
             //save major-student
