@@ -114,9 +114,9 @@
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <label>Major :</label>
+                                    <label>Course :</label>
                                     <select id="major" onchange="selectMajor()" class="form-control select2" name="major" style="width: 100%;">
-                                        <option selected="selected"  value="">----- Choose major------</option>
+                                        <option selected="selected"  value="">----- Choose course------</option>
                                         <th:block th:each="major : ${majors}">
                                             <option th:value="${major.id}">[[${major.majorName}]]</option>
                                         </th:block>
