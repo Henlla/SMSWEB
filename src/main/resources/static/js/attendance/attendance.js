@@ -1,7 +1,67 @@
 $(() => {
+    let date = $("#date_attendance");
+
+    date.val(moment().format("YYYY-MM-DD"));
+
+    OnFindAttendanceByDate(date.val());
+
+    $("#viewTable").DataTable({
+        paging: false,
+        info: false,
+        autoWidth: false,
+        columnDefs: [
+            {
+                "targets": [0, 1, 2],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2],
+                "orderable": false,
+            }
+        ],
+        columns: [
+            {title: "STT"},
+            {title: "Class"},
+            {title: "Action"},
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
+
     $(".select2").select2({
         theme: "bootstrap4",
         dropdownCssClass: "f-13"
+    });
+
+    date.attr("min", moment().subtract(2, "days").format("YYYY-MM-DD"));
+
+    date.attr("max", moment().format("YYYY-MM-DD"));
+
+    date.on("change", () => {
+        let date = $("#date_attendance").val();
+        OnFindAttendanceByDate(date);
     });
 
     $("#listStudent").DataTable({
@@ -150,6 +210,82 @@ $(() => {
     });
 
 });
+
+const ViewDatable = (response) => {
+    $("#viewTable").DataTable({
+        paging: false,
+        info: false,
+        autoWidth: false,
+        data: response,
+        columnDefs: [
+            {
+                "targets": [0, 1, 2],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2],
+                "orderable": false,
+            }
+        ],
+        columns: [
+            {
+                render: function (data, type, row, index) {
+                    return index.row + 1;
+                }
+
+            },
+            {
+                data: "class_name",
+                render: function (data, type, row, index) {
+                    return data;
+                }
+            },
+            {
+                data: {class_id: "class_id", isAttendance: "isAttendance", onTime: "onTime"},
+                render: function (data, type, row, index) {
+                    let html = "";
+                    if (data.isAttendance === 0) {
+                        if (data.onTime === 0) {
+                            html += `<button disabled onclick="OnTakeAttendance('${data.class_id}')" class="btn btn-primary btn-sm"><i class="fas fa-user-edit"></i></button>`
+                        } else {
+                            html += `<button onclick="OnTakeAttendance('${data.class_id}')" class="btn btn-primary btn-sm"><i class="fas fa-user-edit"></i></button>`
+                        }
+                    } else {
+                        html += `
+                            <button class="btn btn-warning btn-sm" onclick="OnEditAttendance('${data.class_id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-info btn-sm" onclick="OnViewAttendance('${data.class_id}')"><i class="fas fa-eye"></i></button>
+                        `
+                    }
+                    return html;
+                }
+            }
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
+}
 
 const DataTable = (response) => {
     let html = "";
@@ -690,4 +826,43 @@ const OnViewAttendance = (obj) => {
             }
         }
     });
+}
+
+const OnFindAttendanceByDate = (date) => {
+    $.ajax({
+        url: "/teacher/attendance/getAttendanceByDate",
+        method: "GET",
+        data: {
+            date: date
+        },
+        success: (response) => {
+            console.log(response);
+            if ($.fn.dataTable.isDataTable('#viewTable')) {
+                table = $('#viewTable').DataTable();
+                table.clear().draw();
+                table.destroy();
+                ViewDatable(response);
+            } else {
+                ViewDatable(response);
+            }
+        }, error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/login";
+                    }
+                });
+            } else {
+                if ($.fn.dataTable.isDataTable('#listEditStudent')) {
+                    table = $('#listEditStudent').DataTable();
+                    table.clear().draw();
+                }
+            }
+        }
+    })
 }
