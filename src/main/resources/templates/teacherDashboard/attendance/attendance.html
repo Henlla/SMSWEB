@@ -19,6 +19,14 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="form-group d-flex flex-column">
+                    <label>Date: </label>
+                    <input type="date" id="date_attendance" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
     </section>
     <section class="row">
         <div class="col-sm-12">
@@ -26,49 +34,7 @@
                 <div class="card-body">
                     <div class="row table-responsive">
                         <div class="col-12">
-                            <table class="table table-hover table-bordered">
-                                <thead>
-                                <tr class="text-center">
-                                    <th>STT</th>
-                                    <th>Class</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <th:block th:if="${msg.isEmpty()}">
-                                    <tr class="text-center" th:each="items:${listClass}">
-                                        <td style="vertical-align: middle">[[${listClass.indexOf(items)+1}]]</td>
-                                        <td style="vertical-align: middle" th:value="${items.class_id}">
-                                            [[${items.class_name}]]
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <th:block th:if="${items.isAttendance == 0}">
-                                                <th:block th:if="${items.onTime == 0}">
-                                                    <button th:data-name="${items.class_id}" disabled onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-user-edit"></i></button>
-                                                </th:block>
-                                                <th:block th:if="${items.onTime == 1}">
-                                                    <button th:data-name="${items.class_id}" onclick="OnTakeAttendance(this.getAttribute('data-name'))" class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-user-edit"></i></button>
-                                                </th:block>
-                                            </th:block>
-                                            <th:block th:if="${items.isAttendance == 1}">
-                                                <button th:data-name="${items.class_id}" class="btn btn-warning btn-sm" onclick="OnEditAttendance(this.getAttribute('data-name'))">
-                                                    <i class="fas fa-edit"></i></button>
-                                                <button th:data-name="${items.class_id}" class="btn btn-info btn-sm" onclick="OnViewAttendance(this.getAttribute('data-name'))">
-                                                    <i class="fas fa-eye"></i></button>
-                                            </th:block>
-                                        </td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:if="${!msg.isEmpty()}">
-                                    <tr>
-                                        <td class="text-center" colspan="3">[[${msg}]]</td>
-                                    </tr>
-                                </th:block>
-                                </tbody>
-                            </table>
-
+                            <table id="viewTable" class="table table-hover table-bordered"></table>
                         </div>
                     </div>
                 </div>
@@ -92,7 +58,8 @@
                     </section>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <input type="button" id="btnOnsubmit" onclick="OnSubmitAttendance()" value="Confirm" style="width: 200px" class="btn btn-primary btn-sm mb-2">
+                    <input type="button" id="btnOnsubmit" onclick="OnSubmitAttendance()" value="Confirm"
+                           style="width: 200px" class="btn btn-primary btn-sm mb-2">
                 </div>
             </div>
         </div>
@@ -114,7 +81,8 @@
                     </section>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <input type="button" id="btnOnUpdate" onclick="OnUpdateAttendance()" value="Confirm" style="width: 200px" class="btn btn-primary mb-2">
+                    <input type="button" id="btnOnUpdate" onclick="OnUpdateAttendance()" value="Confirm"
+                           style="width: 200px" class="btn btn-primary mb-2">
                 </div>
             </div>
         </div>

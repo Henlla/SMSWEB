@@ -48,20 +48,13 @@ public class AttendanceController {
     List<Attendance> listAttendance;
     List<AttendanceView> listAttendanceView;
     List<StudentSubject> listStudentSubject;
-    List<Student> listStudent;
     AttendanceView attendanceView;
     List<AttendanceEdit> listEditAttendance;
-    List<GroupingSchedule> listGroupingSchedule;
     List<Attendance> existsAttendance;
-    List<ScheduleDetail> scheduleDetailList;
 
     String mSTime = "07:30", mETime = "11:30";
     String aSTime = "12:30", aETime = "17:30";
     String eSTime = "17:30", eETime = "21:30";
-
-//  String mSTime = "00:00", mETime = "23:59";
-//  String aSTime = "00:00", aETime = "23:59";
-//  String eSTime = "00:00",  eETime = "23:59";
 
     LocalTime startTime;
     LocalTime endTime;
@@ -75,8 +68,27 @@ public class AttendanceController {
     LocalDate detailDate;
 
     @GetMapping("/index")
-    public String attendance(@CookieValue(name = "_token", defaultValue = "") String _token,
-                             Model model, Authentication auth) {
+    public Object getAttendanceDate(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                    Authentication auth, Model model) {
+        try {
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                return "teacherDashboard/attendance/attendance";
+            } else {
+                return "redirect:/login";
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            model.addAttribute("msg", "Don't have time table for today");
+            return "teacherDashboard/attendance/attendance";
+        }
+    }
+
+    @GetMapping("/getAttendanceByDate")
+    @ResponseBody
+    public Object attendance(@CookieValue(name = "_token", defaultValue = "") String _token,
+                             Model model, Authentication auth,
+                             @RequestParam("date") String date) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
@@ -85,8 +97,6 @@ public class AttendanceController {
                 listStudentSubject = new ArrayList<>();
                 listClass = new ArrayList<>();
                 listAttendanceView = new ArrayList<>();
-                listGroupingSchedule = new ArrayList<>();
-                scheduleDetailList = new ArrayList<>();
                 listAttendance = new ArrayList<>();
                 existsAttendance = new ArrayList<>();
                 restTemplate = new RestTemplate();
@@ -101,19 +111,15 @@ public class AttendanceController {
                 ResponseEntity<Teacher> teacherResponse = restTemplate.exchange(TEACHER_URL + "getByProfile/" + profileResponse.getBody().getId(), HttpMethod.GET, request, Teacher.class);
 
                 MultiValueMap<String, String> content = new LinkedMultiValueMap<String, String>();
-                LocalDate toDate = LocalDate.parse(LocalDate.now().format(formatDate));
-                LocalDate fromDate = toDate.minusDays(2);
-                content.add("fromDate", fromDate.toString());
-                content.add("toDate", toDate.toString());
+                content.add("date", date);
                 content.add("teacherId", String.valueOf(teacherResponse.getBody().getId()));
                 HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(content, headers);
 
-                //Lấy Schedule Detail từ ngày đến ngày
-                ResponseEntity<ResponseModel> scheduleDetailResponse = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailsByDateBetweenAndTeacherId", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
+                //Lấy Schedule Detail theo ngày
+                ResponseEntity<ResponseModel> scheduleDetailResponse = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailsByDate", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
                 String scheduleDetailJson = new ObjectMapper().writeValueAsString(scheduleDetailResponse.getBody().getData());
                 listScheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, new TypeReference<List<ScheduleDetail>>() {
                 });
-
 
                 if (!listScheduleDetail.isEmpty()) {
                     for (ScheduleDetail scheduleDetail : listScheduleDetail) {
@@ -313,16 +319,13 @@ public class AttendanceController {
                             listAttendanceView.add(attendanceView);
                         }
                     }
-                    Collections.sort(listAttendanceView, Comparator.comparing(AttendanceView::getDate));
-                    model.addAttribute("msg", "");
-                    model.addAttribute("listClass", listAttendanceView);
-                    return "teacherDashboard/attendance/attendance";
+                    Collections.sort(listAttendanceView, Collections.reverseOrder(Comparator.comparing(AttendanceView::getShift).thenComparing(AttendanceView::getDate)));
+                    return listAttendanceView;
                 } else {
-                    model.addAttribute("msg", "Don't have time table for today");
-                    return "teacherDashboard/attendance/attendance";
+                    return listAttendanceView;
                 }
             } else {
-                return "redirect:/login";
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -543,7 +546,6 @@ public class AttendanceController {
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
                 listStudentSubject = new ArrayList<>();
-                listStudent = new ArrayList<>();
                 listEditAttendance = new ArrayList<>();
                 listAttendance = new ArrayList<>();
                 HttpHeaders headers = new HttpHeaders();
@@ -782,7 +784,6 @@ public class AttendanceController {
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
                 listStudentSubject = new ArrayList<>();
-                listStudent = new ArrayList<>();
                 listEditAttendance = new ArrayList<>();
                 listAttendance = new ArrayList<>();
                 HttpHeaders headers = new HttpHeaders();

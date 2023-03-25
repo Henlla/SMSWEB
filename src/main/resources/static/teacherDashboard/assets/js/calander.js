@@ -20,6 +20,5 @@ $(document).ready(function () {
 
 let getSchedule=(startDate)=>{
     var date = new Date(startDate)
-    console.log(date)
     return "Hello"
 }

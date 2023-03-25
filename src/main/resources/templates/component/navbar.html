@@ -1,236 +1,251 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-  <a th:href="@{'/dashboard'}" class="brand-link">
-    <img src="/img/hkt_logo_2.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-    <span class="brand-text font-weight-light">HKT System</span>
-  </a>
+    <a th:href="@{'/dashboard'}" class="brand-link">
+        <img src="/img/hkt_logo_2.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+             style="opacity: .8">
+        <span class="brand-text font-weight-light">HKT System</span>
+    </a>
 
-  <div class="sidebar">
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="image">
-        <img src="/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-      </div>
-      <div class="info">
-        <a href="#" class="d-block" th:text="${#authentication.getPrincipal().username}"></a>
-      </div>
+    <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block" th:text="${#authentication.getPrincipal().username}"></a>
+            </div>
+        </div>
+
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-hashtag"></i>
+                        <p>Major<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/apartment/index}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Major</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'', ''STAFF'')')}">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-hashtag"></i>
+                        <p>Course<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/major/index}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List course</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>
+                            Student
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/student/index-student'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Student</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/student/create-student'}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Create Student</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>
+                            Teacher
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/teacher/index-teacher'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List teacher</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/teacher/create-teacher'}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Create teacher</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>
+                            Staff
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/staff/index-staff'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List staff</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/staff/create-staff'}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Create staff</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-hashtag"></i>
+                        <p>Subject<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/subject/index}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List subject</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>Role<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/role/index-role}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List role</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-hashtag"></i>
+                        <p>Application<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/applicationType/index}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>Application Type</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/application/app_index}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Application</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>News<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/news/index-news}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List News</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/news/create_new}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Create News</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>Attendance<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/attendance/index}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Edit attendance</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>Class<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/class/class-index'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Class</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/class/class-create'}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Create Class</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>Room<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/room/index'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Room</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
     </div>
-
-    <nav class="mt-2">
-      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <li class="nav-item">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>
-              Student
-              <i class="right fas fa-angle-left"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/student/index-student'}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List Student</p>
-              </a>
-            </li>
-          </ul>
-          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
-            <li  class="nav-item">
-              <a th:href="@{'/dashboard/student/create-student'}" class="nav-link active">
-                <i class="fas fa-plus"></i>
-                <p>Create Student</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>
-              Teacher
-              <i class="right fas fa-angle-left"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/teacher/index-teacher'}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List teacher</p>
-              </a>
-            </li>
-          </ul>
-          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/teacher/create-teacher'}" class="nav-link active">
-                <i class="fas fa-plus"></i>
-                <p>Create teacher</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>
-              Staff
-              <i class="right fas fa-angle-left"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/staff/index-staff'}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List staff</p>
-              </a>
-            </li>
-          </ul>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/staff/create-staff'}" class="nav-link active">
-                <i class="fas fa-plus"></i>
-                <p>Create staff</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'', ''STAFF'')')}">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-hashtag"></i>
-            <p>Major<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/major/index}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List major</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-hashtag"></i>
-            <p>Subject<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/subject/index}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List subject</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>Role<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/role/index-role}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List role</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-hashtag"></i>
-            <p>Application<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/applicationType/index}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>Application Type</p>
-              </a>
-            </li>
-          </ul>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/application/app_index}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List Application</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>News<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/news/index-news}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List News</p>
-              </a>
-            </li>
-          </ul>
-          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/news/create_new}" class="nav-link active">
-                <i class="fas fa-plus"></i>
-                <p>Create News</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>Attendance<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{/dashboard/attendance/index}" class="nav-link active">
-                <i class="fas fa-plus"></i>
-                <p>Edit attendance</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>Class<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/class/class-index'}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List Class</p>
-              </a>
-            </li>
-          </ul>
-          <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/class/class-create'}" class="nav-link active">
-                <i class="fas fa-plus"></i>
-                <p>Create Class</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link active">
-            <i class="fas fa-user"></i>
-            <p>Room<i class="right fas fa-angle-left"></i></p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a th:href="@{'/dashboard/room/index'}" class="nav-link active">
-                <i class="fas fa-list"></i>
-                <p>List Room</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
-  </div>
 </aside>
 
 
