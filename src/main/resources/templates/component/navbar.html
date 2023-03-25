@@ -48,6 +48,20 @@
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link active">
+                        <i class="fas fa-hashtag"></i>
+                        <p>Subject<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{/dashboard/subject/index}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List subject</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
                         <i class="fas fa-user"></i>
                         <p>
                             Student
@@ -96,6 +110,42 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>Room<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/room/index'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Room</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>Class<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/class/class-index'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Class</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/class/class-create'}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Create Class</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}">
                     <a href="#" class="nav-link active">
                         <i class="fas fa-user"></i>
@@ -117,20 +167,6 @@
                             <a th:href="@{'/dashboard/staff/create-staff'}" class="nav-link active">
                                 <i class="fas fa-plus"></i>
                                 <p>Create staff</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-hashtag"></i>
-                        <p>Subject<i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a th:href="@{/dashboard/subject/index}" class="nav-link active">
-                                <i class="fas fa-list"></i>
-                                <p>List subject</p>
                             </a>
                         </li>
                     </ul>
@@ -207,42 +243,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-user"></i>
-                        <p>Class<i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a th:href="@{'/dashboard/class/class-index'}" class="nav-link active">
-                                <i class="fas fa-list"></i>
-                                <p>List Class</p>
-                            </a>
-                        </li>
-                    </ul>
-                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a th:href="@{'/dashboard/class/class-create'}" class="nav-link active">
-                                <i class="fas fa-plus"></i>
-                                <p>Create Class</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-user"></i>
-                        <p>Room<i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a th:href="@{'/dashboard/room/index'}" class="nav-link active">
-                                <i class="fas fa-list"></i>
-                                <p>List Room</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+
             </ul>
         </nav>
     </div>

@@ -17,6 +17,43 @@ $(() => {
         "hideMethod": "fadeOut"
     }
 
+    $(".apartment_select").select2({
+        theme: "bootstrap4",
+        placeholder: "Choose major",
+        ajax: {
+            url: "/dashboard/major/findApartment",
+            method: "GET",
+            processResults: function (response) {
+                let dataArray = [];
+                for (const dataKey of response) {
+                    let data = {
+                        "id": dataKey.id,
+                        "text": dataKey.apartmentCode
+                    }
+                    dataArray.push(data);
+                }
+                return {
+                    results: dataArray
+                };
+            }, error: (data) => {
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                } else {
+                    toastr.error(data.responseText);
+                }
+            }
+        }
+    });
+
     $("#create-form").validate({
         rules: {
             create_major_code_validate: {
@@ -24,6 +61,9 @@ $(() => {
             },
             create_major_name_validate: {
                 required: true
+            },
+            create_apartment_validate:{
+                required:true
             }
         }, messages: {
             create_major_code_validate: {
@@ -31,6 +71,9 @@ $(() => {
             },
             create_major_name_validate: {
                 required: "Please enter major name"
+            },
+            create_apartment_validate:{
+                required:"Please choose major"
             }
         }
     });
@@ -42,6 +85,9 @@ $(() => {
             },
             edit_major_name_validate: {
                 required: true
+            },
+            edit_apartment_validate:{
+                required:true
             }
         }, messages: {
             edit_major_code_validate: {
@@ -49,6 +95,9 @@ $(() => {
             },
             edit_major_name_validate: {
                 required: "Please enter major name"
+            },
+            edit_apartment_validate:{
+                required:"Please choose major"
             }
         }
     });
@@ -84,15 +133,21 @@ $(() => {
         }
     });
 
+    $("#create-major-modal").on("hidden.bs.modal",function(){
+        $(this).find('#create-form')[0].reset();
+        $("#apartment").val(null).trigger("change");
+    })
 });
 
 var OnCreateMajor = () => {
     if ($("#create-form").valid()) {
         var major_code = $("#create_major_code").val();
         var major_name = $("#create_major_name").val();
+        var apartment_id = $("#apartment").val();
         var major = {
             "majorCode": major_code,
-            "majorName": major_name
+            "majorName": major_name,
+            "apartmentId" : apartment_id
         }
         $.ajax({
             url: "/dashboard/major/save",
@@ -132,10 +187,11 @@ var OnEditMajor = (id) => {
         contentType: "application/json",
         method: "GET",
         success: (data) => {
+            $("#edit-major-modal").modal("show");
             $("#edit_major_id").val(data.id);
             $("#edit_major_code").val(data.majorCode);
             $("#edit_major_name").val(data.majorName);
-            $("#edit-major-modal").modal("show");
+            $("#edit_apartment").val(data.apartmentId).trigger("change");
         }, error: (data) => {
             if (data.responseText.toLowerCase() === "token expired") {
                 Swal.fire({
@@ -160,6 +216,7 @@ var OnUpdateMajor = () => {
         "id": $("#edit_major_id").val(),
         "majorCode": $("#edit_major_code").val(),
         "majorName": $("#edit_major_name").val(),
+        "apartmentId" : $("#edit_apartment").val()
     }
     $.ajax({
         url: "/dashboard/major/update",
@@ -240,7 +297,7 @@ var OnDeleteMajor = (id) => {
 
 var OnSaveExcelData = () => {
     var file = $("#fileUpload").get(0).files[0];
-    if(file !== undefined){
+    if (file !== undefined) {
         var formData = new FormData();
         formData.append("file", file);
         $.ajax({

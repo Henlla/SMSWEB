@@ -1,12 +1,10 @@
 package com.example.smsweb.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -40,6 +38,6 @@ public class Major {
     @Column(name = "apartment_id", nullable = true)
     private Integer apartmentId;
     @ManyToOne
-    @JoinColumn(name = "apartment_id", referencedColumnName = "id")
+    @JoinColumn(name = "apartment_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Apartment apartmentByApartmentId;
 }
