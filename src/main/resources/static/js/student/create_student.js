@@ -1,10 +1,37 @@
 $(()=>{
-    $('#reservationdate').datetimepicker({
+    $('#dob_calendar').datetimepicker({
         format: 'DD/MM/YYYY'
     });
     $('.select2').select2({
         theme: 'bootstrap4'
     });
+
+    $('#dob_calendar').on('change.datetimepicker',(e)=>{
+        // var formatedValue = e.date.format(e.date._f);
+        let date = new Date(e.date)
+        let age = _calculateAge(date)
+        console.log(age);
+        if (age <= 18){
+            $('#dob-error').show()
+            $('#dob-error').html('Age must be greater than 18 ')
+        }else{
+            $('#dob-error').hide()
+            $('#dob-error').html('')
+        }
+    })
+
+    $('#phone').on('change',()=>{
+        // console.log()
+        let isPhone = regexPhone($('#phone').val())
+        if(isPhone){
+            $('#phone-error').hide()
+            $('#phone-error').html('')
+        }else{
+            $('#phone-error').show()
+            $('#phone-error').html('Please enter incorrect phone')
+        }
+    })
+
     const province = document.getElementById("province")
     const district = document.getElementById("district")
     const wards = document.getElementById("ward")
@@ -59,6 +86,8 @@ $(()=>{
     $('.icon-choose_image').on('click', function() {
         $('#avatar').trigger('click');
     });
+
+
 
     function readURL(input) {
         if (input.files && input.files[0]) {
@@ -180,18 +209,31 @@ $(()=>{
             return arg !== value;
         }, "Value must not equal arg.");
 
+        $.validator.addMethod("checkAge", function(value, element){
+            let date = new Date(value)
+            let age = _calculateAge(date)
+            return age >= 18;
+        }, "Age must be greater than 18");
+
+        $.validator.addMethod("checkPhoneNumber", function(value, element){
+            return regexPhone(value);
+        }, "Please enter incorrect phone");
+
         $('#form-create').validate({
             rules: {
                 first_name: {
+
                     required: true
                 },
                 last_name: {
                     required: true
                 },
                 phone: {
+                    checkPhoneNumber:true,
                     required: true
                 }
                 ,dob: {
+                    checkAge:true,
                     required: true
                 },
                 email: {
@@ -226,8 +268,10 @@ $(()=>{
                     required:"Please enter last name"
                 },
                 phone: {
+                    checkPhoneNumber: "Please enter incorrect phone",
                     required: "Please enter phone numbers "
                 }, dob: {
+                    checkAge:"Age must be greater than 18",
                     required: "Please enter date of birth "
                 },
                 email: {
@@ -314,6 +358,12 @@ $(()=>{
     })
 
 })
+
+
+
+
+
+
 function selectMajor(){
     console.log($('#major').val())
    if($('#major').val() != ""){
@@ -341,3 +391,5 @@ function selectWard(){
         $('#ward-error').html("")
     }
 }
+
+

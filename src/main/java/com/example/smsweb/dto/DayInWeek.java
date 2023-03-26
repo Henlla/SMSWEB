@@ -23,4 +23,5 @@ public class DayInWeek {
     private Integer slot;
     private Integer week;
     private Integer weekOfYear;
+    private Integer year;
 }

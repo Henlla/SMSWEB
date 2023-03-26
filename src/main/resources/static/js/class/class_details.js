@@ -764,7 +764,7 @@ var OnChangeSemesterSchedule = () => {
         cache: false,
         processData: false,
         success: (res) => {
-            console.log(res)
+            // console.log(res)
             $('#btn_update_schedule').css('display', 'block')
             $('#btnDownSchedule').show()
             $('#btnDownSchedule').attr('href', `/dashboard/class/export_schedule/${classId}&${semester}`)
@@ -783,7 +783,7 @@ var OnChangeSemesterSchedule = () => {
             }
             if (res !== '') {
                 const list = Object.values(res);
-                // console.log(list)
+                console.log(list)
                 let table = document.getElementById("schedule_table")
                 $('#schedule_table tbody').remove()
                 let tbody = document.createElement("tbody")
@@ -825,12 +825,12 @@ var OnChangeSemesterSchedule = () => {
                     // const td6_2 = document.createElement("td")
                     // td6_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
 
-                    for (let j of i) {
+                    for (let j of i.list) {
                         switch (j.dayOfWeek) {
                             case "MONDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
+                                        td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                           <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -839,7 +839,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
+                                        td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
                                       <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}</div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
@@ -847,7 +847,7 @@ var OnChangeSemesterSchedule = () => {
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -856,7 +856,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
                                      <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
@@ -867,7 +867,7 @@ var OnChangeSemesterSchedule = () => {
                             case "TUESDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -876,7 +876,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -887,7 +887,7 @@ var OnChangeSemesterSchedule = () => {
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -896,7 +896,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -909,7 +909,7 @@ var OnChangeSemesterSchedule = () => {
                             case "WEDNESDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -918,7 +918,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -929,7 +929,7 @@ var OnChangeSemesterSchedule = () => {
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -938,7 +938,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -951,7 +951,7 @@ var OnChangeSemesterSchedule = () => {
                             case "THURSDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -960,7 +960,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                      </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -971,7 +971,7 @@ var OnChangeSemesterSchedule = () => {
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -980,7 +980,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -993,7 +993,7 @@ var OnChangeSemesterSchedule = () => {
                             case "FRIDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a>
@@ -1004,7 +1004,7 @@ var OnChangeSemesterSchedule = () => {
                                               </div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                      </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -1015,7 +1015,7 @@ var OnChangeSemesterSchedule = () => {
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -1024,7 +1024,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -1037,7 +1037,7 @@ var OnChangeSemesterSchedule = () => {
                             case "SATURDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -1046,7 +1046,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
@@ -1057,7 +1057,7 @@ var OnChangeSemesterSchedule = () => {
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
@@ -1066,7 +1066,7 @@ var OnChangeSemesterSchedule = () => {
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}

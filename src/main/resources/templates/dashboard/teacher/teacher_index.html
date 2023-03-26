@@ -167,140 +167,142 @@
                                 <input type="hidden" id="profileId_u">
                                 <input type="hidden" id="accountId_u">
                                 <input type="hidden" id="img">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <img id="st_image_u" style="width: 100%;height: 50%">
-                                        <input type="file" hidden id="fileAvatar" name="fileAvatar"
-                                               onchange="previewImage()">
-                                        <button type="button" id="btn-updateImg" onclick="selectFile()"
-                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Update Image
-                                        </button>
-                                        <div id="btn-function" style="display: none">
-                                            <button type="button" onclick="OnUpdateImg()"
-                                                    class="btn btn-success btn-sm"><i class="fas fa-check"></i>
+                                <form id="form_teacher_update">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <img id="st_image_u" style="width: 100%;height: 50%">
+                                            <input type="file" hidden id="fileAvatar" name="fileAvatar"
+                                                   onchange="previewImage()">
+                                            <button type="button" id="btn-updateImg" onclick="selectFile()"
+                                                    class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Update Image
                                             </button>
-                                            <button type="button" onclick="CancelUpdateImg()"
-                                                    class="btn btn-danger btn-sm"><i
-                                                    class="fas fa-times"></i>
-                                            </button>
+                                            <div id="btn-function" style="display: none">
+                                                <button type="button" onclick="OnUpdateImg()"
+                                                        class="btn btn-success btn-sm"><i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button" onclick="CancelUpdateImg()"
+                                                        class="btn btn-danger btn-sm"><i
+                                                        class="fas fa-times"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">First Name :</label>
-                                                    <input type="text" id="firstName_u"
-                                                           placeholder="Enter first name..."
-                                                           class="form-control form-control-sm"
-                                                    >
+                                        <div class="col-9">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">First Name :</label>
+                                                        <input type="text" id="firstName_u" name="firstName_u"
+                                                               placeholder="Enter first name..."
+                                                               class="form-control form-control-sm"
+                                                        >
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Last Name :</label>
-                                                    <input type="text" id="lastName_u"
-                                                           placeholder="Enter last name..."
-                                                           class="form-control form-control-sm"
-                                                    >
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">Last Name :</label>
+                                                        <input type="text" id="lastName_u" name="lastName_u"
+                                                               placeholder="Enter last name..."
+                                                               class="form-control form-control-sm"
+                                                        >
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="col-6" style="margin-top: -10px;">
-                                                <label style="font-size: 13px">Date of Birth:</label>
-                                                <div class="input-group date" id="reservationdate_u"
-                                                     data-target-input="nearest">
-                                                    <input type="text"
-                                                           class="form-control form-control-sm datetimepicker-input"
-                                                           data-target="#reservationdate_u" id="dob_u" name="dob"
-                                                           placeholder="Chọn ngày sinh"/>
-                                                    <div class="input-group-append" data-target="#reservationdate_u"
-                                                         data-toggle="datetimepicker">
-                                                        <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                <div class="col-6" style="margin-top: -10px;">
+                                                    <label style="font-size: 13px">Date of Birth:</label>
+                                                    <div class="input-group date" id="dob_calendar_u"
+                                                         data-target-input="nearest">
+                                                        <input type="text"
+                                                               class="form-control form-control-sm datetimepicker-input"
+                                                               data-target="#dob_calendar_u" id="dob_u" name="dob_u"
+                                                               placeholder="Chọn ngày sinh"/>
+                                                        <div class="input-group-append" data-target="#dob_calendar_u"
+                                                             data-toggle="datetimepicker">
+                                                            <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label style="font-size: 13px">Gender :</label>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" value="Nam" type="radio"
-                                                               name="sex" id="flexRadioDefault1" checked>
-                                                        <label class="form-check-label" for="flexRadioDefault1">
-                                                            Male
-                                                        </label>
-                                                        <input class="form-check-input" value="Nữ" type="radio"
-                                                               name="sex" style="margin-left: 15px;"
-                                                               id="flexRadioDefault2">
-                                                        <label class="form-check-label" style="margin-left: 36px;"
-                                                               for="flexRadioDefault2">
-                                                            Female
-                                                        </label>
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px">Gender :</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" value="Nam" type="radio"
+                                                                   name="sex" id="flexRadioDefault1" checked>
+                                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                                Male
+                                                            </label>
+                                                            <input class="form-check-input" value="Nữ" type="radio"
+                                                                   name="sex" style="margin-left: 15px;"
+                                                                   id="flexRadioDefault2">
+                                                            <label class="form-check-label" style="margin-left: 36px;"
+                                                                   for="flexRadioDefault2">
+                                                                Female
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">Phone Numbers :</label>
-                                                <input type="text" id="phone_u"
-                                                       placeholder="Enter phone numbers..."
-                                                       class="form-control form-control-sm">
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">Identity Card :</label>
-                                                <input type="text" id="identityCard_u"
-                                                       placeholder="Enter identity card..."
-                                                       class="form-control form-control-sm"
-                                                >
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="m-0" style="font-size: 13px">Email :</label>
-                                                <input type="text" id="email_u"
-                                                       placeholder="Enter email..."
-                                                       class="form-control form-control-sm">
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Province:</label>
-                                                    <select id="province_u" class="form-control select2 form-control-sm"
-                                                            name="province_u"
-                                                            style="width: 100%;">
-                                                        <option selected="selected" value="">-Choose province-</option>
-                                                        <option th:each="province : ${provinces}"
-                                                                th:value="${province.id}">[[${province.name}]]
-                                                        </option>
-                                                    </select>
+                                                <div class="col-6">
+                                                    <label class="m-0" style="font-size: 13px">Phone Numbers :</label>
+                                                    <input type="text" id="phone_u" name="phone_u"
+                                                           placeholder="Enter phone numbers..."
+                                                           class="form-control form-control-sm">
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">District:</label>
-                                                    <select id="district_u" class="form-control select2 form-control-sm"
-                                                            name="district_u"
-                                                            style="width: 100%;">
-                                                        <option selected="selected" value="">-Choose district-</option>
-                                                    </select>
+                                                <div class="col-6">
+                                                    <label class="m-0" style="font-size: 13px">Identity Card :</label>
+                                                    <input type="text" id="identityCard_u" name="identityCard_u"
+                                                           placeholder="Enter identity card..."
+                                                           class="form-control form-control-sm"
+                                                    >
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Ward:</label>
-                                                    <select id="ward_u" class="form-control select2 form-control-sm"
-                                                            name="ward_u"
-                                                            style="width: 100%;">
-                                                        <option selected="selected" value="">-Choose ward-</option>
-                                                    </select>
+                                                <div class="col-12">
+                                                    <label class="m-0" style="font-size: 13px">Email :</label>
+                                                    <input type="text" id="email_u" name="email_u"
+                                                           placeholder="Enter email..."
+                                                           class="form-control form-control-sm">
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="m-0" style="font-size: 13px">Address :</label>
-                                                <input type="text" id="address_u"
-                                                       class="form-control form-control-sm"
-                                                       placeholder="Enter address... ">
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">Province:</label>
+                                                        <select id="province_u" class="form-control select2 form-control-sm"
+                                                                name="province_u"
+                                                                style="width: 100%;">
+                                                            <option selected="selected" value="">-Choose province-</option>
+                                                            <option th:each="province : ${provinces}"
+                                                                    th:value="${province.id}">[[${province.name}]]
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">District:</label>
+                                                        <select id="district_u" class="form-control select2 form-control-sm"
+                                                                name="district_u"
+                                                                style="width: 100%;">
+                                                            <option selected="selected" value="">-Choose district-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">Ward:</label>
+                                                        <select id="ward_u" class="form-control select2 form-control-sm"
+                                                                name="ward_u"
+                                                                style="width: 100%;">
+                                                            <option selected="selected" value="">-Choose ward-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="m-0" style="font-size: 13px">Address :</label>
+                                                    <input type="text" id="address_u" name="address_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Enter address... ">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -318,6 +320,7 @@
     </section>
 </div>
 <th:block layout:fragment="optional">
+    <script type="text/javascript" src="/js/HelperJs.js"></script>
     <script src="/js/teacher/teacher_index.js"></script>
 </th:block>
 </body>

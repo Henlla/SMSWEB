@@ -68,3 +68,15 @@ var urltoFile = (url, mimeType) => {
             })
     );
 }
+
+function _calculateAge(birthday) { // birthday is a date
+    var ageDifMs = Date.now() - birthday.getTime();
+    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+let regexPhone = (phone) => {
+    const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
+    return phone.match(regexPhoneNumber) ? true : false;
+
+}
