@@ -12,8 +12,8 @@ $(() => {
             },
             create_slot_validate: {
                 required: true,
-                min: 8,
-                max: 15
+                min: 4,
+                max: 20
             },
             create_course_validate: {
                 required: true
@@ -31,8 +31,8 @@ $(() => {
             },
             create_slot_validate: {
                 required: "Please enter number of slot",
-                min: "Slot must be greater than 8",
-                max: "Slot must be letter than 15"
+                min: "Slot must be greater than 4",
+                max: "Slot must be letter than 20"
             },
             create_course_validate: {
                 required: "Please choose course"
@@ -53,8 +53,8 @@ $(() => {
             },
             edit_slot_validate: {
                 required: true,
-                min: 8,
-                max: 15
+                min: 4,
+                max: 20
             }
         },
         messages: {
@@ -66,8 +66,8 @@ $(() => {
             },
             edit_fee_validate: {
                 required: "Please enter fee",
-                min: "Slot must be greater than 8",
-                max: "Slot must be letter than 15"
+                min: "Slot must be greater than 4",
+                max: "Slot must be letter than 20"
 
             },
             edit_slot_validate: {

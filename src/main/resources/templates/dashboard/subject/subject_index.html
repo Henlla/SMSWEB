@@ -7,6 +7,12 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/custom.css">
     <title>Subject</title>
+    <style>
+        #create_subject_code-error {
+            position: absolute;
+            top: 32px;
+        }
+    </style>
 </head>
 <body>
 <section layout:fragment="content">
@@ -132,7 +138,8 @@
                         </div>
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Course</label>
-                            <select th:id="create_major_id" name="create_course_validate" class="form-control select2-single form-control-sm">
+                            <select th:id="create_major_id" name="create_course_validate"
+                                    class="form-control select2-single form-control-sm">
                                 <option value="">----Choose course----</option>
                                 <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode + "-"
                                     +item.majorName}]]
@@ -203,7 +210,9 @@
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Major</label>
                             <select th:id="edit_major_id" class="form-control select2-single">
-                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode + "-" + item.majorName}]]</option>
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode + "-" +
+                                    item.majorName}]]
+                                </option>
                             </select>
                         </div>
                     </form>

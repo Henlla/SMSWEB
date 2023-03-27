@@ -1,6 +1,4 @@
-
-
-$(()=>{
+$(() => {
     $('#dob_calendar_u').datetimepicker({
 
         format: 'DD/MM/YYYY'
@@ -124,7 +122,7 @@ $(()=>{
                     $("#student_details").modal("hide");
 
                     $('#spinner-divI').hide()
-                },error:(xhr, status, error)=>{
+                }, error: (xhr, status, error) => {
                     var err = eval("(" + xhr.responseText + ")");
                     console.log(err)
                     $('#spinner-divI').hide()
@@ -282,37 +280,43 @@ var OnUpdate = (id) => {
             $('#profileId_u').val(data.student.studentByProfile.id)
             $('#accountId_u').val(data.student.studentByProfile.accountId)
 
-            const province_id = data.student.studentByProfile.profileProvince.id
+            if (data.student.studentByProfile.profileProvince != null && data.student.studentByProfile.districtByDistrictId != null && data.student.studentByProfile.wardByWardId != null) {
+                const province_id = data.student.studentByProfile.profileProvince.id
 
-            const district_id = data.student.studentByProfile.districtByDistrictId.id
-            const ward_id = data.student.studentByProfile.wardByWardId.id
-            console.log(province_id, district_id, ward_id)
-            $("#province_u").val(province_id).trigger('change');
+                const district_id = data.student.studentByProfile.districtByDistrictId.id
+                const ward_id = data.student.studentByProfile.wardByWardId.id
+                console.log(province_id, district_id, ward_id)
+                $("#province_u").val(province_id).trigger('change');
 
-            $.ajax({
-                url: "http://localhost:8080/api/districts/",
-                method: "GET",
-                contentType: "application/json",
-                data: {province: province_id},
-                success: (res) => {
-                    for (var dis of res) {
-                        district.options[district.options.length] = new Option(dis.name, dis.id);
-                    }
-                    $("#district_u").val(district_id).trigger('change');
-                    $.ajax({
-                        url: "http://localhost:8080/api/wards/",
-                        method: "GET",
-                        contentType: "application/json",
-                        data: {province: province_id, district: district_id},
-                        success: (res) => {
-                            for (const ward of res) {
-                                wards.options[wards.options.length] = new Option(ward.name, ward.id);
-                            }
-                            $("#ward_u").val(ward_id).trigger('change');
+                $.ajax({
+                    url: "http://localhost:8080/api/districts/",
+                    method: "GET",
+                    contentType: "application/json",
+                    data: {province: province_id},
+                    success: (res) => {
+                        for (var dis of res) {
+                            district.options[district.options.length] = new Option(dis.name, dis.id);
                         }
-                    })
-                }
-            })
+                        $("#district_u").val(district_id).trigger('change');
+                        $.ajax({
+                            url: "http://localhost:8080/api/wards/",
+                            method: "GET",
+                            contentType: "application/json",
+                            data: {province: province_id, district: district_id},
+                            success: (res) => {
+                                for (const ward of res) {
+                                    wards.options[wards.options.length] = new Option(ward.name, ward.id);
+                                }
+                                $("#ward_u").val(ward_id).trigger('change');
+                            }
+                        })
+                    }
+                })
+            }else{
+                $("#province_u").val(null).trigger('change');
+                $("#district_u").val(null).trigger('change');
+                $("#ward_u").val(null).trigger('change');
+            }
 
             $("input[name=sex][value=" + data.student.studentByProfile.sex + "]").prop('checked', true);
 
@@ -379,17 +383,17 @@ var OnUpdateSubmit = () => {
     $('#spinner-divI').show();
 
     //method rule
-    $.validator.addMethod("valueNotEquals", function(value, element, arg){
+    $.validator.addMethod("valueNotEquals", function (value, element, arg) {
         return arg !== value;
     }, "Value must not equal arg.");
 
-    $.validator.addMethod("checkAge", function(value, element){
+    $.validator.addMethod("checkAge", function (value, element) {
         let date = new Date(value)
         let age = _calculateAge(date)
         return age >= 18;
     }, "Age must be greater than 18");
 
-    $.validator.addMethod("checkPhoneNumber", function(value, element){
+    $.validator.addMethod("checkPhoneNumber", function (value, element) {
         return regexPhone(value);
     }, "Please enter incorrect phone");
 
@@ -402,16 +406,16 @@ var OnUpdateSubmit = () => {
                 required: true
             },
             phone_u: {
-                checkPhoneNumber:true,
+                checkPhoneNumber: true,
                 required: true
             }
-            ,dob_u: {
-                checkAge:true,
+            , dob_u: {
+                checkAge: true,
                 required: true
             },
             email_u: {
                 required: true,
-                email:true
+                email: true
             },
             identityCard_u: {
                 required: true
@@ -425,27 +429,27 @@ var OnUpdateSubmit = () => {
             ward_u: {
                 valueNotEquals: ""
             },
-            address_u:{
+            address_u: {
                 required: true
             },
         },
-        messages:{
-            firstName_u : {
-                required:"Please enter first name"
+        messages: {
+            firstName_u: {
+                required: "Please enter first name"
             },
-            lastName_u : {
-                required:"Please enter last name"
+            lastName_u: {
+                required: "Please enter last name"
             },
             phone_u: {
                 checkPhoneNumber: "Please enter incorrect phone",
                 required: "Please enter phone numbers "
             }, dob_u: {
-                checkAge:"Age must be greater than 18",
+                checkAge: "Age must be greater than 18",
                 required: "Please enter date of birth "
             },
             email_u: {
                 required: "Please enter email ",
-                email:"Email wrong format xxxx@xxx.xxx"
+                email: "Email wrong format xxxx@xxx.xxx"
             },
             identityCard_u: {
                 required: "Please enter identity card "
@@ -459,12 +463,12 @@ var OnUpdateSubmit = () => {
             ward_u: {
                 valueNotEquals: "Please enter ward "
             },
-            address_u:{
+            address_u: {
                 required: "Please enter address"
             },
         },
     })
-    if($('#form_student_update').valid()){
+    if ($('#form_student_update').valid()) {
         $.ajax({
             url: "/dashboard/student/student_update",
             method: "POST",
@@ -479,7 +483,7 @@ var OnUpdateSubmit = () => {
                 location.reload();
                 toastr.success('Cập nhật sinh viên thành công')
             },
-            error:(xhr, status, error)=>{
+            error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 console.log(err)
                 if (err.message.toLowerCase() === "token expired") {
@@ -494,7 +498,7 @@ var OnUpdateSubmit = () => {
                             location.href = "/dashboard/login";
                         }
                     });
-                }else{
+                } else {
                     toastr.success('Update fail')
                 }
             }
@@ -598,6 +602,7 @@ const OnChooseFile = () => {
 }
 
 const OnImportStudent = () => {
+    $('#spinner-divI').show();
     let file = $("#fileStudent").get(0).files[0];
     if (file !== undefined) {
         let formData = new FormData();
@@ -610,6 +615,7 @@ const OnImportStudent = () => {
             contentType: false,
             enctype: "multipart/form-data",
             success: (data) => {
+                $('#spinner-divI').hide()
                 toastr.success(data);
                 setTimeout(() => {
                     location.reload();
