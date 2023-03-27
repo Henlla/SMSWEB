@@ -94,4 +94,9 @@ public class ClassRestController extends GenericController<Classses> {
     public ResponseEntity<?> findClassByRoom(@PathVariable("roomId") Integer roomId) {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByRoom(roomId)));
     }
+
+    @GetMapping("/findClassesByShift/{shift}")
+    public ResponseEntity<?> findClassesByShift(@PathVariable("shift")String shift){
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassesByShift(shift)));
+    }
 }

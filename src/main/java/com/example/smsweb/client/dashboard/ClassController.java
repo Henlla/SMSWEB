@@ -11,9 +11,11 @@ import com.example.smsweb.utils.ExcelExport.ClassExport;
 import com.example.smsweb.utils.ExcelExport.ScheduleExport;
 import com.example.smsweb.utils.ExcelHelper;
 import com.example.smsweb.utils.FileUtils;
+import com.example.smsweb.utils.StreamHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.json.Json;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +40,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.Date;
 import java.util.*;
@@ -84,9 +88,7 @@ public class ClassController {
     @GetMapping("/class-create")
     public String createClass(Model model, @CookieValue(name = "_token", defaultValue = "") String _token)
             throws JsonProcessingException {
-        if (_token.equals("")) {
-            return "redirect:/dashboard/login";
-        }
+        if(JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/dashboard/login";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -96,9 +98,7 @@ public class ClassController {
 
         ResponseEntity<String> teacherResponse = restTemplate.exchange(TEACHER_URL + "list", HttpMethod.GET, request,
                 String.class);
-        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(),
-                new TypeReference<List<Teacher>>() {
-                });
+        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<List<Teacher>>() {});
 
         ResponseModel listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
         List<Room> listRoom = restTemplate.getForObject(URL_ROOM, ArrayList.class);
@@ -660,6 +660,7 @@ public class ClassController {
                         int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
                         int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate())
                                 .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                        int year = LocalDate.parse(listSortDate.get(i).getDate()).getYear();
                         if (date.isEqual(LocalDate.parse(listSortDate.get(i).getDate()))) {
                             DayInWeek diw = new DayInWeek();
                             if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i)) && date
@@ -672,6 +673,7 @@ public class ClassController {
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
                                 diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                                 diw.setWeek(weekOfMonth);
+                                diw.setYear(year);
                                 diw.setSlot(listSortDate.get(i).getSlot());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
                                 diw.setMonth(monthOfYear);
@@ -689,6 +691,7 @@ public class ClassController {
                             diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                             diw.setSlot(listSortDate.get(i).getSlot());
                             diw.setWeek(weekOfMonth);
+                            diw.setYear(year);
                             diw.setMonth(monthOfYear);
                             diw.setWeekOfYear(weekOfYear);
                             dayInWeekList.add(diw);
@@ -706,7 +709,7 @@ public class ClassController {
                             diw.setSubject(null);
                             diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
                             diw.setSubjectId(0);
-
+                            diw.setYear(year);
                             diw.setSlot(1);
                             diw.setWeek(date.get(weekFields.weekOfMonth()));
                             diw.setMonth(date.getMonthValue());
@@ -720,6 +723,7 @@ public class ClassController {
                             diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
                             diw.setSubjectId(0);
                             diw.setSlot(2);
+                            diw.setYear(year);
                             diw.setWeek(date.get(weekFields.weekOfMonth()));
                             diw.setMonth(date.getMonthValue());
                             diw.setWeekOfYear(date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
@@ -737,24 +741,113 @@ public class ClassController {
                 scheduleModel.setDayInWeeks(dayInWeekList);
                 HashMap<Integer, List<DayInWeek>> hashMap = new HashMap<Integer, List<DayInWeek>>();
                 List<DayInWeek> listSort = scheduleModel.getDayInWeeks().stream()
-                        .sorted((a, b) -> a.getWeekOfYear().compareTo(b.getWeekOfYear())).toList();
-                for (DayInWeek dayInWeek : listSort) {
-                    Integer key = dayInWeek.getWeekOfYear();
-                    if (hashMap.containsKey(key)) {
-                        List<DayInWeek> list = hashMap.get(key);
-                        list.add(dayInWeek);
+                        .sorted((a, b) -> a.getWeekOfYear().compareTo(b.getWeekOfYear())).sorted((a,b)->a.getYear().compareTo(b.getYear())).toList();
+                int year1 = listSort.get(0).getYear();
+                int year2 = listSort.get(listSort.size() - 1).getYear();
+                LocalDate lastDateOfYear1 = LocalDate.parse(year1+"-12-31");
+                LocalDate lastDateOfYear2 = LocalDate.parse(year1+"-12-30");
+                if(year2 > year1){
+                    listSort  = listSort.stream().map(d->{
+                        if(d.getDate().equals(lastDateOfYear1) || d.getDate().equals(lastDateOfYear2)){
+                            d.setYear(year1);
+                        }
+                        return d;
+                    }).collect(Collectors.toList());
+                    List<DayInWeek> listYear_1 = listSort.stream().filter(d -> d.getYear().equals(year1))
+                            .toList();
+                    List<DayInWeek> listYear_2 = listSort.stream().filter(d -> d.getYear().equals(year2)).toList();
 
-                    } else {
-                        List<DayInWeek> list = new ArrayList<DayInWeek>();
-                        list.add(dayInWeek);
-                        hashMap.put(key, list);
+                    HashMap<Integer, List<DayInWeek>> hashMap1 = new HashMap<Integer, List<DayInWeek>>();
+                    HashMap<Integer, List<DayInWeek>> hashMap2 = new HashMap<Integer, List<DayInWeek>>();
+
+                    for (DayInWeek dayInWeek : listYear_1) {
+                        Integer key = dayInWeek.getWeekOfYear();
+                        if (hashMap1.containsKey(key)) {
+                            List<DayInWeek> list = hashMap1.get(key);
+                            list.add(dayInWeek);
+
+                        } else {
+                            List<DayInWeek> list = new ArrayList<DayInWeek>();
+                            list.add(dayInWeek);
+                            hashMap1.put(key, list);
+                        }
                     }
+
+                    for (DayInWeek dayInWeek : listYear_2) {
+                        Integer key = dayInWeek.getWeekOfYear();
+                        if (hashMap2.containsKey(key)) {
+                            List<DayInWeek> list = hashMap2.get(key);
+                            list.add(dayInWeek);
+
+                        } else {
+                            List<DayInWeek> list = new ArrayList<DayInWeek>();
+                            list.add(dayInWeek);
+                            hashMap2.put(key, list);
+                        }
+                    }
+
+                    List<TimetableModel> list = new ArrayList<>();
+
+
+                    HashMap<Integer, List<DayInWeek>> newMapSortedByKey1 = hashMap1.entrySet().stream()
+                            .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                            .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                                    LinkedHashMap::new));
+
+                    HashMap<Integer, List<DayInWeek>> newMapSortedByKey2 = hashMap2.entrySet().stream()
+                            .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                            .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                                    LinkedHashMap::new));
+
+
+                    for(Map.Entry<Integer, List<DayInWeek>> entry : newMapSortedByKey1.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<DayInWeek> value = entry.getValue();
+                        TimetableModel timetableModel = new TimetableModel();
+                        timetableModel.setWeek(key);
+                        timetableModel.setList(value);
+                        list.add(timetableModel);
+                    }
+
+                    for(Map.Entry<Integer, List<DayInWeek>> entry : newMapSortedByKey2.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<DayInWeek> value = entry.getValue();
+                        TimetableModel timetableModel = new TimetableModel();
+                        timetableModel.setWeek(key);
+                        timetableModel.setList(value);
+                        list.add(timetableModel);
+                    }
+                    return list;
+                }else{
+                    for (DayInWeek dayInWeek : listSort) {
+                        Integer key = dayInWeek.getWeekOfYear();
+                        if (hashMap.containsKey(key)) {
+                            List<DayInWeek> list = hashMap.get(key);
+                            list.add(dayInWeek);
+
+                        } else {
+                            List<DayInWeek> list = new ArrayList<DayInWeek>();
+                            list.add(dayInWeek);
+                            hashMap.put(key, list);
+                        }
+                    }
+                    List<TimetableModel> list = new ArrayList<>();
+                    HashMap<Integer, List<DayInWeek>> newMapSortedByKey = hashMap.entrySet().stream()
+                            .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                            .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                                    LinkedHashMap::new));
+
+                    for(Map.Entry<Integer, List<DayInWeek>> entry : newMapSortedByKey.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<DayInWeek> value = entry.getValue();
+                        TimetableModel timetableModel = new TimetableModel();
+                        timetableModel.setWeek(key);
+                        timetableModel.setList(value);
+                        list.add(timetableModel);
+                    }
+
+                    return list;
                 }
-                HashMap<Integer, List<DayInWeek>> newMapSortedByKey = hashMap.entrySet().stream()
-                        .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-                        .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
-                                LinkedHashMap::new));
-                return newMapSortedByKey;
             } else {
                 return null;
             }
@@ -1636,6 +1729,179 @@ public class ClassController {
             } else {
                 return null;
             }
+        }
+    }
+
+    @PostMapping("getAvailableRoom") @ResponseBody
+    public String getAvailableRoom(@CookieValue(name = "_token")String _token,
+                                   @RequestParam(value = "date", required = false)String inputDate,
+                                   @RequestParam("shift")String shift){
+        try{
+            JWTUtils.checkExpired(_token);
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + _token);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            HttpEntity<Object> requestGET = new HttpEntity<>(headers);
+
+            HttpEntity<MultiValueMap<String, Object>> requestPOST;
+            MultiValueMap<String, Object> content;
+
+            //Declare var
+            List<Room> roomList = new ArrayList<>();
+            List<Schedule> scheduleList = new ArrayList<>();
+
+            //@RequestParam processing
+            LocalDate date;
+            if (inputDate == null || inputDate == ""){
+                date = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            }else {
+                date = LocalDate.parse(inputDate);
+            }
+            //String slotList = objectMapper.readValue(slots, new TypeReference<>() {});
+
+            //find ScheduleDetails by date
+            content= new LinkedMultiValueMap<>();
+            content.add("date", date.toString());
+            requestPOST = new HttpEntity<>(content, headers);
+
+            HttpEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(
+                    SCHEDULE_DETAIL_URL + "findScheduleDetailsOrNullByDate",
+                    HttpMethod.POST, requestPOST,ResponseModel.class
+            );
+            String jsonScheduleDetail = objectMapper.writeValueAsString(responseScheduleDetail.getBody().getData());
+            List<ScheduleDetail> scheduleDetailList = objectMapper.readValue(jsonScheduleDetail, new TypeReference<>() {});
+
+            //Get All room
+            HttpEntity<String> responseRoom = restTemplate.exchange(
+                    URL_ROOM, HttpMethod.GET, requestGET, String.class);
+            roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>(){});
+
+            //Get All class by shift
+            HttpEntity<String> responseClass = restTemplate.exchange(
+                    CLASS_URL+ "findClassesByShift/"+ shift,
+                    HttpMethod.GET, requestGET, String.class);
+            ResponseModel responseModelClasses = objectMapper.readValue(responseClass.getBody(),new TypeReference<>(){});
+            String jsonResponseModelClasses = objectMapper.writeValueAsString(responseModelClasses.getData());
+            List<Classses> classsesList = objectMapper.readValue(jsonResponseModelClasses, new TypeReference<>(){});
+            List<Classses> filterdClassesList = new ArrayList<>();
+            //Fillter
+            for (Classses clazz : classsesList) {
+                for (Schedule schedule : clazz.getSchedulesById()) {
+                    if(LocalDate.parse(schedule.getEndDate()).isBefore(date))
+                        continue;
+                    else if (schedule.getScheduleDetailsById().stream().anyMatch(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate()).isEqual(date)))
+                        continue;
+                    else
+                        filterdClassesList.add(clazz);
+                }
+            }
+
+            if(filterdClassesList != null){
+                filterdClassesList = filterdClassesList.stream()
+                        .filter(StreamHelper.distinctByKey(Classses::getRoomId)).toList();
+            }
+
+            for(Classses clazz: filterdClassesList){
+                roomList.stream().filter(room -> room.getId() != clazz.getRoomId())
+                        .toList();
+            }
+
+            return objectMapper.writeValueAsString(roomList);
+
+        }catch (Exception e){
+            if (e.getMessage().equalsIgnoreCase("Token expired"))
+                return "redirect:/dashboard/logout";
+            else throw new ErrorHandler(e.getMessage());
+        }
+    }
+
+    @PostMapping("/class-update-room") @ResponseBody
+    public Object class_update_room(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                    @RequestParam("classId") Integer classId,
+                                    @RequestParam("roomId") int roomId) throws JsonProcessingException {
+        try{
+            if(JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/dashboard/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "findOne/" + classId,
+                    HttpMethod.GET, request, String.class);
+            ResponseModel responseModel = objectMapper.readValue(response.getBody(), new TypeReference<ResponseModel>() {
+            });
+            String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
+            Classses classModel = objectMapper.readValue(convertToJson, Classses.class);
+
+            classModel.setRoomId(roomId);
+
+            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+            content.add("newClass", objectMapper.writeValueAsString(classModel));
+            HttpEntity<MultiValueMap<String, Object>> requestPOST = new HttpEntity<>(content, headers);
+
+            ResponseEntity<ResponseModel> responsePostClass = restTemplate.exchange(CLASS_URL + "save",
+                    HttpMethod.POST, requestPOST, ResponseModel.class);
+            if (responsePostClass.getStatusCode().is2xxSuccessful()){
+                return "success";
+            }else {
+                throw new ErrorHandler("Change class failed");
+            }
+        } catch (Exception e) {
+            throw new ErrorHandler(e.getMessage());
+        }
+    }
+
+    @PostMapping("getAvailableTeacher") @ResponseBody
+    public String getAvailableTeacher(@CookieValue(name = "_token")String _token,
+                                      @RequestParam("shift")String shift,
+                                      @RequestParam("date")String date){
+        try{
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/dashboad/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<Object> requestGET = new HttpEntity<>(headers);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            HttpEntity<MultiValueMap<String, Object>> requestPOST;
+            MultiValueMap<String, Object> content;
+
+            LocalDate startDate = LocalDate.parse(date).minusDays(1);
+
+            ResponseEntity<String> teacherResponse = restTemplate.exchange(TEACHER_URL + "list", HttpMethod.GET, requestGET,
+                    String.class);
+            List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<List<Teacher>>() {});
+
+            //Get ScheduleDetails
+            content= new LinkedMultiValueMap<>();
+            content.add("shift", shift);
+            content.add("date", startDate.toString());
+            requestPOST = new HttpEntity<>(content, headers);
+
+            HttpEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(
+                    SCHEDULE_DETAIL_URL + "findScheduleDetailsOrNullByShiftAndDateGreater",
+                    HttpMethod.POST, requestPOST,ResponseModel.class
+            );
+            String jsonScheduleDetail = objectMapper.writeValueAsString(responseScheduleDetail.getBody().getData());
+            List<ScheduleDetail> scheduleDetailList = objectMapper.readValue(jsonScheduleDetail, new TypeReference<>() {});
+            if(scheduleDetailList == null){
+                return objectMapper.writeValueAsString(teacherList);
+            }
+            scheduleDetailList = scheduleDetailList.stream().filter(StreamHelper.distinctByKey(ScheduleDetail::getTeacherId)).toList();
+            for (ScheduleDetail item : scheduleDetailList) {
+                teacherList = teacherList.stream()
+                        .filter(teacher -> teacher.getId() != item.getTeacherByScheduleDetail().getId())
+                        .toList();
+            }
+            return objectMapper.writeValueAsString(teacherList);
+        } catch (Exception e) {
+            throw new ErrorHandler(e.getMessage());
         }
     }
 }

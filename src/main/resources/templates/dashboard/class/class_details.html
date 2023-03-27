@@ -68,7 +68,7 @@
                                             </tr>
                                             <tr>
                                                 <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Room:&nbsp;</b></h5></td>
-                                                <td><h5>[[${room.roomCode}]]</h5></td>
+                                                <td><h5 id="title_room_code">[[${room.roomCode}]]&nbsp;&nbsp;<i onclick="OnchangeRoom()" class="fas fa-pencil-alt"></i></h5></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -170,6 +170,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <div class="pt-5 spinner-div">
+                            <div class="spinner-border text-primary" role="status">
+                            </div>
+                        </div>
                         <div class="container">
                             <form id="role_create-form">
                                 <div class="col-6">
@@ -193,10 +197,6 @@
                                     </div>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-                    <div id="spinner-div" class="pt-5">
-                        <div class="spinner-border text-primary" role="status">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -548,10 +548,48 @@
             </div>
         </div>
 
+        <div class="modal fade" id="change_room" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change room</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <div class="form-group" style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="b">
+                                        <input type="text" id="room" hidden="hidden" readonly>
+                                        <select id="room_change" class="form-control select2" name="room_change"
+                                                style="width: 100%;">
+                                            <option selected="selected" value="">----- Choose room------</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submit_change_room"><i class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <input type="hidden" id="classId" th:value="${class.id}">
         <input type="hidden" id="classCode" th:value="${class.classCode}">
         <input type="hidden" id="shift" th:value="${class.getShift()}">
         <input type="hidden" id="teacherId_v" th:value="${class.getTeacherId()}">
+        <input type="hidden" id="roomId" th:value="${class.getId()}">
         <input type="hidden" id="availablePlace"
                th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
     </section>

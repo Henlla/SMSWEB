@@ -1,6 +1,8 @@
 package com.example.smsweb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +26,6 @@ public class Room {
     private String roomCode;
 
     @OneToMany(mappedBy = "roomId")
-    @JsonIgnore
+    @JsonManagedReference("roomClass")
     private List<Classses> roomClass;
 }

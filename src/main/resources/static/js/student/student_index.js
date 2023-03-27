@@ -1,5 +1,8 @@
-$(() => {
-    $('#reservationdate_u').datetimepicker({
+
+
+$(()=>{
+    $('#dob_calendar_u').datetimepicker({
+
         format: 'DD/MM/YYYY'
     });
     $('.select2').select2({
@@ -107,7 +110,7 @@ $(() => {
             var data = new FormData();
             data.append("id", $('#accountId').val());
             data.append("email", $('#email').val());
-            $('#spinner-div').show()
+            $('#spinner-divI').show()
             $.ajax({
                 url: "/dashboard/student/reset_password",
                 method: "POST",
@@ -119,10 +122,12 @@ $(() => {
                     console.log(data)
                     toastr.success('Reset password success')
                     $("#student_details").modal("hide");
-                    $('#spinner-div').hide()
-                }, error: (xhr, status, error) => {
+
+                    $('#spinner-divI').hide()
+                },error:(xhr, status, error)=>{
                     var err = eval("(" + xhr.responseText + ")");
                     console.log(err)
+                    $('#spinner-divI').hide()
                     if (err.message.toLowerCase() === "token expired") {
                         Swal.fire({
                             title: 'End of login session please login again',
@@ -372,40 +377,129 @@ var OnUpdateSubmit = () => {
     }
     formData.append('profile', JSON.stringify(profile))
     $('#spinner-divI').show();
-    $.ajax({
-        url: "/dashboard/student/student_update",
-        method: "POST",
-        data: formData,
-        cache: false,
-        processData: false,
-        contentType: false,
-        success: (result) => {
-            console.log(result)
-            $("#student_update").modal("hide");
-            $('#spinner-divI').hide();
-            location.reload();
-            toastr.success('Cập nhật sinh viên thành công')
-        },
-        error: (xhr, status, error) => {
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err)
-            if (err.message.toLowerCase() === "token expired") {
-                $('#spinner-divI').hide();
-                Swal.fire({
-                    title: 'End of login session please login again',
-                    showDenyButton: false,
-                    showCancelButton: false,
-                    confirmButtonText: 'Confirm',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.href = "/dashboard/login";
-                    }
-                });
-            } else {
-                toastr.success('Update fail')
+
+    //method rule
+    $.validator.addMethod("valueNotEquals", function(value, element, arg){
+        return arg !== value;
+    }, "Value must not equal arg.");
+
+    $.validator.addMethod("checkAge", function(value, element){
+        let date = new Date(value)
+        let age = _calculateAge(date)
+        return age >= 18;
+    }, "Age must be greater than 18");
+
+    $.validator.addMethod("checkPhoneNumber", function(value, element){
+        return regexPhone(value);
+    }, "Please enter incorrect phone");
+
+    $('#form_student_update').validate({
+        rules: {
+            firstName_u: {
+                required: true
+            },
+            lastName_u: {
+                required: true
+            },
+            phone_u: {
+                checkPhoneNumber:true,
+                required: true
             }
-        }
+            ,dob_u: {
+                checkAge:true,
+                required: true
+            },
+            email_u: {
+                required: true,
+                email:true
+            },
+            identityCard_u: {
+                required: true
+            },
+            province_u: {
+                valueNotEquals: ""
+            },
+            district_u: {
+                valueNotEquals: ""
+            },
+            ward_u: {
+                valueNotEquals: ""
+            },
+            address_u:{
+                required: true
+            },
+        },
+        messages:{
+            firstName_u : {
+                required:"Please enter first name"
+            },
+            lastName_u : {
+                required:"Please enter last name"
+            },
+            phone_u: {
+                checkPhoneNumber: "Please enter incorrect phone",
+                required: "Please enter phone numbers "
+            }, dob_u: {
+                checkAge:"Age must be greater than 18",
+                required: "Please enter date of birth "
+            },
+            email_u: {
+                required: "Please enter email ",
+                email:"Email wrong format xxxx@xxx.xxx"
+            },
+            identityCard_u: {
+                required: "Please enter identity card "
+            },
+            province_u: {
+                valueNotEquals: "Please enter province "
+            },
+            district_u: {
+                valueNotEquals: "Please enter district "
+            },
+            ward_u: {
+                valueNotEquals: "Please enter ward "
+            },
+            address_u:{
+                required: "Please enter address"
+            },
+        },
     })
+    if($('#form_student_update').valid()){
+        $.ajax({
+            url: "/dashboard/student/student_update",
+            method: "POST",
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: (result) => {
+                console.log(result)
+                $("#student_update").modal("hide");
+                $('#spinner-divI').hide();
+                location.reload();
+                toastr.success('Cập nhật sinh viên thành công')
+            },
+            error:(xhr, status, error)=>{
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err)
+                if (err.message.toLowerCase() === "token expired") {
+                    $('#spinner-divI').hide();
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                }else{
+                    toastr.success('Update fail')
+                }
+            }
+        })
+    }
 }
 const imageProfile = document.getElementById('st_image_u')
 
@@ -455,7 +549,7 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
         let formData = new FormData();
         formData.append('file', avatarUrl.files[0]);
         formData.append('id', profileId)
-        $('#spinner-divI').show()
+        $('#spinner-divI_2').show()
         $.ajax({
             url: "/dashboard/student/changeImg",
             method: "POST",
@@ -465,14 +559,14 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
             processData: false,
             contentType: false,
             success: (data) => {
-                $('#spinner-divI').hide()
+                $('#spinner-divI_2').hide()
                 location.reload();
                 toastr.success('Change success')
             }, error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 console.log(err)
                 if (err.message.toLowerCase() === "token expired") {
-                    $('#spinner-divI').hide()
+                    $('#spinner-divI_2').hide()
                     Swal.fire({
                         title: 'End of login session please login again',
                         showDenyButton: false,

@@ -17,6 +17,7 @@ $(()=>{
                 })
             }else {
                 $("#listMark").DataTable({
+                    processing: true,
                     data: parse,
                     columns:[
                         {

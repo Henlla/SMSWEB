@@ -124,3 +124,8 @@
     margin-top: 20%;
     margin-left: 20%;
 }
+
+#dob-error{
+    position: absolute;
+    top: 40px;
+}

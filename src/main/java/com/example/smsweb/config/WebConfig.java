@@ -46,7 +46,7 @@ public class WebConfig {
                  "/api/districts/**","/api/accounts/login","/api/wards/**"
                  ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**","/fcm/**","/api/device/**","/api/room/**","/api/apartment/**").permitAll()
                 .requestMatchers("/dashboard/login","/login/**","/dashboard/logout").permitAll()
-                .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
+                .requestMatchers("/dashboard","/dashboard/view_room_active").hasAnyAuthority("ADMIN","STAFF")
                 .requestMatchers("/dashboard/teacher/**","/dashboard/student/**"
                         ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**"
                         ,"/dashboard/applicationType/**","/dashboard/news/**","/dashboard/class/**","/dashboard/attendance/**"
