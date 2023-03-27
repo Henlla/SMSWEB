@@ -117,7 +117,7 @@ public class DashboardController {
             //Get All room
             HttpEntity<String> responseRoom = restTemplate.exchange(
                     ROOM_URL, HttpMethod.GET, requestGET, String.class);
-            List<Room> roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>(){});
+            List<RoomScheduleViewModel> roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>(){});
 
             List<RoomScheduleViewModel> roomScheduleViewModelList = new ArrayList<>();
             content = new LinkedMultiValueMap<>();
@@ -172,7 +172,7 @@ public class DashboardController {
                     clazz.setSchedulesById(list);
                 }
             }
-            for (Room room : roomList){
+            for (RoomScheduleViewModel room : roomList){
                 List<Classses> list = new ArrayList<>();
                 for (Classses clazz: classesList){
                     if (clazz.getRoomId().equals(room.getId())){

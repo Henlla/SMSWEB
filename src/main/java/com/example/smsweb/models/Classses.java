@@ -75,7 +75,6 @@ public class Classses {
 
     @ManyToOne
     @JoinColumn(name = "room_id", insertable = false, updatable = false)
-    @JsonBackReference("roomClass")
     private Room classRoom;
 
 
