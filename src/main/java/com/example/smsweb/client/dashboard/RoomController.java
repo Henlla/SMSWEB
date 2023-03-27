@@ -107,7 +107,7 @@ public class RoomController {
                 String jsonClassList = new ObjectMapper().writeValueAsString(response.getBody().getData());
                 List<Classses> list = new ObjectMapper().readValue(jsonClassList, new TypeReference<List<Classses>>() {
                 });
-                if(list.isEmpty()){
+                if(list == null){
                     flag = false;
                 }else{
                     boolean isCheck = list.stream().anyMatch(classses -> classses.getShift().equals(shift));

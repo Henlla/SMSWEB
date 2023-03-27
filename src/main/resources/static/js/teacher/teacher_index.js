@@ -1,5 +1,5 @@
 $(()=>{
-    $('#reservationdate_u').datetimepicker({
+    $('#dob_calendar_u').datetimepicker({
         format: 'DD/MM/YYYY'
     });
 
@@ -280,25 +280,112 @@ var OnUpdateSubmit = () =>{
     }
     formData.append('profile',JSON.stringify(profile))
     $('#spinner-divT').show();
-    $.ajax({
-        url:"/dashboard/teacher/teacher_update",
-        method:"POST",
-        data:formData,
-        cache : false,
-        processData: false,
-        contentType: false,
-        success:(result)=>{
-            console.log(result)
-            $("#student_update").modal("hide");
-            $('#spinner-divT').hide();
-            location.reload();
-            toastr.success('Update success')
+    $.validator.addMethod("valueNotEquals", function(value, element, arg){
+        return arg !== value;
+    }, "Value must not equal arg.");
+
+    $.validator.addMethod("checkAge", function(value, element){
+        let date = new Date(value)
+        let age = _calculateAge(date)
+        return age >= 18;
+    }, "Age must be greater than 18");
+
+    $.validator.addMethod("checkPhoneNumber", function(value, element){
+        return regexPhone(value);
+    }, "Please enter incorrect phone");
+
+    $('#form_teacher_update').validate({
+        rules: {
+            firstName_u: {
+                required: true
+            },
+            lastName_u: {
+                required: true
+            },
+            phone_u: {
+                checkPhoneNumber:true,
+                required: true
+            }
+            ,dob_u: {
+                checkAge:true,
+                required: true
+            },
+            email_u: {
+                required: true,
+                email:true
+            },
+            identityCard_u: {
+                required: true
+            },
+            province_u: {
+                valueNotEquals: ""
+            },
+            district_u: {
+                valueNotEquals: ""
+            },
+            ward_u: {
+                valueNotEquals: ""
+            },
+            address_u:{
+                required: true
+            },
         },
-        error:(e)=>{
-            toastr.error('Fail')
-            $('#spinner-divT').hide();
-        }
+        messages:{
+            firstName_u : {
+                required:"Please enter first name"
+            },
+            lastName_u : {
+                required:"Please enter last name"
+            },
+            phone_u: {
+                checkPhoneNumber: "Please enter incorrect phone",
+                required: "Please enter phone numbers "
+            }, dob_u: {
+                checkAge:"Age must be greater than 18",
+                required: "Please enter date of birth "
+            },
+            email_u: {
+                required: "Please enter email ",
+                email:"Email wrong format xxxx@xxx.xxx"
+            },
+            identityCard_u: {
+                required: "Please enter identity card "
+            },
+            province_u: {
+                valueNotEquals: "Please enter province "
+            },
+            district_u: {
+                valueNotEquals: "Please enter district "
+            },
+            ward_u: {
+                valueNotEquals: "Please enter ward "
+            },
+            address_u:{
+                required: "Please enter address"
+            },
+        },
     })
+    if($('#form_teacher_update').valid()){
+        $.ajax({
+            url:"/dashboard/teacher/teacher_update",
+            method:"POST",
+            data:formData,
+            cache : false,
+            processData: false,
+            contentType: false,
+            success:(result)=>{
+                console.log(result)
+                $("#student_update").modal("hide");
+                $('#spinner-divT').hide();
+                location.reload();
+                toastr.success('Update success')
+            },
+            error:(e)=>{
+                toastr.error('Fail')
+                $('#spinner-divT').hide();
+            }
+        })
+    }
 }
 const imageProfile = document.getElementById('st_image_u')
 function selectFile(){

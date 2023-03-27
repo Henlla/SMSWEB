@@ -1,6 +1,8 @@
 $(()=>{
     $('.timetable').hide()
-    $('#week').select2()
+    $('#week').select2({
+        theme:'bootstrap4'
+    })
 })
 
 
@@ -35,7 +37,6 @@ var OnDetailSchedule = ()=>{
                 $('.timetable').hide()
                 $('#schedule_table').show()
                 const list = Object.values(res);
-                console.log(list)
                 let table = document.getElementById("schedule_table")
                 $('#schedule_table tbody').remove()
                 let tbody = document.createElement("tbody")
@@ -77,7 +78,7 @@ var OnDetailSchedule = ()=>{
                     // const td6_2 = document.createElement("td")
                     // td6_2.innerHTML = `<div style="display: flex;justify-content: center;height: 70px;align-items: center">X</div>`
 
-                    for (let j of i) {
+                    for (let j of i.list) {
                         switch (j.dayOfWeek) {
                             case "MONDAY":
                                 if (j.slot === 1) {
@@ -613,7 +614,7 @@ var OnChangeWeek = ()=>{
                                 $('.date_friday').html(formatDate)
                                 if(shift==="M"){
                                     if(i.slot==1){
-                                        $('.r1_5').html(` }</div>`)
+                                        $('.r1_5').html(``)
                                     }else{
                                         $('.r2_5').html(` `)
                                     }

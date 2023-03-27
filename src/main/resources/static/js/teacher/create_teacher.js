@@ -1,9 +1,35 @@
 $(()=>{
-    $('#reservationdate').datetimepicker({
+    $('#dob_calendar').datetimepicker({
         format: 'DD/MM/YYYY'
     })
     $('.select2').select2({
         theme: 'bootstrap4'
+    })
+
+    $('#dob_calendar').on('change.datetimepicker',(e)=>{
+        // var formatedValue = e.date.format(e.date._f);
+        let date = new Date(e.date)
+        let age = _calculateAge(date)
+        console.log(age);
+        if (age <= 18){
+            $('#dob-error').show()
+            $('#dob-error').html('Age must be greater than 18 ')
+        }else{
+            $('#dob-error').hide()
+            $('#dob-error').html('')
+        }
+    })
+
+    $('#phone').on('change',()=>{
+        // console.log()
+        let isPhone = regexPhone($('#phone').val())
+        if(isPhone){
+            $('#phone-error').hide()
+            $('#phone-error').html('')
+        }else{
+            $('#phone-error').show()
+            $('#phone-error').html('Please enter incorrect phone')
+        }
     })
     const province = document.getElementById("province")
     const district = document.getElementById("district")
@@ -173,6 +199,16 @@ $(()=>{
             return arg !== value;
         }, "Value must not equal arg.");
 
+        $.validator.addMethod("checkAge", function(value, element){
+            let date = new Date(value)
+            let age = _calculateAge(date)
+            return age >= 18;
+        }, "Age must be greater than 18");
+
+        $.validator.addMethod("checkPhoneNumber", function(value, element){
+            return regexPhone(value);
+        }, "Please enter incorrect phone");
+
         $('#form-create').validate({
             rules: {
                 first_name: {
@@ -182,6 +218,7 @@ $(()=>{
                     required: true
                 },
                 phone: {
+                    checkPhoneNumber:true,
                     required: true
                 },
                 email: {
@@ -189,6 +226,10 @@ $(()=>{
                     email:true
                 },
                 identityCard: {
+                    required: true
+                }
+                ,dob: {
+                    checkAge:true,
                     required: true
                 },
                 province: {
@@ -213,11 +254,16 @@ $(()=>{
                     required:"Please enter last name"
                 },
                 phone: {
+                    checkPhoneNumber: "Please enter incorrect phone",
                     required: "Please enter phone numbers "
+                },
+                dob: {
+                    checkAge:"Age must be greater than 18",
+                    required: "Please enter date of birth "
                 },
                 email: {
                     required: "Please enter email ",
-                    email:"Email wrong format"
+                    email:"Email wrong format xxxx@xxx.xxx"
                 },
                 identityCard: {
                     required: "Please enter identity card "

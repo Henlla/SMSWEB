@@ -660,6 +660,7 @@ public class ClassController {
                         int monthOfYear = LocalDate.parse(listSortDate.get(i).getDate()).getMonthValue();
                         int weekOfYear = LocalDate.parse(listSortDate.get(i).getDate())
                                 .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                        int year = LocalDate.parse(listSortDate.get(i).getDate()).getYear();
                         if (date.isEqual(LocalDate.parse(listSortDate.get(i).getDate()))) {
                             DayInWeek diw = new DayInWeek();
                             if (listSortDate.get(listSortDate.size() - 1).equals(listSortDate.get(i)) && date
@@ -672,6 +673,7 @@ public class ClassController {
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
                                 diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                                 diw.setWeek(weekOfMonth);
+                                diw.setYear(year);
                                 diw.setSlot(listSortDate.get(i).getSlot());
                                 diw.setSubjectId(listSortDate.get(i).getSubjectId());
                                 diw.setMonth(monthOfYear);
@@ -689,6 +691,7 @@ public class ClassController {
                             diw.setTeacher(listSortDate.get(i).getTeacherByScheduleDetail());
                             diw.setSlot(listSortDate.get(i).getSlot());
                             diw.setWeek(weekOfMonth);
+                            diw.setYear(year);
                             diw.setMonth(monthOfYear);
                             diw.setWeekOfYear(weekOfYear);
                             dayInWeekList.add(diw);
@@ -706,7 +709,7 @@ public class ClassController {
                             diw.setSubject(null);
                             diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
                             diw.setSubjectId(0);
-
+                            diw.setYear(year);
                             diw.setSlot(1);
                             diw.setWeek(date.get(weekFields.weekOfMonth()));
                             diw.setMonth(date.getMonthValue());
@@ -720,6 +723,7 @@ public class ClassController {
                             diw.setDayOfWeek(String.valueOf(date.getDayOfWeek().getValue()));
                             diw.setSubjectId(0);
                             diw.setSlot(2);
+                            diw.setYear(year);
                             diw.setWeek(date.get(weekFields.weekOfMonth()));
                             diw.setMonth(date.getMonthValue());
                             diw.setWeekOfYear(date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()));
@@ -737,24 +741,113 @@ public class ClassController {
                 scheduleModel.setDayInWeeks(dayInWeekList);
                 HashMap<Integer, List<DayInWeek>> hashMap = new HashMap<Integer, List<DayInWeek>>();
                 List<DayInWeek> listSort = scheduleModel.getDayInWeeks().stream()
-                        .sorted((a, b) -> a.getWeekOfYear().compareTo(b.getWeekOfYear())).toList();
-                for (DayInWeek dayInWeek : listSort) {
-                    Integer key = dayInWeek.getWeekOfYear();
-                    if (hashMap.containsKey(key)) {
-                        List<DayInWeek> list = hashMap.get(key);
-                        list.add(dayInWeek);
+                        .sorted((a, b) -> a.getWeekOfYear().compareTo(b.getWeekOfYear())).sorted((a,b)->a.getYear().compareTo(b.getYear())).toList();
+                int year1 = listSort.get(0).getYear();
+                int year2 = listSort.get(listSort.size() - 1).getYear();
+                LocalDate lastDateOfYear1 = LocalDate.parse(year1+"-12-31");
+                LocalDate lastDateOfYear2 = LocalDate.parse(year1+"-12-30");
+                if(year2 > year1){
+                    listSort  = listSort.stream().map(d->{
+                        if(d.getDate().equals(lastDateOfYear1) || d.getDate().equals(lastDateOfYear2)){
+                            d.setYear(year1);
+                        }
+                        return d;
+                    }).collect(Collectors.toList());
+                    List<DayInWeek> listYear_1 = listSort.stream().filter(d -> d.getYear().equals(year1))
+                            .toList();
+                    List<DayInWeek> listYear_2 = listSort.stream().filter(d -> d.getYear().equals(year2)).toList();
 
-                    } else {
-                        List<DayInWeek> list = new ArrayList<DayInWeek>();
-                        list.add(dayInWeek);
-                        hashMap.put(key, list);
+                    HashMap<Integer, List<DayInWeek>> hashMap1 = new HashMap<Integer, List<DayInWeek>>();
+                    HashMap<Integer, List<DayInWeek>> hashMap2 = new HashMap<Integer, List<DayInWeek>>();
+
+                    for (DayInWeek dayInWeek : listYear_1) {
+                        Integer key = dayInWeek.getWeekOfYear();
+                        if (hashMap1.containsKey(key)) {
+                            List<DayInWeek> list = hashMap1.get(key);
+                            list.add(dayInWeek);
+
+                        } else {
+                            List<DayInWeek> list = new ArrayList<DayInWeek>();
+                            list.add(dayInWeek);
+                            hashMap1.put(key, list);
+                        }
                     }
+
+                    for (DayInWeek dayInWeek : listYear_2) {
+                        Integer key = dayInWeek.getWeekOfYear();
+                        if (hashMap2.containsKey(key)) {
+                            List<DayInWeek> list = hashMap2.get(key);
+                            list.add(dayInWeek);
+
+                        } else {
+                            List<DayInWeek> list = new ArrayList<DayInWeek>();
+                            list.add(dayInWeek);
+                            hashMap2.put(key, list);
+                        }
+                    }
+
+                    List<TimetableModel> list = new ArrayList<>();
+
+
+                    HashMap<Integer, List<DayInWeek>> newMapSortedByKey1 = hashMap1.entrySet().stream()
+                            .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                            .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                                    LinkedHashMap::new));
+
+                    HashMap<Integer, List<DayInWeek>> newMapSortedByKey2 = hashMap2.entrySet().stream()
+                            .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                            .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                                    LinkedHashMap::new));
+
+
+                    for(Map.Entry<Integer, List<DayInWeek>> entry : newMapSortedByKey1.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<DayInWeek> value = entry.getValue();
+                        TimetableModel timetableModel = new TimetableModel();
+                        timetableModel.setWeek(key);
+                        timetableModel.setList(value);
+                        list.add(timetableModel);
+                    }
+
+                    for(Map.Entry<Integer, List<DayInWeek>> entry : newMapSortedByKey2.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<DayInWeek> value = entry.getValue();
+                        TimetableModel timetableModel = new TimetableModel();
+                        timetableModel.setWeek(key);
+                        timetableModel.setList(value);
+                        list.add(timetableModel);
+                    }
+                    return list;
+                }else{
+                    for (DayInWeek dayInWeek : listSort) {
+                        Integer key = dayInWeek.getWeekOfYear();
+                        if (hashMap.containsKey(key)) {
+                            List<DayInWeek> list = hashMap.get(key);
+                            list.add(dayInWeek);
+
+                        } else {
+                            List<DayInWeek> list = new ArrayList<DayInWeek>();
+                            list.add(dayInWeek);
+                            hashMap.put(key, list);
+                        }
+                    }
+                    List<TimetableModel> list = new ArrayList<>();
+                    HashMap<Integer, List<DayInWeek>> newMapSortedByKey = hashMap.entrySet().stream()
+                            .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                            .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                                    LinkedHashMap::new));
+
+                    for(Map.Entry<Integer, List<DayInWeek>> entry : newMapSortedByKey.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<DayInWeek> value = entry.getValue();
+                        TimetableModel timetableModel = new TimetableModel();
+                        timetableModel.setWeek(key);
+                        timetableModel.setList(value);
+                        list.add(timetableModel);
+                    }
+
+                    return list;
                 }
-                HashMap<Integer, List<DayInWeek>> newMapSortedByKey = hashMap.entrySet().stream()
-                        .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-                        .collect(Collectors.toMap(HashMap.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
-                                LinkedHashMap::new));
-                return newMapSortedByKey;
             } else {
                 return null;
             }
@@ -1151,6 +1244,7 @@ public class ClassController {
                             StudentSubject studentSubject = new StudentSubject();
                             studentSubject.setStudentId(student.getId());
                             studentSubject.setSubjectId(subject.getId());
+                            studentSubject.setStatus("0");
 
                             content.add("subjectId", String.valueOf(subject.getId()));
                             content.add("studentId", String.valueOf(student.getId()));

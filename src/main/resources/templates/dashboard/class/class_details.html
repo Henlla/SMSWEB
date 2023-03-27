@@ -170,6 +170,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <div class="pt-5 spinner-div">
+                            <div class="spinner-border text-primary" role="status">
+                            </div>
+                        </div>
                         <div class="container">
                             <form id="role_create-form">
                                 <div class="col-6">
@@ -195,10 +199,6 @@
                             </form>
                         </div>
                     </div>
-                    <div id="spinner-div" class="pt-5">
-                        <div class="spinner-border text-primary" role="status">
-                        </div>
-                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
                                 class="fas fa-times"></i> Close
@@ -218,7 +218,7 @@
 
         <div class="modal fade" id="details_schedule" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-xl" style="max-width: 90% !important;">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">View Time Table</h5>

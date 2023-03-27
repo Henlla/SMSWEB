@@ -297,7 +297,7 @@
     transform: scale(1.05);
   }
   .timetable .weekend {
-    background: #fbfbfc;
+    /*background: #fbfbfc;*/
     color: #87a1ad;
   }
   .timetable .week-names {
