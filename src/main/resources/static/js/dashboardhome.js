@@ -192,9 +192,11 @@ $(()=>{
             contentType: false,
             enctype: "multipart/form-data",
             success: (response) => {
+                console.log(response);
                 $("#thead-view-room").empty();
                 $("#tbody-view-room").empty();
                 let parseData = JSON.parse(response);
+                console.log(parseData);
                 if(parseData.length >0){
                     $(`<th class="col-1 text-black-50"></th>`).appendTo("#thead-view-room")
                     parseData.forEach((room) =>{
