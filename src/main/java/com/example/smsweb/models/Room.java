@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Room {
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -26,6 +25,6 @@ public class Room {
     private String roomCode;
 
     @OneToMany(mappedBy = "roomId")
-    @JsonManagedReference("roomClass")
+    @JsonIgnore
     private List<Classses> roomClass;
 }
