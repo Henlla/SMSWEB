@@ -50,6 +50,59 @@ $(()=>{
                     console.log(e)
                 }
             })
+
+            let data = new FormData()
+            data.append("shift",selectShift.val()+$("#dayOfWeek").val())
+            data.append("date",inputStartDate.val())
+            $.ajax({
+                url: "/dashboard/class/getAvailableTeacher",
+                method: "POST",
+                data: data,
+                cache : false,
+                processData: false,
+                contentType: false,
+                enctype:"multipart/form-data",
+                success: (result) => {
+                    $("#teacherId").empty();
+                    result =JSON.parse(result);
+                    console.log(result);
+                    if (result != null && result != ""){
+                        $(`<option selected="selected" value="">-- Choose teacher --</option>`).appendTo("#teacherId");
+                        result.forEach(item =>{
+                            $(`<option value="${item.id}">${item.profileByProfileId.firstName +" "+ item.profileByProfileId.lastName} - ${item.teacherCard}</option>`).appendTo("#teacherId");
+                        })
+                    }else {
+                        $(`<option selected="selected" value="">-- No available teacher --</option>`).appendTo("#teacherId");
+                    }
+                },
+                error: (e) => {
+                    $("#teacherId").empty();
+                    console.log(e)
+                    $(`<option selected="selected" value="">-- No available teacher --</option>`).appendTo("#teacherId");
+                }
+            })
+
+            $.ajax({
+                url: "/dashboard/class/getAvailableRoom",
+                method: "POST",
+                data:data,
+                cache: false,
+                processData: false,
+                contentType: false,
+                enctype: "multipart/form-data",
+                success: (response) => {
+                    $("#roomList").empty();
+                    let parse = JSON.parse(response);
+                    if (parse.length == 0){
+                        $(`<option value="">--No room available--</option>`).appendTo("#roomList");
+                    }else {
+                        $(`<option value="">--Select Room--</option>`).appendTo("#roomList");
+                        parse.forEach( item =>{
+                            $(`<option value="${item.id}">${item.roomCode}</option>`).appendTo("#roomList");
+                        });
+                    }
+                },
+            })
         }
     }
     selectShift.change(autoFillClassCode);

@@ -173,9 +173,8 @@ $(document).ready(function () {
             dataArray = Sheet1;
             console.log(Sheet1);
             for (let i = 0; i < dataArray.length; i++) {
-                var studentId = dataArray[i]['Student Id'];
-                var subjectId = dataArray[i]['Subject Id'];
-                var studentSubjectId = dataArray[i]['StudentSubject Id'];
+                var studentId = dataArray[i]['Student Code'];
+                var subjectId = dataArray[i]['Subject Code'];
                 var fullName = dataArray[i]['Student Name'];
                 var subjectName = dataArray[i]['Subject Name'];
                 var asmMark =dataArray[i]['ASM mark'];
@@ -185,8 +184,6 @@ $(document).ready(function () {
                             <input style="border: none" type="text" value="${studentId}" hidden readonly/>
                         </td><td style="display:none;">
                             <input style="border: none" type="text" value="${subjectId}" hidden readonly/>
-                        </td><td style="display:none;">
-                            <input style="border: none" type="text" value="${studentSubjectId}" hidden readonly/>
                         </td><td>
                             <input style="border: none" type="text" value="${fullName}" readonly/>
                         </td><td>
@@ -316,18 +313,13 @@ $(document).ready(function () {
                 enctype: "multipart/form-data",
                 success: (response) => {
                     console.log(JSON.parse(response));
-                    // if ( $.fn.dataTable.isDataTable( '#mark_table' ) ) {
-                    //     $("#mark_table").DataTable().destroy();
-                    // }
                     dataArray = JSON.parse(response);
                     for (let i = 0; i < dataArray.length; i++) {
                         $(`<tr>
                             <td style="display:none;">
-                                <input style="border: none" type="text" value="${dataArray[i].studentId}" hidden readonly/>
+                                <input style="border: none" type="text" value="${dataArray[i].studentCode}" hidden readonly/>
                             </td><td style="display:none;">
-                                <input style="border: none" type="text" value="${dataArray[i].subjectId}" hidden readonly/>
-                            </td><td style="display:none;">
-                                <input style="border: none" type="text" value="${dataArray[i].studentSubjectId}" hidden readonly/>
+                                <input style="border: none" type="text" value="${dataArray[i].subjectCode}" hidden readonly/>
                             </td><td>
                                 <input style="border: none" type="text" value="${dataArray[i].fullName}" readonly/>
                             </td><td>
@@ -390,15 +382,23 @@ $(document).ready(function () {
                         $('#mark_table').DataTable().destroy();
                     }
                     $('#mark_table tbody').empty();
-
+                    console.log(array)
                     jsonRowsTable+='[';
                     for (let index = 0; index < array.length; index++) {
-                        jsonRowsTable += `{"studentId":${array[index][0]},"subjectId":${array[index][1]},"studentSubjectId":"${array[index][2]}","fullName":"${array[index][3]}","subjectName":"${array[index][4]}","asmMark":${array[index][5]},"objMark":${array[index][6]}}`;
+                        jsonRowsTable += `{
+                            "studentCode":"${array[index][0]}",
+                            "subjectCode":"${array[index][1]}",
+                            "fullName":"${array[index][2]}",
+                            "subjectName":"${array[index][3]}",
+                            "asmMark":${array[index][4]},
+                            "objMark":${array[index][5]}
+                            }`;
                         if (index != array.length - 1){
                             jsonRowsTable += ','
                         }
                     }
                     jsonRowsTable+=']';
+                    console.log(jsonRowsTable);
 
                     var data = new FormData();
                     data.append("teacherId",$("#teacherId").val());

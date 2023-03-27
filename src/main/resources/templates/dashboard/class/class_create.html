@@ -36,7 +36,7 @@
                     <div class="col-6">
                         <label>Class code :</label>
                         <input type="text" class="form-control classCode" id="classCode" name="classCode" readonly="">
-                    </div>
+                    </div> <!-- classCode-->
                     <div class="col-6">
                         <label>Major code :</label>
                         <select id="majorId" class="form-control major" name="majorId" style="width: 100%;">
@@ -45,19 +45,24 @@
                                 <option th:value="${major.id}">[[${major.majorName}]]</option>
                             </th:block>
                         </select>
-                    </div>
+                    </div>  <!-- Major-->
                     <div class="col-6">
-                        <label>Teacher :</label>
-                        <select id="teacherId" class="form-control teacher" name="teacherId" style="width: 100%;">
-                            <option selected="selected" value="">----- Choose teacher------</option>
-                            <th:block th:each="teacher : ${teachers}">
-                                <option th:value="${teacher.id}">[[${teacher.profileByProfileId.firstName + " " +
-                                    teacher.profileByProfileId.lastName}]]
-                                </option>
-                            </th:block>
-                        </select>
-                    </div>
+                        <label for="startDate">Start time:</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate"
+                               placeholder="chọn ngày bắt đầu học">
+                        <input type="text" id="inputToday" style="display: none">
+                    </div>   <!-- startTime-->
                     <div class="row col-6">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="dayOfWeek">Day of week:</label>
+                                <select id="dayOfWeek" class="form-control teacher" name="teacherId" style="width: 100%;">
+                                    <option value="">-----Choose days------</option>
+                                    <option value="0">Monday - Wednesday - Friday</option>
+                                    <option value="1">Tuesday - Thursday - Saturday</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="shift">Time :</label>
@@ -69,30 +74,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="dayOfWeek">Day of week:</label>
-                                <select id="dayOfWeek" class="form-control teacher" name="teacherId" style="width: 100%;">
-                                    <option value="">-----Choose days------</option>
-                                    <option value="0">Monday - Wednesday - Friday</option>
-                                    <option value="1">Tuesday - Thursday - Saturday</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <label for="startDate">Start time:</label>
-                        <input type="date" class="form-control" id="startDate" name="startDate"
-                               placeholder="chọn ngày bắt đầu học">
-                        <input type="text" id="inputToday" style="display: none">
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="limitStudent">Limit student</label>
-                            <input type="number" value="22" min="18" max="26" class="form-control" id="limitStudent" name="limitStudent"
-                                   placeholder="Số Sinh viên tối đa">
-                        </div>
-                    </div>
+                    </div>  <!-- Shift-->
                     <div class="col-6">
                         <div class="form-group">
                             <label for="roomList">Room</label>
@@ -103,8 +85,20 @@
                                 </th:block>
                             </select>
                         </div>
-                    </div>
-                    <br>
+                    </div>    <!-- Room-->
+                    <div class="col-6">
+                        <label>Teacher :</label>
+                        <select id="teacherId" class="form-control teacher" name="teacherId" style="width: 100%;">
+
+                        </select>
+                    </div>    <!-- teacher-->
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="limitStudent">Limit student</label>
+                            <input type="number" value="22" min="18" max="26" class="form-control" id="limitStudent" name="limitStudent"
+                                   placeholder="Số Sinh viên tối đa">
+                        </div>
+                    </div>   <!-- limitStudent-->
                     <div class="col-6">
                         <div class="form-group">
                             <label for="studentList">Import list of
@@ -112,8 +106,7 @@
                             example file</a>
                             <input type="file" accept=".xlsx" class="form-control" id="studentList" name="studentList">
                         </div>
-                    </div>
-                    <div class="col-6"></div>
+                    </div>    <!-- studentList-->
 
                     <div class="col-6 form-group mx-auto">
                         <button type="submit" id="btn_create_class" class="btn btn-default btn-block">Create

@@ -80,5 +80,10 @@ public class ClassService implements IClass {
         return repository.findAllByRoomId(roomId);
     }
 
+    @Override
+    public List<Classses> findClassesByShift(String shift) {
+        return repository.findClasssesByShift(shift);
+    }
+
 
 }

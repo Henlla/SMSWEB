@@ -18,7 +18,6 @@ var OnCreateSchedule = (classId, majorId, shift) => {
         processData: false,
         contentType: false,
         success: (res) => {
-            console.log(res)
             if (res === "error") {
                 Swal.fire(
                     "",
@@ -837,11 +836,13 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
                                       <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}</div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
                                     break;
@@ -854,12 +855,14 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
                                      <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
                                     break;
@@ -871,9 +874,10 @@ var OnChangeSemesterSchedule = () => {
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -881,6 +885,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -894,6 +899,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -901,6 +907,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -916,6 +923,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -923,6 +931,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -936,6 +945,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -943,6 +953,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -958,6 +969,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -965,6 +977,7 @@ var OnChangeSemesterSchedule = () => {
                                      </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -978,6 +991,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -985,6 +999,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -1002,6 +1017,7 @@ var OnChangeSemesterSchedule = () => {
                                               <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a>
                                               </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -1009,6 +1025,7 @@ var OnChangeSemesterSchedule = () => {
                                      </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -1022,6 +1039,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -1029,6 +1047,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -1044,6 +1063,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -1051,6 +1071,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
 
@@ -1064,6 +1085,7 @@ var OnChangeSemesterSchedule = () => {
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     } else {
                                         td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
@@ -1071,6 +1093,7 @@ var OnChangeSemesterSchedule = () => {
                                       </div>
                                               <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
+                                      
                                       <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
                                     }
                                     break;
@@ -1308,6 +1331,113 @@ let OnChangeTeacherScheduleDetails = (id, date, slot, shift) => {
     $('#slot_2').html(slot)
     $('#slot_I').val(slot)
 }
+
+let OnchangeRoom = () => {
+    $("#room_change").empty();
+    $('#change_room').modal('show')
+    let data = new FormData();
+
+    data.append("shift",$("#shift").val());
+    $.ajax({
+        url: "/dashboard/class/getAvailableRoom",
+        method: "POST",
+        data:data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        enctype: "multipart/form-data",
+        success: (response) => {
+            let parse = JSON.parse(response);
+            if (parse.length == 0){
+                parse.forEach( item =>{
+                    $(`
+                    <option value="">--No room available--</option>
+                `).appendTo("#room_change");
+                });
+            }else {
+                $(`
+                    <option value="">--Select Room--</option>
+                `).appendTo("#room_change");
+                parse.forEach( item =>{
+                    $(`
+                    <option value="${item.id}">${item.roomCode}</option>
+                `).appendTo("#room_change");
+                });
+            }
+        },
+        error: (error)=>{
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.responseJSON.message,
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            })
+        }
+    })
+}
+
+let btn_submit_change_room = $("#btn_submit_change_room");
+btn_submit_change_room.click((event) =>{
+    event.preventDefault();
+
+    let roomId = $("#room_change").val();
+    if (roomId == "" || roomId == null){
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: "Please choose a Room",
+            showDenyButton: false,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ok',
+        })
+    }else {
+        Swal.fire({
+            icon: 'question',
+            title: 'Change to this room?',
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let data = new FormData();
+                data.append("classId",$("#classId").val());
+                data.append("roomId",roomId);
+                $.ajax({
+                    url: "/dashboard/class/class-update-room",
+                    method: "POST",
+                    data:data,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    enctype: "multipart/form-data",
+                    success: (response) => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Succcess',
+                            text: error.responseJSON.message,
+                            showDenyButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok',
+                        })
+                    },
+                    error: (error)=>{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.responseJSON.message,
+                            showDenyButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok',
+                        })
+                    }
+                })
+            }
+        });
+    }
+})
 
 function isFutureDate(value) {
     d_now = new Date();
