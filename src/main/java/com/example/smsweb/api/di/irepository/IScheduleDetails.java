@@ -9,6 +9,7 @@ public interface IScheduleDetails {
     void addScheduleList(List<ScheduleDetail> list);
 
     List<ScheduleDetail> findScheduleByDate(String date);
+    List<ScheduleDetail> findSchedulesOrNullByDate(String date);
 
     List<ScheduleDetail> findScheduleDetail(String date, String scheduleId);
 

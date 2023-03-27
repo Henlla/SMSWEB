@@ -90,11 +90,39 @@ public class ScheduleDetailsRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), "Don't find any records"));
         }
     }
+    @PostMapping("/findScheduleDetailsOrNullByDate")
+    public ResponseEntity<?> findScheduleDetailsOrNullByDate(@RequestParam("date") String date) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetailsOrNullByDate(date)));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+
+    @PostMapping("/findScheduleDetailsOrNullByShiftAndDateGreater")
+    public ResponseEntity<?> findScheduleDetailsOrNullByShiftAndDateGreater(@RequestParam("date")String date,
+                                                                            @RequestParam("shift")String shift){
+        try{
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("success", LocalDate.now().toString(), scheduleDetailsService.findScheduleDetailsByShiftAndDateAfter(shift, date)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
 
     @PostMapping("/findScheduleDetailsByDate")
     public ResponseEntity<?> findScheduleDetailsByDate(@RequestParam("date") String date) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findScheduleByDate(date)));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
+        }
+    }
+    @PostMapping("/findSchedulesOrNullByDate")
+    public ResponseEntity<?> findSchedulesOrNullByDate(@RequestParam("date") String date) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), scheduleDetailsService.findSchedulesOrNullByDate(date)));
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(), "Don't find any records"));
