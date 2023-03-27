@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -32,6 +33,8 @@ public class SubjectService implements ISubject {
     SemesterRepository semesterDao;
     List<Subject> listSubject;
     Major major;
+    List<Subject> existsSubject;
+    Optional<Subject> subject;
     Semester semester;
     XSSFWorkbook workbook;
     XSSFSheet sheet;
@@ -65,7 +68,7 @@ public class SubjectService implements ISubject {
 
     @Override
     public Subject findOne(int id) {
-        return subjectDao.findById(id).orElseThrow(() -> new ErrorHandler("do not found any subject with id: "+id));
+        return subjectDao.findById(id).orElseThrow(() -> new ErrorHandler("do not found any subject with id: " + id));
     }
 
     @Override
@@ -79,6 +82,7 @@ public class SubjectService implements ISubject {
 
     @Override
     public String importExcelData(MultipartFile file) {
+        String status = "";
         if (!file.isEmpty()) {
             if (FileUtils.getExtension(file.getOriginalFilename()).equals("xlsx")) {
                 listSubject = new ArrayList<>();
@@ -97,38 +101,51 @@ public class SubjectService implements ISubject {
                                 && !subject_fee.isEmpty() && !subject_slot.isEmpty()
                                 && !subject_semester.isEmpty() && !subject_major.isEmpty()) {
                             major = new Major();
+                            subject = Optional.of(new Subject());
                             semester = new Semester();
-                            major = majorDao.findMajorByMajorCode(subject_major);
+                            major = majorDao.findMajorByMajorName(subject_major);
                             semester = semesterDao.findBySemesterCode(subject_semester);
                             if (major != null && semester != null) {
-                                Subject subject = Subject.builder().subjectCode(subject_code)
-                                        .subjectName(subject_name).fee(Double.valueOf(subject_fee))
-                                        .slot(Integer.valueOf(subject_slot)).semesterId(semester.getId()).majorId(major.getId()).build();
-                                listSubject.add(subject);
+                                subject = subjectDao.findSubjectBySubjectCode(major.getMajorCode() + "-" + subject_code);
+                                if (subject.isEmpty()) {
+                                    Subject subject = Subject.builder().subjectCode(major.getMajorCode() + "-" + subject_code)
+                                            .subjectName(subject_name).fee(Double.valueOf(subject_fee))
+                                            .slot(Integer.valueOf(subject_slot)).semesterId(semester.getId()).majorId(major.getId()).build();
+                                    listSubject.add(subject);
+                                } else {
+                                    status = "Row " + (rowIndex + 1) + " was had";
+                                    break;
+                                }
+                            } else {
+                                status = "Please check major and semester data at row " + (rowIndex + 1);
+                                break;
                             }
+                        } else {
+                            status = "Row " + (rowIndex + 1) + " don't have data";
+                            break;
                         }
                     }
-                    if (!listSubject.isEmpty()) {
+                    if(!status.isEmpty()){
+                        return status;
+                    }else{
                         subjectDao.saveAll(listSubject);
-                    } else {
-                        return "File excel không có dữ liệu";
+                        return "";
                     }
-                    return "";
                 } catch (Exception e) {
                     log.error("Import Subject: " + e.getMessage());
-                    return "Đỗ dữ liệu thất bại";
+                    return "Import data fail";
                 }
             } else {
-                return "Vui lòng chọn file excel";
+                return "Please choose excel file";
             }
         } else {
-            return "Vui lòng chọn file";
+            return "Please choose file";
         }
     }
 
     @Override
     public Subject findSubjectBySubjectCode(String subjectCode) {
-        return subjectDao.findSubjectBySubjectCode(subjectCode).orElseThrow(()-> new ErrorHandler("Subject "+ subjectCode+" is not existed"));
+        return subjectDao.findSubjectBySubjectCode(subjectCode).orElseThrow(() -> new ErrorHandler("Subject " + subjectCode + " is not existed"));
     }
 
     public List<Subject> findSubjectByMajorIdSemester(Integer majorId, Integer semester) {
@@ -138,13 +155,7 @@ public class SubjectService implements ISubject {
     @Override
     public List<Subject> findSubjectBySemesterIdAndMajorId(Integer fromSemester, Integer toSemester, Integer majorId) {
         try {
-            listSubject = new ArrayList<>();
-            listSubject = subjectDao.findSubjectsBySemesterIdBetweenAndMajorId(fromSemester, toSemester, majorId);
-            if (listSubject.size() != 0) {
-                return listSubject;
-            } else {
-                return null;
-            }
+            return subjectDao.findSubjectsBySemesterIdBetweenAndMajorId(fromSemester, toSemester, majorId);
         } catch (Exception e) {
             throw new ErrorHandler("Don't find any records");
         }

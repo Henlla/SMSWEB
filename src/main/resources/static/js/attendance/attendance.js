@@ -57,7 +57,7 @@ $(() => {
 
     date.attr("min", moment().subtract(2, "days").format("YYYY-MM-DD"));
 
-    date.attr("max", moment().format("YYYY-MM-DD"));
+    date.attr("max", moment().add(4, "days").format("YYYY-MM-DD"));
 
     date.on("change", () => {
         let date = $("#date_attendance").val();
@@ -81,6 +81,7 @@ $(() => {
         columns: [
             {title: "STT"},
             {title: "Avatar"},
+            {title: "Student Card"},
             {title: "Student name"},
             {title: "Present"},
             {title: "Absent"},
@@ -246,7 +247,7 @@ const ViewDatable = (response) => {
                     let html = "";
                     if (data.isAttendance === 0) {
                         if (data.onTime === 0) {
-                            html += `<button disabled onclick="OnTakeAttendance('${data.class_id}')" class="btn btn-primary btn-sm"><i class="fas fa-user-edit"></i></button>`
+                            html += `<button onclick="OnTakeAttendance('${data.class_id}')" class="btn btn-primary btn-sm"><i class="fas fa-user-edit"></i></button>`
                         } else {
                             html += `<button onclick="OnTakeAttendance('${data.class_id}')" class="btn btn-primary btn-sm"><i class="fas fa-user-edit"></i></button>`
                         }
@@ -289,6 +290,7 @@ const ViewDatable = (response) => {
 
 const DataTable = (response) => {
     let html = "";
+    console.log(response);
     $("#listStudent").DataTable({
         data: response,
         paging: false,
@@ -318,6 +320,13 @@ const DataTable = (response) => {
                     return html;
                 }
             },
+            {
+                data: "classStudentByStudent",
+                render: function (data, type, row, index) {
+                    return data.studentCard;
+                }
+            }
+            ,
             {
                 data: "classStudentByStudent",
                 render: function (data, type, row, index) {

@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class SubjectController {
     @Autowired
     private ISubject service;
-
     private String SUBJECT_URL = "http://localhost:8080/api/subject/";
     private String MAJOR_URL = "http://localhost:8080/api/major/";
     private String SEMESTER_URL = "http://localhost:8080/api/semester/";
@@ -166,4 +165,5 @@ public class SubjectController {
             return new ResponseEntity<String>("Import fail", HttpStatus.BAD_REQUEST);
         }
     }
+
 }

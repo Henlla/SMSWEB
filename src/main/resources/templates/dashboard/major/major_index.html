@@ -33,11 +33,11 @@
                                 data-target="#create-major-modal" class="btn btn-info btn-sm">
                             <i class="fas fa-plus"></i> Create
                         </button>
-                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i
-                                class="fas fa-download"></i> Export data</a>
-                        <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>
-                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                           class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Import Data</a>
+<!--                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i-->
+<!--                                class="fas fa-download"></i> Export data</a>-->
+<!--                        <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>-->
+<!--                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
+<!--                           class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Import Data</a>-->
                     </div>
                 </section>
                 <section class="row">
@@ -127,20 +127,22 @@
                     <form th:id="edit-form">
                         <input type="text" th:id="edit_major_id" hidden>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Course code</label>
+                            <label class="m-0">Course code</label>
                             <input type="text" name="edit_major_code_validate" th:id="edit_major_code"
                                    class="form-control form-control-sm"
                                    placeholder="Enter major code...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Course name</label>
+                            <label class="m-0">Course name</label>
                             <input type="text" name="edit_major_name_validate" th:id="edit_major_name"
                                    class="form-control form-control-sm"
                                    placeholder="Enter major name...">
                         </div>
                         <div class="form-group">
                             <label class="m-0">Select Major</label>
-                            <select name="edit_apartment_validate" id="edit_apartment" class="apartment_select"></select>
+                            <select name="edit_apartment_validate" class="select2" id="edit_apartment">
+                                <option th:each="item:${listApartment}" th:value="${item.id}">[[${item.apartmentCode}]]</option>
+                            </select>
                         </div>
                     </form>
                 </div>

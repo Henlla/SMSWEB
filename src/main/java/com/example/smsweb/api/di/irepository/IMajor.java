@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface IMajor extends IGenericRepository<Major> {
     String importDataToDb(MultipartFile file);
+
     Major findMajorByMajorCode(String majorCode);
 
     void exportDataToExcel(HttpServletResponse response, List<Major> list, String fileName);
