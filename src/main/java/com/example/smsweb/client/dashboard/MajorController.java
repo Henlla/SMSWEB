@@ -47,7 +47,10 @@ public class MajorController {
                 restTemplate = new RestTemplate();
                 listMajor = new ResponseModel();
                 HttpHeaders headers = new HttpHeaders();
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                ResponseEntity<ResponseModel> responseApartment = restTemplate.exchange(APARTMENT_URL, HttpMethod.GET, request, ResponseModel.class);
                 listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
+                model.addAttribute("listApartment", responseApartment.getBody().getData());
                 model.addAttribute("listMajor", listMajor.getData());
                 return "dashboard/major/major_index";
             } else {

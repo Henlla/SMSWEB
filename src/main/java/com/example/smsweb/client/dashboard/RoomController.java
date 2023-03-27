@@ -4,13 +4,10 @@ package com.example.smsweb.client.dashboard;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.Classses;
-import com.example.smsweb.models.Province;
-import com.example.smsweb.models.Role;
 import com.example.smsweb.models.Room;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.Http;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -107,7 +104,7 @@ public class RoomController {
                 String jsonClassList = new ObjectMapper().writeValueAsString(response.getBody().getData());
                 List<Classses> list = new ObjectMapper().readValue(jsonClassList, new TypeReference<List<Classses>>() {
                 });
-                if(list.isEmpty()){
+                if(list == null){
                     flag = false;
                 }else{
                     boolean isCheck = list.stream().anyMatch(classses -> classses.getShift().equals(shift));

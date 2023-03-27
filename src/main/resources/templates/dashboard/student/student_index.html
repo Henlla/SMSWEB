@@ -33,7 +33,8 @@
                         <div class="col-12">
                             <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm"><i class="fas fa-plus"></i> Create</a>
                             <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Export Data</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Download Template</a>
+                            <a onclick="OnChooseFile()" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Import Data</a>
+                            <input type="file" hidden id="fileStudent" onchange="OnImportStudent()">
                         </div>
                     </div>
                     <div class="row">

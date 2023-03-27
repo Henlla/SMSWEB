@@ -23,7 +23,8 @@ public class ProfileRestController {
     private ProfileService service;
 
     @PostMapping("/")
-    public ResponseEntity<?> saveProfile(@RequestParam("profile") String profile, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> saveProfile(@RequestParam("profile") String profile,
+                                         @RequestParam("file") MultipartFile file) {
         try {
             log.info("START method saveProfile :::::::::");
             log.info("Request params profile = {}",profile);

@@ -1,4 +1,4 @@
-$(()=>{
+$(() => {
     $('#reservationdate_u').datetimepicker({
         format: 'DD/MM/YYYY'
     });
@@ -6,8 +6,8 @@ $(()=>{
         theme: 'bootstrap4'
     });
     $("#student-table").DataTable({
-        pageLength:5,
-        lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
+        pageLength: 5,
+        lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
         scrollCollapse: true,
         scrollY: '600px',
         "language": {
@@ -33,7 +33,7 @@ $(()=>{
                 "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
-        },initComplete: function () {
+        }, initComplete: function () {
             count = 0;
             this.api().columns([4]).every(function (i) {
                 var title = this.header();
@@ -120,7 +120,7 @@ $(()=>{
                     toastr.success('Reset password success')
                     $("#student_details").modal("hide");
                     $('#spinner-div').hide()
-                },error:(xhr, status, error)=>{
+                }, error: (xhr, status, error) => {
                     var err = eval("(" + xhr.responseText + ")");
                     console.log(err)
                     if (err.message.toLowerCase() === "token expired") {
@@ -134,7 +134,7 @@ $(()=>{
                                 location.href = "/dashboard/login";
                             }
                         });
-                    }else{
+                    } else {
                         alert("Create fail");
                     }
                 }
@@ -216,11 +216,11 @@ var OnDetails = (id) => {
             for (var major of data.student.majorStudentsById) {
                 $('#st_major').html(major.majorByMajorId.majorName)
             }
-            if(data.classes.length ===0){
+            if (data.classes.length === 0) {
                 $('#st_class').html('Chưa có')
-            }else {
+            } else {
                 for (var classes of data.classes) {
-                    classCode+=classes.classCode+" "
+                    classCode += classes.classCode + " "
                 }
                 $('#st_class').html(classCode)
             }
@@ -232,7 +232,7 @@ var OnDetails = (id) => {
             // $.ajax({
             //     url: "/dashboard/student/getClassByStudentId/" + id,
             // })
-        },  error:(xhr, status, error)=>{
+        }, error: (xhr, status, error) => {
             var err = eval("(" + xhr.responseText + ")");
             $("#student_details").modal("hide");
             console.log(err)
@@ -247,7 +247,7 @@ var OnDetails = (id) => {
                         location.href = "/dashboard/login";
                     }
                 });
-            }else{
+            } else {
                 toastr.success("Can't get detail")
             }
         }
@@ -312,7 +312,7 @@ var OnUpdate = (id) => {
             $("input[name=sex][value=" + data.student.studentByProfile.sex + "]").prop('checked', true);
 
             $("#student_update").modal("show");
-        },  error:(xhr, status, error)=>{
+        }, error: (xhr, status, error) => {
             var err = eval("(" + xhr.responseText + ")");
             $("#student_update").modal("hide");
             console.log(err)
@@ -327,7 +327,7 @@ var OnUpdate = (id) => {
                         location.href = "/dashboard/login";
                     }
                 });
-            }else{
+            } else {
                 toastr.success('Get detail fail')
             }
         }
@@ -386,7 +386,7 @@ var OnUpdateSubmit = () => {
             location.reload();
             toastr.success('Cập nhật sinh viên thành công')
         },
-        error:(xhr, status, error)=>{
+        error: (xhr, status, error) => {
             var err = eval("(" + xhr.responseText + ")");
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
@@ -401,7 +401,7 @@ var OnUpdateSubmit = () => {
                         location.href = "/dashboard/login";
                     }
                 });
-            }else{
+            } else {
                 toastr.success('Update fail')
             }
         }
@@ -468,7 +468,7 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
                 $('#spinner-divI').hide()
                 location.reload();
                 toastr.success('Change success')
-            }, error:(xhr, status, error)=>{
+            }, error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 console.log(err)
                 if (err.message.toLowerCase() === "token expired") {
@@ -483,7 +483,7 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
                             location.href = "/dashboard/login";
                         }
                     });
-                }else{
+                } else {
                     alert("Change fail");
                 }
             }
@@ -497,4 +497,46 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
             $(this).remove();
         });
     });
+}
+
+const OnChooseFile = () => {
+    $("#fileStudent").trigger("click");
+}
+
+const OnImportStudent = () => {
+    let file = $("#fileStudent").get(0).files[0];
+    if (file !== undefined) {
+        let formData = new FormData();
+        formData.append("file", file);
+        $.ajax({
+            url: "/dashboard/student/import-excel",
+            data: formData,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            enctype: "multipart/form-data",
+            success: (data) => {
+                toastr.success(data);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            },
+            error: (data) => {
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                } else {
+                    toastr.error(data.responseText);
+                }
+            }
+        });
+    }
 }
