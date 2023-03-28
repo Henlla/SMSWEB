@@ -95,4 +95,14 @@ public class ScheduleRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDateTime.now().toString(), "Don't find any records"));
         }
     }
+
+    @GetMapping("/findOne/{scheduleId}")
+    public ResponseEntity<?> findOne(@PathVariable("scheduleId") Integer scheduleId) {
+        try {
+            Schedule schedule = iSchedule.findOne(scheduleId);
+            return ResponseEntity.status(HttpStatus.OK).body(schedule);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDateTime.now().toString(), "Don't find any records"));
+        }
+    }
 }

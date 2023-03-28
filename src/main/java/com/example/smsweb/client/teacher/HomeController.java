@@ -724,9 +724,10 @@ public class HomeController {
             ObjectMapper objectMapper = new ObjectMapper();
 
             List<Mark> markList = new ArrayList<>();
+            List<InputMarkModel> checkedInputMarkModelList = new ArrayList<>();
 
-            List<InputMarkModel> inputMarkModelList = objectMapper.readValue(mark_list, new TypeReference<>() {
-            });
+            List<InputMarkModel> inputMarkModelList = objectMapper.readValue(mark_list, new TypeReference<>() {});
+
 
             if (inputMarkModelList.size() != 0) {
                 //Get class
@@ -740,25 +741,49 @@ public class HomeController {
                 });
 
                 for (InputMarkModel item : inputMarkModelList) {
+                    //Get  Subject And Student add to new Model
+                    ResponseEntity<Student> responseStudent = restTemplate.exchange(
+                            STUDENT_URL + "findStudentByStudentCard/" +item.getStudentCode(),
+                            HttpMethod.GET, request, Student.class);
+                    Student student = responseStudent.getBody();
+                    if (student == null){
+                        throw new ErrorHandler("Not found student: "+item.getFullName());
+                    }
+
+                    ResponseEntity<ResponseModel> responseSubject = restTemplate.exchange(
+                            SUBJECT_URL + "findSubjectBySubjectCode/" +item.getSubjectCode(),
+                            HttpMethod.GET, request, ResponseModel.class);
+                    ResponseModel responseModelSubject = responseSubject.getBody();
+                    if (responseModelSubject.getData() == null){
+                        throw new ErrorHandler("Not found subject: "+item.getSubjectName());
+                    }
+                    String jsonResponseModelSubject = objectMapper.writeValueAsString(responseModelSubject.getData());
+                    Subject subject = objectMapper.readValue(jsonResponseModelSubject, new TypeReference<>() {
+                    });
+
+                    //add to new checkedInputMarkModelList
+                    InputMarkModel inputMarkModel = new InputMarkModel(student, subject);
+                    checkedInputMarkModelList.add(inputMarkModel);
+
                     //Check existed mark in database
                     ResponseEntity<Mark> responseMark = restTemplate.exchange(
-                            MARK_URL + "findMarkByStudentSubjectId/" + item.getStudentSubjectId(),
+                            MARK_URL + "findMarkByStudentSubjectId/" + inputMarkModel.getStudentSubjectId(),
                             HttpMethod.GET, request, Mark.class);
                     Mark body = responseMark.getBody();
                     if (body != null) {
-                        throw new ErrorHandler(item.getFullName() + " already have a record of mark in " + item.getSubjectName() + "!");
+                        throw new ErrorHandler(inputMarkModel.getFullName() + " already have a record of mark in " + inputMarkModel.getSubjectName() + "!");
                     }
                     //Check permission mark a student
-                    if (classs.getStudentClassById().stream().filter(studentClass -> studentClass.getStudentId() == item.getStudentId()).collect(Collectors.toList()).size() == 0) {
-                        throw new ErrorHandler("You have no permission to mark this student: " + item.getFullName());
+                    if (classs.getStudentClassById().stream().filter(studentClass -> studentClass.getStudentId() == inputMarkModel.getStudentId()).collect(Collectors.toList()).size() == 0) {
+                        throw new ErrorHandler("You have no permission to mark this student: " + inputMarkModel.getFullName());
                     }
 
                     //Check existed subject and subject existed in this class
-                    if (classs.getMajor().getSubjectsById().stream().filter(s -> s.getId() == item.getSubjectId()).collect(Collectors.toList()).size() == 0) {
-                        throw new ErrorHandler("You have no permission to mark this subject: " + item.getSubjectName());
+                    if (classs.getMajor().getSubjectsById().stream().filter(s -> s.getId() == inputMarkModel.getSubjectId()).collect(Collectors.toList()).size() == 0) {
+                        throw new ErrorHandler("You have no permission to mark this subject: " + inputMarkModel.getSubjectName());
                     }
 
-                    markList.add(new Mark(0, item.getAsmMark(), item.getObjMark(), item.getStudentSubjectId(), null));
+                    markList.add(new Mark(0, item.getAsmMark(), item.getObjMark(), inputMarkModel.getStudentSubjectId(), null));
                 }
 
                 //Save markList

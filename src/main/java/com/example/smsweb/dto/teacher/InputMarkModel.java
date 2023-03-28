@@ -17,6 +17,7 @@ public class InputMarkModel implements Serializable {
 
 
     private int subjectId;
+    private String subjectCode;
     private String subjectName;
     private int studentSubjectId;
     private Double asmMark;
@@ -33,13 +34,13 @@ public class InputMarkModel implements Serializable {
         this.lastName = student.getStudentByProfile().getLastName();
         this.fullName = student.getStudentByProfile().getFullName();
         this.subjectId = subject.getId();
+        this.subjectCode = subject.getSubjectCode();
         this.subjectName = subject.getSubjectName();
     }
 
-    public InputMarkModel(int studentId, int subjectId, int studentSubjectId, Double asmMark, Double objMark) {
-        this.studentId = studentId;
-        this.subjectId = subjectId;
-        this.studentSubjectId = studentSubjectId;
+    public InputMarkModel(String studentCode, String subjectCode, Double asmMark, Double objMark) {
+        this.studentCode = studentCode;
+        this.subjectCode = subjectCode;
         this.asmMark = asmMark;
         this.objMark = objMark;
     }

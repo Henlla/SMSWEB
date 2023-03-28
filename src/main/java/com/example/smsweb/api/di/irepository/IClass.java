@@ -13,4 +13,5 @@ public interface IClass extends IGenericRepository<Classses> {
     List<Classses> findClassByMajorId(Integer majorId);
     List<Classses> findClassByRoom(Integer roomId);
     List<Classses> findClassByRoomAndDepartmentId(Integer roomId,Integer departmentId);
+    List<Classses> findClassesByShift(String shift);
 }

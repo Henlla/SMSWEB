@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -32,6 +33,10 @@ public class ScheduleDetailsService implements IScheduleDetails {
     @Override
     public List<ScheduleDetail> findScheduleByDate(String date) {
         return repository.findByDate(date).orElseThrow(() -> new ErrorHandler("Don't find records with date: " + date));
+    }
+    @Override
+    public List<ScheduleDetail> findSchedulesOrNullByDate(String date) {
+        return repository.findByDate(date).orElse(null);
     }
 
     @Override
@@ -136,5 +141,12 @@ public class ScheduleDetailsService implements IScheduleDetails {
 
     public ScheduleDetail findScheduleDetailsByDate(String date) {
         return repository.findScheduleDetailByDate(date).orElseThrow(() -> new ErrorHandler("Cannot find schedule detail with date = " + date));
+    }
+
+    public List<ScheduleDetail> findScheduleDetailsOrNullByDate(String date) {
+        return repository.findScheduleDetailsByDate(date).orElse(null);
+    }
+    public List<ScheduleDetail> findScheduleDetailsByShiftAndDateAfter(String shift,String date) {
+        return repository.findScheduleDetailsByShiftAndDateAfter(shift, date).orElse(null);
     }
 }

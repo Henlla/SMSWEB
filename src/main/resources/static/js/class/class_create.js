@@ -1,3 +1,65 @@
+function getRoomAndTeacherByDate(){
+    let shift1 = $('#shift').val();
+    let shift2 = $("#dayOfWeek").val();
+    let startdate = $('#startDate').val();
+    if (shift1 != "" && shift2 != "" && startdate != ""){
+        let data = new FormData()
+        data.append("shift",shift1+shift2)
+        data.append("date",startdate)
+        $.ajax({
+            url: "/dashboard/class/getAvailableTeacher",
+            method: "POST",
+            data: data,
+            cache : false,
+            processData: false,
+            contentType: false,
+            enctype:"multipart/form-data",
+            success: (result) => {
+                $("#teacherId").empty();
+                result =JSON.parse(result);
+                console.log(result);
+                if (result != null && result != ""){
+                    $(`<option selected="selected" value="">-- Choose teacher --</option>`).appendTo("#teacherId");
+                    result.forEach(item =>{
+                        $(`<option value="${item.id}">${item.profileByProfileId.firstName +" "+ item.profileByProfileId.lastName} - ${item.teacherCard}</option>`).appendTo("#teacherId");
+                    })
+                }else {
+                    $(`<option selected="selected" value="">-- No available teacher --</option>`).appendTo("#teacherId");
+                }
+            },
+            error: (e) => {
+                $("#teacherId").empty();
+                console.log(e)
+                $(`<option selected="selected" value="">-- No available teacher --</option>`).appendTo("#teacherId");
+            }
+        })
+
+        $.ajax({
+            url: "/dashboard/class/getAvailableRoom",
+            method: "POST",
+            data:data,
+            cache: false,
+            processData: false,
+            contentType: false,
+            enctype: "multipart/form-data",
+            success: (response) => {
+                $("#roomList").empty();
+                let parse = JSON.parse(response);
+                if (parse.length == 0){
+                    $(`<option>--No room available--</option>`).appendTo("#roomList");
+                }else {
+                    $(`<option>--Select Room--</option>`).appendTo("#roomList");
+                    parse.forEach( item =>{
+                        $(`<option value="${item.id}">${item.roomCode}</option>`).appendTo("#roomList");
+                    });
+                }
+            },
+            error:(error)=>{
+
+            }
+        })
+    }
+}
 $(()=>{
     var date = new Date();
     var day = date.getDate();
@@ -20,6 +82,16 @@ $(()=>{
             }
             return false;
         }, 'Must be greater than {0}.');
+    jQuery.validator.addMethod("checkNullOrUndefine",
+        function(value, element, params) {
+            let val = $(params).val();
+            if (val == null || val == undefined || val ==""){
+                console.log("f");
+                return false;
+            }
+            console.log("t");
+            return true;
+        }, 'Required');
     let autoFillClassCode = function (){
         if (selectMajor.val()!= "" && selectShift.val()!= "" && selectDayOfWeek.val() != "" && inputStartDate.val() != ""){
             var inputDate = new Date(inputStartDate.val());
@@ -52,11 +124,14 @@ $(()=>{
             })
         }
     }
-    selectShift.change(autoFillClassCode);
-    selectDayOfWeek.change(autoFillClassCode);
-    selectMajor.change(autoFillClassCode);
-    inputStartDate.change(autoFillClassCode);
-
+    function multipleFunc() {
+        getRoomAndTeacherByDate();
+        autoFillClassCode();
+    }
+    selectShift.change(multipleFunc);
+    inputStartDate.change(multipleFunc);
+    selectDayOfWeek.change(multipleFunc);
+    selectMajor.change(multipleFunc);
     $('#btn_create_class').on('click',function (e){
         e.preventDefault();
 
@@ -92,7 +167,10 @@ $(()=>{
                     required: true
                 },
                 teacherId: {
-                    required: true
+                    checkNullOrUndefine: "#teacherId"
+                },
+                roomList: {
+                    checkNullOrUndefine: "#roomList"
                 },
                 shift: {
                     required: true
@@ -118,6 +196,9 @@ $(()=>{
                 },
                 teacherId: {
                     required: "Please choose teacher"
+                },
+                roomList: {
+                    required: "Please choose room"
                 },
                 shift: {
                     required: "Please choose timer"
