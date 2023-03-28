@@ -106,7 +106,7 @@ public class ApplicationController {
                 dataNotification.setAction("Application");
 
                 String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
-                message.setTitle("Thông báo gửi đơn");
+                message.setTitle("Announcement");
                 message.setData(jsonData);
                 message.setRegistrationTokens(listDeviceToken);
 
