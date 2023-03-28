@@ -1,5 +1,6 @@
 package com.example.smsweb.client.dashboard;
 
+import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.dto.StudentClassModel;
 import com.example.smsweb.jwt.JWTUtils;
@@ -99,16 +100,28 @@ public class StudentController {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
             String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
             String numbers = "1234567890";
             String combinedChars = capitalCaseLetters + lowerCaseLetters + numbers;
             Profile parseProfile = new ObjectMapper().readValue(profile, Profile.class);
 
+            String studentCard = StringUtils.randomStudentCard(numbers);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"findStudentCard/"+studentCard,HttpMethod.GET,request,String.class);
+            if (response.getBody() != null) {
+                studentCard = StringUtils.randomStudentCard(numbers);
+            }
+
             //generate accountName = first_name+ last_name + dob
-            String accountName = StringUtils.removeAccent(parseProfile.getFirstName() + parseProfile.getLastName()).toLowerCase().replace(" ", "")
-                    + parseProfile.getDob().replace("/", "");
-            String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
+//            String accountName = StringUtils.removeAccent(parseProfile.getFirstName()+parseProfile.getLastName()).toLowerCase().replace(" ","")
+//                    +parseProfile.getDob().replace("/","");
+            String password = RandomStringUtils.random(8,0,combinedChars.length(),true,true,combinedChars.toCharArray());
+
 
             //Select role
             HttpHeaders headersRole = new HttpHeaders();
@@ -121,7 +134,8 @@ public class StudentController {
             Role role = new ObjectMapper().readValue(responseRole.getBody(), Role.class);
 
             //Save Account
-            Account account = new Account(accountName, password, role.getId());
+            Account account = new Account(studentCard.toLowerCase(),password,role.getId());
+
             String jsonAccount = new ObjectMapper().writeValueAsString(account);
             HttpHeaders headersAccount = new HttpHeaders();
             headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -153,11 +167,11 @@ public class StudentController {
             Mail mail = new Mail();
             mail.setToMail(parseProfile.getEmail());
             mail.setSubject("Account student HKT SYSTEM");
-            String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
-            Map<String, Object> props = new HashMap<>();
-            props.put("accountName", accountName);
-            props.put("password", password);
-            props.put("fullname", name);
+            String name = profileResponse.getFirstName()+" "+profileResponse.getLastName();
+            Map<String,Object> props = new HashMap<>();
+            props.put("accountName",accountResponse.getUsername());
+            props.put("password",password);
+            props.put("fullname",name);
             mail.setProps(props);
             mailService.sendHtmlMessage(mail);
             //-----------------------------
@@ -165,8 +179,8 @@ public class StudentController {
             //Save student
             //generate studentCard
             HttpHeaders headerStudent = new HttpHeaders();
-            headerStudent.set("Authorization", "Bearer " + _token);
-            String studentCard = StringUtils.randomStudentCard(numbers);
+            headerStudent.set("Authorization","Bearer "+_token);
+
             MultiValueMap<String, String> paramsStudent = new LinkedMultiValueMap<>();
             paramsStudent.add("studentCard", studentCard);
             paramsStudent.add("profileId", String.valueOf(profileResponse.getId()));

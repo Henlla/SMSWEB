@@ -50,6 +50,11 @@ public class StudentService implements IStudent {
     }
 
     @Override
+    public Student findStudentCard(String studentCard) {
+        return repository.findStudentByStudentCard(studentCard).orElse(null);
+    }
+
+    @Override
     public List<Student> findStudentIdByRangeStudentCard(List<String> listStudentCard) {
         List<Student> listResult = new ArrayList<>();
         for (String stringCard : listStudentCard) {

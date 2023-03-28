@@ -70,10 +70,10 @@ public class TeacherController {
             String numbers = "1234567890";
             String combinedChars = capitalCaseLetters + lowerCaseLetters + numbers;
             Profile parseProfile = new ObjectMapper().readValue(profile, Profile.class);
-
+            String teacherCard = StringUtils.randomTeacherCard(numbers);
             //generate accountName = first_name+ last_name + dob
-            String accountName = StringUtils.removeAccent(parseProfile.getFirstName() + parseProfile.getLastName()).toLowerCase().replace(" ", "")
-                    + parseProfile.getDob().replace("/", "");
+//            String accountName = StringUtils.removeAccent(parseProfile.getFirstName() + parseProfile.getLastName()).toLowerCase().replace(" ", "")
+//                    + parseProfile.getDob().replace("/", "");
             String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
 
             //Select role
@@ -87,7 +87,7 @@ public class TeacherController {
             Role role = new ObjectMapper().readValue(responseRole.getBody(), Role.class);
 
             //Save Account
-            Account account = new Account(accountName, password, role.getId());
+            Account account = new Account(teacherCard.toLowerCase(), password, role.getId());
             String jsonAccount = new ObjectMapper().writeValueAsString(account);
             HttpHeaders headersAccount = new HttpHeaders();
             headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -121,7 +121,7 @@ public class TeacherController {
             mail.setSubject("Account student HKT SYSTEM");
             String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
             Map<String, Object> props = new HashMap<>();
-            props.put("accountName", accountName);
+            props.put("accountName", accountResponse.getUsername());
             props.put("password", password);
             props.put("fullname", name);
             mail.setProps(props);
@@ -133,7 +133,7 @@ public class TeacherController {
             headerTeacher.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, String> paramsTeacher = new LinkedMultiValueMap<>();
             paramsTeacher.add("profileId", String.valueOf(profileResponse.getId()));
-            paramsTeacher.add("teacherCard", StringUtils.randomTeacherCard(numbers));
+            paramsTeacher.add("teacherCard", teacherCard);
             HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsTeacher, headerTeacher);
             ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(TEACHER_URL, HttpMethod.POST, requestEntityStudent, ResponseModel.class);
             String teacherResponseToJson = new ObjectMapper().writeValueAsString(responseModelStudent.getBody().getData());

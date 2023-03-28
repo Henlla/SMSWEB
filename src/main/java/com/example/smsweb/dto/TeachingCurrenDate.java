@@ -23,4 +23,5 @@ public class TeachingCurrenDate {
     private Integer slot;
     private String time;
     private String startTime;
+    private String departmentCode;
 }
