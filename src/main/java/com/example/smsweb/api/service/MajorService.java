@@ -104,6 +104,11 @@ public class MajorService implements IMajor {
     }
 
     @Override
+    public Major findMajorByMajorCodeAndApartment(String majorCode, Integer apartmentId) {
+        return dao.findMajorByMajorCodeAndApartmentId(majorCode, apartmentId);
+    }
+
+    @Override
     public void exportDataToExcel(HttpServletResponse response, List<Major> list, String fileName) {
         try {
             MajorExport export = new MajorExport();

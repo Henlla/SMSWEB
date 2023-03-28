@@ -35,7 +35,7 @@ public class MajorController {
     private IMajor service;
     private final String MAJOR_URL = "http://localhost:8080/api/major/";
     private final String APARTMENT_URL = "http://localhost:8080/api/apartment/";
-    ResponseModel listMajor;
+    List<Major> listMajor;
     List<Apartment> listApartment;
     RestTemplate restTemplate;
 
@@ -45,13 +45,12 @@ public class MajorController {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
-                listMajor = new ResponseModel();
                 HttpHeaders headers = new HttpHeaders();
                 HttpEntity<String> request = new HttpEntity<>(headers);
                 ResponseEntity<ResponseModel> responseApartment = restTemplate.exchange(APARTMENT_URL, HttpMethod.GET, request, ResponseModel.class);
-                listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
+                ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(MAJOR_URL + "list", HttpMethod.GET, request, ResponseModel.class);
                 model.addAttribute("listApartment", responseApartment.getBody().getData());
-                model.addAttribute("listMajor", listMajor.getData());
+                model.addAttribute("listMajor", responseMajor.getBody().getData());
                 return "dashboard/major/major_index";
             } else {
                 return "redirect:/dashboard/login";
@@ -89,17 +88,30 @@ public class MajorController {
 
     @PostMapping("/save")
     @ResponseBody
+
     public Object post(@CookieValue(name = "_token", defaultValue = "") String _token, @RequestBody Major major) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
-                MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
-                content.add("major", major);
-                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-                return response.getBody().getData();
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(MAJOR_URL + "findByMajorCode/" + major.getMajorCode(), HttpMethod.GET, request, ResponseModel.class);
+                if (responseMajor.getStatusCode().is2xxSuccessful()) {
+                    String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
+                    Major majorResponse = new ObjectMapper().readValue(majorJson, Major.class);
+                    if (majorResponse == null) {
+                        MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+                        content.add("major", major);
+                        HttpEntity<MultiValueMap<String, Object>> requestMajor = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
+                        ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "save", HttpMethod.POST, requestMajor, ResponseModel.class);
+                        return response.getBody().getData();
+                    } else {
+                        return new ResponseEntity<String>("This curriculum was having", HttpStatus.BAD_REQUEST);
+                    }
+                } else {
+                    return new ResponseEntity<String>("Wrong curriculum format", HttpStatus.BAD_REQUEST);
+                }
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
@@ -144,11 +156,23 @@ public class MajorController {
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
-                MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
-                content.add("major", major);
-                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "update", HttpMethod.PUT, request, ResponseModel.class);
-                return response.getBody().getData();
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(MAJOR_URL + "findByMajorCode/" + major.getMajorCode(), HttpMethod.GET, request, ResponseModel.class);
+                if (responseMajor.getStatusCode().is2xxSuccessful()) {
+                    String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
+                    Major majorResponse = new ObjectMapper().readValue(majorJson, Major.class);
+                    if (majorResponse == null) {
+                        MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
+                        content.add("major", major);
+                        HttpEntity<MultiValueMap<String, Object>> requestMajor = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
+                        ResponseEntity<ResponseModel> response = restTemplate.exchange(MAJOR_URL + "update", HttpMethod.PUT, requestMajor, ResponseModel.class);
+                        return response.getBody().getData();
+                    } else {
+                        return new ResponseEntity<String>("The curriculum updating was have", HttpStatus.BAD_REQUEST);
+                    }
+                } else {
+                    return new ResponseEntity<String>("Can't update curriculum in this time! Please contact admin", HttpStatus.BAD_REQUEST);
+                }
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }

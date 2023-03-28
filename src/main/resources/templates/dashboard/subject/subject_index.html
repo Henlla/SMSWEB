@@ -37,6 +37,7 @@
                 <section class="container-fluid">
                     <section class="row mb-3">
                         <section class="col-12">
+                            <input type="text" hidden th:value="${#authentication.getAuthorities()}" id="userRole">
                             <button data-toggle="modal"
                                     th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
                                     data-target="#subject-modal" class="btn btn-info btn-sm">
@@ -45,6 +46,14 @@
                             <a onclick="OnClickImport()" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>
                                 Import Data</a>
                             <input type="file" onchange="OnSaveExcelData()" id="fileUpload" hidden>
+                        </section>
+                    </section>
+                    <section class="row mb-3">
+                        <section class="col-3">
+                            <label>Sort By Curriculum</label>
+                            <select id="curriculum" onchange="OnChangeCurriculum()" class="select2">
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode}]]</option>
+                            </select>
                         </section>
                     </section>
                     <section class="row">
@@ -141,8 +150,7 @@
                             <select th:id="create_major_id" name="create_course_validate"
                                     class="form-control select2-single form-control-sm">
                                 <option value="">----Choose course----</option>
-                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode + "-"
-                                    +item.majorName}]]
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode}]]
                                 </option>
                             </select>
                         </div>
@@ -210,8 +218,7 @@
                         <div class="form-group">
                             <label class="m-0" style="font-size: 13px">Major</label>
                             <select th:id="edit_major_id" class="form-control select2-single">
-                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode + "-" +
-                                    item.majorName}]]
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode}]]
                                 </option>
                             </select>
                         </div>

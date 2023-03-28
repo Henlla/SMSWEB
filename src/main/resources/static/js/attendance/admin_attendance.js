@@ -15,9 +15,10 @@ $(() => {
         ajax: {
             url: "/dashboard/attendance/findScheduleDetailByDate",
             method: "GET",
+            delay:250,
             data: function (params) {
                 let query = {
-                    search: params.term,
+                    searchTerm: params.term,
                     date: $("#date_time").val()
                 }
                 return query;

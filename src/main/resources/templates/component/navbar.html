@@ -49,13 +49,13 @@
                 <li class="nav-item" th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'', ''STAFF'')')}">
                     <a href="#" class="nav-link active">
                         <i class="fas fa-hashtag"></i>
-                        <p>Course<i class="right fas fa-angle-left"></i></p>
+                        <p>Curriculum<i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a th:href="@{/dashboard/major/index}" class="nav-link active">
                                 <i class="fas fa-list"></i>
-                                <p>List course</p>
+                                <p>List curriculum</p>
                             </a>
                         </li>
                     </ul>
