@@ -103,12 +103,12 @@ public class SubjectService implements ISubject {
                             major = new Major();
                             subject = Optional.of(new Subject());
                             semester = new Semester();
-                            major = majorDao.findMajorByMajorName(subject_major);
+                            major = majorDao.findMajorByMajorCode(subject_major);
                             semester = semesterDao.findBySemesterCode(subject_semester);
                             if (major != null && semester != null) {
-                                subject = subjectDao.findSubjectBySubjectCode(major.getMajorCode() + "-" + subject_code);
+                                subject = subjectDao.findSubjectBySubjectCode(major.getMajorId() + "-" + subject_code);
                                 if (subject.isEmpty()) {
-                                    Subject subject = Subject.builder().subjectCode(major.getMajorCode() + "-" + subject_code)
+                                    Subject subject = Subject.builder().subjectCode(major.getMajorId() + "-" + subject_code)
                                             .subjectName(subject_name).fee(Double.valueOf(subject_fee))
                                             .slot(Integer.valueOf(subject_slot)).semesterId(semester.getId()).majorId(major.getId()).build();
                                     listSubject.add(subject);
@@ -117,7 +117,7 @@ public class SubjectService implements ISubject {
                                     break;
                                 }
                             } else {
-                                status = "Please check major and semester data at row " + (rowIndex + 1);
+                                status = "Don't find major or semester data at row " + (rowIndex + 1);
                                 break;
                             }
                         } else {

@@ -56,4 +56,14 @@ public class MajorRestController extends GenericController<Major> {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),"Don't find any records"));
         }
     }
+
+    @PostMapping("/findByMajorCodeAndApartment")
+    public ResponseEntity<?> findByMajorCodeAndApartment(@RequestParam("majorCode")String majorCode,
+                                                         @RequestParam("apartmentId")Integer apartmentId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findMajorByMajorCodeAndApartment(majorCode,apartmentId)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseModel("Error", LocalDate.now().toString(),"Don't find any records"));
+        }
+    }
 }
