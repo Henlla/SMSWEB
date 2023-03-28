@@ -129,9 +129,9 @@ public class DashboardController {
 
             String jsonScheduleDetails = objectMapper.writeValueAsString(responseScheduleDetails.getBody().getData());
             scheduleDetailList = objectMapper.readValue(jsonScheduleDetails, new TypeReference<>() {});
-            if (scheduleDetailList.size() == 0){
-                return objectMapper.writeValueAsString(roomScheduleViewModelList);
-            }
+//            if (scheduleDetailList.size() == 0){
+//                return objectMapper.writeValueAsString(roomScheduleViewModelList);
+//            }
 
             var scheduleDetailListTemp = scheduleDetailList.stream().filter(
                     StreamHelper.distinctByKey(ScheduleDetail::getScheduleId)).toList();

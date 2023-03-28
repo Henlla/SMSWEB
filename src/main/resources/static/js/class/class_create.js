@@ -46,9 +46,9 @@ function getRoomAndTeacherByDate(){
                 $("#roomList").empty();
                 let parse = JSON.parse(response);
                 if (parse.length == 0){
-                    $(`<option>--No room available--</option>`).appendTo("#roomList");
+                    $(`<option value="">--No room available--</option>`).appendTo("#roomList");
                 }else {
-                    $(`<option>--Select Room--</option>`).appendTo("#roomList");
+                    $(`<option value="">--Select Room--</option>`).appendTo("#roomList");
                     parse.forEach( item =>{
                         $(`<option value="${item.id}">${item.roomCode}</option>`).appendTo("#roomList");
                     });
@@ -59,6 +59,46 @@ function getRoomAndTeacherByDate(){
             }
         })
     }
+}
+let autoFillClassCode = function (){
+    let inputStartDate = $('#startDate')
+    let selectMajor = $('#majorId')
+    let selectShift = $('#shift')
+    let selectDayOfWeek = $('#dayOfWeek')
+    if (selectMajor.val()!= "" && selectShift.val()!= "" && selectDayOfWeek.val() != "" && inputStartDate.val() != ""){
+        var inputDate = new Date(inputStartDate.val());
+        var day = inputDate.getDate() < 10? "0"+inputDate.getDate(): inputDate.getDate().toString();
+        var month = (inputDate.getMonth()+1) < 10? "0"+(inputDate.getMonth()+1): (inputDate.getMonth()+1).toString();
+
+        var major = $('#majorId option[value='+selectMajor.val()+']').text();;
+        const regex = /[^A-Z]/g;
+        var classCode =major.replace(regex, '')+"."+selectShift.val()+selectDayOfWeek.val()+"."+day+month+".";
+
+        $.ajax({
+            url: "/dashboard/class/class-searchClasssesByClassCode?classCode="+classCode,
+            method: "GET",
+            success: (result) => {
+                result =JSON.parse(result);
+                for(var increaseNumber = 1;increaseNumber < 99;increaseNumber++){
+                    if (increaseNumber.toString().length < 2){
+                        increaseNumber = "0"+increaseNumber;
+                    }
+                    var temp  = classCode+increaseNumber;
+                    if (result.filter( c => c == temp).length == 0){
+                        $("#classCode").val(temp);
+                        break;
+                    }
+                }
+            },
+            error: (e) => {
+                console.log(e)
+            }
+        })
+    }
+}
+function multipleFunc() {
+    getRoomAndTeacherByDate();
+    autoFillClassCode();
 }
 $(()=>{
     var date = new Date();
@@ -92,42 +132,7 @@ $(()=>{
             console.log("t");
             return true;
         }, 'Required');
-    let autoFillClassCode = function (){
-        if (selectMajor.val()!= "" && selectShift.val()!= "" && selectDayOfWeek.val() != "" && inputStartDate.val() != ""){
-            var inputDate = new Date(inputStartDate.val());
-            var day = inputDate.getDate() < 10? "0"+inputDate.getDate(): inputDate.getDate().toString();
-            var month = (inputDate.getMonth()+1) < 10? "0"+(inputDate.getMonth()+1): (inputDate.getMonth()+1).toString();
 
-            var major = $('#majorId option[value='+selectMajor.val()+']').text();;
-            const regex = /[^A-Z]/g;
-            var classCode =major.replace(regex, '')+"."+selectShift.val()+selectDayOfWeek.val()+"."+day+month+".";
-
-            $.ajax({
-                url: "/dashboard/class/class-searchClasssesByClassCode?classCode="+classCode,
-                method: "GET",
-                success: (result) => {
-                    result =JSON.parse(result);
-                    for(var increaseNumber = 1;increaseNumber < 99;increaseNumber++){
-                        if (increaseNumber.toString().length < 2){
-                            increaseNumber = "0"+increaseNumber;
-                        }
-                        var temp  = classCode+increaseNumber;
-                        if (result.filter( c => c == temp).length == 0){
-                            $("#classCode").val(temp);
-                            break;
-                        }
-                    }
-                },
-                error: (e) => {
-                    console.log(e)
-                }
-            })
-        }
-    }
-    function multipleFunc() {
-        getRoomAndTeacherByDate();
-        autoFillClassCode();
-    }
     selectShift.change(multipleFunc);
     inputStartDate.change(multipleFunc);
     selectDayOfWeek.change(multipleFunc);
