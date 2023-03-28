@@ -17,6 +17,10 @@ $(() => {
         "hideMethod": "fadeOut"
     }
 
+    $(".select2").select2({
+        theme:"bootstrap4",
+    })
+
     $(".apartment_select").select2({
         theme: "bootstrap4",
         placeholder: "Choose major",
@@ -187,6 +191,7 @@ var OnEditMajor = (id) => {
         contentType: "application/json",
         method: "GET",
         success: (data) => {
+            console.log(data);
             $("#edit-major-modal").modal("show");
             $("#edit_major_id").val(data.id);
             $("#edit_major_code").val(data.majorCode);

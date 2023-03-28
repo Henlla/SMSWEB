@@ -8,9 +8,14 @@ $(() => {
                 required: true
             },
             create_fee_validate: {
-                required: true
+                required: true,
             },
             create_slot_validate: {
+                required: true,
+                min: 4,
+                max: 20
+            },
+            create_course_validate: {
                 required: true
             }
         },
@@ -22,10 +27,15 @@ $(() => {
                 required: "Please enter subject name"
             },
             create_fee_validate: {
-                required: "Please enter fee"
+                required: "Please enter fee",
             },
             create_slot_validate: {
-                required: "Please enter number of slot"
+                required: "Please enter number of slot",
+                min: "Slot must be greater than 4",
+                max: "Slot must be letter than 20"
+            },
+            create_course_validate: {
+                required: "Please choose course"
             }
         },
     });
@@ -39,10 +49,12 @@ $(() => {
                 required: true
             },
             edit_fee_validate: {
-                required: true
+                required: true,
             },
             edit_slot_validate: {
-                required: true
+                required: true,
+                min: 4,
+                max: 20
             }
         },
         messages: {
@@ -53,13 +65,17 @@ $(() => {
                 required: "Please enter subject name"
             },
             edit_fee_validate: {
-                required: "Please enter fee"
+                required: "Please enter fee",
+                min: "Slot must be greater than 4",
+                max: "Slot must be letter than 20"
+
             },
             edit_slot_validate: {
                 required: "Please enter number of slot"
             }
         },
     });
+
     $("#subject-table").dataTable({
         pageLength: 5,
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
@@ -90,10 +106,20 @@ $(() => {
             }
         }
     });
+
     $(".select2-single").select2({
         theme: "bootstrap4",
         width: "100%",
         dropdownCssClass: "f-13"
+    });
+
+    $("#create_major_id").on("change", function () {
+        let code = $("#create_major_id").select2('data')[0].text.split("-")[0];
+        $("#create_apartment_code").text(code + "-")
+    });
+    $("#edit_major_id").on("change", function () {
+        let code = $("#edit_major_id").select2('data')[0].text.split("-")[0];
+        $("#edit_apartment_code").text(code + "-")
     });
 });
 
@@ -114,9 +140,9 @@ var OnSaveExcelData = () => {
         processData: false,
         success: (data) => {
             toastr.success(data);
-            setTimeout(()=>{
+            setTimeout(() => {
                 location.reload();
-            },2000);
+            }, 2000);
         },
         error: (data) => {
             if (data.responseText.toLowerCase() === "token expired") {
@@ -146,13 +172,15 @@ var OnEditSubject = (id) => {
             var formatFee = obj.fee.toLocaleString('en-US', {
                 valute: "currency"
             });
+            var code = obj.subjectCode.split("-");
             $("#edit_id").val(obj.id);
-            $("#edit_subject_code").val(obj.subjectCode);
+            $("#edit_subject_code").val(code[1]);
             $("#edit_subject_name").val(obj.subjectName);
             $("#edit_fee").val(formatFee);
             $("#edit_slot").val(obj.slot);
             $("#edit_semester_id").val(obj.semesterId).trigger("change");
             $("#edit_major_id").val(obj.majorId).trigger("change");
+            $("#edit_apartment_code").text(code[0] + "-");
             $("#subject-edit-modal").modal("show");
         },
         error: (data) => {
@@ -176,7 +204,7 @@ var OnEditSubject = (id) => {
 
 var OnCreateSubject = () => {
     if ($("#create-form").valid()) {
-        var subject_code = $("#create_subject_code").val();
+        var subject_code = $("#create_apartment_code").text() + $("#create_subject_code").val();
         var subject_name = $("#create_subject_name").val();
         var fee = $("#create_fee").val().replace(/,/g, '');
         var slot = $("#create_slot").val();
@@ -225,7 +253,7 @@ var OnCreateSubject = () => {
 var OnUpdateSubject = () => {
     if ($("#edit-form").valid()) {
         var id = $("#edit_id").val();
-        var subject_code = $("#edit_subject_code").val();
+        var subject_code = $("#edit_apartment_code").text() + $("#edit_subject_code").val();
         var subject_name = $("#edit_subject_name").val();
         var fee = $("#edit_fee").val().replace(/,/g, '');
         var slot = $("#edit_slot").val();
@@ -271,7 +299,7 @@ var OnUpdateSubject = () => {
     }
 }
 
-var OnDeleteSubject = (id) =>{
+var OnDeleteSubject = (id) => {
     Swal.fire({
         title: 'Do you want to delete this ?',
         text: "When you confirm data can't recover!",
@@ -316,11 +344,23 @@ var OnDeleteSubject = (id) =>{
 var OnFormatCurrency = (obj) => {
     if (obj.id === "create_fee") {
         var fee = $("#create_fee").val();
-        $("#create_fee").val(fee.replace(/\D/g, '')
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        if (fee.replaceAll(",", "") > 10000000) {
+            fee = "9999999"
+            $("#create_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        } else {
+            $("#create_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        }
     } else {
         var fee = $("#edit_fee").val();
-        $("#edit_fee").val(fee.replace(/\D/g, '')
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        if (fee.replaceAll(",", "") > 10000000) {
+            fee = "9999999"
+            $("#edit_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        } else {
+            $("#edit_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        }
     }
 }

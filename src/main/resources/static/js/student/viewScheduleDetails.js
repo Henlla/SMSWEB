@@ -23,8 +23,8 @@ var OnDetailSchedule = ()=>{
             let shift = $('#shift').val().substring(0, 1)
             let arrTime = []
             if(shift==='M'){
-                arrTime.push('7:30-9:30')
-                arrTime.push('9:30-11:30')
+                arrTime.push('8:00-10:00')
+                arrTime.push('10:00-12:00')
             }else if(shift==='A'){
                 arrTime.push('12:30-15:30')
                 arrTime.push('15:30-17:30')

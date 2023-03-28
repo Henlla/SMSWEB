@@ -4,7 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Course</title>
+    <title>Department</title>
     <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
@@ -14,12 +14,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h5 class="m-0">Course manager</h5>
+                        <h5 class="m-0">Department manager</h5>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                            <li class="breadcrumb-item active">List Course</li>
+                            <li class="breadcrumb-item active">List Department</li>
                         </ol>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                 <section class="row mb-3">
                     <div class="col-12 d-flex align-items-center">
                         <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
-                                data-target="#create-major-modal" class="btn btn-info btn-sm">
+                                data-target="#create-department-modal" class="btn btn-info btn-sm">
                             <i class="fas fa-plus"></i> Create
                         </button>
 <!--                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i-->
@@ -46,19 +46,23 @@
                             <thead>
                             <tr class="text-center">
                                 <th class="th-sm">STT</th>
-                                <th class="th-sm">Course Code</th>
-                                <th class="th-sm">Course Name</th>
+                                <th class="th-sm">Department Code</th>
+                                <th class="th-sm">Department Name</th>
+                                <th class="th-sm">Address</th>
+                                <th class="th-sm">Phone</th>
                                 <th class="th-sm">Action</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr class="text-center" th:each="item:${listMajor}">
-                                <td>[[${listMajor.indexOf(item)+1}]]</td>
-                                <td>[[${item.majorCode}]]</td>
-                                <td>[[${item.majorName}]]</td>
+                            <tr class="text-center" th:each="item:${departmentList}">
+                                <td>[[${departmentList.indexOf(item)+1}]]</td>
+                                <td>[[${item.departmentCode}]]</td>
+                                <td>[[${item.departmentName}]]</td>
+                                <td>[[${item.address}]]</td>
+                                <td>[[${item.phone}]]</td>
                                 <td class="text-center">
-                                    <a class="mr-3" th:data-name="${item.id}"
-                                       onclick="OnEditMajor(this.getAttribute('data-name'))"><i
+                                    <a class="mr-3" th:data-id="${item.id}"
+                                       onclick="OnDepartmentMajor(this.getAttribute('data-id'))"><i
                                             class="fas fa-pen indigo-text"></i></a>
 <!--                                    <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
 <!--                                       th:data-name="${item.id}"-->
@@ -74,12 +78,12 @@
         </section>
     </section>
 
-    <div class="modal fade" id="create-major-modal" data-backdrop="static" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="create-department-modal" data-backdrop="static" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add new course</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add new department</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -87,25 +91,33 @@
                 <div class="modal-body">
                     <form th:id="create-form">
                         <div class="form-group">
-                            <label class="m-0">Course code</label>
-                            <input type="text" name="create_major_code_validate" th:id="create_major_code"
+                            <label class="m-0">Department code</label>
+                            <input type="text" name="create_department_code" th:id="create_department_code"
                                    class="form-control form-control-sm"
-                                   placeholder="Enter major code...">
+                                   placeholder="Enter department code...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0">Course name</label>
-                            <input type="text" name="create_major_name_validate" th:id="create_major_name"
+                            <label class="m-0">Department name</label>
+                            <input type="text" name="create_department_name" th:id="create_department_name"
                                    class="form-control form-control-sm"
-                                   placeholder="Enter major name...">
+                                   placeholder="Enter department name...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0">Select Major</label>
-                            <select name="create_apartment_validate" id="apartment" class="apartment_select"></select>
+                            <label class="m-0">Address</label>
+                            <input type="text" name="create_department_address" th:id="create_department_address"
+                                   class="form-control form-control-sm"
+                                   placeholder="Enter address...">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0">Phone</label>
+                            <input type="text" name="create_department_phone" th:id="create_department_phone"
+                                   class="form-control form-control-sm"
+                                   placeholder="Enter phone...">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" onclick="OnCreateMajor()" class="btn btn-primary btn-sm"><i
+                    <button type="button" onclick="OnCreateDepartment()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Create
                     </button>
                 </div>
@@ -113,7 +125,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="edit-major-modal" data-backdrop="static" tabindex="-1"
+    <div class="modal fade" id="edit-department-modal" data-backdrop="static" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -125,29 +137,35 @@
                 </div>
                 <div class="modal-body">
                     <form th:id="edit-form">
-                        <input type="text" th:id="edit_major_id" hidden>
+                        <input type="text" th:id="edit_department_id" hidden>
                         <div class="form-group">
-                            <label class="m-0">Course code</label>
-                            <input type="text" name="edit_major_code_validate" th:id="edit_major_code"
+                            <label class="m-0" style="font-size: 13px">Department code</label>
+                            <input type="text" name="edit_department_code" th:id="edit_department_code"
                                    class="form-control form-control-sm"
-                                   placeholder="Enter major code...">
+                                   placeholder="Enter department code...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0">Course name</label>
-                            <input type="text" name="edit_major_name_validate" th:id="edit_major_name"
+                            <label class="m-0" style="font-size: 13px">Department name</label>
+                            <input type="text" name="edit_department_name" th:id="edit_department_name"
+                                   class="form-control form-control-sm"
+                                   placeholder="Enter department name...">
+                        </div>
+                        <div class="form-group">
+                            <label class="m-0" style="font-size: 13px">Address</label>
+                            <input type="text" name="edit_address" th:id="edit_address"
                                    class="form-control form-control-sm"
                                    placeholder="Enter major name...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0">Select Major</label>
-                            <select name="edit_apartment_validate" class="select2" id="edit_apartment">
-                                <option th:each="item:${listApartment}" th:value="${item.id}">[[${item.apartmentCode}]]</option>
-                            </select>
+                            <label class="m-0" style="font-size: 13px">Phone</label>
+                            <input type="text" name="edit_phone" th:id="edit_phone"
+                                   class="form-control form-control-sm"
+                                   placeholder="Enter major name...">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" onclick="OnUpdateMajor()" class="btn btn-primary btn-sm"><i
+                    <button type="button" onclick="OnUpdateDepartment()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Update
                     </button>
                 </div>
@@ -157,7 +175,7 @@
 
 </div>
 <th:block layout:fragment="optional">
-    <script src="/js/major/major.js"></script>
+    <script src="/js/department/department_index.js"></script>
 </th:block>
 </body>
 </html>

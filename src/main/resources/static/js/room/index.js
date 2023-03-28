@@ -1,4 +1,34 @@
 $(()=>{
+    $("#room-table").DataTable({
+        pageLength:5,
+        lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
+        scrollCollapse: true,
+        scrollY: '600px',
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    })
     $("#room_create-form").validate({
         rules: {
             room_code_validate: {
@@ -14,8 +44,15 @@ $(()=>{
 
     $('#btn_create_room').on('click',()=>{
         let roomCode = $('#room_code').val()
+        let department = $('#department').val()
         let data = new FormData()
-        data.append("roomCode",roomCode)
+
+        let room = {
+            "roomCode":roomCode,
+            "departmentId":department
+        }
+
+        data.append("room",JSON.stringify(room))
 
         if ($("#room_create-form").valid()) {
             $.ajax({
@@ -27,7 +64,9 @@ $(()=>{
                 contentType: false,
                 success:(res)=>{
                     console.log(res)
+                    location.reload();
                     Swal.fire(
+                        "",
                         'Create room success',
                         'success'
                     )
@@ -81,8 +120,11 @@ let OnClickViewRoom = (id)=>{
 
 let OnChangeShiftCheckRoom = ()=>{
     let shift = $('#shift').val()
+    let department = $('#department_id').val()
+    console.log(department)
     let data = new FormData()
     data.append("shift",shift)
+    data.append("department_id",department)
 
     $.ajax({
         url:"/dashboard/room/checkShiftRoom",
@@ -112,6 +154,13 @@ let OnChangeShiftCheckRoom = ()=>{
             }
         }
     })
+}
+
+let OnChangeDepartment = ()=>{
+    $('.list-shift').show()
+    $('#shift').val("")
+    const dataDiv = document.getElementsByClassName("data")[0]
+    dataDiv.innerHTML = '';
 }
 
 

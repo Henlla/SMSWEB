@@ -10,7 +10,7 @@ $(()=>{
         // var formatedValue = e.date.format(e.date._f);
         let date = new Date(e.date)
         let age = _calculateAge(date)
-        console.log(age);
+        console.log(date);
         if (age <= 18){
             $('#dob-error').show()
             $('#dob-error').html('Age must be greater than 18 ')
@@ -210,8 +210,12 @@ $(()=>{
         }, "Value must not equal arg.");
 
         $.validator.addMethod("checkAge", function(value, element){
-            let date = new Date(value)
+            var dateParts = value.split("/");
+// month is 0-based, that's why we need dataParts[1] - 1
+            var date = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+            console.log(value)
             let age = _calculateAge(date)
+            console.log(age)
             return age >= 18;
         }, "Age must be greater than 18");
 
