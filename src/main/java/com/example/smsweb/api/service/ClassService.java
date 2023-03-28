@@ -82,7 +82,8 @@ public class ClassService implements IClass {
 
     @Override
     public List<Classses> findClassByRoomAndDepartmentId(Integer roomId, Integer departmentId) {
-        return repository.findAllByRoomIdAndDepartmentId(roomId,departmentId);
+        return repository.findAllByRoomIdAndDepartmentId(roomId, departmentId);
+    }
     public List<Classses> findClassesByShift(String shift) {
         return repository.findClasssesByShift(shift);
     }
