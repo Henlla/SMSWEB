@@ -317,3 +317,16 @@
 .usetwentyfour{
     width: 400px !important;
 }
+
+.tb_code{
+    font-size: 13px;
+}
+.tb_date{
+    font-size: 13px;
+}
+.tb_teacher{
+    font-size:12px;
+}
+.tb_time{
+    font-size: 13px;
+}

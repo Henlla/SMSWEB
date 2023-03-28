@@ -42,7 +42,7 @@
         <section class="row mb-3">
           <div class="col-12">
             <input type="text" hidden id="classCode" th:value="${classses.classCode}">
-            <input type="text" hidden id="classRoom" th:value="${classses.getClassRoom().getRoomCode()}">
+            <input type="text" hidden id="classRoom" th:value="${classses.getDepartmentByDepartmentId().getDepartmentCode()+'_'+classses.getClassRoom().getRoomCode()}">
             <input type="text" hidden id="classId" th:value="${classses.getId()}">
             <input type="text" hidden id="shift" th:value="${classses.getShift()}">
           </div>
@@ -101,8 +101,8 @@
                   <div class="dayOfWeek">sunday <span class="date_sunday"></span></div>
                 </div>
                 <div class="time-interval" style="background-color:lightgray">
-                  <div>7:30 - 9:30</div>
-                  <div>9:30 - 11:30</div>
+                  <div>8:00 - 10:00</div>
+                  <div>10:00 - 12:00</div>
                   <div>13:30 - 15:30</div>
                   <div>15:30 - 17:30</div>
                   <div>17:30 - 19:30</div>

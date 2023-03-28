@@ -96,16 +96,16 @@ public class StudentClientController {
                                     currentDateTeaching.setClassCode(classses.getClassCode());
                                     currentDateTeaching.setDate(scheduleDetail.getDate());
                                     currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                    currentDateTeaching.setTime("7:30 - 9:30");
+                                    currentDateTeaching.setTime("8:00 - 10:00");
                                     currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
-                                    currentDateTeaching.setStartTime("7:30");
+                                    currentDateTeaching.setStartTime("8:00");
                                 } else {
                                     currentDateTeaching.setClassCode(classses.getClassCode());
                                     currentDateTeaching.setDate(scheduleDetail.getDate());
                                     currentDateTeaching.setSubject(scheduleDetail.getSubjectBySubjectId());
-                                    currentDateTeaching.setTime("9:30 - 11:30");
+                                    currentDateTeaching.setTime("10:00 - 12:00");
                                     currentDateTeaching.setRoomCode(classses.getClassRoom().getRoomCode());
-                                    currentDateTeaching.setStartTime("9:30");
+                                    currentDateTeaching.setStartTime("10:00");
 
                                 }
                             } else if (classses.getShift().substring(0, 1).equals("A")) {

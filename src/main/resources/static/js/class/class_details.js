@@ -772,8 +772,8 @@ var OnChangeSemesterSchedule = () => {
             let shift = $('#shift').val().substring(0, 1)
             let arrTime = []
             if (shift === 'M') {
-                arrTime.push('7:30-9:30')
-                arrTime.push('9:30-11:30')
+                arrTime.push('8:00-10:00')
+                arrTime.push('10:00-12:00')
             } else if (shift === 'A') {
                 arrTime.push('12:30-15:30')
                 arrTime.push('15:30-17:30')
@@ -830,78 +830,78 @@ var OnChangeSemesterSchedule = () => {
                             case "MONDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td0_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white f-12">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size13" style="display: flex;justify-content: center;">${j.date}
                                           <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size12 tb_teacher"  style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="tb_time font-size12">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white f-13">${j.subject.subjectCode}</span>
+                                        td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white f-12">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
                                       <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}</div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div style="font-size: 13px" class="font-size12">${arrTime[j.slot - 1]}</div>`
                                     }
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td0_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size13" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
-                                     <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                        td0_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}</div>
+                                     <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size12  tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
                                     break;
                                 }
                             case "TUESDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td1_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td1_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_toime">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td1_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                        td1_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
@@ -909,41 +909,41 @@ var OnChangeSemesterSchedule = () => {
                             case "WEDNESDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td2_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td2_1.innerHTML = `<span class=" tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td2_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td2_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
@@ -951,41 +951,41 @@ var OnChangeSemesterSchedule = () => {
                             case "THURSDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td3_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td3_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                      </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td3_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td3_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
@@ -993,43 +993,43 @@ var OnChangeSemesterSchedule = () => {
                             case "FRIDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td4_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a>
                                      </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a>
                                               </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td4_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                      </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td4_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td4_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                               </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
@@ -1037,41 +1037,41 @@ var OnChangeSemesterSchedule = () => {
                             case "SATURDAY":
                                 if (j.slot === 1) {
                                     if (isFutureDate(j.date)) {
-                                        td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td5_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td5_1.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
 
                                     break;
                                 } else {
                                     if (isFutureDate(j.date)) {
-                                        td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td5_2.innerHTML = `<span class="tb_code bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}"
                                               onclick="OnUpdateDate(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'))" class="fas fa-pencil-alt"></i></a></div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="tb_teacher font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                <a class="ml-1 btn_update_date"><i data-id="${j.id}" data-date="${j.date}" data-slot="${j.slot}" data-shift="${$('#shift').val()}"
                                               onclick="OnChangeTeacherScheduleDetails(this.getAttribute('data-id'),this.getAttribute('data-date'),this.getAttribute('data-slot'),this.getAttribute('data-shift'))" class="fas fa-pencil-alt"></i></a></div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     } else {
-                                        td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
-                                      <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
+                                        td5_2.innerHTML = `<span class="tb_teacher bg-sky padding-5px-tb padding-5px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
+                                      <div class="tb_date margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                              <div class="font-size12" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                              <div class="font-size12 tb_teacher" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                      <div class="font-size13 tb_time">${arrTime[j.slot - 1]}</div>`
                                     }
                                     break;
                                 }

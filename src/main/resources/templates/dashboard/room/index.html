@@ -41,11 +41,12 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <table id="student-table" class="table table-bordered">
+                            <table id="room-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
                                     <th>STT</th>
                                     <th>Room code</th>
+                                    <th>Department code</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -56,6 +57,9 @@
                                     </td>
                                     <td><span
                                             th:text="${room.getRoomCode()}"></span>
+                                    </td>
+                                    <td><span
+                                            th:text="${room.getDepartmentByDepartmentId().getDepartmentCode()}"></span>
                                     </td>
                                     <td>
                                         <a th:data-id="${room.id}"
@@ -85,6 +89,15 @@
                                                 <input type="text" name="room_code_validate" id="room_code"
                                                        class="form-control form-control-sm">
                                             </div>
+                                            <div class="form-group">
+                                                <label class="m-0" style="font-size: 13px">Department</label>
+                                                <select class="form-control" name="department_id" id="department">
+                                                    <option value="">-----Choose department</option>
+                                                    <th:block th:each="department:${listDepartment}">
+                                                        <option th:value="${department.id}" th:text="${department.getDepartmentName()}"></option>
+                                                    </th:block>
+                                                </select>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -113,42 +126,42 @@
                                     <div class="container">
                                         <div class="row">
                                             <div class="col-6">
-                                                <i class="fas fa-dot-circle"></i> Shift M0 ( Morning - 2/4/6 ) :
+                                                <i class="fas fa-dot-circle"></i> 8:00 - 12:00 ( Morning - 2/4/6 ) :
                                             </div>
                                             <div class="col-6 m0">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
-                                                <i class="fas fa-dot-circle"></i> Shift A0 ( Afternoon - 2/4/6 ) :
+                                                <i class="fas fa-dot-circle"></i> 13:30 - 17:30 ( Afternoon - 2/4/6 ) :
                                             </div>
                                             <div class="col-6 a0">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
-                                                <i class="fas fa-dot-circle"></i> Shift E0 ( Evening - 2/4/6 ) :
+                                                <i class="fas fa-dot-circle"></i> 17:30 - 21h30 ( Evening - 2/4/6 ) :
                                             </div>
                                             <div class="col-6 e0">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
-                                                <i class="fas fa-dot-circle"></i> Shift M1 ( Morning - 3/5/7 ) :
+                                                <i class="fas fa-dot-circle"></i> 8:00 - 12:00 ( Morning - 3/5/7 ) :
                                             </div>
                                             <div class="col-6 m1">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
-                                                <i class="fas fa-dot-circle"></i> Shift A1 ( Afternoon - 3/5/7 ) :
+                                                <i class="fas fa-dot-circle"></i> 13:30 - 17:30  ( Afternoon - 3/5/7 ) :
                                             </div>
                                             <div class="col-6 a1">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
-                                                <i class="fas fa-dot-circle"></i> Shift E1 ( Evening - 3/5/7 ) :
+                                                <i class="fas fa-dot-circle"></i> 17:30 - 21h30 ( Evening - 3/5/7 ) :
                                             </div>
                                             <div class="col-6 e1">
                                             </div>
@@ -176,20 +189,30 @@
                                 <div class="modal-body">
                                     <div class="container">
                                         <div class="form-group">
+                                            <label for="department_id">Department</label>
+                                            <select id="department_id" class="form-control"
+                                                    onchange="OnChangeDepartment()">
+                                                <option value="">-----Choose department</option>
+                                                <th:block th:each="department:${listDepartment}">
+                                                    <option th:value="${department.id}" th:text="${department.getDepartmentName()}"></option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                        <div class="form-group list-shift" style="display: none">
                                             <label for="shift">Shift</label>
                                             <select name="shift" id="shift" class="form-control"
                                                     onchange="OnChangeShiftCheckRoom()">
-                                                <option value="M0">Morning - 2/4/6</option>
-                                                <option value="A0">Afternoon - 2/4/6</option>
-                                                <option value="E0">Evening - 2/4/6</option>
-                                                <option value="M1">Morning - 3/5/7</option>
-                                                <option value="A1">Afternoon - 3/5/7</option>
-                                                <option value="E1">Evening - 3/5/7</option>
+                                                <option value="">----Choose shift----</option>
+                                                <option value="M0">(Morning - 2/4/6) 8:00 - 12:00</option>
+                                                <option value="A0">(Afternoon - 2/4/6) 13:30 - 17:30</option>
+                                                <option value="E0">(Evening - 2/4/6) 17:30 - 21:30</option>
+                                                <option value="M1">(Morning - 3/5/7) 8:00 - 12:00</option>
+                                                <option value="A1">(Afternoon - 3/5/7) 13:30 - 17:30</option>
+                                                <option value="E1">(Evening - 3/5/7) 17:30 - 21:30</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="container data">
-
                                     </div>
                                 </div>
                                 <div class="modal-footer">

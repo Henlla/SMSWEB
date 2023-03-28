@@ -4,6 +4,7 @@ import com.example.smsweb.dto.DayInWeek;
 import com.example.smsweb.dto.ScheduleModel;
 import com.example.smsweb.models.Classses;
 import com.example.smsweb.models.Student;
+import com.example.smsweb.utils.Format;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -56,7 +57,7 @@ public class ScheduleExport {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        createCell(row, 0, "Ngày bắt đầu: "+scheduleModel.getStartDate(), style);
+        createCell(row, 0, "Ngày bắt đầu: "+Format.dateFormat(scheduleModel.getStartDate().toString(),"dd/MM/yyyy"), style);
 
         sheet.addMergedRegion(new CellRangeAddress(2,2,0,11));
         row = sheet.createRow(2);
@@ -67,7 +68,7 @@ public class ScheduleExport {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        createCell(row, 0, "Ngày kết thúc: "+scheduleModel.getEndDate(), style);
+        createCell(row, 0, "Ngày kết thúc: "+Format.dateFormat(scheduleModel.getEndDate().toString(),"dd/MM/yyyy"), style);
 
         sheet.addMergedRegion(new CellRangeAddress(3,3,0,11));
         row = sheet.createRow(3);
@@ -78,7 +79,7 @@ public class ScheduleExport {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        createCell(row, 0, "Phòng: "+classses.getClassRoom().getRoomCode(), style);
+        createCell(row, 0, "Phòng: "+classses.getDepartmentByDepartmentId().getDepartmentCode()+"_"+classses.getClassRoom().getRoomCode(), style);
 
         row = sheet.createRow(4);
         font = workbook.createFont();
@@ -249,9 +250,9 @@ public class ScheduleExport {
                     style.setBorderRight(BorderStyle.THIN);
                     style.setWrapText(true);
                     if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,0,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,0,dayInWeek.getSubject().getSubjectCode()+"\n"+ Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }else{
-                        createCell(row,1,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,1,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }
                 }else if(dayInWeek.getDayOfWeek().equals("TUESDAY")){
                     style = workbook.createCellStyle();
@@ -268,9 +269,9 @@ public class ScheduleExport {
                     style.setBorderRight(BorderStyle.THIN);
                     style.setWrapText(true);
                     if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,2,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,2,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }else{
-                        createCell(row,3,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,3,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }
                 }else if(dayInWeek.getDayOfWeek().equals("WEDNESDAY")){
                     style = workbook.createCellStyle();
@@ -287,9 +288,9 @@ public class ScheduleExport {
                     style.setBorderRight(BorderStyle.THIN);
                     style.setWrapText(true);
                     if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,4,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,4,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }else{
-                        createCell(row,5,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,5,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }
                 }else if(dayInWeek.getDayOfWeek().equals("THURSDAY")){
                     style = workbook.createCellStyle();
@@ -306,9 +307,9 @@ public class ScheduleExport {
                     style.setBorderRight(BorderStyle.THIN);
                     style.setWrapText(true);
                     if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,6,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,6,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }else{
-                        createCell(row,7,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,7,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }
                 }else if (dayInWeek.getDayOfWeek().equals("FRIDAY")){
                     style = workbook.createCellStyle();
@@ -325,9 +326,9 @@ public class ScheduleExport {
                     style.setBorderRight(BorderStyle.THIN);
                     style.setWrapText(true);
                     if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,8,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,8,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }else{
-                        createCell(row,9,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,9,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }
                 }else if(dayInWeek.getDayOfWeek().equals("SATURDAY")){
                     style = workbook.createCellStyle();
@@ -344,9 +345,9 @@ public class ScheduleExport {
                     style.setBorderRight(BorderStyle.THIN);
                     style.setWrapText(true);
                     if(dayInWeek.getSlot().equals(1)){
-                        createCell(row,10,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,10,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }else{
-                        createCell(row,11,dayInWeek.getSubject().getSubjectCode()+"\n"+dayInWeek.getDate().toString(),style);
+                        createCell(row,11,dayInWeek.getSubject().getSubjectCode()+"\n"+Format.dateFormat(dayInWeek.getDate().toString(),"dd/MM/yyyy"),style);
                     }
                 }
 //                else if (dayInWeek.getDayOfWeek().equals("SUNDAY")) {

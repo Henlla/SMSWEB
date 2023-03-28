@@ -80,5 +80,10 @@ public class ClassService implements IClass {
         return repository.findAllByRoomId(roomId);
     }
 
+    @Override
+    public List<Classses> findClassByRoomAndDepartmentId(Integer roomId, Integer departmentId) {
+        return repository.findAllByRoomIdAndDepartmentId(roomId,departmentId);
+    }
+
 
 }

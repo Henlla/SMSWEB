@@ -68,7 +68,11 @@
                                             </tr>
                                             <tr>
                                                 <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Room:&nbsp;</b></h5></td>
-                                                <td><h5>[[${room.roomCode}]]</h5></td>
+                                                <td><h5>[[${class.departmentByDepartmentId.departmentCode+'_'+room.roomCode}]]</h5></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Date create:&nbsp;</b></h5></td>
+                                                <td><h5>[[${class.startDate}]]</h5></td>
                                             </tr>
                                         </table>
                                     </td>

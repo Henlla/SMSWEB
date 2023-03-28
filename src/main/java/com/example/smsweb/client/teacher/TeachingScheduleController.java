@@ -116,10 +116,11 @@ public class TeachingScheduleController {
 
                 LocalDate now = LocalDate.now();
                 Integer week = now.get(WeekFields.of(Locale.getDefault()).weekOfYear());
+                Integer year = now.getYear();
                 List<TeachingCurrenDate> teachingCurrenDateList = new ArrayList<>();
                 for (ScheduleDetail scheduleDetail:scheduleDetails){
                     if (LocalDate.parse(scheduleDetail.getDate())
-                            .get(WeekFields.of(Locale.getDefault()).weekOfYear()) == week) {
+                            .get(WeekFields.of(Locale.getDefault()).weekOfYear()) == week && LocalDate.parse(scheduleDetail.getDate()).getYear() == year) {
                         ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL+"get/"+scheduleDetail.getScheduleId(),HttpMethod.POST,request,ResponseModel.class);
                         String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                         Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
@@ -130,6 +131,7 @@ public class TeachingScheduleController {
                         teachingCurrenDate.setDate(scheduleDetail.getDate());
                         teachingCurrenDate.setClassCode(classses.getClassCode());
                         teachingCurrenDate.setShift(classses.getShift());
+                        teachingCurrenDate.setDepartmentCode(classses.getDepartmentByDepartmentId().getDepartmentCode());
                         teachingCurrenDate.setSlot(scheduleDetail.getSlot());
                         teachingCurrenDate.setSubject(scheduleDetail.getSubjectBySubjectId());
                         teachingCurrenDate.setDayOfWeek(scheduleDetail.getDayOfWeek());
@@ -212,9 +214,10 @@ public class TeachingScheduleController {
                 });
                 LocalDate now = LocalDate.now();
                 List<TeachingCurrenDate> teachingCurrenDateList = new ArrayList<>();
+                Integer year = now.getYear();
                 for (ScheduleDetail scheduleDetail:scheduleDetails){
                     if (LocalDate.parse(scheduleDetail.getDate())
-                            .get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()) == week) {
+                            .get(WeekFields.of(Locale.getDefault()).weekOfYear()) == week && LocalDate.parse(scheduleDetail.getDate()).getYear()==year) {
                         ResponseEntity<ResponseModel> responseSchedule = restTemplate.exchange(SCHEDULE_URL+"get/"+scheduleDetail.getScheduleId(),HttpMethod.POST,request,ResponseModel.class);
                         String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                         Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
@@ -225,6 +228,7 @@ public class TeachingScheduleController {
                         teachingCurrenDate.setDate(scheduleDetail.getDate());
                         teachingCurrenDate.setClassCode(classses.getClassCode());
                         teachingCurrenDate.setShift(classses.getShift());
+                        teachingCurrenDate.setDepartmentCode(classses.getDepartmentByDepartmentId().getDepartmentCode());
                         teachingCurrenDate.setSlot(scheduleDetail.getSlot());
                         teachingCurrenDate.setSubject(scheduleDetail.getSubjectBySubjectId());
                         teachingCurrenDate.setDayOfWeek(scheduleDetail.getDayOfWeek());
