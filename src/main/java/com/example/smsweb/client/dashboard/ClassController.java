@@ -1050,6 +1050,7 @@ public class ClassController {
                 StudentSubject studentSubject = new StudentSubject();
                 studentSubject.setStudentId(studentId);
                 studentSubject.setSubjectId(subject.getId());
+                studentSubject.setStatus("0");
 
                 content.add("subjectId", String.valueOf(subject.getId()));
                 content.add("studentId", String.valueOf(studentId));
