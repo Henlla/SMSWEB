@@ -42,11 +42,7 @@
                         <select id="majorId" class="form-control select2" name="majorId" style="width: 100%;">
                             <option selected="selected">----- Choose curriculum------</option>
                             <th:block th:each="major : ${majors}">
-<<<<<<< Updated upstream
-                                <option th:data-code="${major.majorCode}" th:value="${major.id}">[[${major.majorName}]]</option>
-=======
                                 <option th:value="${major.id}">[[${major.majorCode}]]</option>
->>>>>>> Stashed changes
                             </th:block>
                         </select>
                     </div>  <!-- Major-->
@@ -60,7 +56,8 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="dayOfWeek">Day of week:</label>
-                                <select id="dayOfWeek" class="form-control select2" name="dayOfWeek" style="width: 100%;">
+                                <select id="dayOfWeek" class="form-control select2" name="dayOfWeek"
+                                        style="width: 100%;">
                                     <option value="">-----Choose days------</option>
                                     <option value="0">Monday - Wednesday - Friday</option>
                                     <option value="1">Tuesday - Thursday - Saturday</option>
@@ -79,34 +76,23 @@
                             </div>
                         </div>
                     </div>  <!-- Shift-->
-<<<<<<< Updated upstream
                     <div class="col-6 row">
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="department">Department</label>
-                                <select  class="form-control" name="department" id="department">
+                                <select class="form-control" name="department" id="department">
                                     <option value="">-----Choose department-----</option>
                                     <th:block th:each="department:${departments}">
-                                        <option th:value="${department.getId()}">[[${department.getDepartmentName}]]</option>
+                                        <option th:value="${department.getId()}">[[${department.getDepartmentName}]]
+                                        </option>
                                     </th:block>
                                 </select>
                             </div>
-=======
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="roomList">Room</label>
-                            <select  class="form-control select2" name="roomList" id="roomList">
-                                <option value="">-----Choose room-----</option>
-                                <th:block th:each="room:${roomList}">
-                                    <option th:value="${room.getId()}">[[${room.roomCode}]]</option>
-                                </th:block>
-                            </select>
->>>>>>> Stashed changes
                         </div>
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="roomList">Room</label>
-                                <select  class="form-control" name="roomList" id="roomList">
+                                <select class="form-control" name="roomList" id="roomList">
                                     <option value="">--Select department first--</option>
                                 </select>
                             </div>
@@ -121,7 +107,8 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label for="limitStudent">Limit student</label>
-                            <input type="number" value="22" min="18" max="26" class="form-control" id="limitStudent" name="limitStudent"
+                            <input type="number" value="22" min="18" max="26" class="form-control" id="limitStudent"
+                                   name="limitStudent"
                                    placeholder="Limit student">
                         </div>
                     </div>   <!-- limitStudent-->

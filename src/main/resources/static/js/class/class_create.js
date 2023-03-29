@@ -213,7 +213,7 @@ $(()=>{
                     range:"Limit student just from 18 between 26"
                 },
                 majorId : {
-                    required:"Please enter major"
+                    required:"Please choose curriculum"
                 },
                 teacherId: {
                     required: "Please choose teacher"

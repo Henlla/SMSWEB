@@ -491,8 +491,8 @@ public class StudentController {
                             ResponseEntity<String> responseRole = restTemplate.exchange(ROLE_URL + "get", HttpMethod.POST, requestRole, String.class);
                             Role role = new ObjectMapper().readValue(responseRole.getBody(), Role.class);
 
-//                            int excelLength = ExcelHelper.getNumberOfNonEmptyCells(sheet, 3);
-//                            if (excelLength < 26) {
+                            int excelLength = ExcelHelper.getNumberOfNonEmptyCells(sheet, 3);
+                            if (excelLength < 30) {
                             for (int rowIndex = 2; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
                                 XSSFRow row = sheet.getRow(rowIndex);
                                 Cell date = row.getCell(4);
@@ -517,9 +517,6 @@ public class StudentController {
                                     String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
                                     Major major = new ObjectMapper().readValue(majorJson, Major.class);
 
-                                    // Get Profile
-
-
                                     if (major != null) {
                                         String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
 
@@ -528,7 +525,6 @@ public class StudentController {
                                         if (response.getBody() != null) {
                                             studentCard = StringUtils.randomStudentCard(numbers);
                                         }
-
 
                                         //Save Account
                                         Account account = new Account(studentCard, password, role.getId());
@@ -583,7 +579,6 @@ public class StudentController {
                                         //-----------------------------
 
                                         //Save student
-                                        //generate studentCard
                                         MultiValueMap<String, String> paramsStudent = new LinkedMultiValueMap<>();
                                         paramsStudent.add("studentCard", studentCard);
                                         paramsStudent.add("profileId", String.valueOf(profileResponse.getId()));
@@ -612,9 +607,9 @@ public class StudentController {
                                 }
                             }
                             return new ResponseEntity<String>("Success", HttpStatus.OK);
-//                            } else {
-//                                return new ResponseEntity<String>("Excel data must letter than 26 student", HttpStatus.BAD_REQUEST);
-//                            }
+                            } else {
+                                return new ResponseEntity<String>("Excel data must letter than 30 student", HttpStatus.BAD_REQUEST);
+                            }
                         } catch (Exception e) {
                             log.error("Import Student: " + e.getMessage());
                             return new ResponseEntity<String>("Import excel fail", HttpStatus.BAD_REQUEST);
