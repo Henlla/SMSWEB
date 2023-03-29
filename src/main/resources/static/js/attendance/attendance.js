@@ -57,7 +57,7 @@ $(() => {
 
     date.attr("min", moment().subtract(2, "days").format("YYYY-MM-DD"));
 
-    date.attr("max", moment().add(4, "days").format("YYYY-MM-DD"));
+    date.attr("max", moment().format("YYYY-MM-DD"));
 
     date.on("change", () => {
         let date = $("#date_attendance").val();
