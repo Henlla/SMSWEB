@@ -42,7 +42,7 @@
                         <select id="majorId" class="form-control major" name="majorId" style="width: 100%;">
                             <option selected="selected">----- Choose major------</option>
                             <th:block th:each="major : ${majors}">
-                                <option th:value="${major.id}">[[${major.majorName}]]</option>
+                                <option th:data-code="${major.majorCode}" th:value="${major.id}">[[${major.majorName}]]</option>
                             </th:block>
                         </select>
                     </div>  <!-- Major-->
@@ -75,16 +75,26 @@
                             </div>
                         </div>
                     </div>  <!-- Shift-->
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="roomList">Room</label>
-                            <select  class="form-control" name="roomList" id="roomList">
-                                <option value="">-----Choose room-----</option>
-                                <th:block th:each="room:${roomList}">
-                                    <option th:value="${room.getId()}">[[${room.roomCode}]]</option>
-                                </th:block>
-                            </select>
+                    <div class="col-6 row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <select  class="form-control" name="department" id="department">
+                                    <option value="">-----Choose department-----</option>
+                                    <th:block th:each="department:${departments}">
+                                        <option th:value="${department.getId()}">[[${department.getDepartmentName}]]</option>
+                                    </th:block>
+                                </select>
+                            </div>
                         </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="roomList">Room</label>
+                                <select  class="form-control" name="roomList" id="roomList">
+                                    <option value="">--Select department first--</option>
+                                </select>
+                            </div>
+                        </div> <!-- Room-->
                     </div>    <!-- Room-->
                     <div class="col-6">
                         <label>Teacher :</label>

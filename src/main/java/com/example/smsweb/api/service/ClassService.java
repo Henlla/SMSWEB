@@ -81,6 +81,11 @@ public class ClassService implements IClass {
     }
 
     @Override
+    public List<Classses> findClassesDepartmentId(Integer departmentId) {
+        return repository.findClasssesByDepartmentId(departmentId);
+    }
+
+    @Override
     public List<Classses> findClassByRoomAndDepartmentId(Integer roomId, Integer departmentId) {
         return repository.findAllByRoomIdAndDepartmentId(roomId, departmentId);
     }

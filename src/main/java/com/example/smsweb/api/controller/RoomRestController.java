@@ -26,6 +26,11 @@ public class RoomRestController {
         return ResponseEntity.status(HttpStatus.OK).body(iRoom.findOne(id));
     }
 
+    @GetMapping("findRoomsByDepartmentId/{departmentId}")
+    public ResponseEntity<?> findRoomsByDepartmentId(@PathVariable("departmentId")Integer departmentId){
+        return ResponseEntity.status(HttpStatus.OK).body(iRoom.findRoomsByDepartmentId(departmentId));
+    }
+
     @PostMapping("/")
     public ResponseEntity<?> saveRoom(@RequestParam("room") String roomJson) throws Exception {
         Room room = new ObjectMapper().readValue(roomJson,Room.class);

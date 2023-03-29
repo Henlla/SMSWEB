@@ -15,6 +15,8 @@ import com.example.smsweb.utils.StreamHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.uwyn.jhighlight.fastutil.Hash;
+import com.uwyn.jhighlight.fastutil.objects.ObjectList;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +53,7 @@ import java.util.stream.Collectors;
 public class ClassController {
 
     private final String MAJOR_URL = "http://localhost:8080/api/major/";
+    private final String DEPARTMENT_URL = "http://localhost:8080/api/department/";
     private final String PROVINCE_URL = "http://localhost:8080/api/provinces/";
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
@@ -98,14 +101,19 @@ public class ClassController {
         List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<List<Teacher>>() {
         });
 
+        ResponseEntity<ResponseModel> departmentResponse
+                = restTemplate.exchange(DEPARTMENT_URL,HttpMethod.GET, request, ResponseModel.class);
+        String jsonDepartments = new ObjectMapper().writeValueAsString(departmentResponse.getBody().getData());
+        List<Department> departments = new ObjectMapper().readValue(jsonDepartments, new TypeReference<>(){});
+
         ResponseModel listMajor = restTemplate.getForObject(MAJOR_URL + "list", ResponseModel.class);
         List<Room> listRoom = restTemplate.getForObject(URL_ROOM, ArrayList.class);
         String json = new ObjectMapper().writeValueAsString(listRoom);
-        List<Room> l = new ObjectMapper().readValue(json, new TypeReference<List<Room>>() {
-        });
+        List<Room> roomList = new ObjectMapper().readValue(json, new TypeReference<>() {});
         model.addAttribute("majors", listMajor.getData());
+        model.addAttribute("departments", departments);
         model.addAttribute("teachers", teacherList);
-        model.addAttribute("roomList", l);
+        model.addAttribute("roomList", roomList);
         return "dashboard/class/class_create";
     }
 
@@ -1759,10 +1767,11 @@ public class ClassController {
     @PostMapping("getAvailableRoom")
     @ResponseBody
     public String getAvailableRoom(@CookieValue(name = "_token") String _token,
-                                   @RequestParam(value = "date", required = false) String inputDate,
-                                   @RequestParam("shift") String shift) {
+                                   @RequestParam(value = "date") String inputDate,
+                                   @RequestParam("departmentId") String departmentId,
+                                    @RequestParam("shift") String shift) {
         try {
-            JWTUtils.checkExpired(_token);
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/dashboad/login";
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -1774,76 +1783,56 @@ public class ClassController {
             HttpEntity<MultiValueMap<String, Object>> requestPOST;
             MultiValueMap<String, Object> content;
 
-            //Declare var
-            List<Room> roomList = new ArrayList<>();
-            List<Schedule> scheduleList = new ArrayList<>();
-
             //@RequestParam processing
-            LocalDate date;
-            if (inputDate == null || inputDate == "") {
-                date = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            } else {
-                date = LocalDate.parse(inputDate);
-            }
-            //String slotList = objectMapper.readValue(slots, new TypeReference<>() {});
+            LocalDate date = LocalDate.parse(inputDate);
 
-            //find ScheduleDetails by date
-            content = new LinkedMultiValueMap<>();
-            content.add("date", date.toString());
-            requestPOST = new HttpEntity<>(content, headers);
-
-            HttpEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(
-                    SCHEDULE_DETAIL_URL + "findScheduleDetailsOrNullByDate",
-                    HttpMethod.POST, requestPOST, ResponseModel.class
-            );
-            String jsonScheduleDetail = objectMapper.writeValueAsString(responseScheduleDetail.getBody().getData());
-            List<ScheduleDetail> scheduleDetailList = objectMapper.readValue(jsonScheduleDetail, new TypeReference<>() {
-            });
-
-            //Get All room
+            //Get All Room By departmentId
             HttpEntity<String> responseRoom = restTemplate.exchange(
-                    URL_ROOM, HttpMethod.GET, requestGET, String.class);
-            roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>() {
-            });
-
-            //Get All class by shift
-            HttpEntity<String> responseClass = restTemplate.exchange(
-                    CLASS_URL + "findClassesByShift/" + shift,
+                    URL_ROOM + "findRoomsByDepartmentId/" + departmentId,
                     HttpMethod.GET, requestGET, String.class);
-            ResponseModel responseModelClasses = objectMapper.readValue(responseClass.getBody(), new TypeReference<>() {
-            });
-            String jsonResponseModelClasses = objectMapper.writeValueAsString(responseModelClasses.getData());
+            String jsonRooms = objectMapper.writeValueAsString(responseRoom.getBody());
+            List<Room> roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>() {});
+
+            //Get All class by departmentId
+            HttpEntity<ResponseModel> responseClass = restTemplate.exchange(
+                    CLASS_URL + "findClassesDepartmentId/" + departmentId,
+                    HttpMethod.GET, requestGET, ResponseModel.class);
+
+            String jsonResponseModelClasses = objectMapper.writeValueAsString(responseClass.getBody().getData());
             List<Classses> classsesList = objectMapper.readValue(jsonResponseModelClasses, new TypeReference<>() {
             });
-            List<Classses> filterdClassesList = new ArrayList<>();
-            //Fillter
-            for (Classses clazz : classsesList) {
-                for (Schedule schedule : clazz.getSchedulesById()) {
-                    if (LocalDate.parse(schedule.getEndDate()).isBefore(date))
-                        continue;
-                    else if (schedule.getScheduleDetailsById().stream().anyMatch(scheduleDetail -> LocalDate.parse(scheduleDetail.getDate()).isEqual(date)))
-                        continue;
-                    else
-                        filterdClassesList.add(clazz);
+            if (classsesList.size() != 0 ){
+                //Set endate for class
+                for (Classses clazz : classsesList) {
+                    if(clazz.getSchedulesById().size() > 0 ){
+                        clazz.setEndDate(clazz.getSchedulesById().stream()
+                                .sorted(Comparator.comparing(Schedule::getEndDate).reversed())
+                                .toList().get(0).getEndDate());
+                    }
                 }
-            }
 
-            if (filterdClassesList != null) {
-                filterdClassesList = filterdClassesList.stream()
-                        .filter(StreamHelper.distinctByKey(Classses::getRoomId)).toList();
+                classsesList = classsesList.stream()
+                        .filter(clazz -> clazz.getEndDate() != null)
+                        .filter(clazz -> clazz.getShift().equals(shift) && LocalDate.parse(clazz.getEndDate()).isAfter(date))
+                        .filter(StreamHelper.distinctByKey(Classses::getRoomId))
+                        .collect(Collectors.toList());
+                if (classsesList.size() != 0){
+                    List<Room> availableRooms = new ArrayList<>();
+                    for(Room room: roomList){
+                        for (Classses clazz: classsesList){
+                            if (room.getId() != clazz.getRoomId()){
+                                availableRooms.add(room);
+                            }
+                        }
+                    }
+                    return objectMapper.writeValueAsString(availableRooms);
+                }
+                return objectMapper.writeValueAsString(roomList);
             }
-
-            for (Classses clazz : filterdClassesList) {
-                roomList.stream().filter(room -> room.getId() != clazz.getRoomId())
-                        .toList();
-            }
-
             return objectMapper.writeValueAsString(roomList);
 
         } catch (Exception e) {
-            if (e.getMessage().equalsIgnoreCase("Token expired"))
-                return "redirect:/dashboard/logout";
-            else throw new ErrorHandler(e.getMessage());
+            throw new ErrorHandler(e.getMessage());
         }
     }
 
@@ -1890,49 +1879,68 @@ public class ClassController {
     @ResponseBody
     public String getAvailableTeacher(@CookieValue(name = "_token") String _token,
                                       @RequestParam("shift") String shift,
-                                      @RequestParam("date") String date) {
+                                      @RequestParam("date") String inputDate) {
         try {
             if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/dashboad/login";
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            HttpEntity<Object> requestGET = new HttpEntity<>(headers);
+            headers.add("Authorization", "Bearer " + _token);
+
             ObjectMapper objectMapper = new ObjectMapper();
+            HttpEntity<Object> requestGET = new HttpEntity<>(headers);
 
             HttpEntity<MultiValueMap<String, Object>> requestPOST;
             MultiValueMap<String, Object> content;
 
-            LocalDate startDate = LocalDate.parse(date).minusDays(1);
+            //@RequestParam processing
+            LocalDate date = LocalDate.parse(inputDate);
 
-            ResponseEntity<String> teacherResponse = restTemplate.exchange(TEACHER_URL + "list", HttpMethod.GET, requestGET,
-                    String.class);
-            List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<List<Teacher>>() {
-            });
+            //Get All Teacher
+            HttpEntity<String> responseTeachers = restTemplate.exchange(
+                    TEACHER_URL + "list",
+                    HttpMethod.GET, requestGET, String.class);
+            List<Teacher> allTeachers = objectMapper.readValue(responseTeachers.getBody(), new TypeReference<>(){});
 
-            //Get ScheduleDetails
-            content = new LinkedMultiValueMap<>();
-            content.add("shift", shift);
-            content.add("date", startDate.toString());
-            requestPOST = new HttpEntity<>(content, headers);
+            HttpEntity<ResponseModel> responseClass = restTemplate.exchange(
+                    CLASS_URL + "findClassesByShift/" + shift,
+                    HttpMethod.GET, requestGET, ResponseModel.class);
 
-            HttpEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(
-                    SCHEDULE_DETAIL_URL + "findScheduleDetailsOrNullByShiftAndDateGreater",
-                    HttpMethod.POST, requestPOST, ResponseModel.class
-            );
-            String jsonScheduleDetail = objectMapper.writeValueAsString(responseScheduleDetail.getBody().getData());
-            List<ScheduleDetail> scheduleDetailList = objectMapper.readValue(jsonScheduleDetail, new TypeReference<>() {
-            });
-            if (scheduleDetailList == null) {
-                return objectMapper.writeValueAsString(teacherList);
-            }
-            scheduleDetailList = scheduleDetailList.stream().filter(StreamHelper.distinctByKey(ScheduleDetail::getTeacherId)).toList();
-            for (ScheduleDetail item : scheduleDetailList) {
-                teacherList = teacherList.stream()
-                        .filter(teacher -> teacher.getId() != item.getTeacherByScheduleDetail().getId())
+            String jsonResponseModelClasses = objectMapper.writeValueAsString(responseClass.getBody().getData());
+            List<Classses> classesByShift = objectMapper.readValue(jsonResponseModelClasses, new TypeReference<>(){});
+            if (classesByShift.size() > 0){
+
+                //Set endate for class
+                for (Classses clazz : classesByShift) {
+                    if(clazz.getSchedulesById().size() > 0 ){
+                        clazz.setEndDate(clazz.getSchedulesById().stream()
+                                .sorted(Comparator.comparing(Schedule::getEndDate).reversed())
+                                .toList().get(0).getEndDate());
+                    }
+                }
+
+                //filter classesByShift
+                classesByShift = classesByShift.stream()
+                        .filter(clazz -> clazz.getEndDate() != null)
+                        .filter(clazz -> LocalDate.parse(clazz.getEndDate()).isAfter(date))
+                        .filter(StreamHelper.distinctByKey(Classses::getTeacherId))
                         .toList();
+                if (classesByShift.size() != 0){
+                    List<Teacher> availableTeachers = new ArrayList<>();
+                    for (Teacher teacher : allTeachers){
+                        for (Classses clazz : classesByShift){
+                            if (clazz.getTeacherId() != teacher.getId()){
+                                availableTeachers.add(teacher);
+                            }
+                        }
+                    }
+                    return objectMapper.writeValueAsString(availableTeachers);
+                }
+                return objectMapper.writeValueAsString(allTeachers);
             }
-            return objectMapper.writeValueAsString(teacherList);
+
+            return objectMapper.writeValueAsString(allTeachers);
+
         } catch (Exception e) {
             throw new ErrorHandler(e.getMessage());
         }

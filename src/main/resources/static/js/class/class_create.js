@@ -1,4 +1,4 @@
-function getRoomAndTeacherByDate(){
+function getAvailableTeacherByDateAndShift(){
     let shift1 = $('#shift').val();
     let shift2 = $("#dayOfWeek").val();
     let startdate = $('#startDate').val();
@@ -6,6 +6,7 @@ function getRoomAndTeacherByDate(){
         let data = new FormData()
         data.append("shift",shift1+shift2)
         data.append("date",startdate)
+        data.append("departmentId",$("#department").val())
         $.ajax({
             url: "/dashboard/class/getAvailableTeacher",
             method: "POST",
@@ -33,6 +34,18 @@ function getRoomAndTeacherByDate(){
                 $(`<option selected="selected" value="">-- No available teacher --</option>`).appendTo("#teacherId");
             }
         })
+    }
+}
+function getAvailableRoomByDateAndDepartment(){
+    let shift1 = $('#shift').val();
+    let shift2 = $("#dayOfWeek").val();
+    let startdate = $('#startDate').val();
+    let department = $('#department').val();
+    if (shift1 != "" && shift2 != "" && startdate != "" && department != ''){
+        let data = new FormData()
+        data.append("shift",shift1+shift2)
+        data.append("date",startdate)
+        data.append("departmentId",$("#department").val())
 
         $.ajax({
             url: "/dashboard/class/getAvailableRoom",
@@ -46,19 +59,54 @@ function getRoomAndTeacherByDate(){
                 $("#roomList").empty();
                 let parse = JSON.parse(response);
                 if (parse.length == 0){
-                    $(`<option>--No room available--</option>`).appendTo("#roomList");
+                    $(`<option value="">--No room available--</option>`).appendTo("#roomList");
                 }else {
-                    $(`<option>--Select Room--</option>`).appendTo("#roomList");
+                    $(`<option value="">--Select Room--</option>`).appendTo("#roomList");
                     parse.forEach( item =>{
                         $(`<option value="${item.id}">${item.roomCode}</option>`).appendTo("#roomList");
                     });
                 }
             },
             error:(error)=>{
-
             }
         })
     }
+}
+let autoFillClassCode = function (){
+    let inputStartDate = $('#startDate')
+    let selectMajor = $('#majorId')
+    let selectShift = $('#shift')
+    let selectDayOfWeek = $('#dayOfWeek')
+    if (selectMajor.val()!= "" && selectShift.val()!= "" && selectDayOfWeek.val() != "" && inputStartDate.val() != ""){
+        var inputDate = new Date(inputStartDate.val());
+        var day = inputDate.getDate() < 10? "0"+inputDate.getDate(): inputDate.getDate().toString();
+        var month = (inputDate.getMonth()+1) < 10? "0"+(inputDate.getMonth()+1): (inputDate.getMonth()+1).toString();
+
+        var classCode =selectShift.val()+selectDayOfWeek.val()+"."+day+month+"."+"T";
+
+        $.ajax({
+            url: "/dashboard/class/class-searchClasssesByClassCode?classCode="+classCode,
+            method: "GET",
+            success: (result) => {
+                result =JSON.parse(result);
+                for(var increaseNumber = 1;increaseNumber < 99;increaseNumber++){
+                    var temp  = classCode+increaseNumber;
+                    if (result.filter( c => c == temp).length == 0){
+                        $("#classCode").val(temp);
+                        break;
+                    }
+                }
+            },
+            error: (e) => {
+                console.log(e)
+            }
+        })
+    }
+}
+function multipleFunc() {
+    getAvailableRoomByDateAndDepartment();
+    getAvailableTeacherByDateAndShift()
+    autoFillClassCode();
 }
 $(()=>{
     var date = new Date();
@@ -72,6 +120,7 @@ $(()=>{
     let inputStartDate = $('#startDate')
     let selectMajor = $('#majorId')
     let selectShift = $('#shift')
+    let selectDepartment = $('#department')
     let selectDayOfWeek = $('#dayOfWeek')
 
     jQuery.validator.addMethod("dateGreaterThan",
@@ -92,46 +141,12 @@ $(()=>{
             console.log("t");
             return true;
         }, 'Required');
-    let autoFillClassCode = function (){
-        if (selectMajor.val()!= "" && selectShift.val()!= "" && selectDayOfWeek.val() != "" && inputStartDate.val() != ""){
-            var inputDate = new Date(inputStartDate.val());
-            var day = inputDate.getDate() < 10? "0"+inputDate.getDate(): inputDate.getDate().toString();
-            var month = (inputDate.getMonth()+1) < 10? "0"+(inputDate.getMonth()+1): (inputDate.getMonth()+1).toString();
 
-            var major = $('#majorId option[value='+selectMajor.val()+']').text();;
-            const regex = /[^A-Z]/g;
-            var classCode =major.replace(regex, '')+"."+selectShift.val()+selectDayOfWeek.val()+"."+day+month+".";
-
-            $.ajax({
-                url: "/dashboard/class/class-searchClasssesByClassCode?classCode="+classCode,
-                method: "GET",
-                success: (result) => {
-                    result =JSON.parse(result);
-                    for(var increaseNumber = 1;increaseNumber < 99;increaseNumber++){
-                        if (increaseNumber.toString().length < 2){
-                            increaseNumber = "0"+increaseNumber;
-                        }
-                        var temp  = classCode+increaseNumber;
-                        if (result.filter( c => c == temp).length == 0){
-                            $("#classCode").val(temp);
-                            break;
-                        }
-                    }
-                },
-                error: (e) => {
-                    console.log(e)
-                }
-            })
-        }
-    }
-    function multipleFunc() {
-        getRoomAndTeacherByDate();
-        autoFillClassCode();
-    }
     selectShift.change(multipleFunc);
     inputStartDate.change(multipleFunc);
     selectDayOfWeek.change(multipleFunc);
-    selectMajor.change(multipleFunc);
+    selectMajor.change(autoFillClassCode());
+    selectDepartment.change(multipleFunc);
     $('#btn_create_class').on('click',function (e){
         e.preventDefault();
 
@@ -139,6 +154,7 @@ $(()=>{
         var majorId = $('#majorId').val()
         var teacherId = $('#teacherId').val()
         var limitStudent = $('#limitStudent').val()
+        var department = $('#department').val()
         var room = $('#roomList').val()
         var newClass = {
             "id": "",
@@ -148,6 +164,7 @@ $(()=>{
             "shift" : selectShift.val()+selectDayOfWeek.val(),
             "limitStudent" : limitStudent,
             "startDate": inputStartDate.val(),
+            "departmentId": department,
             "roomId":room
         }
         var file = $("#studentList").get(0).files[0];
@@ -214,61 +231,76 @@ $(()=>{
             },
         })
         if($('#form-create').valid()){
-            $('#spinner-div').show()
-            $.ajax({
-                url:"/dashboard/class/class-create",
-                method:"POST",
-                data:formData,
-                cache : false,
-                processData: false,
-                contentType: false,
-                enctype:"multipart/form-data",
-                success:(result)=>{
-                    result = JSON.parse(result);
-                    if (result.status == "success"){
-                        $('#teacherId').val("").change();
-                        $('#majorId').val("").change();
-                        $('#classCode').val("");
-                        selectDayOfWeek.val("").change();
-                        selectShift.val("").change();
-                        Swal.fire(
-                            "",
-                            "Create class success",
-                            "success"
-                        )
-                        if(result.message != null && result.message != ''){
-                            toastr.warning(result.message)
-                        }
-                        $('#spinner-div').hide();
-                    }else {
-                        Swal.fire(
-                            "",
-                            "This room's class shift already exists.Try another room",
-                            "error"
-                        )
-                        $('#spinner-div').hide();
-                    }
-                },
-                error:(xhr, status, error)=>{
-                    var err = eval("(" + xhr.responseText + ")");
-                    console.log(err)
-                    if (err.message.toLowerCase() === "token expired") {
-                        $('#spinner-div').hide();
-                        Swal.fire({
-                            title: 'End of login session please login again',
-                            showDenyButton: false,
-                            showCancelButton: false,
-                            confirmButtonText: 'Confirm',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.href = "/dashboard/login";
+            Swal.fire({
+                icon: 'question',
+                title: 'Warning',
+                text: 'Create class ?',
+                showCancelButton: true,
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Ok',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#spinner-div').show()
+                    $.ajax({
+                        url:"/dashboard/class/class-create",
+                        method:"POST",
+                        data:formData,
+                        cache : false,
+                        processData: false,
+                        contentType: false,
+                        enctype:"multipart/form-data",
+                        success:(result)=>{
+                            result = JSON.parse(result);
+                            if (result.status == "success"){
+                                $('#teacherId').val("").change();
+                                $('#majorId').val("").change();
+                                $('#classCode').val("");
+                                selectDayOfWeek.val("").change();
+                                selectShift.val("").change();
+                                Swal.fire(
+                                    "",
+                                    "Create class success",
+                                    "success"
+                                )
+                                if(result.message != null && result.message != ''){
+                                    toastr.warning(result.message)
+                                }
+                                $('#spinner-div').hide();
+                            }else {
+                                Swal.fire(
+                                    "",
+                                    "This room's class shift already exists.Try another room",
+                                    "error"
+                                )
+                                $('#spinner-div').hide();
                             }
-                        });
-                    }else{
-                        toastr.error('Create fail')
-                    }
+                        },
+                        error:(xhr, status, error)=>{
+                            var err = eval("(" + xhr.responseText + ")");
+                            console.log(err)
+                            if (err.message.toLowerCase() === "token expired") {
+                                $('#spinner-div').hide();
+                                Swal.fire({
+                                    title: 'End of login session please login again',
+                                    showDenyButton: false,
+                                    showCancelButton: false,
+                                    confirmButtonText: 'Confirm',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.href = "/dashboard/login";
+                                    }
+                                });
+                            }else{
+                                toastr.error('Create fail')
+                            }
+                        }
+                    })
                 }
             })
+
         }
 
     })
