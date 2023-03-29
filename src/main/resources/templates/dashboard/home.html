@@ -84,7 +84,15 @@
                             <div class="card-header">
                                 <div class="row d-flex">
                                     <h4 class="mr-auto">Over view class</h4>
-                                    <div class="d-inline">
+                                    <div class="d-inline mr-auto form-group">
+                                        <label>Department: </label>
+                                        <select class="select2" style="width: 200px;height: 30px" id="department">
+                                            <th:block th:each="department : ${departments}">
+                                                <option th:value="${department.getId()}">[[${department.getDepartmentName()}]]</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                    <div class="d-inline form-group">
                                         <label>Date: </label>
                                         <input style="width: 200px" type="date" id="over_view_date">
                                     </div>

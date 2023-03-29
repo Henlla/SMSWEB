@@ -75,5 +75,4 @@ public class Classses {
     @JoinColumn(name = "department_id", referencedColumnName = "id",insertable = false, updatable = false)
     private Department departmentByDepartmentId;
 
-
 }

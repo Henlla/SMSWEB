@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DashboardController {
     private final String MAJOR_URL = "http://localhost:8080/api/major/";
+    private final String DEPARTMENT_URL = "http://localhost:8080/api/department/";
     private final String PROVINCE_URL = "http://localhost:8080/api/provinces/";
     private final String CLASS_URL = "http://localhost:8080/api/classes/";
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
@@ -69,7 +70,14 @@ public class DashboardController {
                 countChart.setTotalTeacher(teacherCount);
                 countChart.setTotalClass(classCount);
                 countChart.setTotalRoom(roomCount);
+
+                ResponseEntity<ResponseModel> departmentResponse
+                        = restTemplate.exchange(DEPARTMENT_URL,HttpMethod.GET, request, ResponseModel.class);
+                String jsonDepartments = new ObjectMapper().writeValueAsString(departmentResponse.getBody().getData());
+                List<Department> departments = new ObjectMapper().readValue(jsonDepartments, new TypeReference<>(){});
+
                 model.addAttribute("chartTotal",countChart);
+                model.addAttribute("departments",departments);
                 return "dashboard/home";
             } else {
                 return "redirect:/dashboard/logout";
@@ -88,7 +96,8 @@ public class DashboardController {
 
     @PostMapping("/dashboard/view_room_active") @ResponseBody
     public String view_room_active(@CookieValue(value = "_token", defaultValue = "")String _token,
-                                   @RequestParam(value = "date", required = false)String inputDate){
+                                   @RequestParam(value = "date",required = false)String inputDate,
+                                   @RequestParam(value = "departmentId", required = false)String departmentId){
         try{
             if(JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/dashboard/logout";
 
@@ -115,9 +124,18 @@ public class DashboardController {
             List<Classses> classesList = new ArrayList<>();
 
             //Get All room
-            HttpEntity<String> responseRoom = restTemplate.exchange(
-                    ROOM_URL, HttpMethod.GET, requestGET, String.class);
-            List<RoomScheduleViewModel> roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>(){});
+            List<RoomScheduleViewModel> roomList;
+            if(departmentId != null){
+                HttpEntity<String> responseRoom = restTemplate.exchange(
+                        ROOM_URL+"findRoomsByDepartmentId/"+departmentId, HttpMethod.GET, requestGET, String.class);
+                roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>(){});
+
+            }else {
+                HttpEntity<String> responseRoom = restTemplate.exchange(
+                        ROOM_URL, HttpMethod.GET, requestGET, String.class);
+                roomList = objectMapper.readValue(responseRoom.getBody(), new TypeReference<>(){});
+            }
+
 
             List<RoomScheduleViewModel> roomScheduleViewModelList = new ArrayList<>();
             content = new LinkedMultiValueMap<>();

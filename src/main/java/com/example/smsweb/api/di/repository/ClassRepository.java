@@ -24,6 +24,7 @@ public interface ClassRepository extends GenericRepository<Classses, Integer> {
 
     List<Classses> findAllByRoomId(Integer roomId);
 
+    List<Classses> findClasssesByDepartmentId(Integer departmentId);
     List<Classses> findAllByRoomIdAndDepartmentId(Integer roomId,Integer departmentId);
     List<Classses> findClasssesByShift(String shift);
 

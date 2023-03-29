@@ -95,14 +95,17 @@ public class ClassRestController extends GenericController<Classses> {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByRoom(roomId)));
     }
 
-
+    @GetMapping("/findClassesDepartmentId/{departmentId}")
+    public ResponseEntity<?> findClassesDepartmentId(@PathVariable("departmentId") Integer departmentId) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassesDepartmentId(departmentId)));
+    }
     @GetMapping("/findClassByRoomAndDepartmentId/{roomId}/{departmentId}")
     public ResponseEntity<?> findClassByRoomAndDepartmentId(@PathVariable("roomId") Integer roomId, @PathVariable("departmentId") Integer departmentId) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByRoomAndDepartmentId(roomId,departmentId)));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassByRoomAndDepartmentId(roomId, departmentId)));
+    }
 
     @GetMapping("/findClassesByShift/{shift}")
     public ResponseEntity<?> findClassesByShift(@PathVariable("shift")String shift){
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(), service.findClassesByShift(shift)));
-
     }
 }

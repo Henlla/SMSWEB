@@ -37,4 +37,8 @@ public class RoomService implements IRoom {
     }
 
 
+    @Override
+    public List<Room> findRoomsByDepartmentId(Integer departmentId) {
+        return roomRepository.findRoomsByDepartmentId(departmentId).orElse(null);
+    }
 }
