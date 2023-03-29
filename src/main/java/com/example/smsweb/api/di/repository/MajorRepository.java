@@ -7,4 +7,6 @@ public interface MajorRepository extends GenericRepository<Major, Integer> {
     Major findMajorByMajorCode(String major_code);
 
     Major findMajorByMajorName(String major_name);
+
+    Major findMajorByMajorCodeAndApartmentId(String majorCode,Integer apartmentId);
 }

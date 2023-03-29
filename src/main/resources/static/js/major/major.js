@@ -18,44 +18,8 @@ $(() => {
     }
 
     $(".select2").select2({
-        theme:"bootstrap4",
-    })
-
-    $(".apartment_select").select2({
         theme: "bootstrap4",
-        placeholder: "Choose major",
-        ajax: {
-            url: "/dashboard/major/findApartment",
-            method: "GET",
-            processResults: function (response) {
-                let dataArray = [];
-                for (const dataKey of response) {
-                    let data = {
-                        "id": dataKey.id,
-                        "text": dataKey.apartmentCode
-                    }
-                    dataArray.push(data);
-                }
-                return {
-                    results: dataArray
-                };
-            }, error: (data) => {
-                if (data.responseText.toLowerCase() === "token expired") {
-                    Swal.fire({
-                        title: 'End of login session please login again',
-                        showDenyButton: false,
-                        showCancelButton: false,
-                        confirmButtonText: 'Confirm',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.href = "/dashboard/login";
-                        }
-                    });
-                } else {
-                    toastr.error(data.responseText);
-                }
-            }
-        }
+        placeholder:"Choose major"
     });
 
     $("#create-form").validate({
@@ -66,8 +30,8 @@ $(() => {
             create_major_name_validate: {
                 required: true
             },
-            create_apartment_validate:{
-                required:true
+            create_apartment_validate: {
+                required: true
             }
         }, messages: {
             create_major_code_validate: {
@@ -76,8 +40,8 @@ $(() => {
             create_major_name_validate: {
                 required: "Please enter major name"
             },
-            create_apartment_validate:{
-                required:"Please choose major"
+            create_apartment_validate: {
+                required: "Please choose major"
             }
         }
     });
@@ -90,8 +54,8 @@ $(() => {
             edit_major_name_validate: {
                 required: true
             },
-            edit_apartment_validate:{
-                required:true
+            edit_apartment_validate: {
+                required: true
             }
         }, messages: {
             edit_major_code_validate: {
@@ -100,8 +64,8 @@ $(() => {
             edit_major_name_validate: {
                 required: "Please enter major name"
             },
-            edit_apartment_validate:{
-                required:"Please choose major"
+            edit_apartment_validate: {
+                required: "Please choose major"
             }
         }
     });
@@ -137,7 +101,7 @@ $(() => {
         }
     });
 
-    $("#create-major-modal").on("hidden.bs.modal",function(){
+    $("#create-major-modal").on("hidden.bs.modal", function () {
         $(this).find('#create-form')[0].reset();
         $("#apartment").val(null).trigger("change");
     })
@@ -145,13 +109,15 @@ $(() => {
 
 var OnCreateMajor = () => {
     if ($("#create-form").valid()) {
-        var major_code = $("#create_major_code").val();
+        var major_id = $("#create_major_code").val();
+        var major_code = "OV-" + $("#curriculum_code").val() + "-" + major_id;
         var major_name = $("#create_major_name").val();
         var apartment_id = $("#apartment").val();
         var major = {
+            "majorId": major_id,
             "majorCode": major_code,
             "majorName": major_name,
-            "apartmentId" : apartment_id
+            "apartmentId": apartment_id
         }
         $.ajax({
             url: "/dashboard/major/save",
@@ -185,16 +151,38 @@ var OnCreateMajor = () => {
     }
 }
 
+var OnChangeCurriculum = () => {
+    var curriculum_code = $("#curriculum_code").val();
+    if (curriculum_code === "DISM") {
+        $("#create_major_name").val("Diploma in Information System Management");
+    } else if (curriculum_code === "CPISM") {
+        $("#create_major_name").val("Certificate of Proficiency in System Management");
+    } else {
+        $("#create_major_name").val("Advanced Diploma In Software Engineering");
+    }
+}
+
+var OnEditCurriculum = () =>{
+    var edit_curriculum_code = $("#edit_curriculum_code").val();
+    if (edit_curriculum_code === "DISM") {
+        $("#edit_major_name").val("Diploma in Information System Management");
+    } else if (edit_curriculum_code === "CPISM") {
+        $("#edit_major_name").val("Certificate of Proficiency in System Management");
+    } else {
+        $("#edit_major_name").val("Advanced Diploma In Software Engineering");
+    }
+}
+
 var OnEditMajor = (id) => {
     $.ajax({
         url: "/dashboard/major/findOne/" + id,
         contentType: "application/json",
         method: "GET",
         success: (data) => {
-            console.log(data);
             $("#edit-major-modal").modal("show");
             $("#edit_major_id").val(data.id);
-            $("#edit_major_code").val(data.majorCode);
+            $("#edit_curriculum_code").val(data.majorCode.split("-")[1]).trigger("change");
+            $("#edit_major_code").val(data.majorId);
             $("#edit_major_name").val(data.majorName);
             $("#edit_apartment").val(data.apartmentId).trigger("change");
         }, error: (data) => {
@@ -217,11 +205,17 @@ var OnEditMajor = (id) => {
 }
 
 var OnUpdateMajor = () => {
+    var id = $("#edit_major_id").val();
+    var major_id = $("#edit_major_code").val();
+    var major_code = "OV-" + $("#edit_curriculum_code").val() + "-" + major_id;
+    var major_name = $("#edit_major_name").val();
+    var apartment = $("#edit_apartment").val();
     var major = {
-        "id": $("#edit_major_id").val(),
-        "majorCode": $("#edit_major_code").val(),
-        "majorName": $("#edit_major_name").val(),
-        "apartmentId" : $("#edit_apartment").val()
+        "id": id,
+        "majorId": major_id,
+        "majorCode": major_code,
+        "majorName": major_name,
+        "apartmentId": apartment
     }
     $.ajax({
         url: "/dashboard/major/update",

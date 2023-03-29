@@ -17,6 +17,10 @@ public class Major {
     @Id
     @Column(name = "id", nullable = false)
     private int id;
+
+    @Basic
+    @Column(name = "major_id", nullable = true, length = 250)
+    private String majorId;
     @Basic
     @Column(name = "major_code", nullable = true, length = 45)
     private String majorCode;
@@ -38,6 +42,6 @@ public class Major {
     @Column(name = "apartment_id", nullable = true)
     private Integer apartmentId;
     @ManyToOne
-    @JoinColumn(name = "apartment_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JoinColumn(name = "apartment_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Apartment apartmentByApartmentId;
 }

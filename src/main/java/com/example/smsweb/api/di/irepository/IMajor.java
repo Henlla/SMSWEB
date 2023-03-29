@@ -12,5 +12,7 @@ public interface IMajor extends IGenericRepository<Major> {
 
     Major findMajorByMajorCode(String majorCode);
 
+    Major findMajorByMajorCodeAndApartment(String majorCode,Integer apartmentId);
+
     void exportDataToExcel(HttpServletResponse response, List<Major> list, String fileName);
 }

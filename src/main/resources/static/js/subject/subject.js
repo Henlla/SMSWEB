@@ -13,7 +13,7 @@ $(() => {
             create_slot_validate: {
                 required: true,
                 min: 4,
-                max: 20
+                max: 24
             },
             create_course_validate: {
                 required: true
@@ -32,13 +32,19 @@ $(() => {
             create_slot_validate: {
                 required: "Please enter number of slot",
                 min: "Slot must be greater than 4",
-                max: "Slot must be letter than 20"
+                max: "Slot must be letter than 24"
             },
             create_course_validate: {
                 required: "Please choose course"
             }
         },
     });
+
+    $(".select2").select2({
+        theme: "bootstrap4"
+    });
+
+    $("#curriculum").val($("#curriculum option:first").val()).trigger('change');
 
     $("#edit-form").validate({
         rules: {
@@ -54,7 +60,7 @@ $(() => {
             edit_slot_validate: {
                 required: true,
                 min: 4,
-                max: 20
+                max: 24
             }
         },
         messages: {
@@ -67,7 +73,7 @@ $(() => {
             edit_fee_validate: {
                 required: "Please enter fee",
                 min: "Slot must be greater than 4",
-                max: "Slot must be letter than 20"
+                max: "Slot must be letter than 24"
 
             },
             edit_slot_validate: {
@@ -81,6 +87,16 @@ $(() => {
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
         scrollCollapse: true,
         scrollY: '300px',
+        columnDefs: [
+            {
+                "targets": [0, 1, 2, 3, 4],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2, 4],
+                "orderable": false,
+            }
+        ],
         "language": {
             "decimal": "",
             "emptyTable": "Don't have any record",
@@ -114,14 +130,131 @@ $(() => {
     });
 
     $("#create_major_id").on("change", function () {
-        let code = $("#create_major_id").select2('data')[0].text.split("-")[0];
+        let code = $("#create_major_id").select2('data')[0].text.split("-")[2];
         $("#create_apartment_code").text(code + "-")
     });
+
     $("#edit_major_id").on("change", function () {
-        let code = $("#edit_major_id").select2('data')[0].text.split("-")[0];
+        let code = $("#edit_major_id").select2('data')[0].text.split("-")[2];
         $("#edit_apartment_code").text(code + "-")
     });
 });
+
+var OnChangeCurriculum = () =>{
+    var majorId = $("#curriculum").val();
+    $.ajax({
+        url: "/dashboard/subject/findSubjectByMajorId/" + majorId,
+        method: "GET",
+        success: (response) => {
+            if ($.fn.dataTable.isDataTable('#subject-table')) {
+                let table = $('#subject-table').DataTable();
+                table.clear().draw();
+                table.destroy();
+                DataTable(response);
+            } else {
+                DataTable(response);
+            }
+        }, error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error(data.responseText);
+            }
+        }
+    });
+}
+
+var DataTable = (response) => {
+    let html = "";
+    var role = $("#userRole").val();
+    $("#subject-table").dataTable({
+        pageLength: 5,
+        lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
+        scrollCollapse: true,
+        scrollY: '300px',
+        data: response,
+        columnDefs: [
+            {
+                "targets": [0, 1, 2, 3, 4],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2, 4],
+                "orderable": false,
+            }
+        ],
+        columns: [
+            {
+                render: function (data, type, row, index) {
+                    return index.row + 1;
+                }
+            },
+            {
+                data: "subjectCode",
+                render: function (data, type, row, index) {
+                    return data;
+                }
+            },
+            {
+                data: "subjectName",
+                render: function (data, type, row, index) {
+                    return data;
+                }
+            },
+            {
+                data: "fee",
+                render: function (data, type, row, index) {
+                    return data.toLocaleString('it-IT', {style: 'currency', currency: 'vnd'}).toLowerCase();
+                }
+            },
+            {
+                data: "id",
+                render: function (data, type, row, index) {
+                    if(role === "[STAFF]"){
+                        html = ` <a onclick="OnEditSubject('${data}')" class="mr-3"><i class="fas fa-pen indigo-text"></i></a>
+                              <a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
+                    }else{
+                        html = `<a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
+                    }
+                    return html;
+                }
+            }
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
+}
 
 var OnClickImport = () => {
     $("#fileUpload").trigger("click");

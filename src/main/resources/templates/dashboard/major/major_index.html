@@ -4,8 +4,14 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Course</title>
+    <title>Curriculum</title>
     <link rel="stylesheet" href="/css/custom.css">
+    <style>
+        #create_major_code-error{
+            position: absolute;
+            top: 30px;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
@@ -14,12 +20,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h5 class="m-0">Course manager</h5>
+                        <h5 class="m-0">Curriculum manager</h5>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                            <li class="breadcrumb-item active">List Course</li>
+                            <li class="breadcrumb-item active">List curriculum</li>
                         </ol>
                     </div>
                 </div>
@@ -29,15 +35,15 @@
             <section class="container-fluid">
                 <section class="row mb-3">
                     <div class="col-12 d-flex align-items-center">
-                        <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                        <button data-toggle="modal" onclick="OnChangeCurriculum()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
                                 data-target="#create-major-modal" class="btn btn-info btn-sm">
                             <i class="fas fa-plus"></i> Create
                         </button>
-<!--                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i-->
-<!--                                class="fas fa-download"></i> Export data</a>-->
-<!--                        <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>-->
-<!--                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
-<!--                           class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Import Data</a>-->
+                        <!--                        <a th:href="@{'/dashboard/major/export-excel'}" class="btn btn-success btn-sm"><i-->
+                        <!--                                class="fas fa-download"></i> Export data</a>-->
+                        <!--                        <input type="file" id="fileUpload" onchange="OnSaveExcelData()" hidden>-->
+                        <!--                        <a onclick="OnClickImport()" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
+                        <!--                           class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Import Data</a>-->
                     </div>
                 </section>
                 <section class="row">
@@ -46,8 +52,8 @@
                             <thead>
                             <tr class="text-center">
                                 <th class="th-sm">STT</th>
-                                <th class="th-sm">Course Code</th>
-                                <th class="th-sm">Course Name</th>
+                                <th class="th-sm">Curriculum Code</th>
+                                <th class="th-sm">Curriculum Name</th>
                                 <th class="th-sm">Action</th>
                             </tr>
                             </thead>
@@ -60,10 +66,10 @@
                                     <a class="mr-3" th:data-name="${item.id}"
                                        onclick="OnEditMajor(this.getAttribute('data-name'))"><i
                                             class="fas fa-pen indigo-text"></i></a>
-<!--                                    <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
-<!--                                       th:data-name="${item.id}"-->
-<!--                                       onclick="OnDeleteMajor(this.getAttribute('data-name'))"><i-->
-<!--                                            class="fas fa-trash red-text"></i></a>-->
+                                    <!--                                    <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
+                                    <!--                                       th:data-name="${item.id}"-->
+                                    <!--                                       onclick="OnDeleteMajor(this.getAttribute('data-name'))"><i-->
+                                    <!--                                            class="fas fa-trash red-text"></i></a>-->
                                 </td>
                             </tr>
                             </tbody>
@@ -79,7 +85,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add new course</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add new curriculum</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -87,20 +93,37 @@
                 <div class="modal-body">
                     <form th:id="create-form">
                         <div class="form-group">
-                            <label class="m-0">Course code</label>
-                            <input type="text" name="create_major_code_validate" th:id="create_major_code"
-                                   class="form-control form-control-sm"
-                                   placeholder="Enter major code...">
+                            <label class="m-0">Curriculum code</label>
+                            <div class="input-group input-group-sm mb3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">OV - </span>
+                                    <span class="input-group">
+                                        <select onchange="OnChangeCurriculum(this)" id="curriculum_code" class="form-control form-control-sm">
+                                            <option value="CPISM">CPISM</option>
+                                            <option value="DISM">DISM</option>
+                                            <option value="ADSE">ADSE</option>
+                                        </select>
+                                    </span>
+                                </div>
+                                <input type="text" name="create_major_code_validate" th:id="create_major_code"
+                                       class="form-control form-control-sm"
+                                       placeholder="Enter major code...">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="m-0">Course name</label>
-                            <input type="text" name="create_major_name_validate" th:id="create_major_name"
+                            <label class="m-0">Curriculum name</label>
+                            <input type="text" readonly name="create_major_name_validate" th:id="create_major_name"
                                    class="form-control form-control-sm"
                                    placeholder="Enter major name...">
                         </div>
                         <div class="form-group">
                             <label class="m-0">Select Major</label>
-                            <select name="create_apartment_validate" id="apartment" class="apartment_select"></select>
+                            <select name="create_apartment_validate" class="select2" id="apartment">
+                                <option value="">Choose Major</option>
+                                <option th:each="item:${listApartment}" th:value="${item.id}">
+                                    [[${item.apartmentCode}]]
+                                </option>
+                            </select>
                         </div>
                     </form>
                 </div>
@@ -113,12 +136,12 @@
         </div>
     </div>
 
-    <div class="modal fade" id="edit-major-modal" data-backdrop="static" tabindex="-1"
+    <div class="modal fade" id="edit-major-modal" data-backdrop="static"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Update Course</h5>
+                    <h5 class="modal-title">Update Curriculum</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -127,21 +150,36 @@
                     <form th:id="edit-form">
                         <input type="text" th:id="edit_major_id" hidden>
                         <div class="form-group">
-                            <label class="m-0">Course code</label>
-                            <input type="text" name="edit_major_code_validate" th:id="edit_major_code"
-                                   class="form-control form-control-sm"
-                                   placeholder="Enter major code...">
+                            <label class="m-0">Curriculum code</label>
+                            <div class="input-group input-group-sm mb3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">OV - </span>
+                                    <span class="input-group">
+                                        <select onchange="OnEditCurriculum()" id="edit_curriculum_code" class="form-control form-control-sm">
+                                            <option value="CPISM">CPISM</option>
+                                            <option value="DISM">DISM</option>
+                                            <option value="ADSE">ADSE</option>
+                                        </select>
+                                    </span>
+                                </div>
+                                <input type="text" name="edit_major_code_validate" th:id="edit_major_code"
+                                       class="form-control form-control-sm"
+                                       placeholder="Enter major code...">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="m-0">Course name</label>
+                            <label class="m-0">Curriculum name</label>
                             <input type="text" name="edit_major_name_validate" th:id="edit_major_name"
+                                   readonly
                                    class="form-control form-control-sm"
                                    placeholder="Enter major name...">
                         </div>
                         <div class="form-group">
                             <label class="m-0">Select Major</label>
                             <select name="edit_apartment_validate" class="select2" id="edit_apartment">
-                                <option th:each="item:${listApartment}" th:value="${item.id}">[[${item.apartmentCode}]]</option>
+                                <option th:each="item:${listApartment}" th:value="${item.id}">
+                                    [[${item.apartmentCode}]]
+                                </option>
                             </select>
                         </div>
                     </form>
