@@ -491,124 +491,124 @@ public class StudentController {
                             ResponseEntity<String> responseRole = restTemplate.exchange(ROLE_URL + "get", HttpMethod.POST, requestRole, String.class);
                             Role role = new ObjectMapper().readValue(responseRole.getBody(), Role.class);
 
-                            int excelLength = ExcelHelper.getNumberOfNonEmptyCells(sheet, 3);
-                            if (excelLength < 30) {
-                            for (int rowIndex = 2; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
-                                XSSFRow row = sheet.getRow(rowIndex);
-                                Cell date = row.getCell(4);
+                            int excelLength = ExcelHelper.getNumberOfNonEmptyCells(sheet, 2);
+                            if (excelLength <= 31) {
+                                for (int rowIndex = 2; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
+                                    XSSFRow row = sheet.getRow(rowIndex);
+                                    Cell date = row.getCell(4);
 
-                                String first_name = ExcelHelper.getValue(row.getCell(1)).toString();
-                                String last_name = ExcelHelper.getValue(row.getCell(2)).toString();
-                                String email = ExcelHelper.getValue(row.getCell(3)).toString();
-                                String dob = "";
-                                if (date != null) {
-                                    dob = date.getLocalDateTimeCellValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                                }
-                                String phone = ExcelHelper.getValue(row.getCell(5)).toString();
-                                String identity_card = ExcelHelper.getValue(row.getCell(6)).toString();
-                                String gender = ExcelHelper.getValue(row.getCell(7)).toString();
-                                String course = ExcelHelper.getValue(row.getCell(8)).toString();
+                                    String first_name = ExcelHelper.getValue(row.getCell(1)).toString();
+                                    String last_name = ExcelHelper.getValue(row.getCell(2)).toString();
+                                    String email = ExcelHelper.getValue(row.getCell(3)).toString();
+                                    String dob = "";
+                                    if (date != null) {
+                                        dob = date.getLocalDateTimeCellValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                                    }
+                                    String phone = ExcelHelper.getValue(row.getCell(5)).toString();
+                                    String identity_card = ExcelHelper.getValue(row.getCell(6)).toString();
+                                    String gender = ExcelHelper.getValue(row.getCell(7)).toString();
+                                    String course = ExcelHelper.getValue(row.getCell(8)).toString();
 
-                                if (!first_name.isEmpty() && !last_name.isEmpty() && !email.isEmpty() && !dob.isEmpty() && !phone.isEmpty()
-                                        && !identity_card.isEmpty() && !gender.isEmpty() && !course.isEmpty()) {
+                                    if (!first_name.isEmpty() && !last_name.isEmpty() && !email.isEmpty() && !dob.isEmpty() && !phone.isEmpty()
+                                            && !identity_card.isEmpty() && !gender.isEmpty() && !course.isEmpty()) {
 
-                                    // Get Major
-                                    ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(MAJOR_URL + "findByMajorCode/" + course, HttpMethod.GET, request, ResponseModel.class);
-                                    String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
-                                    Major major = new ObjectMapper().readValue(majorJson, Major.class);
+                                        // Get Major
+                                        ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(MAJOR_URL + "findByMajorCode/" + course, HttpMethod.GET, request, ResponseModel.class);
+                                        String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
+                                        Major major = new ObjectMapper().readValue(majorJson, Major.class);
 
-                                    if (major != null) {
-                                        String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
+                                        if (major != null) {
+                                            String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
 
-                                        String studentCard = StringUtils.randomStudentCard(numbers);
-                                        ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL + "findStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
-                                        if (response.getBody() != null) {
-                                            studentCard = StringUtils.randomStudentCard(numbers);
-                                        }
+                                            String studentCard = StringUtils.randomStudentCard(numbers);
+                                            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL + "findStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
+                                            if (response.getBody() != null) {
+                                                studentCard = StringUtils.randomStudentCard(numbers);
+                                            }
 
-                                        //Save Account
-                                        Account account = new Account(studentCard, password, role.getId());
-                                        String jsonAccount = new ObjectMapper().writeValueAsString(account);
-                                        HttpHeaders headersAccount = new HttpHeaders();
-                                        headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                                        headersAccount.set("Authorization", "Bearer " + _token);
-                                        MultiValueMap<String, String> paramsAccount = new LinkedMultiValueMap<>();
-                                        paramsAccount.add("account", jsonAccount);
-                                        HttpEntity<MultiValueMap<String, String>> requestAccount = new HttpEntity<>(paramsAccount, headersAccount);
-                                        ResponseEntity<ResponseModel> responseAccount = restTemplate.exchange(ACCOUNT_URL, HttpMethod.POST, requestAccount, ResponseModel.class);
-                                        String accountResponseToJson = new ObjectMapper().writeValueAsString(responseAccount.getBody().getData());
-                                        Account accountResponse = new ObjectMapper().readValue(accountResponseToJson, Account.class);
+                                            //Save Account
+                                            Account account = new Account(studentCard.toLowerCase(), password, role.getId());
+                                            String jsonAccount = new ObjectMapper().writeValueAsString(account);
+                                            HttpHeaders headersAccount = new HttpHeaders();
+                                            headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                                            headersAccount.set("Authorization", "Bearer " + _token);
+                                            MultiValueMap<String, String> paramsAccount = new LinkedMultiValueMap<>();
+                                            paramsAccount.add("account", jsonAccount);
+                                            HttpEntity<MultiValueMap<String, String>> requestAccount = new HttpEntity<>(paramsAccount, headersAccount);
+                                            ResponseEntity<ResponseModel> responseAccount = restTemplate.exchange(ACCOUNT_URL, HttpMethod.POST, requestAccount, ResponseModel.class);
+                                            String accountResponseToJson = new ObjectMapper().writeValueAsString(responseAccount.getBody().getData());
+                                            Account accountResponse = new ObjectMapper().readValue(accountResponseToJson, Account.class);
 
-                                        Profile parseProfile = new Profile();
-                                        parseProfile.setDob(dob);
-                                        parseProfile.setEmail(email);
-                                        parseProfile.setPhone(phone);
-                                        parseProfile.setIdentityCard(identity_card);
-                                        parseProfile.setFirstName(first_name);
-                                        parseProfile.setLastName(last_name);
-                                        parseProfile.setSex(gender);
-                                        File fileImage = ResourceUtils.getFile("classpath:static/img/avatar.png");
-                                        FileInputStream inputStream = new FileInputStream(fileImage);
-                                        MultipartFile multipartFile = new MockMultipartFile("file", fileImage.getName(), "image/png", IOUtil.toByteArray(inputStream));
+                                            Profile parseProfile = new Profile();
+                                            parseProfile.setDob(dob);
+                                            parseProfile.setEmail(email);
+                                            parseProfile.setPhone(phone);
+                                            parseProfile.setIdentityCard(identity_card);
+                                            parseProfile.setFirstName(first_name);
+                                            parseProfile.setLastName(last_name);
+                                            parseProfile.setSex(gender);
+                                            File fileImage = ResourceUtils.getFile("classpath:static/img/avatar.png");
+                                            FileInputStream inputStream = new FileInputStream(fileImage);
+                                            MultipartFile multipartFile = new MockMultipartFile("file", fileImage.getName(), "image/png", IOUtil.toByteArray(inputStream));
 
-                                        //save profile
-                                        HttpHeaders headersProfile = new HttpHeaders();
-                                        headersProfile.set("Content-Type", "multipart/form-data");
-                                        headersProfile.set("Authorization", "Bearer " + _token);
-                                        MultiValueMap<String, Object> paramsProfile = new LinkedMultiValueMap<>();
-                                        parseProfile.setAccountId(accountResponse.getId());
-                                        String jsonProfile = new ObjectMapper().writeValueAsString(parseProfile);
-                                        paramsProfile.add("file", multipartFile.getResource());
-                                        paramsProfile.add("profile", jsonProfile);
-                                        HttpEntity<MultiValueMap<String, Object>> requestEntityProfile = new HttpEntity<>(paramsProfile, headersProfile);
-                                        ResponseEntity<ResponseModel> responseProfile = restTemplate.exchange(PROFILE_URL, HttpMethod.POST, requestEntityProfile, ResponseModel.class);
-                                        String profileResponseToJson = new ObjectMapper().writeValueAsString(responseProfile.getBody().getData());
-                                        Profile profileResponse = new ObjectMapper().readValue(profileResponseToJson, Profile.class);
+                                            //save profile
+                                            HttpHeaders headersProfile = new HttpHeaders();
+                                            headersProfile.set("Content-Type", "multipart/form-data");
+                                            headersProfile.set("Authorization", "Bearer " + _token);
+                                            MultiValueMap<String, Object> paramsProfile = new LinkedMultiValueMap<>();
+                                            parseProfile.setAccountId(accountResponse.getId());
+                                            String jsonProfile = new ObjectMapper().writeValueAsString(parseProfile);
+                                            paramsProfile.add("file", multipartFile.getResource());
+                                            paramsProfile.add("profile", jsonProfile);
+                                            HttpEntity<MultiValueMap<String, Object>> requestEntityProfile = new HttpEntity<>(paramsProfile, headersProfile);
+                                            ResponseEntity<ResponseModel> responseProfile = restTemplate.exchange(PROFILE_URL, HttpMethod.POST, requestEntityProfile, ResponseModel.class);
+                                            String profileResponseToJson = new ObjectMapper().writeValueAsString(responseProfile.getBody().getData());
+                                            Profile profileResponse = new ObjectMapper().readValue(profileResponseToJson, Profile.class);
 
 //                                      //Send mail
-                                        Mail mail = new Mail();
-                                        mail.setToMail(parseProfile.getEmail());
-                                        mail.setSubject("Account student HKT SYSTEM");
-                                        String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
-                                        Map<String, Object> props = new HashMap<>();
-                                        props.put("accountName", studentCard);
-                                        props.put("password", password);
-                                        props.put("fullname", name);
-                                        mail.setProps(props);
-                                        mailService.sendHtmlMessage(mail);
-                                        //-----------------------------
+                                            Mail mail = new Mail();
+                                            mail.setToMail(parseProfile.getEmail());
+                                            mail.setSubject("Account student HKT SYSTEM");
+                                            String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
+                                            Map<String, Object> props = new HashMap<>();
+                                            props.put("accountName", studentCard);
+                                            props.put("password", password);
+                                            props.put("fullname", name);
+                                            mail.setProps(props);
+                                            mailService.sendHtmlMessage(mail);
+                                            //-----------------------------
 
-                                        //Save student
-                                        MultiValueMap<String, String> paramsStudent = new LinkedMultiValueMap<>();
-                                        paramsStudent.add("studentCard", studentCard);
-                                        paramsStudent.add("profileId", String.valueOf(profileResponse.getId()));
-                                        HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsStudent, headers);
-                                        ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(STUDENT_URL, HttpMethod.POST, requestEntityStudent, ResponseModel.class);
-                                        String studentResponseToJson = new ObjectMapper().writeValueAsString(responseModelStudent.getBody().getData());
-                                        Student studentResponse = new ObjectMapper().readValue(studentResponseToJson, Student.class);
-                                        //----------------------
+                                            //Save student
+                                            MultiValueMap<String, String> paramsStudent = new LinkedMultiValueMap<>();
+                                            paramsStudent.add("studentCard", studentCard);
+                                            paramsStudent.add("profileId", String.valueOf(profileResponse.getId()));
+                                            HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsStudent, headers);
+                                            ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(STUDENT_URL, HttpMethod.POST, requestEntityStudent, ResponseModel.class);
+                                            String studentResponseToJson = new ObjectMapper().writeValueAsString(responseModelStudent.getBody().getData());
+                                            Student studentResponse = new ObjectMapper().readValue(studentResponseToJson, Student.class);
+                                            //----------------------
 
-                                        //save major-student
-                                        MajorStudent majorStudent = new MajorStudent(major.getId(), studentResponse.getId());
-                                        String jsonMajorStudent = new ObjectMapper().writeValueAsString(majorStudent);
-                                        HttpHeaders headersMajorStudent = new HttpHeaders();
-                                        headersMajorStudent.set("Content-Type", "multipart/form-data");
-                                        headersMajorStudent.set("Authorization", "Bearer " + _token);
-                                        MultiValueMap<String, String> paramsMajorStudent = new LinkedMultiValueMap<>();
-                                        paramsMajorStudent.add("student_major", jsonMajorStudent);
-                                        HttpEntity<MultiValueMap<String, String>> requestEntityMajorStudent = new HttpEntity<>(paramsMajorStudent, headersMajorStudent);
-                                        ResponseEntity<ResponseModel> responseStudentMajor = restTemplate.exchange(STUDENT_MAJOR_URL, HttpMethod.POST, requestEntityMajorStudent, ResponseModel.class);
-                                        //---------
+                                            //save major-student
+                                            MajorStudent majorStudent = new MajorStudent(major.getId(), studentResponse.getId());
+                                            String jsonMajorStudent = new ObjectMapper().writeValueAsString(majorStudent);
+                                            HttpHeaders headersMajorStudent = new HttpHeaders();
+                                            headersMajorStudent.set("Content-Type", "multipart/form-data");
+                                            headersMajorStudent.set("Authorization", "Bearer " + _token);
+                                            MultiValueMap<String, String> paramsMajorStudent = new LinkedMultiValueMap<>();
+                                            paramsMajorStudent.add("student_major", jsonMajorStudent);
+                                            HttpEntity<MultiValueMap<String, String>> requestEntityMajorStudent = new HttpEntity<>(paramsMajorStudent, headersMajorStudent);
+                                            ResponseEntity<ResponseModel> responseStudentMajor = restTemplate.exchange(STUDENT_MAJOR_URL, HttpMethod.POST, requestEntityMajorStudent, ResponseModel.class);
+                                            //---------
+                                        } else {
+                                            return new ResponseEntity<String>("Can't find curriculum at row " + (rowIndex + 1), HttpStatus.BAD_REQUEST);
+                                        }
                                     } else {
-                                        return new ResponseEntity<String>("Can't find curriculum at row " + (rowIndex + 1), HttpStatus.BAD_REQUEST);
+                                        return new ResponseEntity<String>("Some field at row " + (rowIndex + 1) + " is empty please fill it", HttpStatus.BAD_REQUEST);
                                     }
-                                } else {
-                                    return new ResponseEntity<String>("Some field at row " + (rowIndex + 1) + " is empty please fill it", HttpStatus.BAD_REQUEST);
                                 }
-                            }
-                            return new ResponseEntity<String>("Success", HttpStatus.OK);
+                                return new ResponseEntity<String>("Success", HttpStatus.OK);
                             } else {
-                                return new ResponseEntity<String>("Excel data must letter than 30 student", HttpStatus.BAD_REQUEST);
+                                return new ResponseEntity<String>("Excel data must less than or equals 30 student", HttpStatus.BAD_REQUEST);
                             }
                         } catch (Exception e) {
                             log.error("Import Student: " + e.getMessage());
