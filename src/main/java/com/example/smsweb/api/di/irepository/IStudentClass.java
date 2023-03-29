@@ -16,4 +16,5 @@ public interface IStudentClass extends IGenericRepository<StudentClass> {
     List<StudentClass> findStudentClassesByStudentId(int id);
 
     List<StudentClass> findClassesByStudentId(Integer id);
+    StudentClass findStudentClassByClassIdAndStudentId(Integer classId,Integer studentId);
 }

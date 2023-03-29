@@ -1,6 +1,5 @@
 package com.example.smsweb.client.dashboard;
 
-import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.dto.StudentClassModel;
 import com.example.smsweb.jwt.JWTUtils;
@@ -42,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -110,9 +110,9 @@ public class StudentController {
             String studentCard = StringUtils.randomStudentCard(numbers);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization","Bearer "+_token);
+            headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL+"findStudentCard/"+studentCard,HttpMethod.GET,request,String.class);
+            ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL + "findStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
             if (response.getBody() != null) {
                 studentCard = StringUtils.randomStudentCard(numbers);
             }
@@ -120,7 +120,7 @@ public class StudentController {
             //generate accountName = first_name+ last_name + dob
 //            String accountName = StringUtils.removeAccent(parseProfile.getFirstName()+parseProfile.getLastName()).toLowerCase().replace(" ","")
 //                    +parseProfile.getDob().replace("/","");
-            String password = RandomStringUtils.random(8,0,combinedChars.length(),true,true,combinedChars.toCharArray());
+            String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
 
 
             //Select role
@@ -134,7 +134,7 @@ public class StudentController {
             Role role = new ObjectMapper().readValue(responseRole.getBody(), Role.class);
 
             //Save Account
-            Account account = new Account(studentCard.toLowerCase(),password,role.getId());
+            Account account = new Account(studentCard.toLowerCase(), password, role.getId());
 
             String jsonAccount = new ObjectMapper().writeValueAsString(account);
             HttpHeaders headersAccount = new HttpHeaders();
@@ -167,11 +167,11 @@ public class StudentController {
             Mail mail = new Mail();
             mail.setToMail(parseProfile.getEmail());
             mail.setSubject("Account student HKT SYSTEM");
-            String name = profileResponse.getFirstName()+" "+profileResponse.getLastName();
-            Map<String,Object> props = new HashMap<>();
-            props.put("accountName",accountResponse.getUsername());
-            props.put("password",password);
-            props.put("fullname",name);
+            String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
+            Map<String, Object> props = new HashMap<>();
+            props.put("accountName", accountResponse.getUsername());
+            props.put("password", password);
+            props.put("fullname", name);
             mail.setProps(props);
             mailService.sendHtmlMessage(mail);
             //-----------------------------
@@ -179,7 +179,7 @@ public class StudentController {
             //Save student
             //generate studentCard
             HttpHeaders headerStudent = new HttpHeaders();
-            headerStudent.set("Authorization","Bearer "+_token);
+            headerStudent.set("Authorization", "Bearer " + _token);
 
             MultiValueMap<String, String> paramsStudent = new LinkedMultiValueMap<>();
             paramsStudent.add("studentCard", studentCard);
@@ -477,6 +477,10 @@ public class StudentController {
                             String numbers = "1234567890";
                             String combinedChars = capitalCaseLetters + lowerCaseLetters + numbers;
 
+                            HttpHeaders headers = new HttpHeaders();
+                            headers.set("Authorization", "Bearer " + _token);
+                            HttpEntity<Object> request = new HttpEntity<>(headers);
+
                             //Select role
                             HttpHeaders headersRole = new HttpHeaders();
                             headersRole.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -489,35 +493,45 @@ public class StudentController {
 
 //                            int excelLength = ExcelHelper.getNumberOfNonEmptyCells(sheet, 3);
 //                            if (excelLength < 26) {
-                                for (int rowIndex = 2; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
-                                    XSSFRow row = sheet.getRow(rowIndex);
-                                    Cell date = row.getCell(4);
+                            for (int rowIndex = 2; rowIndex < ExcelHelper.getNumberOfNonEmptyCells(sheet, 0); rowIndex++) {
+                                XSSFRow row = sheet.getRow(rowIndex);
+                                Cell date = row.getCell(4);
 
-                                    int day = date.getLocalDateTimeCellValue().getDayOfMonth();
-                                    int month = date.getLocalDateTimeCellValue().getMonthValue();
-                                    int year = date.getLocalDateTimeCellValue().getYear();
-                                    String first_name = ExcelHelper.getValue(row.getCell(1)).toString();
-                                    String last_name = ExcelHelper.getValue(row.getCell(2)).toString();
-                                    String email = ExcelHelper.getValue(row.getCell(3)).toString();
-                                    String dob = "";
-                                    if (date != null) {
-                                        dob = year + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
-                                    }
-                                    String phone = ExcelHelper.getValue(row.getCell(5)).toString();
-                                    String identity_card = ExcelHelper.getValue(row.getCell(6)).toString();
-                                    String gender = ExcelHelper.getValue(row.getCell(7)).toString();
-                                    String course = ExcelHelper.getValue(row.getCell(8)).toString();
+                                String first_name = ExcelHelper.getValue(row.getCell(1)).toString();
+                                String last_name = ExcelHelper.getValue(row.getCell(2)).toString();
+                                String email = ExcelHelper.getValue(row.getCell(3)).toString();
+                                String dob = "";
+                                if (date != null) {
+                                    dob = date.getLocalDateTimeCellValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                                }
+                                String phone = ExcelHelper.getValue(row.getCell(5)).toString();
+                                String identity_card = ExcelHelper.getValue(row.getCell(6)).toString();
+                                String gender = ExcelHelper.getValue(row.getCell(7)).toString();
+                                String course = ExcelHelper.getValue(row.getCell(8)).toString();
 
-                                    if (!first_name.isEmpty() && !last_name.isEmpty() && !email.isEmpty() && !dob.isEmpty() && !phone.isEmpty()
-                                            && !identity_card.isEmpty() && !gender.isEmpty() && !course.isEmpty()) {
+                                if (!first_name.isEmpty() && !last_name.isEmpty() && !email.isEmpty() && !dob.isEmpty() && !phone.isEmpty()
+                                        && !identity_card.isEmpty() && !gender.isEmpty() && !course.isEmpty()) {
 
-                                        //generate accountName = first_name+ last_name + dob
-                                        String accountName = StringUtils.removeAccent(first_name + last_name).toLowerCase().replace(" ", "")
-                                                + (day < 10 ? "0" + day : day) + (month < 10 ? "0" + month : month) + year;
+                                    // Get Major
+                                    ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(MAJOR_URL + "findByMajorCode/" + course, HttpMethod.GET, request, ResponseModel.class);
+                                    String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
+                                    Major major = new ObjectMapper().readValue(majorJson, Major.class);
+
+                                    // Get Profile
+
+
+                                    if (major != null) {
                                         String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
 
+                                        String studentCard = StringUtils.randomStudentCard(numbers);
+                                        ResponseEntity<String> response = restTemplate.exchange(STUDENT_URL + "findStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
+                                        if (response.getBody() != null) {
+                                            studentCard = StringUtils.randomStudentCard(numbers);
+                                        }
+
+
                                         //Save Account
-                                        Account account = new Account(accountName, password, role.getId());
+                                        Account account = new Account(studentCard, password, role.getId());
                                         String jsonAccount = new ObjectMapper().writeValueAsString(account);
                                         HttpHeaders headersAccount = new HttpHeaders();
                                         headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -556,40 +570,30 @@ public class StudentController {
                                         Profile profileResponse = new ObjectMapper().readValue(profileResponseToJson, Profile.class);
 
 //                                      //Send mail
-//                                      Mail mail = new Mail();
-//                                      mail.setToMail(parseProfile.getEmail());
-//                                      mail.setSubject("Account student HKT SYSTEM");
-//                                      String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
-//                                      Map<String, Object> props = new HashMap<>();
-//                                      props.put("accountName", accountName);
-//                                      props.put("password", password);
-//                                      props.put("fullname", name);
-//                                      mail.setProps(props);
-//                                      mailService.sendHtmlMessage(mail);
+                                        Mail mail = new Mail();
+                                        mail.setToMail(parseProfile.getEmail());
+                                        mail.setSubject("Account student HKT SYSTEM");
+                                        String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
+                                        Map<String, Object> props = new HashMap<>();
+                                        props.put("accountName", studentCard);
+                                        props.put("password", password);
+                                        props.put("fullname", name);
+                                        mail.setProps(props);
+                                        mailService.sendHtmlMessage(mail);
                                         //-----------------------------
 
                                         //Save student
                                         //generate studentCard
-                                        HttpHeaders headerStudent = new HttpHeaders();
-                                        headerStudent.set("Authorization", "Bearer " + _token);
-                                        String studentCard = StringUtils.randomStudentCard(numbers);
                                         MultiValueMap<String, String> paramsStudent = new LinkedMultiValueMap<>();
                                         paramsStudent.add("studentCard", studentCard);
                                         paramsStudent.add("profileId", String.valueOf(profileResponse.getId()));
-                                        HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsStudent, headerStudent);
+                                        HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsStudent, headers);
                                         ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(STUDENT_URL, HttpMethod.POST, requestEntityStudent, ResponseModel.class);
                                         String studentResponseToJson = new ObjectMapper().writeValueAsString(responseModelStudent.getBody().getData());
                                         Student studentResponse = new ObjectMapper().readValue(studentResponseToJson, Student.class);
                                         //----------------------
 
                                         //save major-student
-                                        HttpHeaders headerMajor = new HttpHeaders();
-                                        headerStudent.set("Authorization", "Bearer " + _token);
-                                        HttpEntity<String> requestMajor = new HttpEntity<>(headerMajor);
-                                        ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(MAJOR_URL + "findByMajorCode/" + course.split("-")[0], HttpMethod.GET, requestMajor, ResponseModel.class);
-                                        String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
-                                        Major major = new ObjectMapper().readValue(majorJson, Major.class);
-
                                         MajorStudent majorStudent = new MajorStudent(major.getId(), studentResponse.getId());
                                         String jsonMajorStudent = new ObjectMapper().writeValueAsString(majorStudent);
                                         HttpHeaders headersMajorStudent = new HttpHeaders();
@@ -601,10 +605,13 @@ public class StudentController {
                                         ResponseEntity<ResponseModel> responseStudentMajor = restTemplate.exchange(STUDENT_MAJOR_URL, HttpMethod.POST, requestEntityMajorStudent, ResponseModel.class);
                                         //---------
                                     } else {
-                                        return new ResponseEntity<String>("Some field at row " + (rowIndex +  1) + " is empty please fill it", HttpStatus.BAD_REQUEST);
+                                        return new ResponseEntity<String>("Can't find curriculum at row " + (rowIndex + 1), HttpStatus.BAD_REQUEST);
                                     }
+                                } else {
+                                    return new ResponseEntity<String>("Some field at row " + (rowIndex + 1) + " is empty please fill it", HttpStatus.BAD_REQUEST);
                                 }
-                                return new ResponseEntity<String>("Success", HttpStatus.OK);
+                            }
+                            return new ResponseEntity<String>("Success", HttpStatus.OK);
 //                            } else {
 //                                return new ResponseEntity<String>("Excel data must letter than 26 student", HttpStatus.BAD_REQUEST);
 //                            }

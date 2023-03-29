@@ -110,4 +110,14 @@ public class StudentClassRestController extends GenericController<StudentClass> 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Don't find any records"));
         }
     }
+
+    @PostMapping("/getStudentClassByClassIdAndStudentId")
+    public ResponseEntity<?> getStudentClassByClassIdAndStudentId(@RequestParam("classId")Integer classId,
+                                                                  @RequestParam("studentId") Integer studentId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success",LocalDate.now().toString(),service.findStudentClassByClassIdAndStudentId(classId, studentId)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error",LocalDate.now().toString(),"Don't find any records"));
+        }
+    }
 }

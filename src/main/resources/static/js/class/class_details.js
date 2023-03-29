@@ -55,14 +55,17 @@ $(document).ready(function () {
     $('#newDate_input').datetimepicker({
         format: 'DD/MM/YYYY',
     });
+
     $('#day_default_input').datetimepicker({
         format: 'DD/MM/YYYY',
     });
+
     $('#btn_update_schedule').css('display', 'none')
     $('#btnDownSchedule').hide()
     $('#btn_create_schedule').hide()
     $('#btn_submitChangeDate').hide()
     $('#btn_submitTeacher').hide()
+
     $("#student-table").DataTable({
         pageLength: 5,
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
@@ -448,37 +451,38 @@ $(document).ready(function () {
                 });
             }
         }
-    })
+    });
+
     $('#teacher_change').on('change', () => {
         let card = $('#teacher_change').val()
         let shift = $('#shift').val()
         let data = new FormData()
-        data.append("card",card)
-        data.append("shift",shift)
+        data.append("card", card)
+        data.append("shift", shift)
         $.ajax({
             url: `/dashboard/class/checkTeacherChange`,
             method: "POST",
-            data:data,
+            data: data,
             contentType: false,
             cache: false,
             processData: false,
             success: (res) => {
                 console.log(res)
-               if(res.toLowerCase()==="success"){
-                   Swal.fire(
-                       "",
-                       `You can swap this teacher !`,
-                       "success"
-                   )
-                   $('#btn_submitTeacher').show()
-               }else{
-                   Swal.fire(
-                       "",
-                       `This time the teacher has a class !`,
-                       "error"
-                   )
-                   $('#btn_submitTeacher').hide()
-               }
+                if (res.toLowerCase() === "success") {
+                    Swal.fire(
+                        "",
+                        `You can swap this teacher !`,
+                        "success"
+                    )
+                    $('#btn_submitTeacher').show()
+                } else {
+                    Swal.fire(
+                        "",
+                        `This time the teacher has a class !`,
+                        "error"
+                    )
+                    $('#btn_submitTeacher').hide()
+                }
             }, error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 $("#student_update").modal("hide");
@@ -501,6 +505,7 @@ $(document).ready(function () {
 
         })
     })
+
     $('#btn_submitTeacher').on('click', () => {
         Swal.fire({
             title: '',
@@ -560,6 +565,7 @@ $(document).ready(function () {
             }
         })
     })
+
     $('#btnSendSchedule').on('click', () => {
         let data = new FormData();
         data.append("file", $("#fileSchedule").get(0).files[0])
@@ -679,14 +685,14 @@ $(document).ready(function () {
             cache: false,
             processData: false,
             success: (res) => {
-                if(res.toLowerCase() === "success"){
+                if (res.toLowerCase() === "success") {
                     Swal.fire(
                         'Change teacher success',
                         'success'
                     )
                     $('#change_teacher_schedule').modal('hide')
                     OnChangeSemesterSchedule();
-                }else{
+                } else {
                     Swal.fire(
                         'Change teacher failed',
                         'error'
@@ -716,23 +722,23 @@ $(document).ready(function () {
 
     })
 
-    $('#startDate').on('change',()=>{
+    $('#startDate').on('change', () => {
         console.log($('#startDate').val())
         console.log(isFutureDate($('#startDate').val()))
-        if(!isFutureDate($('#startDate').val())){
+        if (!isFutureDate($('#startDate').val())) {
             $('#btn_create_schedule').hide()
             $('.error-choose_day').html('Cannot choose day is past . Try again!')
-        }else{
+        } else {
             $('#btn_create_schedule').show()
             $('.error-choose_day').html('')
         }
     })
 
-    $('.newDate').on('change',()=>{
-        if(!isFutureDate($('.newDate').val())){
+    $('.newDate').on('change', () => {
+        if (!isFutureDate($('.newDate').val())) {
             $('#btn_submitChangeDate').hide()
             $('.error-choose_day').html('Cannot choose day is past . Try again!')
-        }else{
+        } else {
             $('#btn_submitChangeDate').show()
             $('.error-choose_day').html('')
         }
@@ -740,6 +746,63 @@ $(document).ready(function () {
 
 });
 
+var OnImportListStudent = () => {
+    swal.showLoading();
+    var file = $("#studentList").get(0).files[0];
+    var formData = new FormData();
+    var availablePlace = $("#availablePlace").val();
+    var classId = $("#classId").val();
+    formData.append("file", file);
+    formData.append("classId", classId);
+    formData.append("availablePlace", availablePlace);
+    $.ajax({
+        url: "/dashboard/class/import-excel-student",
+        method: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        enctype: "multipart/file",
+        beforeSend: () => {
+            $("#class_import_student_file").modal("hide");
+            var sweet_loader = `<div id="spinner-divI">
+                            <div style="overflow: hidden" class="spinner-border m-0 text-primary" role="status"></div>
+                        </div>`
+            Swal.fire({
+                title: 'Importing student',
+                html: sweet_loader,// add html attribute if you want or remove
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                customClass: "swal-height",
+            });
+        }, success: (response) => {
+            setTimeout(() => {
+                Swal.close();
+                toastr.success("Import student success");
+                setTimeout(()=>{
+                    location.reload();
+                },1500)
+            }, 1500);
+        }, error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                setTimeout(() => {
+                    Swal.close();
+                    toastr.error(data.responseText);
+                }, 1500);
+            }
+        }
+    });
+}
 
 var OnUpdateDate = (id, date, slot) => {
     // console.log(id)
@@ -1337,35 +1400,35 @@ let OnchangeRoom = () => {
     $('#change_room').modal('show')
     let data = new FormData();
 
-    data.append("shift",$("#shift").val());
+    data.append("shift", $("#shift").val());
     $.ajax({
         url: "/dashboard/class/getAvailableRoom",
         method: "POST",
-        data:data,
+        data: data,
         cache: false,
         processData: false,
         contentType: false,
         enctype: "multipart/form-data",
         success: (response) => {
             let parse = JSON.parse(response);
-            if (parse.length == 0){
-                parse.forEach( item =>{
+            if (parse.length == 0) {
+                parse.forEach(item => {
                     $(`
                     <option value="">--No room available--</option>
                 `).appendTo("#room_change");
                 });
-            }else {
+            } else {
                 $(`
                     <option value="">--Select Room--</option>
                 `).appendTo("#room_change");
-                parse.forEach( item =>{
+                parse.forEach(item => {
                     $(`
                     <option value="${item.id}">${item.roomCode}</option>
                 `).appendTo("#room_change");
                 });
             }
         },
-        error: (error)=>{
+        error: (error) => {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -1379,11 +1442,12 @@ let OnchangeRoom = () => {
 }
 
 let btn_submit_change_room = $("#btn_submit_change_room");
-btn_submit_change_room.click((event) =>{
+
+btn_submit_change_room.click((event) => {
     event.preventDefault();
 
     let roomId = $("#room_change").val();
-    if (roomId == "" || roomId == null){
+    if (roomId == "" || roomId == null) {
         Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -1392,7 +1456,7 @@ btn_submit_change_room.click((event) =>{
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Ok',
         })
-    }else {
+    } else {
         Swal.fire({
             icon: 'question',
             title: 'Change to this room?',
@@ -1403,12 +1467,12 @@ btn_submit_change_room.click((event) =>{
         }).then((result) => {
             if (result.isConfirmed) {
                 let data = new FormData();
-                data.append("classId",$("#classId").val());
-                data.append("roomId",roomId);
+                data.append("classId", $("#classId").val());
+                data.append("roomId", roomId);
                 $.ajax({
                     url: "/dashboard/class/class-update-room",
                     method: "POST",
-                    data:data,
+                    data: data,
                     cache: false,
                     processData: false,
                     contentType: false,
@@ -1423,7 +1487,7 @@ btn_submit_change_room.click((event) =>{
                             confirmButtonText: 'Ok',
                         })
                     },
-                    error: (error)=>{
+                    error: (error) => {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',

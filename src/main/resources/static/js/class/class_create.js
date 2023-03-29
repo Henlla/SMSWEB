@@ -123,6 +123,10 @@ $(()=>{
     let selectDepartment = $('#department')
     let selectDayOfWeek = $('#dayOfWeek')
 
+    $(".select2").select2({
+        theme:"bootstrap4",
+    })
+
     jQuery.validator.addMethod("dateGreaterThan",
         function(value, element, params) {
         $("#inputToday").val(today);

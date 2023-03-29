@@ -38,11 +38,15 @@
                         <input type="text" class="form-control classCode" id="classCode" name="classCode" readonly="">
                     </div> <!-- classCode-->
                     <div class="col-6">
-                        <label>Major code :</label>
-                        <select id="majorId" class="form-control major" name="majorId" style="width: 100%;">
-                            <option selected="selected">----- Choose major------</option>
+                        <label>Curriculum:</label>
+                        <select id="majorId" class="form-control select2" name="majorId" style="width: 100%;">
+                            <option selected="selected">----- Choose curriculum------</option>
                             <th:block th:each="major : ${majors}">
+<<<<<<< Updated upstream
                                 <option th:data-code="${major.majorCode}" th:value="${major.id}">[[${major.majorName}]]</option>
+=======
+                                <option th:value="${major.id}">[[${major.majorCode}]]</option>
+>>>>>>> Stashed changes
                             </th:block>
                         </select>
                     </div>  <!-- Major-->
@@ -56,7 +60,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="dayOfWeek">Day of week:</label>
-                                <select id="dayOfWeek" class="form-control teacher" name="dayOfWeek" style="width: 100%;">
+                                <select id="dayOfWeek" class="form-control select2" name="dayOfWeek" style="width: 100%;">
                                     <option value="">-----Choose days------</option>
                                     <option value="0">Monday - Wednesday - Friday</option>
                                     <option value="1">Tuesday - Thursday - Saturday</option>
@@ -66,7 +70,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="shift">Time :</label>
-                                <select id="shift" class="form-control teacher" name="shift" style="width: 100%;">
+                                <select id="shift" class="form-control select2" name="shift" style="width: 100%;">
                                     <option value="">-----Choose time------</option>
                                     <option value="M">Morning</option>
                                     <option value="A">Afternoon</option>
@@ -75,6 +79,7 @@
                             </div>
                         </div>
                     </div>  <!-- Shift-->
+<<<<<<< Updated upstream
                     <div class="col-6 row">
                         <div class="col-6">
                             <div class="form-group">
@@ -86,6 +91,17 @@
                                     </th:block>
                                 </select>
                             </div>
+=======
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="roomList">Room</label>
+                            <select  class="form-control select2" name="roomList" id="roomList">
+                                <option value="">-----Choose room-----</option>
+                                <th:block th:each="room:${roomList}">
+                                    <option th:value="${room.getId()}">[[${room.roomCode}]]</option>
+                                </th:block>
+                            </select>
+>>>>>>> Stashed changes
                         </div>
                         <div class="col-6">
                             <div class="form-group">
@@ -98,35 +114,36 @@
                     </div>    <!-- Room-->
                     <div class="col-6">
                         <label>Teacher :</label>
-                        <select id="teacherId" class="form-control teacher" name="teacherId" style="width: 100%;">
-                            <option value="">--Slect all inputs to get teacher--</option>
+                        <select id="teacherId" class="form-control select2" name="teacherId" style="width: 100%;">
+                            <option value="">--Select all inputs to get teacher--</option>
                         </select>
                     </div>    <!-- teacher-->
                     <div class="col-6">
                         <div class="form-group">
                             <label for="limitStudent">Limit student</label>
                             <input type="number" value="22" min="18" max="26" class="form-control" id="limitStudent" name="limitStudent"
-                                   placeholder="Số Sinh viên tối đa">
+                                   placeholder="Limit student">
                         </div>
                     </div>   <!-- limitStudent-->
-                    <div class="col-6">
+                    <div class="col-6 d-none">
                         <div class="form-group">
                             <label for="studentList">Import list of
-                                student&nbsp;&nbsp;</label><a href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Download
+                                student&nbsp;&nbsp;</label><a href="/TempExcel/student_import.xlsx" download>Download
                             example file</a>
                             <input type="file" accept=".xlsx" class="form-control" id="studentList" name="studentList">
                         </div>
-                    </div>    <!-- studentList-->
-
-                    <div class="col-6 form-group mx-auto">
-                        <button type="submit" id="btn_create_class" class="btn btn-default btn-block">Create
-                        </button>
                     </div>
+                    <!-- studentList-->
+                </div>
+                <div class="col-6 form-group mx-auto">
+                    <button type="submit" id="btn_create_class" class="btn btn-default btn-block">Create
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 <th:block layout:fragment="optional">
     <script type="text/javascript" src="/js/class/class_create.js"></script>
 </th:block>

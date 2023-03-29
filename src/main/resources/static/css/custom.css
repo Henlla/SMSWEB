@@ -7,6 +7,10 @@
     height: 30px !important;
 }
 
+.swal-height {
+    height: 20vh;
+}
+
 .select2-results__option{
     font-size: 14px;
 }
