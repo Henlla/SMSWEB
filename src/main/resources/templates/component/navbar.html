@@ -34,6 +34,21 @@
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>Room<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/room/index'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Room</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
                         <i class="fas fa-hashtag"></i>
                         <p>Major<i class="right fas fa-angle-left"></i></p>
                     </a>
@@ -78,31 +93,6 @@
                     <a href="#" class="nav-link active">
                         <i class="fas fa-user"></i>
                         <p>
-                            Student
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a th:href="@{'/dashboard/student/index-student'}" class="nav-link active">
-                                <i class="fas fa-list"></i>
-                                <p>List Student</p>
-                            </a>
-                        </li>
-                    </ul>
-                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a th:href="@{'/dashboard/student/create-student'}" class="nav-link active">
-                                <i class="fas fa-plus"></i>
-                                <p>Create Student</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-user"></i>
-                        <p>
                             Teacher
                             <i class="right fas fa-angle-left"></i>
                         </p>
@@ -127,20 +117,6 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link active">
                         <i class="fas fa-user"></i>
-                        <p>Room<i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a th:href="@{'/dashboard/room/index'}" class="nav-link active">
-                                <i class="fas fa-list"></i>
-                                <p>List Room</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-user"></i>
                         <p>Class<i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview">
@@ -156,6 +132,31 @@
                             <a th:href="@{'/dashboard/class/class-create'}" class="nav-link active">
                                 <i class="fas fa-plus"></i>
                                 <p>Create Class</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        <p>
+                            Student
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/student/index-student'}" class="nav-link active">
+                                <i class="fas fa-list"></i>
+                                <p>List Student</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a th:href="@{'/dashboard/student/create-student'}" class="nav-link active">
+                                <i class="fas fa-plus"></i>
+                                <p>Create Student</p>
                             </a>
                         </li>
                     </ul>

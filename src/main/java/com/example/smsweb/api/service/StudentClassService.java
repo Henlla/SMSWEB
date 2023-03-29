@@ -87,4 +87,9 @@ public class StudentClassService implements IStudentClass {
     public List<StudentClass> findClassesByStudentId(Integer id) {
         return repository.findStudentClassesByStudentId(id).orElseThrow(()->new ErrorHandler("Don't find any records"));
     }
+
+    @Override
+    public StudentClass findStudentClassByClassIdAndStudentId(Integer classId, Integer studentId) {
+        return repository.findStudentClassByClassIdAndStudentId(classId, studentId);
+    }
 }
