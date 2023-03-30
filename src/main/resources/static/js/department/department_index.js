@@ -1,3 +1,51 @@
+$(()=>{
+    $('#apartment').select2({
+        theme:'bootstrap4'
+    })
+    $("#department-table").dataTable({
+        pageLength: 5,
+        lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
+        scrollCollapse: true,
+        scrollY: '300px',
+        columnDefs: [
+            {
+                "targets": [0, 1, 2, 3, 4],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2, 4],
+                "orderable": false,
+            }
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
+
+})
+
+
 let OnCreateDepartment = () => {
     let code = $('#create_department_code').val()
     let name = $('#create_department_name').val()
@@ -185,4 +233,42 @@ let OnUpdateDepartment = ()=>{
             }
         })
     }
+}
+
+let OnDetails = (id)=>{
+    $('#view_department_modal').modal()
+    $('#department').val(id)
+}
+
+let OnGetClass=()=>{
+    let department_id = $('#department').val()
+    let apartment_id = $('#apartment').val()
+    let data = new FormData()
+    data.append("departmentId",department_id)
+    data.append("apartmentId",apartment_id)
+
+    $.ajax({
+        url:"/dashboard/department/viewDepartment",
+        method:"POST",
+        data:data,
+        cache : false,
+        processData: false,
+        contentType: false,
+        success:(res)=>{
+            console.log(res)
+            let container = document.getElementsByClassName("data")[0]
+            container.innerHTML=""
+            let row = document.createElement("div")
+            row.classList.add("row")
+            container.appendChild(row)
+
+            for (let i of res){
+                let col = document.createElement("div")
+                col.classList.add("col-6")
+                col.innerHTML = `<span><i class="fas fa-dot-circle"></i> <a href='/dashboard/class/class-details/${i.classCode}'>${i.classCode}</a></span>`
+                row.appendChild(col)
+            }
+
+        }
+    })
 }

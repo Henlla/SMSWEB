@@ -584,6 +584,19 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             data: data,
+            beforeSend: () => {
+                $('#send_schedule').modal('hide')
+                var sweet_loader = `<div id="spinner-divI">
+                            <div style="overflow: hidden" class="spinner-border m-0 text-primary" role="status"></div>
+                        </div>`
+                Swal.fire({
+                    title: 'Send timetable to student',
+                    html: sweet_loader,// add html attribute if you want or remove
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    customClass: "swal-height",
+                });
+            },
             success: () => {
                 Swal.fire(
                     "",
