@@ -24,6 +24,12 @@ var OnCreateSchedule = (classId, majorId, shift) => {
                     `Schedule for semester ${semester} already exist !`,
                     "error"
                 )
+            }else if(res ==="error schedule"){
+                Swal.fire(
+                    "",
+                    `You have to create schedule ${semester - 1} before !`,
+                    "error"
+                )
             } else if (res === "error date") {
                 Swal.fire(
                     "",
@@ -52,6 +58,9 @@ var OnCreateSchedule = (classId, majorId, shift) => {
 }
 
 $(document).ready(function () {
+    $('#mySelect2').select2({
+        dropdownParent: $('#update_mark')
+    });
     $('#newDate_input').datetimepicker({
         format: 'DD/MM/YYYY',
     });
@@ -578,6 +587,19 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             data: data,
+            beforeSend: () => {
+                $('#send_schedule').modal('hide')
+                var sweet_loader = `<div id="spinner-divI">
+                            <div style="overflow: hidden" class="spinner-border m-0 text-primary" role="status"></div>
+                        </div>`
+                Swal.fire({
+                    title: 'Send timetable to student',
+                    html: sweet_loader,// add html attribute if you want or remove
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    customClass: "swal-height",
+                });
+            },
             success: () => {
                 Swal.fire(
                     "",
@@ -744,8 +766,169 @@ $(document).ready(function () {
         }
     })
 
-});
+    let selectSubjectUpdate = $("#select_subject_update");
+    let selectStudentUpdate = $("#select_student_update");
+    selectSubjectUpdate.change(function (){
+        let subjectId = $("#select_subject_update").val();
+        let studentId = $("#select_student_update").val();
+        if (studentId.length > 0 && subjectId.length > 0){
+            $.ajax({
+                url: "/dashboard/class/get-mark/"+subjectId+"/"+studentId,
+                method: "GET",
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: (response) => {
+                    let parse = JSON.parse(response);
+                    $("#asm_mark_update").val(parse.asm)
+                    $("#obj_mark_update").val(parse.obj)
+                    $("#mark_id").val(parse.id)
+                },
+                error: (error)=>{
+                    $("#select_subject_update").val("").change();
+                    $("#select_student_update").val("").change();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.responseJSON.message,
+                        showDenyButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok',
+                    })
+                },
+            });
+        }
+    });
+    selectStudentUpdate.change(function (){
+        let subjectId = $("#select_subject_update").val();
+        let studentId = $("#select_student_update").val();
+        if (studentId.length > 0 && subjectId.length > 0){
+            $.ajax({
+                url: "/dashboard/class/get-mark/"+subjectId+"/"+studentId,
+                method: "GET",
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: (response) => {
+                    let parse = JSON.parse(response);
+                    $("#asm_mark_update").val(parse.asm)
+                    $("#obj_mark_update").val(parse.obj)
+                    $("#mark_id").val(parse.id)
+                },
+                error: (error)=>{
+                    $("#select_subject_update").val("").change();
+                    $("#select_student_update").val("").change();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.responseJSON.message,
+                        showDenyButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok',
+                    })
+                },
+            });
+        }
+    });
 
+    $("#form_update_mark").submit(function (event) {
+        event.preventDefault()
+        let formData = new FormData(document.querySelector("#form_update_mark"));
+        $('#form_update_mark').validate({
+            rules: {
+                select_subject_update: {
+                    required: true,
+                },
+                select_student_update: {
+                    required: true,
+                },
+                asm_mark_update: {
+                    required: true,
+                    range: [0,100]
+                },
+                obj_mark_update: {
+                    required: true,
+                    range: [0,100]
+                },
+            },
+            messages: {
+                select_subject_update: {
+                    required: "Please choose subject!",
+                },
+                select_student_update: {
+                    required: "Please choose student!",
+                },
+                asm_mark_update: {
+                    required: "Enter asm mark!",
+                    range: "mark must in range 0-100",
+                },
+                obj_mark_update: {
+                    required: "Enter obj mark!",
+                    range: "mark must in range 0-100",
+                },
+            },
+        })
+        if ($("#form_update_mark").valid()){
+            Swal.fire({
+                icon: 'question',
+                title: 'Confirm',
+                text: "Are you sure confirm this mark",
+                showCancelButton: true,
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Ok',
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    let newMark = {
+                        "id":formData.get("mark_id"),
+                        "asm":formData.get("asm_mark_update"),
+                        "obj":formData.get("obj_mark_update"),
+                        "updateTimes":0,
+                        "studentSubjectId":0
+                    }
+                    formData.append("newMark",JSON.stringify(newMark))
+                    $.ajax({
+                        url: "/dashboard/class/update-mark",
+                        method: "POST",
+                        data:formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        enctype: "multipart/form-data",
+                        success: (response) => {
+                            $("#select_subject_update").val("").change();
+                            $("#select_student_update").val("").change();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Update mark Success",
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            });
+                        },
+                        error: (error)=>{
+                            $("#select_subject_update").val("").change();
+                            $("#select_student_update").val("").change();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error.responseJSON.message,
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            })
+                        },
+                    });
+                }
+            })
+
+        }
+    })
+
+});
 var OnImportListStudent = () => {
     swal.showLoading();
     var file = $("#studentList").get(0).files[0];
@@ -1401,6 +1584,8 @@ let OnchangeRoom = () => {
     let data = new FormData();
 
     data.append("shift", $("#shift").val());
+    data.append("departmentId", $("#departmentId").val())
+    data.append("date", moment().format('YYYY-MM-D'))
     $.ajax({
         url: "/dashboard/class/getAvailableRoom",
         method: "POST",

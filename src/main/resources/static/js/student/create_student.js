@@ -211,7 +211,7 @@ $(()=>{
 
         $.validator.addMethod("checkAge", function(value, element){
             var dateParts = value.split("/");
-// month is 0-based, that's why we need dataParts[1] - 1
+            // month is 0-based, that's why we need dataParts[1] - 1
             var date = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
             console.log(value)
             let age = _calculateAge(date)
@@ -221,6 +221,10 @@ $(()=>{
 
         $.validator.addMethod("checkPhoneNumber", function(value, element){
             return regexPhone(value);
+        }, "Please enter incorrect phone");
+
+        $.validator.addMethod("checkIdentityCard", function(value, element){
+            return isCheck;
         }, "Please enter incorrect phone");
 
         $('#form-create').validate({
@@ -245,6 +249,7 @@ $(()=>{
                     email:true
                 },
                 identityCard: {
+                    checkIdentityCard:true,
                     required: true
                 },
                 province: {
@@ -283,6 +288,7 @@ $(()=>{
                     email:"Email wrong format xxxx@xxx.xxx"
                 },
                 identityCard: {
+                    checkIdentityCard:"Identity card is exist",
                     required: "Please enter identity card "
                 },
                 province: {
@@ -363,6 +369,34 @@ $(()=>{
 
 })
 
+let isCheck = false
+
+let CheckIdentityCard= ()=>{
+
+    let data = new FormData()
+    data.append("identityCard",$('#identityCard').val())
+
+    $.ajax({
+        url:"/dashboard/student/checkIdentityCard",
+        method:"POST",
+        data:data,
+        cache : false,
+        processData: false,
+        contentType: false,
+        success:(res)=>{
+            if(res.toLowerCase() === "success"){
+                isCheck = true
+                console.log(isCheck)
+                $('#identityCard-error').hide()
+                $('#identityCard-error').html("")
+            }else{
+                $('#identityCard-error').show()
+                $('#identityCard-error').html("Identity card is exist !")
+            }
+        }
+
+    })
+}
 
 
 

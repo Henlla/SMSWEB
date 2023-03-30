@@ -85,17 +85,21 @@ var OnDetailSchedule = ()=>{
                                     td0_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                               <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 } else {
                                     td0_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 }
                             case "TUESDAY":
@@ -103,17 +107,21 @@ var OnDetailSchedule = ()=>{
                                     td1_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 } else {
                                     td1_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 }
                             case "WEDNESDAY":
@@ -121,17 +129,21 @@ var OnDetailSchedule = ()=>{
                                     td2_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 } else {
                                     td2_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 }
                             case "THURSDAY":
@@ -139,17 +151,21 @@ var OnDetailSchedule = ()=>{
                                     td3_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 } else {
                                     td3_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 }
                             case "FRIDAY":
@@ -157,17 +173,21 @@ var OnDetailSchedule = ()=>{
                                     td4_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 } else {
                                     td4_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 }
                             case "SATURDAY":
@@ -175,17 +195,21 @@ var OnDetailSchedule = ()=>{
                                     td5_1.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 } else {
                                     td5_2.innerHTML = `<span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${j.subject.subjectCode}</span>
                                       <div class="margin-10px-top font-size14" style="display: flex;justify-content: center;">${j.date}
                                       </div>
-                                      <div class="font-size13 text-light-gray" style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
+                                      <div class="font-size13 " style="display: flex;justify-content: center">${j.teacher.profileByProfileId.firstName + ' ' + j.teacher.profileByProfileId.lastName}
                                                </div>
-                                      <div class="font-size13 text-light-gray">${arrTime[j.slot - 1]}</div>`
+                                                <div class="font-size13 " style="display: flex;justify-content: center">${$("#classRoom").val()}
+                                               </div>
+                                      <div class="font-size13 ">${arrTime[j.slot - 1]}</div>`
                                     break;
                                 }
                             // case "SUNDAY":
@@ -337,6 +361,55 @@ var OnChangeWeek = ()=>{
                         "error"
                     )
                 }else{
+                    $('.r1_1').html('')
+                    $('.r1_2').html('')
+                    $('.r1_3').html('')
+                    $('.r1_4').html('')
+                    $('.r1_5').html('')
+                    $('.r1_6').html('')
+                    $('.r1_7').html('')
+
+                    $('.r2_1').html('')
+                    $('.r2_2').html('')
+                    $('.r2_3').html('')
+                    $('.r2_4').html('')
+                    $('.r2_5').html('')
+                    $('.r2_6').html('')
+                    $('.r2_7').html('')
+
+                    $('.r3_1').html('')
+                    $('.r3_2').html('')
+                    $('.r3_3').html('')
+                    $('.r3_4').html('')
+                    $('.r3_5').html('')
+                    $('.r3_6').html('')
+                    $('.r3_7').html('')
+
+
+                    $('.r4_1').html('')
+                    $('.r4_2').html('')
+                    $('.r4_3').html('')
+                    $('.r4_4').html('')
+                    $('.r4_5').html('')
+                    $('.r4_6').html('')
+                    $('.r4_7').html('')
+
+
+                    $('.r5_1').html('')
+                    $('.r5_2').html('')
+                    $('.r5_3').html('')
+                    $('.r5_4').html('')
+                    $('.r5_5').html('')
+                    $('.r5_6').html('')
+                    $('.r5_7').html('')
+
+                    $('.r6_1').html('')
+                    $('.r6_2').html('')
+                    $('.r6_3').html('')
+                    $('.r6_4').html('')
+                    $('.r6_5').html('')
+                    $('.r6_6').html('')
+                    $('.r6_7').html('')
                     $('#schedule_table').hide()
                     $('.timetable').show()
                     let shift = $('#shift').val().substring(0,1)
@@ -350,21 +423,21 @@ var OnChangeWeek = ()=>{
                                 $('.date_monday').html(formatDate)
                                 if(shift==="M"){
                                     if(i.slot==1){
-                                        $('.r1_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r1_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r2_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r2_1').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="A"){
                                     if(i.slot==1){
-                                        $('.r3_1').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r3_1').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r4_1').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r4_1').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="E"){
                                     if(i.slot==1){
-                                        $('.r5_1').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r5_1').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r6_1').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r6_1').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }
                                 break;
@@ -374,21 +447,21 @@ var OnChangeWeek = ()=>{
                                 $('.date_tuesday').html(formatDate)
                                 if(shift==="M"){
                                     if(i.slot==1){
-                                        $('.r1_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r1_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r2_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r2_2').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="A"){
                                     if(i.slot==1){
-                                        $('.r3_2').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r3_2').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r4_2').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r4_2').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="E"){
                                     if(i.slot==1){
-                                        $('.r5_2').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r5_2').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r6_2').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r6_2').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }
                                 break;
@@ -398,21 +471,21 @@ var OnChangeWeek = ()=>{
                                 $('.date_wednesday').html(formatDate)
                                 if(shift==="M"){
                                     if(i.slot==1){
-                                        $('.r1_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r1_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r2_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r2_3').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="A"){
                                     if(i.slot==1){
-                                        $('.r3_3').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r3_3').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r4_3').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r4_3').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="E"){
                                     if(i.slot==1){
-                                        $('.r5_3').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r5_3').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r6_3').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r6_3').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }
                                 break;
@@ -422,21 +495,21 @@ var OnChangeWeek = ()=>{
                                 $('.date_thursday').html(formatDate)
                                 if(shift==="M"){
                                     if(i.slot==1){
-                                        $('.r1_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r1_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r2_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r2_4').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="A"){
                                     if(i.slot==1){
-                                        $('.r3_4').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r3_4').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r4_4').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r4_4').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="E"){
                                     if(i.slot==1){
-                                        $('.r5_4').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r5_4').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r6_4').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r6_4').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }
                                 break;
@@ -446,21 +519,21 @@ var OnChangeWeek = ()=>{
                                 $('.date_friday').html(formatDate)
                                 if(shift==="M"){
                                     if(i.slot==1){
-                                        $('.r1_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r1_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r2_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r2_5').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="A"){
                                     if(i.slot==1){
-                                        $('.r3_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r3_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r4_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r4_5').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="E"){
                                     if(i.slot==1){
-                                        $('.r5_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r5_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r6_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r6_5').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }
                                 break;
@@ -470,21 +543,21 @@ var OnChangeWeek = ()=>{
                                 $('.date_saturday').html(formatDate)
                                 if(shift==="M"){
                                     if(i.slot==1){
-                                        $('.r1_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r1_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r2_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r2_6').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="A"){
                                     if(i.slot==1){
-                                        $('.r3_6').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r3_6').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r4_6').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r4_6').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }else if(shift==="E"){
                                     if(i.slot==1){
-                                        $('.r5_6').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r5_6').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }else{
-                                        $('.r6_6').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                        $('.r6_6').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                     }
                                 }
                                 break;
@@ -494,21 +567,21 @@ var OnChangeWeek = ()=>{
                                 $('.date_sunday').html(formatDate)
                                     if(shift==="M"){
                                         if(i.slot==1){
-                                            $('.r1_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                            $('.r1_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                         }else{
-                                            $('.r2_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                            $('.r2_7').html(` <div class="accent-orange-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                         }
                                     }else if(shift==="A"){
                                         if(i.slot==1){
-                                            $('.r3_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                            $('.r3_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                         }else{
-                                            $('.r4_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                            $('.r4_7').html(` <div class="accent-green-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                         }
                                     }else if(shift==="E"){
                                         if(i.slot==1){
-                                            $('.r5_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                            $('.r5_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                         }else{
-                                            $('.r6_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
+                                            $('.r6_7').html(` <div class="accent-cyan-gradient" style="display:flex;justify-content:center;align-items:center;flex-direction: column"><span>${i.subject.subjectCode}</span><span>${i.teacher.profileByProfileId.firstName+' '+i.teacher.profileByProfileId.lastName}</span><span>Room: ${$("#classRoom").val()}</span></div>`)
                                         }
                                     }
                                     break;

@@ -22,6 +22,7 @@ public class InputMarkModel implements Serializable {
     private int studentSubjectId;
     private Double asmMark;
     private Double objMark;
+    private int updateTimes = -1;
 
     public InputMarkModel(Student student, Subject subject) {
         this.studentSubjectId = student.getStudentSubjectsById().stream()

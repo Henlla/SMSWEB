@@ -42,7 +42,7 @@
                 </section>
                 <section class="row">
                     <div class="col-12">
-                        <table th:id="major-table" class="table table-bordered table-hover">
+                        <table th:id="department-table" class="table table-bordered table-hover">
                             <thead>
                             <tr class="text-center">
                                 <th class="th-sm">STT</th>
@@ -64,10 +64,9 @@
                                     <a class="mr-3" th:data-id="${item.id}"
                                        onclick="OnDepartmentMajor(this.getAttribute('data-id'))"><i
                                             class="fas fa-pen indigo-text"></i></a>
-<!--                                    <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
-<!--                                       th:data-name="${item.id}"-->
-<!--                                       onclick="OnDeleteMajor(this.getAttribute('data-name'))"><i-->
-<!--                                            class="fas fa-trash red-text"></i></a>-->
+                                    <a class="mr-3" th:data-name="${item.id}"
+                                       onclick="OnDetails(this.getAttribute('data-name'))"><i
+                                            class="fas fa-eye indigo-text"></i></a>
                                 </td>
                             </tr>
                             </tbody>
@@ -168,6 +167,36 @@
                     <button type="button" onclick="OnUpdateDepartment()" class="btn btn-primary btn-sm"><i
                             class="fas fa-plus"></i> Update
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="view_department_modal" data-backdrop="static" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">View department</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fa-sm"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="form-group">
+                            <input type="hidden" id="department" >
+                            <label class="m-0" style="font-size: 13px">Major:</label>
+                            <select onchange="OnGetClass()" class="form-control select2" name="apartment" id="apartment">
+                                <option value="">-----Choose major</option>
+                                <th:block th:each="apartment:${apartments}">
+                                    <option th:value="${apartment.id}" th:text="${apartment.getApartmentCode()}"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container data">
+
+                    </div>
                 </div>
             </div>
         </div>
