@@ -61,7 +61,7 @@ public class WebConfig {
                 .requestMatchers("/api/students-subject/**","/api/classes/**","/api/schedules/**",
                         "/api/schedules_detail/**","/api/student-major/**").hasAnyAuthority("ADMIN","STUDENT","TEACHER","STAFF")
                 .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**","/api/teachers/**",
-                        "/api/staffs/**","/api/news/**","/api/students/getByProfile/{id}").hasAnyAuthority("ADMIN","STAFF")
+                        "/api/staffs/**","/api/news/**").hasAnyAuthority("ADMIN","STAFF")
                 //teacher
                 .requestMatchers("/api/attendance/**","/dashboard/attendance/**"
                         ,"/api/student-class/**","/teacher/**","/api/students/**","/api/attendance_tracking/**")

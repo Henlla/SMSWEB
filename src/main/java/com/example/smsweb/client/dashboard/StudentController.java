@@ -628,4 +628,31 @@ public class StudentController {
             return new ResponseEntity<String>("Import excel fail", HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/dashboard/student/checkIdentityCard")
+    @ResponseBody
+    public Object checkIdentityCard(@CookieValue(name = "_token") String _token,@RequestParam("identityCard")String identityCard){
+        try {
+            JWTUtils.checkExpired(_token);
+            RestTemplate restTemplate = new RestTemplate();
+            ObjectMapper objectMapper = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization","Bearer "+_token);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(PROFILE_URL+"findByIdentityCard/"+identityCard,HttpMethod.GET,request,ResponseModel.class);
+            if(response.getBody().getData()==null){
+                return "success";
+            }else {
+                return "error";
+            }
+        } catch (HttpClientErrorException ex) {
+            log.error(ex.getMessage());
+            if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                return ex.getMessage();
+            } else {
+                return ex.getMessage();
+            }
+
+        }
+    }
 }
