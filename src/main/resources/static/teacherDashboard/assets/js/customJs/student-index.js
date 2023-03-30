@@ -58,8 +58,6 @@ $(()=>{
                     });
 
                 column.data().unique().sort().each(function (d, j) {
-                    console.log(d)
-                    console.log(j)
                     select.append('<option value="' + d + '">' + d + '</option>');
                 });
                 //use column title as selector and placeholder
@@ -87,7 +85,6 @@ var OnDetails = (id) => {
         contentType: "application/json",
         method: "GET",
         success: (data) => {
-            console.log(data)
             $('#st_image').attr('src', data.student.studentByProfile.avartarUrl)
             $('#st_fullName').html(data.student.studentByProfile.firstName + ' ' + data.student.studentByProfile.lastName)
             $('#st_card').html(data.student.studentCard)

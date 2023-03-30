@@ -55,8 +55,8 @@ public class WebConfig {
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/news/list","/api/news/get/{id}").permitAll()
-                .requestMatchers("/api/accounts/changePassword/{id}","/api/profiles/get/{id}","/api/teachers/get/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF","TEACHER")
-                .requestMatchers("/api/students/getByProfile/{id}").hasAnyAuthority("STUDENT")
+                .requestMatchers("/api/accounts/changePassword/{id}","/api/profiles/get/{id}","/api/teachers/get/{id}","/api/students/getByProfile/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF","TEACHER")
+//                .requestMatchers().hasAnyAuthority("STUDENT")
                 .requestMatchers("/api/teachers/getByProfile/{id}").hasAnyAuthority("TEACHER")
                 .requestMatchers("/api/students-subject/**","/api/classes/**","/api/schedules/**",
                         "/api/schedules_detail/**","/api/student-major/**").hasAnyAuthority("ADMIN","STUDENT","TEACHER","STAFF")

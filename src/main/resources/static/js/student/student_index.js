@@ -1,8 +1,8 @@
 $(() => {
     $('#dob_calendar_u').datetimepicker({
-
         format: 'DD/MM/YYYY'
     });
+
     $('.select2').select2({
         theme: 'bootstrap4'
     });
@@ -217,10 +217,11 @@ var OnDetails = (id) => {
             $('#st_sex').html(data.student.studentByProfile.sex)
             let classCode = "";
             for (var major of data.student.majorStudentsById) {
-                $('#st_major').html(major.majorByMajorId.majorName)
+                $('#st_major').html(major.majorByMajorId.majorCode)
+                $('#st_apartment').html(major.majorByMajorId.apartmentByApartmentId.apartmentCode)
             }
             if (data.classes.length === 0) {
-                $('#st_class').html('Chưa có')
+                $('#st_class').html('None')
             } else {
                 for (var classes of data.classes) {
                     classCode += classes.classCode + " "
@@ -228,13 +229,16 @@ var OnDetails = (id) => {
                 $('#st_class').html(classCode)
             }
             $('#st_identityId').html(data.student.studentByProfile.identityCard)
-            $('#st_address').html(data.student.studentByProfile.address + ' , ' + data.student.studentByProfile.wardByWardId.name + ' , ' + data.student.studentByProfile.districtByDistrictId.name + ' , ' + data.student.studentByProfile.profileProvince.name)
+            if (data.student.studentByProfile.profileProvince != null && data.student.studentByProfile.districtByDistrictId != null && data.student.studentByProfile.wardByWardId != null){
+                $('#st_address').html(data.student.studentByProfile.address + ' , ' + data.student.studentByProfile.wardByWardId.name + ' , ' + data.student.studentByProfile.districtByDistrictId.name + ' , ' + data.student.studentByProfile.profileProvince.name)
+            }else{
+                $('#st_address').html("")
+            }
+
             $('#accountId').val(data.student.studentByProfile.accountByAccountId.id)
             $('#email').val(data.student.studentByProfile.email)
             $("#student_details").modal("show");
-            // $.ajax({
-            //     url: "/dashboard/student/getClassByStudentId/" + id,
-            // })
+
         }, error: (xhr, status, error) => {
             var err = eval("(" + xhr.responseText + ")");
             $("#student_details").modal("hide");
@@ -312,7 +316,7 @@ var OnUpdate = (id) => {
                         })
                     }
                 })
-            }else{
+            } else {
                 $("#province_u").val(null).trigger('change');
                 $("#district_u").val(null).trigger('change');
                 $("#ward_u").val(null).trigger('change');
@@ -602,7 +606,6 @@ const OnChooseFile = () => {
 }
 
 const OnImportStudent = () => {
-    $('#spinner-divI').show();
     let file = $("#fileStudent").get(0).files[0];
     if (file !== undefined) {
         let formData = new FormData();
@@ -614,15 +617,31 @@ const OnImportStudent = () => {
             processData: false,
             contentType: false,
             enctype: "multipart/form-data",
+            beforeSend: () => {
+                $("#class_import_student_file").modal("hide");
+                var sweet_loader = `<div id="spinner-divI_3">
+                                        <div class="spinner-border m-0 text-primary" role="status"></div>
+                                    </div>`
+                Swal.fire({
+                    title: 'Importing student',
+                    html: sweet_loader,// add html attribute if you want or remove
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    customClass: "swal-height",
+                });
+            },
             success: (data) => {
-                $('#spinner-divI').hide()
-                toastr.success(data);
+                setTimeout(()=>{
+                    Swal.close();
+                    toastr.success(data);
+                },1500)
                 setTimeout(() => {
                     location.reload();
                 }, 1500);
             },
             error: (data) => {
                 if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.close();
                     Swal.fire({
                         title: 'End of login session please login again',
                         showDenyButton: false,
@@ -634,6 +653,7 @@ const OnImportStudent = () => {
                         }
                     });
                 } else {
+                    Swal.close();
                     toastr.error(data.responseText);
                 }
             }
