@@ -21,6 +21,10 @@ public class Mark {
     @Basic
     @Column(name = "obj")
     private Double obj;
+
+    @Basic
+    @Column(name = "update_times")
+    private int updateTimes = 0;
     @Basic
     @Column(name = "student_subject_id")
     private Integer studentSubjectId;

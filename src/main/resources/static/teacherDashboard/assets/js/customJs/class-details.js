@@ -149,6 +149,8 @@ $(document).ready(function () {
             if(/^.+xlsx$/.test(value)) return true;
             else return false;
         }, 'Only accept excel file !');
+
+
     $("#mark_list").click(function (e) {
         $(this).val('');
     })
@@ -181,18 +183,18 @@ $(document).ready(function () {
                 var objMark = dataArray[i]['OBJ mark'];
                 $(`<tr>
                         <td style="display:none;">
-                            <input style="border: none" type="text" value="${studentId}" hidden readonly/>
+                            <input style="border: none" type="text" value="${dataArray[i].studentCode}" hidden readonly/>
                         </td><td style="display:none;">
-                            <input style="border: none" type="text" value="${subjectId}" hidden readonly/>
-                        </td><td>
-                            <input style="border: none" type="text" value="${fullName}" readonly/>
-                        </td><td>
-                            <input style="border: none" type="text" value="${subjectName}" readonly/>
-                        </td><td>
-                            <input class="check_numberic_0_100" value="${asmMark == null || asmMark == 'null' || asmMark == undefined ? '': asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
-                        </td><td>
-                            <input class="check_numberic_0_100" value="${objMark == null || objMark == 'null' || objMark == undefined ? '': objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
-                        </td>
+                        <input style="border: none" type="text" value="${dataArray[i].subjectCode}" hidden readonly/>
+                    </td><td>
+                        <input style="border: none" type="text" value="${dataArray[i].fullName}" readonly/>
+                    </td><td>
+                        <input style="border: none" type="text" value="${dataArray[i].subjectName} ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100 ? '[Update]': ''}" readonly/>
+                    </td><td>
+                        <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                    </td><td>
+                        <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                    </td>
                     </tr>`).appendTo("#mark_table tbody");
             }
 
@@ -323,11 +325,11 @@ $(document).ready(function () {
                             </td><td>
                                 <input style="border: none" type="text" value="${dataArray[i].fullName}" readonly/>
                             </td><td>
-                                <input style="border: none" type="text" value="${dataArray[i].subjectName}" readonly/>
+                                <input style="border: none" type="text" value="${dataArray[i].subjectName} ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100 ? '[Update]': ''}" readonly/>
                             </td><td>
-                                <input class="check_numberic_0_100" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                                <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
                             </td><td>
-                                <input class="check_numberic_0_100" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                                <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
                             </td>
                         </tr>`).appendTo("#mark_table tbody");
                     }

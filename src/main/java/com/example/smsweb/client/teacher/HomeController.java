@@ -697,6 +697,18 @@ public class HomeController {
                 studentList.add(student);
                 inputMarkModelList.add(new InputMarkModel(student, subject));
             }
+            for (InputMarkModel item : inputMarkModelList) {
+                //Check existed mark in database
+                ResponseEntity<Mark> responseMark = restTemplate.exchange(
+                        MARK_URL + "findMarkByStudentSubjectId/" + item.getStudentSubjectId(),
+                        HttpMethod.GET, requestGET, Mark.class);
+                Mark body = responseMark.getBody();
+                if (body != null) {
+                    item.setAsmMark(body.getAsm());
+                    item.setObjMark(body.getObj());
+                    item.setUpdateTimes(body.getUpdateTimes()+1);
+                }
+            }
 
             String inputMarkJson = new ObjectMapper().writeValueAsString(inputMarkModelList);
 
@@ -763,16 +775,23 @@ public class HomeController {
 
                     //add to new checkedInputMarkModelList
                     InputMarkModel inputMarkModel = new InputMarkModel(student, subject);
-                    checkedInputMarkModelList.add(inputMarkModel);
-
                     //Check existed mark in database
                     ResponseEntity<Mark> responseMark = restTemplate.exchange(
                             MARK_URL + "findMarkByStudentSubjectId/" + inputMarkModel.getStudentSubjectId(),
                             HttpMethod.GET, request, Mark.class);
                     Mark body = responseMark.getBody();
+                    Mark newMark = new Mark(0, item.getAsmMark(), item.getObjMark(),
+                            inputMarkModel.getUpdateTimes(),
+                            inputMarkModel.getStudentSubjectId(), null);
                     if (body != null) {
-                        throw new ErrorHandler(inputMarkModel.getFullName() + " already have a record of mark in " + inputMarkModel.getSubjectName() + "!");
+                        if (body.getUpdateTimes()<2){
+                            newMark.setId(body.getId());
+                            newMark.setUpdateTimes(body.getUpdateTimes()+1);
+                        }else {
+                            continue;
+                        }
                     }
+                    checkedInputMarkModelList.add(inputMarkModel);
                     //Check permission mark a student
                     if (classs.getStudentClassById().stream().filter(studentClass -> studentClass.getStudentId() == inputMarkModel.getStudentId()).collect(Collectors.toList()).size() == 0) {
                         throw new ErrorHandler("You have no permission to mark this student: " + inputMarkModel.getFullName());
@@ -783,7 +802,7 @@ public class HomeController {
                         throw new ErrorHandler("You have no permission to mark this subject: " + inputMarkModel.getSubjectName());
                     }
 
-                    markList.add(new Mark(0, item.getAsmMark(), item.getObjMark(), inputMarkModel.getStudentSubjectId(), null));
+                    markList.add(newMark);
                 }
 
                 //Save markList
@@ -843,6 +862,19 @@ public class HomeController {
             for (StudentClass studentClass : classModel.getStudentClassById()) {
                 Student student = studentClass.getClassStudentByStudent();
                 inputMarkModelList.add(new InputMarkModel(student, subject));
+            }
+
+            for (InputMarkModel item : inputMarkModelList) {
+                //Check existed mark in database
+                ResponseEntity<Mark> responseMark = restTemplate.exchange(
+                        MARK_URL + "findMarkByStudentSubjectId/" + item.getStudentSubjectId(),
+                        HttpMethod.GET, request, Mark.class);
+                Mark body = responseMark.getBody();
+                if (body != null) {
+                    item.setAsmMark(body.getAsm());
+                    item.setObjMark(body.getObj());
+                    item.setUpdateTimes(body.getUpdateTimes()+1);
+                }
             }
 
             response.setContentType("application/octet-stream");

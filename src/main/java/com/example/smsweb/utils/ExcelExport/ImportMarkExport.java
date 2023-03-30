@@ -77,8 +77,8 @@ public class ImportMarkExport {
             createCell(row, 1, item.getSubjectCode(), style);
             createCell(row, 2, item.getFullName(), style);
             createCell(row, 3, item.getSubjectName(), style);
-            createCell(row, 4, "null", style);
-            createCell(row, 5, "null", style);
+            createCell(row, 4, item.getAsmMark() == null ?"null":item.getAsmMark(), style);
+            createCell(row, 5, item.getObjMark() == null ?"null":item.getObjMark(), style);
         }
     }
 
