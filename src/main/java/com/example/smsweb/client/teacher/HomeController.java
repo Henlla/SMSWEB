@@ -907,7 +907,7 @@ public class HomeController {
                             newMark.setId(body.getId());
                             newMark.setUpdateTimes(body.getUpdateTimes()+1);
                         }else {
-                            continue;
+                            throw new ErrorHandler("You have entered "+item.getFullName()+"'s mark 2 times. Please contact to the Staff!!");
                         }
                     }
                     checkedInputMarkModelList.add(inputMarkModel);
