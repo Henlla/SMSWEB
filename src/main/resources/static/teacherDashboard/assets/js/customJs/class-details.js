@@ -31,6 +31,55 @@ let addSubject = function () {
         },
     });
 }
+
+let addSubjectAndStudent = function (){
+    let selectSubject = $("#select_subject_update");
+    let selectStudent = $("#select_student_update");
+    selectSubject.empty();
+    selectStudent.empty();
+    $.ajax({
+        url: "/teacher/class/get-all-subject-and-student/"+$("#classId").val(),
+        method: "GET",
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: (response) => {
+            let parse = JSON.parse(response);
+            console.log(parse);
+            let subjects = parse.major.subjectsById
+            if(subjects.length == 0){
+                $('<option value="">'+'This class has no subject'+'</option>').appendTo(select_subject_update);
+            }else {
+                $('<option value="">'+'--Select--'+'</option>').appendTo(select_subject_update);
+                subjects.forEach(p => {
+                    $('<option value="'+ p.id +'">'+ p.subjectName +'</option>').appendTo(select_subject_update);
+                })
+            }
+
+            let students = parse.studentClassById
+            if(students.length == 0){
+                $('<option value="">'+'This class has no subject'+'</option>').appendTo(select_student_update);
+            }else {
+                $('<option value="">'+'--Select--'+'</option>').appendTo(select_student_update);
+                students.forEach(p => {
+                    $(`<option value="${p.studentId}">${p.classStudentByStudent.studentByProfile.firstName +" "+ p.classStudentByStudent.studentByProfile.lastName}</option>`)
+                        .appendTo(select_student_update);
+                })
+            }
+        },
+        error: (error)=>{
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.responseJSON.message,
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            })
+        },
+    });
+}
+
 let check_input_mark = function (){
     $(".check_numberic_0_100").each(function (){
         let data = $(this).val();
@@ -65,10 +114,16 @@ function check_numberic_0_100(e){
         check_input_mark();
     }
 }
+function remove_update_item(){
+    $(event.target).parent().parent().parent().remove()
+}
 
 $(document).ready(function () {
     $('.select2').select2({
         theme: 'bootstrap4'
+    });
+    $('#mySelect2').select2({
+        dropdownParent: $('#update_mark')
     });
     $('#student-table').DataTable({
         pageLength:5,
@@ -185,16 +240,18 @@ $(document).ready(function () {
                         <td style="display:none;">
                             <input style="border: none" type="text" value="${dataArray[i].studentCode}" hidden readonly/>
                         </td><td style="display:none;">
-                        <input style="border: none" type="text" value="${dataArray[i].subjectCode}" hidden readonly/>
-                    </td><td>
-                        <input style="border: none" type="text" value="${dataArray[i].fullName}" readonly/>
-                    </td><td>
-                        <input style="border: none" type="text" value="${dataArray[i].subjectName} ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100 ? '[Update]': ''}" readonly/>
-                    </td><td>
-                        <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
-                    </td><td>
-                        <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
-                    </td>
+                            <input style="border: none" type="text" value="${dataArray[i].subjectCode}" hidden readonly/>
+                        </td><td>
+                            <input style="border: none" type="text" value="${dataArray[i].fullName}" readonly/>
+                        </td><td>
+                            <input style="border: none" type="text" value="${dataArray[i].subjectName}" readonly/>
+                        </td><td>
+                            <input class="check_numberic_0_100" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                        </td><td>
+                            <input class="check_numberic_0_100" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                        </td><td>
+                            <span>${dataArray[i].updateTimes == -1?'New' :'<span class="text-warning">Update</span>&nbsp;<i class="fas fa-times " onclick="remove_update_item()" style="color: #de1721;"></i>'}</span>
+                        </td>
                     </tr>`).appendTo("#mark_table tbody");
             }
 
@@ -325,11 +382,13 @@ $(document).ready(function () {
                             </td><td>
                                 <input style="border: none" type="text" value="${dataArray[i].fullName}" readonly/>
                             </td><td>
-                                <input style="border: none" type="text" value="${dataArray[i].subjectName} ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100 ? '[Update]': ''}" readonly/>
+                                <input style="border: none" type="text" value="${dataArray[i].subjectName}" readonly/>
                             </td><td>
-                                <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                                <input class="check_numberic_0_100" value="${dataArray[i].asmMark == null || dataArray[i].asmMark == 'null' || dataArray[i].asmMark == undefined ? '': dataArray[i].asmMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
                             </td><td>
-                                <input class="check_numberic_0_100 ${dataArray[i].asmMark > 0 && dataArray[i].asmMark < 100? 'update_mark' :''}" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                                <input class="check_numberic_0_100" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
+                            </td><td>
+                                <span>${dataArray[i].updateTimes == -1?'New' :'<span class="text-warning">Update</span>&nbsp;<i class="fas fa-times" onclick="remove_update_item()" style="color: #de1721;"></i>'}</span>
                             </td>
                         </tr>`).appendTo("#mark_table tbody");
                     }
@@ -468,5 +527,168 @@ $(document).ready(function () {
             window.location.href = "/teacher/class/download_template/"+$("#classId").val()+"/"+selectSubject.val();
         }
     })
+
+    let selectSubjectUpdate = $("#select_subject_update");
+    let selectStudentUpdate = $("#select_student_update");
+    selectSubjectUpdate.change(function (){
+        let subjectId = $("#select_subject_update").val();
+        let studentId = $("#select_student_update").val();
+        if (studentId.length > 0 && subjectId.length > 0){
+            $.ajax({
+                url: "/teacher/class/get-mark/"+subjectId+"/"+studentId,
+                method: "GET",
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: (response) => {
+                    let parse = JSON.parse(response);
+                    $("#asm_mark_update").val(parse.asm)
+                    $("#obj_mark_update").val(parse.obj)
+                    $("#mark_id").val(parse.id)
+                },
+                error: (error)=>{
+                    $("#select_subject_update").val("").change();
+                    $("#select_student_update").val("").change();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.responseJSON.message,
+                        showDenyButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok',
+                    })
+                },
+            });
+        }
+    });
+    selectStudentUpdate.change(function (){
+        let subjectId = $("#select_subject_update").val();
+        let studentId = $("#select_student_update").val();
+        if (studentId.length > 0 && subjectId.length > 0){
+            $.ajax({
+                url: "/teacher/class/get-mark/"+subjectId+"/"+studentId,
+                method: "GET",
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: (response) => {
+                    let parse = JSON.parse(response);
+                    $("#asm_mark_update").val(parse.asm)
+                    $("#obj_mark_update").val(parse.obj)
+                    $("#mark_id").val(parse.id)
+                },
+                error: (error)=>{
+                    $("#select_subject_update").val("").change();
+                    $("#select_student_update").val("").change();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.responseJSON.message,
+                        showDenyButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok',
+                    })
+                },
+            });
+        }
+    });
+
+    $("#form_update_mark").submit(function (event) {
+        event.preventDefault()
+        let formData = new FormData(document.querySelector("#form_update_mark"));
+        $('#form_update_mark').validate({
+            rules: {
+                select_subject_update: {
+                    required: true,
+                },
+                select_student_update: {
+                    required: true,
+                },
+                asm_mark_update: {
+                    required: true,
+                    range: [0,100]
+                },
+                obj_mark_update: {
+                    required: true,
+                    range: [0,100]
+                },
+            },
+            messages: {
+                select_subject_update: {
+                    required: "Please choose subject!",
+                },
+                select_student_update: {
+                    required: "Please choose student!",
+                },
+                asm_mark_update: {
+                    required: "Enter asm mark!",
+                    range: "mark must in range 0-100",
+                },
+                obj_mark_update: {
+                    required: "Enter obj mark!",
+                    range: "mark must in range 0-100",
+                },
+            },
+        })
+        if ($("#form_update_mark").valid()){
+            Swal.fire({
+                icon: 'question',
+                title: 'Confirm',
+                text: "Are you sure confirm this mark",
+                showCancelButton: true,
+                showDenyButton: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Ok',
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    let newMark = {
+                        "id":formData.get("mark_id"),
+                        "asm":formData.get("asm_mark_update"),
+                        "obj":formData.get("obj_mark_update"),
+                        "updateTimes":0,
+                        "studentSubjectId":0
+                    }
+                    formData.append("newMark",JSON.stringify(newMark))
+                    $.ajax({
+                        url: "/teacher/class/update-mark",
+                        method: "POST",
+                        data:formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        enctype: "multipart/form-data",
+                        success: (response) => {
+                            $("#select_subject_update").val("").change();
+                            $("#select_student_update").val("").change();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Update mark Success",
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            });
+                        },
+                        error: (error)=>{
+                            $("#select_subject_update").val("").change();
+                            $("#select_student_update").val("").change();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error.responseJSON.message,
+                                showDenyButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok',
+                            })
+                        },
+                    });
+                }
+            })
+
+        }
+    })
+
     
 });
