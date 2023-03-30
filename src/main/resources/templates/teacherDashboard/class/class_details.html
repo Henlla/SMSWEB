@@ -72,6 +72,8 @@
                                             <td class="d-flex justify-content-end">
                                                 <a data-bs-target="#mark_score" onclick="addSubject()" data-bs-toggle="modal"
                                                    class="btn btn-primary btn-sm me-1">Input mark</a>
+                                                <a data-bs-target="#update_mark" onclick="addSubjectAndStudent()" data-bs-toggle="modal"
+                                                   class="btn btn-primary btn-sm me-1">Update mark</a>
                                                 <a id="export_student_excel" class="btn btn-success btn-sm">Download list student</a>
                                             </td>
                                         </tr>
@@ -166,6 +168,7 @@
                                             <th>Subject Name</th>
                                             <th>ASM mark</th>
                                             <th>OBJ mark</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -174,6 +177,51 @@
                                     <input id="form_input_mark" class="form-control btn-primary text-white" type="submit" value="Submit">
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="update_mark" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Mark</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col">
+                                <form id="form_update_mark">
+                                    <div class="form-group">
+                                        <label for="select_subject_update">select subject</label>
+                                        <select class="form-control mySelect2" id="select_subject_update" name="select_subject_update">
+                                            <option value="">--Select--</option>
+                                        </select>
+                                    </div><div class="form-group">
+                                        <label for="select_student_update">select student</label>
+                                        <select class="form-control mySelect2" id="select_student_update" name="select_student_update">
+                                            <option value="">--Select--</option>
+                                        </select>
+                                    </div><div class="form-group">
+                                        <label for="select_student_update">Asm Mark</label>
+                                        <input class="form-control" id="asm_mark_update" name="asm_mark_update" type="number" min="0" max="100">
+                                    </div><div class="form-group">
+                                        <label for="select_student_update">Obj Mark</label>
+                                        <input class="form-control" id="obj_mark_update" name="obj_mark_update" type="number" min="0" max="100">
+                                    </div>
+
+                                    <input style="display: none" hidden="hidden" id="mark_id" name="mark_id" value="">
+
+                                    <div class="form-group">
+                                        <input class="form-control btn-primary text-white" type="submit" value="Submit">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

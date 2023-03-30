@@ -61,6 +61,7 @@ public class ClassController {
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
     private final String PROFILE_URL = "http://localhost:8080/api/profiles/";
     private final String ROLE_URL = "http://localhost:8080/api/roles/";
+    private final String MARK_URL = "http://localhost:8080/api/mark/";
 
     private final String STUDENT_MAJOR_URL = "http://localhost:8080/api/student-major/";
     private final String MAJOR_URL = "http://localhost:8080/api/major/";
@@ -1784,7 +1785,7 @@ public class ClassController {
     @PostMapping("getAvailableRoom")
     @ResponseBody
     public String getAvailableRoom(@CookieValue(name = "_token") String _token,
-                                   @RequestParam(value = "date") String inputDate,
+                                   @RequestParam(value = "date", required = false) String inputDate,
                                    @RequestParam("departmentId") String departmentId,
                                     @RequestParam("shift") String shift) {
         try {
@@ -1801,7 +1802,12 @@ public class ClassController {
             MultiValueMap<String, Object> content;
 
             //@RequestParam processing
-            LocalDate date = LocalDate.parse(inputDate);
+            LocalDate date;
+            if (inputDate == null || inputDate == ""){
+                date = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            }else {
+                date = LocalDate.parse(inputDate);
+            }
 
             //Get All Room By departmentId
             HttpEntity<String> responseRoom = restTemplate.exchange(
@@ -2224,4 +2230,96 @@ public class ClassController {
 //            return new ResponseEntity<String>("Can't import student", HttpStatus.NOT_FOUND);
 //        }
 //    }
+
+
+    @GetMapping("get-mark/{subjectId}/{studentId}")
+    @ResponseBody
+    public Object getMarkBySubjectIdAndStudentId(@CookieValue(name = "_token", defaultValue = "") String _token,
+                                                 @PathVariable("subjectId") int subjectId,
+                                                 @PathVariable("studentId") int studentId      ) {
+        try {
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<String> requestGET = new HttpEntity<>(headers);
+            HttpEntity<MultiValueMap<String, Object>> resquestPOST;
+            MultiValueMap<String, Object> content;
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            content = new LinkedMultiValueMap<>();
+            content.add("subjectId", subjectId);
+            content.add("studentId", studentId);
+            resquestPOST = new HttpEntity<>(content, headers);
+            ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(
+                    STUDENT_SUBJECT_URL +"findStudentSubjectBySubjectIdAndStudentId",
+                    HttpMethod.POST,resquestPOST, ResponseModel.class);
+            String jsonStudentSubject = objectMapper.writeValueAsString(responseStudentSubject.getBody().getData());
+
+            StudentSubject studentSubject = objectMapper.readValue(jsonStudentSubject, new TypeReference<>(){});
+            if (studentSubject == null){
+                throw new ErrorHandler("Dont have any record for this student");
+            }
+            ResponseEntity<Mark> responseMark = restTemplate.exchange(
+                    MARK_URL + "findMarkByStudentSubjectId/" + studentSubject.getId(),
+                    HttpMethod.GET, requestGET, Mark.class);
+            Mark mark = responseMark.getBody();
+
+            if (mark == null){
+                throw new ErrorHandler("This student have no mark in this subject to update !");
+            }
+            return objectMapper.writeValueAsString(mark);
+
+        } catch (Exception ex) {
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/update-mark")
+    @ResponseBody
+    public Object updateMark(@CookieValue(name = "_token", defaultValue = "") String _token,
+                             @RequestParam("newMark") String jsonMark) {
+        try {
+            if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + _token);
+            HttpEntity<String> requestGET = new HttpEntity<>(headers);
+            HttpEntity<MultiValueMap<String, Object>> resquestPOST;
+            MultiValueMap<String, Object> content;
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            Mark newMark = objectMapper.readValue(jsonMark, new TypeReference<>(){});
+
+            ResponseEntity<ResponseModel> responseMark = restTemplate.exchange(
+                    MARK_URL + "get/" + newMark.getId(),
+                    HttpMethod.GET, requestGET, ResponseModel.class);
+            String jsonResponseMark = objectMapper.writeValueAsString(responseMark.getBody().getData());
+            Mark mark = objectMapper.readValue(jsonResponseMark, new TypeReference<>(){});
+
+            if (mark == null){
+                throw new ErrorHandler("Dont find any Mark record fo this student");
+            }
+            mark.setAsm(newMark.getAsm());
+            mark.setObj(newMark.getObj());
+            mark.setUpdateTimes(mark.getUpdateTimes()+1);
+
+
+            //Save markList
+            content = new LinkedMultiValueMap<>();
+            content.add("mark", objectMapper.writeValueAsString(mark));
+            resquestPOST = new HttpEntity<>(content, headers);
+            ResponseEntity<ResponseModel> responseSaveMark = restTemplate.exchange(MARK_URL + "save",
+                    HttpMethod.POST, resquestPOST, ResponseModel.class);
+
+            return "success";
+
+        } catch (Exception ex) {
+            throw new ErrorHandler(ex.getMessage());
+        }
+    }
+
+
 }

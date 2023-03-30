@@ -97,16 +97,16 @@ function getOverviewlist () {
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
                                 <span class="col-12">${schedule2.teacherName}</span>
                                 <span class="col-12">${schedule2.subjectName}</span
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
                         }else {
                             cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-success text-md col-12">Available</span>
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
                         }
 
-                        let clazz3 = room.roomClass.filter(item => /^A\d{1}$/.test(item.shift))[0]
+                        let clazz3 = room.roomClass.filter(item => /^E\d{1}$/.test(item.shift))[0]
 
                         var cell4 = row.insertCell();
                         cell4.classList.add("col")
@@ -153,7 +153,7 @@ function getOverviewlist () {
                         cell3.classList.add("col")
                         cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-success text-md col-12">Available</span>
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
 
                         var cell4 = row.insertCell();
@@ -278,16 +278,16 @@ $(() => {
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
                                 <span class="col-12">${schedule2.teacherName}</span>
                                 <span class="col-12">${schedule2.subjectName}</span
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
                             }else {
                                 cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-success text-md col-12">Available</span>
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
                             }
 
-                            let clazz3 = room.roomClass.filter(item => /^A\d{1}$/.test(item.shift))[0]
+                            let clazz3 = room.roomClass.filter(item => /^E\d{1}$/.test(item.shift))[0]
 
                             var cell4 = row.insertCell();
                             cell4.classList.add("col")
@@ -334,7 +334,7 @@ $(() => {
                             cell3.classList.add("col")
                             cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-success text-md col-12">Available</span>
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
 
                             var cell4 = row.insertCell();
@@ -457,12 +457,12 @@ $(() => {
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
                                 <span class="col-12">${schedule2.teacherName}</span>
                                 <span class="col-12">${schedule2.subjectName}</span
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
                             }else {
                                 cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-success text-md col-12">Available</span>
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
                             }
 
@@ -513,7 +513,7 @@ $(() => {
                             cell3.classList.add("col")
                             cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-success text-md col-12">Available</span>
-                                <span class="col-12 mt-4">1:30 - 17:30</span>
+                                <span class="col-12 mt-4">13:30 - 17:30</span>
                             </div>`;
 
                             var cell4 = row.insertCell();

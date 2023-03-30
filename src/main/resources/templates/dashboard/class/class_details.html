@@ -60,7 +60,16 @@
                                             </tr>
                                         </table>
                                     </td>
-                                    <td class="d-flex justify-content-end"></td>
+                                    <td class="d-flex justify-content-end">
+                                        <table>
+                                            <tr>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#update_mark" data-toggle="modal">Update Mark</a></td>
+                                                <td>
+                                            </tr>
+                                        </table>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -641,11 +650,63 @@
             </div>
         </div>
 
+        <div class="modal fade" id="update_mark" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Mark</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="form_update_mark">
+                                <div class="form-group">
+                                    <label for="select_subject_update">select subject</label>
+                                    <select class="form-control mySelect2" id="select_subject_update" name="select_subject_update">
+                                        <option value="">--Select--</option>
+                                        <th:block th:each="subject : ${class.getMajor().getSubjectsById()}">
+                                            <option th:value="${subject.id}">[[${subject.subjectName}]] - [[${subject.subjectCode}]]</option>
+                                        </th:block>
+                                    </select>
+                                </div><div class="form-group">
+                                <label for="select_student_update">select student</label>
+                                <select class="form-control mySelect2" id="select_student_update" name="select_student_update">
+                                    <option value="">--Select--</option>
+                                    <th:block th:each="student : ${class.getStudentClassById()}">
+                                        <option th:value="${student.getClassStudentByStudent().getId()}">[[${student.getClassStudentByStudent().getStudentByProfile().getFirstName()}]]&nbsp;[[${student.getClassStudentByStudent().getStudentByProfile().getLastName()}]]</option>
+                                    </th:block>
+                                </select>
+                            </div><div class="form-group">
+                                <label for="select_student_update">Asm Mark</label>
+                                <input class="form-control" id="asm_mark_update" name="asm_mark_update" type="number" min="0" max="100">
+                            </div><div class="form-group">
+                                <label for="select_student_update">Obj Mark</label>
+                                <input class="form-control" id="obj_mark_update" name="obj_mark_update" type="number" min="0" max="100">
+                            </div>
+
+                                <input style="display: none" hidden="hidden" id="mark_id" name="mark_id" value="">
+
+                                <div class="form-group">
+                                    <input class="form-control btn-primary text-white" type="submit" value="Submit">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <input type="hidden" id="classId" th:value="${class.id}">
         <input type="hidden" id="classCode" th:value="${class.classCode}">
         <input type="hidden" id="shift" th:value="${class.getShift()}">
         <input type="hidden" id="teacherId_v" th:value="${class.getTeacherId()}">
         <input type="hidden" id="roomId" th:value="${class.getId()}">
+        <input type="hidden" id="departmentId" th:value="${class.getDepartmentId()}">
         <input type="hidden" id="availablePlace"
                th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
     </section>
