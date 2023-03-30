@@ -103,10 +103,10 @@
                                     <td><span th:text="${student.classStudentByStudent.studentCard}"></span></td>
                                     <td>
                                         <h2 class="table-avatar">
-                                            <a th:data-name="${student.classStudentByStudent.id}" onclick="OnDetails(this.getAttribute('data-name'))" class="avatar avatar-sm me-2">
+                                            <a th:data-name="${student.classStudentByStudent.id}" class="avatar avatar-sm me-2">
                                                 <img class="avatar-img rounded-circle" th:src="${student.classStudentByStudent.studentByProfile.avartarUrl}" alt="student-img">
                                             </a>
-                                            <a th:data-name="${student.classStudentByStudent.id}" onclick="OnDetails(this.getAttribute('data-name'))"></a>
+                                            <a th:data-name="${student.classStudentByStudent.id}" ></a>
                                         </h2>
                                         <span th:text="${student.classStudentByStudent.studentByProfile.firstName +' '+student.classStudentByStudent.studentByProfile.lastName}"></span>
                                     </td>
@@ -114,7 +114,6 @@
                                         <span th:text="${student.classStudentByStudent.studentByProfile.getDob()}"></span>
                                     </td>
                                     <td class="text-center">
-                                        <a class="mr-3" th:data-name="${student.classStudentByStudent.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
