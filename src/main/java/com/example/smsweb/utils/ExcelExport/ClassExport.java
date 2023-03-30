@@ -34,13 +34,13 @@ public class ClassExport {
         font.setFontHeight(16);
         style.setFont(font);
         createCell(row, 0,"STT",style);
-        createCell(row, 1, "Mã sinnh viên", style);
-        createCell(row, 2, "Họ và tên", style);
-        createCell(row, 3, "Giới tính", style);
-        createCell(row, 4, "Ngày sinh", style);
-        createCell(row, 5, "Số điện thoại", style);
+        createCell(row, 1, "Student Cards", style);
+        createCell(row, 2, "Full Name", style);
+        createCell(row, 3, "Gender", style);
+        createCell(row, 4, "Date of Birth", style);
+        createCell(row, 5, "Phone", style);
         createCell(row, 6, "Email", style);
-        createCell(row, 7, "Tỉnh", style);
+        createCell(row, 7, "Province", style);
     }
 
     //Create Title
@@ -99,15 +99,19 @@ public class ClassExport {
             createCell(row, 4, studentClass.getClassStudentByStudent().getStudentByProfile().getDob(), style);
             createCell(row, 5, studentClass.getClassStudentByStudent().getStudentByProfile().getPhone(), style);
             createCell(row, 6, studentClass.getClassStudentByStudent().getStudentByProfile().getEmail(), style);
-            createCell(row, 7, studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince().getName(), style);
+            if(studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince()!= null){
+                createCell(row, 7, studentClass.getClassStudentByStudent().getStudentByProfile().getProfileProvince().getName(), style);
+            }else{
+                createCell(row, 7, "", style);
+            }
             rowCount++;
             rowIndex++;
         }
     }
 
     public void generateExcelFile(HttpServletResponse response) throws IOException {
-        createTitle();
         writeHeader();
+        createTitle();
         writeData();
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
