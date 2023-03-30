@@ -33,6 +33,8 @@ public class Mark {
     @JoinColumn(name = "student_subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private StudentSubject studentSubjectByStudentSubjectId;
 
+
+
     public int getId() {
         return id;
     }
