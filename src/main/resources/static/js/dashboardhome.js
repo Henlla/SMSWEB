@@ -12,6 +12,7 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 function getOverviewlist () {
+    $("#over_view_date").val(moment().format('YYYY-MM-D'));
     let data = new FormData();
     let date = $("#over_view_date").val();
     let department = $("#department").val();
