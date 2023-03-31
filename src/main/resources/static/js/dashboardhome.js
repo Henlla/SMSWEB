@@ -66,7 +66,7 @@ function getOverviewlist () {
                                 teacherCard: clazz1.teacher.teacherCard,
                                 teacherName: clazz1.teacher.profileByProfileId.firstName + " " + clazz1.teacher.profileByProfileId.lastName,
                                 subjectName: clazz1.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                time: clazz1.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                time: clazz1.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                             };
                             cell2.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule1.classCode}</span>
@@ -91,7 +91,7 @@ function getOverviewlist () {
                                 teacherCard: clazz2.teacher.teacherCard,
                                 teacherName: clazz2.teacher.profileByProfileId.firstName + " " + clazz2.teacher.profileByProfileId.lastName,
                                 subjectName: clazz2.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                             };
                             cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
@@ -118,7 +118,7 @@ function getOverviewlist () {
                                 teacherCard: clazz3.teacher.teacherCard,
                                 teacherName: clazz3.teacher.profileByProfileId.firstName + " " + clazz3.teacher.profileByProfileId.lastName,
                                 subjectName: clazz3.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                time: clazz3.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                time: clazz3.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                             };
                             cell4.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule3.classCode}</span>
@@ -247,7 +247,7 @@ $(() => {
                                     teacherCard: clazz1.teacher.teacherCard,
                                     teacherName: clazz1.teacher.profileByProfileId.firstName + " " + clazz1.teacher.profileByProfileId.lastName,
                                     subjectName: clazz1.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz1.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                    time: clazz1.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                                 };
                                 cell2.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule1.classCode}</span>
@@ -272,7 +272,7 @@ $(() => {
                                     teacherCard: clazz2.teacher.teacherCard,
                                     teacherName: clazz2.teacher.profileByProfileId.firstName + " " + clazz2.teacher.profileByProfileId.lastName,
                                     subjectName: clazz2.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                                 };
                                 cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
@@ -299,7 +299,7 @@ $(() => {
                                     teacherCard: clazz3.teacher.teacherCard,
                                     teacherName: clazz3.teacher.profileByProfileId.firstName + " " + clazz3.teacher.profileByProfileId.lastName,
                                     subjectName: clazz3.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz3.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                    time: clazz3.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                                 };
                                 cell4.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule3.classCode}</span>
@@ -426,7 +426,7 @@ $(() => {
                                     teacherCard: clazz1.teacher.teacherCard,
                                     teacherName: clazz1.teacher.profileByProfileId.firstName + " " + clazz1.teacher.profileByProfileId.lastName,
                                     subjectName: clazz1.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz1.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                    time: clazz1.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                                 };
                                 cell2.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule1.classCode}</span>
@@ -451,7 +451,7 @@ $(() => {
                                     teacherCard: clazz2.teacher.teacherCard,
                                     teacherName: clazz2.teacher.profileByProfileId.firstName + " " + clazz2.teacher.profileByProfileId.lastName,
                                     subjectName: clazz2.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                                 };
                                 cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
@@ -478,7 +478,7 @@ $(() => {
                                     teacherCard: clazz3.teacher.teacherCard,
                                     teacherName: clazz3.teacher.profileByProfileId.firstName + " " + clazz3.teacher.profileByProfileId.lastName,
                                     subjectName: clazz3.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz3.schedulesById[0].scheduleDetailsById.length == 2 ? "8h - 12h" : "8h - 10h"
+                                    time: clazz3.schedulesById[0].scheduleDetailsById.length == 2 ? "8:00 - 12:00" : "8:00 - 10:00"
                                 };
                                 cell4.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule3.classCode}</span>
