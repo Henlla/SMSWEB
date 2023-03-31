@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>HKT University - Teacher</title>
+    <link rel="icon" sizes="196x196" href="/teacherDashboard/assets/img/logo.png" type="image/png">
+    <link rel="stylesheet" href="/teacherDashboard/assets/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/plugins/select2/css/select2.css">
+    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
+    <link rel="stylesheet" href="/teacherDashboard/assets/plugins/feather/feather.css">
+    <link rel="stylesheet" href="/teacherDashboard/assets/plugins/icons/flags/flags.css">
+    <link rel="stylesheet" href="/teacherDashboard/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/teacherDashboard/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/teacherDashboard/assets/plugins/simple-calendar/simple-calendar.css">
+    <link rel="stylesheet" href="/teacherDashboard/assets/css/style.css">
+    <link rel="stylesheet" href="/plugins/datatables/DataTables-1.13.2/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+</head>
+<body>
+
+<div class="main-wrapper">
+
+    <th:block th:replace="~{teacherDashboard/components/header}"></th:block>
+    <th:block th:replace="~{teacherDashboard/components/navbar}"></th:block>
+    <div class="page-wrapper">
+        <th:block layout:fragment="content"></th:block>
+    </div>
+
+</div>
+<script src="/teacherDashboard/assets/js/jquery-3.6.0.min.js"></script>
+<script src="/plugins/moment/moment.min.js"></script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js"></script>
+<script src="/teacherDashboard/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/teacherDashboard/assets/js/feather.min.js"></script>
+<script src="/teacherDashboard/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/teacherDashboard/assets/plugins/simple-calendar/jquery.simple-calendar.js"></script>
+<script src="/teacherDashboard/assets/js/calander.js"></script>
+<script src="/plugins/datatables/DataTables-1.13.2/js/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables/DataTables-1.13.2/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="/plugins/toastr/toastr.min.js"></script>
+<script src="/plugins/select2/js/select2.full.min.js"></script>
+<script src="/teacherDashboard/assets/js/circle-progress.min.js"></script>
+<script type="text/javascript" src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="/teacherDashboard/assets/js/script.js"></script>
+<script type="text/javascript" src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+<th:block layout:fragment="optional"></th:block>
+</body>
+</html>

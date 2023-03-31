@@ -6,22 +6,22 @@ $(()=>{
         scrollCollapse: true,
         "language": {
             "decimal": "",
-            "emptyTable": "Không có dữ liệu",
+            "emptyTable": "Don't have any record",
             "info": "",
             "infoEmpty": "",
             "infoFiltered": "",
             "infoPostFix": "",
             "thousands": ",",
-            "lengthMenu": "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
             "processing": "",
-            "search": "Tìm kiếm:",
-            "zeroRecords": "Không tìm thấy dữ liệu",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first": "Trang đầu",
-                "last": "Trang cuối",
-                "next": "Trang kế tiếp",
-                "previous": "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
                 "sortAscending": ": activate to sort column ascending",
@@ -40,10 +40,10 @@ $(()=>{
         },
         messages: {
             role_code_validate: {
-                required: "Vui lòng nhập mã chức vụ"
+                required: "Please enter role code"
             },
             role_description_validate: {
-                required: "Vui lòng nhập mô tả chức vụ"
+                required: "Please enter role description"
             }
         },
     });
@@ -54,11 +54,11 @@ var OnCreateRole = () => {
         var role_code = $("#role_code_create").val();
         var role_description = $("#role_description_create").val();
         var formData = {
-            "role_code": role_code,
-            "role_description": role_description,
+            "roleName": role_code,
+            "roleDescription": role_description,
         }
         $.ajax({
-            url: "/dashboard/roles/create_role",
+            url: "/dashboard/role/create_role",
             contentType: "application/json",
             method: "POST",
             data: JSON.stringify(formData),

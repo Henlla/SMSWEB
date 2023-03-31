@@ -1,38 +1,40 @@
-$(()=>{
+$(() => {
+    $('#dob_calendar_u').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
 
     $('.select2').select2({
         theme: 'bootstrap4'
-    })
+    });
     $("#student-table").DataTable({
-        pageLength:5,
-        lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
+        pageLength: 5,
+        lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
         scrollCollapse: true,
         scrollY: '600px',
-        // pagingType:"full_numbers",
         "language": {
-            "decimal":        "",
-            "emptyTable":     "Không có dữ liệu",
-            "info":           "",
-            "infoEmpty":      "",
-            "infoFiltered":   "",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
-            "processing":     "",
-            "search":         "Tìm kiếm:",
-            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first":      "Trang đầu",
-                "last":       "Trang cuối",
-                "next":       "Trang kế tiếp",
-                "previous":   "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
-                "sortAscending":  ": activate to sort column ascending",
+                "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
-        },initComplete: function () {
+        }, initComplete: function () {
             count = 0;
             this.api().columns([4]).every(function (i) {
                 var title = this.header();
@@ -66,7 +68,7 @@ $(()=>{
                 //use column title as selector and placeholder
                 $('#' + title).select2({
                     closeOnSelect: true,
-                    placeholder: "- Tất cả -",
+                    placeholder: "- All -",
                     allowClear: true,
                     width: 'resolve',
                 });
@@ -81,7 +83,7 @@ $(()=>{
         {'width': '350px', 'display': 'inline-block'}
     );
     $('#reset_password').on('click', () => {
-        Confirm('Đặt lại mật khẩu', 'Có chắc chắn muốn đặt lại mật khẩu?', 'Có', 'Không')
+        Confirm('Rest password', 'Do you want rest password?', 'Confirm', 'Cancel')
     })
 
     function Confirm(title, msg, $true, $false) { /*change*/
@@ -106,7 +108,7 @@ $(()=>{
             var data = new FormData();
             data.append("id", $('#accountId').val());
             data.append("email", $('#email').val());
-            $('#spinner-div').show()
+            $('#spinner-divI').show()
             $.ajax({
                 url: "/dashboard/student/reset_password",
                 method: "POST",
@@ -116,25 +118,27 @@ $(()=>{
                 data: data,
                 success: (data) => {
                     console.log(data)
-                    toastr.success('Đặt lại mật khẩu thành công')
+                    toastr.success('Reset password success')
                     $("#student_details").modal("hide");
-                    $('#spinner-div').hide()
-                },error:(xhr, status, error)=>{
+
+                    $('#spinner-divI').hide()
+                }, error: (xhr, status, error) => {
                     var err = eval("(" + xhr.responseText + ")");
                     console.log(err)
+                    $('#spinner-divI').hide()
                     if (err.message.toLowerCase() === "token expired") {
                         Swal.fire({
-                            title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                            title: 'End of login session please login again',
                             showDenyButton: false,
                             showCancelButton: false,
-                            confirmButtonText: 'Đồng ý',
+                            confirmButtonText: 'Confirm',
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 location.href = "/dashboard/login";
                             }
-                        })
-                    }else{
-                        alert("Tạo mới thất bại");
+                        });
+                    } else {
+                        alert("Create fail");
                     }
                 }
             })
@@ -204,46 +208,54 @@ var OnDetails = (id) => {
         method: "GET",
         success: (data) => {
             console.log(data)
-            $('#st_image').attr('src', data.studentByProfile.avartarUrl)
-            $('#st_fullName').html(data.studentByProfile.firstName + ' ' + data.studentByProfile.lastName)
-            $('#st_card').html(data.studentCard)
-            $('#st_dob').html(data.studentByProfile.dob)
-            $('#st_phone').html(data.studentByProfile.phone)
-            $('#st_email').html(data.studentByProfile.email)
-            $('#st_sex').html(data.studentByProfile.sex)
-            for (var major of data.majorStudentsById) {
-                $('#st_major').html(major.majorByMajorId.majorName)
+            $('#st_image').attr('src', data.student.studentByProfile.avartarUrl)
+            $('#st_fullName').html(data.student.studentByProfile.firstName + ' ' + data.student.studentByProfile.lastName)
+            $('#st_card').html(data.student.studentCard)
+            $('#st_dob').html(data.student.studentByProfile.dob)
+            $('#st_phone').html(data.student.studentByProfile.phone)
+            $('#st_email').html(data.student.studentByProfile.email)
+            $('#st_sex').html(data.student.studentByProfile.sex)
+            let classCode = "";
+            for (var major of data.student.majorStudentsById) {
+                $('#st_major').html(major.majorByMajorId.majorCode)
+                $('#st_apartment').html(major.majorByMajorId.apartmentByApartmentId.apartmentCode)
+            }
+            if (data.classes.length === 0) {
+                $('#st_class').html('None')
+            } else {
+                for (var classes of data.classes) {
+                    classCode += classes.classCode + " "
+                }
+                $('#st_class').html(classCode)
+            }
+            $('#st_identityId').html(data.student.studentByProfile.identityCard)
+            if (data.student.studentByProfile.profileProvince != null && data.student.studentByProfile.districtByDistrictId != null && data.student.studentByProfile.wardByWardId != null){
+                $('#st_address').html(data.student.studentByProfile.address + ' , ' + data.student.studentByProfile.wardByWardId.name + ' , ' + data.student.studentByProfile.districtByDistrictId.name + ' , ' + data.student.studentByProfile.profileProvince.name)
+            }else{
+                $('#st_address').html("")
             }
 
-            if (data.studentClassById.length == 0) {
-                $('#st_class').html('Chưa có')
-            } else {
-                for (var classes of data.studentClassById) {
-                    $('#st_class').html(classes.classStudentByClass.classCode)
-                }
-            }
-            $('#st_identityId').html(data.studentByProfile.identityCard)
-            $('#st_address').html(data.studentByProfile.address + ' , ' + data.studentByProfile.wardByWardId.name + ' , ' + data.studentByProfile.districtByDistrictId.name + ' , ' + data.studentByProfile.profileProvince.name)
-            $('#accountId').val(data.studentByProfile.accountByAccountId.id)
-            $('#email').val(data.studentByProfile.email)
+            $('#accountId').val(data.student.studentByProfile.accountByAccountId.id)
+            $('#email').val(data.student.studentByProfile.email)
             $("#student_details").modal("show");
-        },  error:(xhr, status, error)=>{
+
+        }, error: (xhr, status, error) => {
             var err = eval("(" + xhr.responseText + ")");
             $("#student_details").modal("hide");
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
-            }else{
-                toastr.success('Xem thông tin thất bại')
+                });
+            } else {
+                toastr.success("Can't get detail")
             }
         }
     });
@@ -259,77 +271,77 @@ var OnUpdate = (id) => {
         method: "GET",
         success: (data) => {
             console.log(data)
-            $('#st_image_u').attr('src', data.studentByProfile.avartarUrl)
-            $('#img').val(data.studentByProfile.avartarUrl)
-            $('#firstName_u').val(data.studentByProfile.firstName)
-            $('#lastName_u').val(data.studentByProfile.lastName)
-            $('#studentCard_u').val(data.studentCard)
-            $('#dob_u').val(data.studentByProfile.dob)
-            $('#phone_u').val(data.studentByProfile.phone)
-            $('#email_u').val(data.studentByProfile.email)
-            $('#address_u').val(data.studentByProfile.address)
-            $('#identityCard_u').val(data.studentByProfile.identityCard)
-            $('#profileId_u').val(data.studentByProfile.id)
-            $('#accountId_u').val(data.studentByProfile.accountId)
+            $('#st_image_u').attr('src', data.student.studentByProfile.avartarUrl)
+            $('#img').val(data.student.studentByProfile.avartarUrl)
+            $('#firstName_u').val(data.student.studentByProfile.firstName)
+            $('#lastName_u').val(data.student.studentByProfile.lastName)
+            $('#studentCard_u').val(data.student.studentCard)
+            $('#dob_u').val(data.student.studentByProfile.dob)
+            $('#phone_u').val(data.student.studentByProfile.phone)
+            $('#email_u').val(data.student.studentByProfile.email)
+            $('#address_u').val(data.student.studentByProfile.address)
+            $('#identityCard_u').val(data.student.studentByProfile.identityCard)
+            $('#profileId_u').val(data.student.studentByProfile.id)
+            $('#accountId_u').val(data.student.studentByProfile.accountId)
 
-            const province_id = data.studentByProfile.profileProvince.id
+            if (data.student.studentByProfile.profileProvince != null && data.student.studentByProfile.districtByDistrictId != null && data.student.studentByProfile.wardByWardId != null) {
+                const province_id = data.student.studentByProfile.profileProvince.id
 
-            const district_id = data.studentByProfile.districtByDistrictId.id
+                const district_id = data.student.studentByProfile.districtByDistrictId.id
+                const ward_id = data.student.studentByProfile.wardByWardId.id
+                console.log(province_id, district_id, ward_id)
+                $("#province_u").val(province_id).trigger('change');
 
-            const ward_id = data.studentByProfile.wardByWardId.id
-
-            console.log(province_id, district_id, ward_id)
-
-            // $("#province_u").val(province_id).trigger('change');
-            $("#province_u option[value='" + province_id + "']").prop("selected", true);
-
-            $.ajax({
-                url: "http://localhost:8080/api/districts/",
-                method: "GET",
-                contentType: "application/json",
-                data: {province: province_id},
-                success: (res) => {
-                    for (var dis of res) {
-                        district.options[district.options.length] = new Option(dis.name, dis.id);
-                    }
-                    $("#district_u option[value='" + district_id + "']").prop("selected", true);
-                    // $("#district_u").val(district_id).trigger('change');
-                    $.ajax({
-                        url: "http://localhost:8080/api/wards/",
-                        method: "GET",
-                        contentType: "application/json",
-                        data: {province: province_id, district: district_id},
-                        success: (res) => {
-                            for (const ward of res) {
-                                wards.options[wards.options.length] = new Option(ward.name, ward.id);
-                            }
-                            $("#ward_u option[value='" + ward_id + "']").prop("selected", true);
-                            // $("#ward_u").val(ward_id).trigger('change');
+                $.ajax({
+                    url: "http://localhost:8080/api/districts/",
+                    method: "GET",
+                    contentType: "application/json",
+                    data: {province: province_id},
+                    success: (res) => {
+                        for (var dis of res) {
+                            district.options[district.options.length] = new Option(dis.name, dis.id);
                         }
-                    })
-                }
-            })
+                        $("#district_u").val(district_id).trigger('change');
+                        $.ajax({
+                            url: "http://localhost:8080/api/wards/",
+                            method: "GET",
+                            contentType: "application/json",
+                            data: {province: province_id, district: district_id},
+                            success: (res) => {
+                                for (const ward of res) {
+                                    wards.options[wards.options.length] = new Option(ward.name, ward.id);
+                                }
+                                $("#ward_u").val(ward_id).trigger('change');
+                            }
+                        })
+                    }
+                })
+            } else {
+                $("#province_u").val(null).trigger('change');
+                $("#district_u").val(null).trigger('change');
+                $("#ward_u").val(null).trigger('change');
+            }
 
-            $("input[name=sex][value=" + data.studentByProfile.sex + "]").prop('checked', true);
+            $("input[name=sex][value=" + data.student.studentByProfile.sex + "]").prop('checked', true);
 
             $("#student_update").modal("show");
-        },  error:(xhr, status, error)=>{
+        }, error: (xhr, status, error) => {
             var err = eval("(" + xhr.responseText + ")");
             $("#student_update").modal("hide");
             console.log(err)
             if (err.message.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                    title: 'End of login session please login again',
                     showDenyButton: false,
                     showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
+                    confirmButtonText: 'Confirm',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.href = "/dashboard/login";
                     }
-                })
-            }else{
-                toastr.success('Xem thông tin thất bại')
+                });
+            } else {
+                toastr.success('Get detail fail')
             }
         }
     });
@@ -373,40 +385,129 @@ var OnUpdateSubmit = () => {
     }
     formData.append('profile', JSON.stringify(profile))
     $('#spinner-divI').show();
-    $.ajax({
-        url: "/dashboard/student/student_update",
-        method: "POST",
-        data: formData,
-        cache: false,
-        processData: false,
-        contentType: false,
-        success: (result) => {
-            console.log(result)
-            $("#student_update").modal("hide");
-            $('#spinner-divI').hide();
-            location.reload();
-            toastr.success('Cập nhật sinh viên thành công')
-        },
-        error:(xhr, status, error)=>{
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err)
-            if (err.message.toLowerCase() === "token expired") {
-                $('#spinner-divI').hide();
-                Swal.fire({
-                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
-                    showDenyButton: false,
-                    showCancelButton: false,
-                    confirmButtonText: 'Đồng ý',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.href = "/dashboard/login";
-                    }
-                })
-            }else{
-                toastr.success('Cập nhật thất bại')
+
+    //method rule
+    $.validator.addMethod("valueNotEquals", function (value, element, arg) {
+        return arg !== value;
+    }, "Value must not equal arg.");
+
+    $.validator.addMethod("checkAge", function (value, element) {
+        let date = new Date(value)
+        let age = _calculateAge(date)
+        return age >= 18;
+    }, "Age must be greater than 18");
+
+    $.validator.addMethod("checkPhoneNumber", function (value, element) {
+        return regexPhone(value);
+    }, "Please enter incorrect phone");
+
+    $('#form_student_update').validate({
+        rules: {
+            firstName_u: {
+                required: true
+            },
+            lastName_u: {
+                required: true
+            },
+            phone_u: {
+                checkPhoneNumber: true,
+                required: true
             }
-        }
+            , dob_u: {
+                checkAge: true,
+                required: true
+            },
+            email_u: {
+                required: true,
+                email: true
+            },
+            identityCard_u: {
+                required: true
+            },
+            province_u: {
+                valueNotEquals: ""
+            },
+            district_u: {
+                valueNotEquals: ""
+            },
+            ward_u: {
+                valueNotEquals: ""
+            },
+            address_u: {
+                required: true
+            },
+        },
+        messages: {
+            firstName_u: {
+                required: "Please enter first name"
+            },
+            lastName_u: {
+                required: "Please enter last name"
+            },
+            phone_u: {
+                checkPhoneNumber: "Please enter incorrect phone",
+                required: "Please enter phone numbers "
+            }, dob_u: {
+                checkAge: "Age must be greater than 18",
+                required: "Please enter date of birth "
+            },
+            email_u: {
+                required: "Please enter email ",
+                email: "Email wrong format xxxx@xxx.xxx"
+            },
+            identityCard_u: {
+                required: "Please enter identity card "
+            },
+            province_u: {
+                valueNotEquals: "Please enter province "
+            },
+            district_u: {
+                valueNotEquals: "Please enter district "
+            },
+            ward_u: {
+                valueNotEquals: "Please enter ward "
+            },
+            address_u: {
+                required: "Please enter address"
+            },
+        },
     })
+    if ($('#form_student_update').valid()) {
+        $.ajax({
+            url: "/dashboard/student/student_update",
+            method: "POST",
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: (result) => {
+                console.log(result)
+                $("#student_update").modal("hide");
+                $('#spinner-divI').hide();
+                location.reload();
+                toastr.success('Cập nhật sinh viên thành công')
+            },
+            error: (xhr, status, error) => {
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err)
+                if (err.message.toLowerCase() === "token expired") {
+                    $('#spinner-divI').hide();
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                } else {
+                    toastr.success('Update fail')
+                }
+            }
+        })
+    }
 }
 const imageProfile = document.getElementById('st_image_u')
 
@@ -429,7 +530,7 @@ var CancelUpdateImg = () => {
 
 var OnUpdateImg = () => {
 
-    ConfirmImg('Thay đổi hình ảnh', 'Có chắc chắn muốn thay đổi hình ảnh?', 'Có', 'Không')
+    ConfirmImg('Change picture', 'Are you sure change picture?', 'Confirm', 'Cancel')
 }
 
 function ConfirmImg(title, msg, $true, $false) { /*change*/
@@ -456,7 +557,7 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
         let formData = new FormData();
         formData.append('file', avatarUrl.files[0]);
         formData.append('id', profileId)
-        $('#spinner-divI').show()
+        $('#spinner-divI_2').show()
         $.ajax({
             url: "/dashboard/student/changeImg",
             method: "POST",
@@ -466,26 +567,26 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
             processData: false,
             contentType: false,
             success: (data) => {
-                $('#spinner-divI').hide()
+                $('#spinner-divI_2').hide()
                 location.reload();
-                toastr.success('Thay đổi hình ảnh thành công')
-            }, error:(xhr, status, error)=>{
+                toastr.success('Change success')
+            }, error: (xhr, status, error) => {
                 var err = eval("(" + xhr.responseText + ")");
                 console.log(err)
                 if (err.message.toLowerCase() === "token expired") {
-                    $('#spinner-divI').hide()
+                    $('#spinner-divI_2').hide()
                     Swal.fire({
-                        title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                        title: 'End of login session please login again',
                         showDenyButton: false,
                         showCancelButton: false,
-                        confirmButtonText: 'Đồng ý',
+                        confirmButtonText: 'Confirm',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             location.href = "/dashboard/login";
                         }
-                    })
-                }else{
-                    alert("Tạo mới thất bại");
+                    });
+                } else {
+                    alert("Change fail");
                 }
             }
         })
@@ -498,4 +599,64 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
             $(this).remove();
         });
     });
+}
+
+const OnChooseFile = () => {
+    $("#fileStudent").trigger("click");
+}
+
+const OnImportStudent = () => {
+    let file = $("#fileStudent").get(0).files[0];
+    if (file !== undefined) {
+        let formData = new FormData();
+        formData.append("file", file);
+        $.ajax({
+            url: "/dashboard/student/import-excel",
+            data: formData,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            enctype: "multipart/form-data",
+            beforeSend: () => {
+                $("#class_import_student_file").modal("hide");
+                var sweet_loader = `<div id="spinner-divI_3">
+                                        <div class="spinner-border m-0 text-primary" role="status"></div>
+                                    </div>`
+                Swal.fire({
+                    title: 'Importing student',
+                    html: sweet_loader,// add html attribute if you want or remove
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    customClass: "swal-height",
+                });
+            },
+            success: (data) => {
+                setTimeout(()=>{
+                    Swal.close();
+                    toastr.success(data);
+                },1500)
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            },
+            error: (data) => {
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.close();
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                } else {
+                    Swal.close();
+                    toastr.error(data.responseText);
+                }
+            }
+        });
+    }
 }

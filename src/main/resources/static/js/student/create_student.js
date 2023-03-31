@@ -1,4 +1,36 @@
 $(()=>{
+    $('#dob_calendar').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('.select2').select2({
+        theme: 'bootstrap4'
+    });
+
+    $('#dob_calendar').on('change.datetimepicker',(e)=>{
+        // var formatedValue = e.date.format(e.date._f);
+        let date = new Date(e.date)
+        let age = _calculateAge(date)
+        console.log(date);
+        if (age <= 18){
+            $('#dob-error').show()
+            $('#dob-error').html('Age must be greater than 18 ')
+        }else{
+            $('#dob-error').hide()
+            $('#dob-error').html('')
+        }
+    })
+
+    $('#phone').on('change',()=>{
+        // console.log()
+        let isPhone = regexPhone($('#phone').val())
+        if(isPhone){
+            $('#phone-error').hide()
+            $('#phone-error').html('')
+        }else{
+            $('#phone-error').show()
+            $('#phone-error').html('Please enter incorrect phone')
+        }
+    })
 
     const province = document.getElementById("province")
     const district = document.getElementById("district")
@@ -55,6 +87,8 @@ $(()=>{
         $('#avatar').trigger('click');
     });
 
+
+
     function readURL(input) {
         if (input.files && input.files[0]) {
             if(GetExtension(input.files[0].name) === "png" ||
@@ -80,7 +114,7 @@ $(()=>{
             $('.errorAvatar').css("display","none")
         }else{
             $('.errorAvatar').css("display","block")
-            $('.errorAvatar').html("Vui lòng chọn file hình ảnh (png,jpg,jpeg)")
+            $('.errorAvatar').html("Please choose image (png,jpg,jpeg)")
         }
     });
 
@@ -88,7 +122,7 @@ $(()=>{
     // custom confirm
    $('.icon-cancel_image').on('click',function (){
        $('.background-choose_image').css("filter","blur(3px)")
-       Confirm('Hủy hình ảnh', 'Có chắc chắn muốn hủy hình ảnh?', 'Hủy', 'Không')
+       Confirm('Cancel image', 'Are you sure cancel image?', 'Ok', 'Cancel')
 
 
    })
@@ -175,18 +209,39 @@ $(()=>{
             return arg !== value;
         }, "Value must not equal arg.");
 
+        $.validator.addMethod("checkAge", function(value, element){
+            var dateParts = value.split("/");
+            // month is 0-based, that's why we need dataParts[1] - 1
+            var date = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+            console.log(value)
+            let age = _calculateAge(date)
+            console.log(age)
+            return age >= 18;
+        }, "Age must be greater than 18");
+
+        $.validator.addMethod("checkPhoneNumber", function(value, element){
+            return regexPhone(value);
+        }, "Please enter incorrect phone");
+
+        $.validator.addMethod("checkIdentityCard", function(value, element){
+            return isCheck;
+        }, "Please enter incorrect phone");
+
         $('#form-create').validate({
             rules: {
                 first_name: {
+
                     required: true
                 },
                 last_name: {
                     required: true
                 },
                 phone: {
+                    checkPhoneNumber:true,
                     required: true
                 }
                 ,dob: {
+                    checkAge:true,
                     required: true
                 },
                 email: {
@@ -194,6 +249,7 @@ $(()=>{
                     email:true
                 },
                 identityCard: {
+                    checkIdentityCard:true,
                     required: true
                 },
                 province: {
@@ -215,43 +271,46 @@ $(()=>{
                 },
             messages:{
                 first_name : {
-                    required:"Vui lòng nhập họ sinh viên"
+                    required:"Please enter first name"
                 },
                 last_name : {
-                    required:"Vui lòng nhập tên sinh viên"
+                    required:"Please enter last name"
                 },
                 phone: {
-                    required: "Vui lòng nhập số điện thoại "
+                    checkPhoneNumber: "Please enter incorrect phone",
+                    required: "Please enter phone numbers "
                 }, dob: {
-                    required: "Vui lòng chọn ngày sinh "
+                    checkAge:"Age must be greater than 18",
+                    required: "Please enter date of birth "
                 },
                 email: {
-                    required: "Vui lòng nhập email ",
-                    email:"Vui lòng nhập đúng email"
+                    required: "Please enter email ",
+                    email:"Email wrong format xxxx@xxx.xxx"
                 },
                 identityCard: {
-                    required: "Vui lòng nhập CMND/CCCD "
+                    checkIdentityCard:"Identity card is exist",
+                    required: "Please enter identity card "
                 },
                 province: {
-                    valueNotEquals: "Vui lòng chọn tỉnh/thành phố "
+                    valueNotEquals: "Please enter province "
                 },
                 district: {
-                    valueNotEquals: "Vui lòng chọn quận/huyện "
+                    valueNotEquals: "Please enter district "
                 },
                 ward: {
-                    valueNotEquals: "Vui lòng chọn xã/thị trấn "
+                    valueNotEquals: "Please enter ward "
                 },
                 address:{
-                    required: "Vui lòng nhập địa chỉ"
+                    required: "Please enter address"
                 },
                 major: {
-                    valueNotEquals: "Vui lòng chọn nghành học "
+                    valueNotEquals: "Please enter major "
                 }
             },
         })
             if(avatarUrl.files.length===0){
                 $('.errorAvatar').css("display","block")
-                $('.errorAvatar').html("Vui lòng chọn ảnh")
+                $('.errorAvatar').html("Please choose image")
             }else{
                 if($('#form-create').valid()){
                     $('#spinner-div').show()
@@ -280,7 +339,7 @@ $(()=>{
                             $('.icon-cancel_image').css("display","none")
                             $('.icon-choose_image').css("display","block")
                             $('.background-choose_image').attr('src','/img/avatar.png').css("filter","blur(3px)")
-                            toastr.success('Tạo sinh viên thành công')
+                            toastr.success('Create success')
                             $('#spinner-div').hide();
                         },
                         error:(xhr, status, error)=>{
@@ -289,17 +348,17 @@ $(()=>{
                             if (err.message.toLowerCase() === "token expired") {
                                 $('#spinner-div').hide();
                                 Swal.fire({
-                                    title: 'Hết phiên đăng nhập vui lòng đăng nhập lại',
+                                    title: 'End of login session please login again',
                                     showDenyButton: false,
                                     showCancelButton: false,
-                                    confirmButtonText: 'Đồng ý',
+                                    confirmButtonText: 'Confirm',
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         location.href = "/dashboard/login";
                                     }
-                                })
+                                });
                             }else{
-                                toastr.success('Tạo sinh viên thành công')
+                                toastr.error('Create fail')
                             }
                         }
                     })
@@ -309,6 +368,40 @@ $(()=>{
     })
 
 })
+
+let isCheck = false
+
+let CheckIdentityCard= ()=>{
+
+    let data = new FormData()
+    data.append("identityCard",$('#identityCard').val())
+
+    $.ajax({
+        url:"/dashboard/student/checkIdentityCard",
+        method:"POST",
+        data:data,
+        cache : false,
+        processData: false,
+        contentType: false,
+        success:(res)=>{
+            if(res.toLowerCase() === "success"){
+                isCheck = true
+                console.log(isCheck)
+                $('#identityCard-error').hide()
+                $('#identityCard-error').html("")
+            }else{
+                $('#identityCard-error').show()
+                $('#identityCard-error').html("Identity card is exist !")
+            }
+        }
+
+    })
+}
+
+
+
+
+
 function selectMajor(){
     console.log($('#major').val())
    if($('#major').val() != ""){
@@ -336,3 +429,5 @@ function selectWard(){
         $('#ward-error').html("")
     }
 }
+
+

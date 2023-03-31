@@ -1,14 +1,15 @@
 package com.example.smsweb.client.dashboard;
 
+import com.example.smsweb.dto.DataNotification;
+import com.example.smsweb.dto.MulticastMessageRepresentation;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.Application;
-import com.example.smsweb.models.ApplicationType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.example.smsweb.models.Devices;
+import com.example.smsweb.models.Student;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.MultipartConfig;
-import org.apache.commons.compress.utils.FileNameUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,36 +17,41 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("dashboard/application")
 @MultipartConfig
+@Slf4j
 public class ApplicationController {
     private final String APPLICATION_URL = "http://localhost:8080/api/application/";
     private final String APPLICATION_TYPE_URL = "http://localhost:8080/api/application_type/";
+    private final String URL_FCM = "http://localhost:8080/fcm/";
+    private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private RestTemplate restTemplate;
-    private final String APP_TYPE_STORE_URL = "/src/main/resources/static/application/ApplicationTemplate/";
 
-    @GetMapping("/app_type_index")
-    public String index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) {
-        ResponseEntity<ResponseModel> response = null;
+    @GetMapping("/app_index")
+    public String regis_index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) {
         try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            HttpEntity<String> request = new HttpEntity<String>(headers);
-            response = restTemplate.exchange(APPLICATION_TYPE_URL + "list", HttpMethod.GET, request, ResponseModel.class);
-            model.addAttribute("listAppType", response.getBody().getData());
-            return "dashboard/application/app_type_index";
-        } catch (Exception e) {
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return "/error/error";
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + _token);
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                ResponseEntity<ResponseModel> responseApplication = restTemplate.exchange(APPLICATION_URL + "list", HttpMethod.GET, request, ResponseModel.class);
+                ResponseEntity<ResponseModel> responseAppType = restTemplate.exchange(APPLICATION_TYPE_URL + "list", HttpMethod.GET, request, ResponseModel.class);
+                model.addAttribute("listApplication", responseApplication.getBody().getData());
+                model.addAttribute("listAppType", responseAppType.getBody().getData());
+                return "dashboard/application/app_index";
+            } else {
+                return "redirect:/dashboard/login";
             }
-            return "redirect:/dashboard/login";
+        } catch (Exception e) {
+            log.error("Index Application: " + e.getMessage());
+            return e.getMessage();
         }
     }
 
@@ -53,150 +59,69 @@ public class ApplicationController {
     @ResponseBody
     public Object getOneApplication(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") int id) {
         try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
-            return response.getBody().getData();
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-    }
-
-    @GetMapping("/app_index")
-    public String regis_index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) {
-        ResponseEntity<ResponseModel> responseApplication = null;
-        ResponseEntity<ResponseModel> responseAppType = null;
-        try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            responseApplication = restTemplate.exchange(APPLICATION_URL + "list", HttpMethod.GET, request, ResponseModel.class);
-            responseAppType = restTemplate.exchange(APPLICATION_TYPE_URL + "list", HttpMethod.GET, request, ResponseModel.class);
-            model.addAttribute("listApplication", responseApplication.getBody().getData());
-            model.addAttribute("listAppType", responseAppType.getBody().getData());
-            return "dashboard/application/app_index";
-        } catch (Exception e) {
-            if (e.getMessage().toLowerCase().equals("token expired")) {
-                return "redirect:/dashboard/login";
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + _token);
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
+                return response.getBody().getData();
             } else {
-                return "/error/error";
-            }
-        }
-    }
-
-    @PostMapping("/save_app_type")
-    @ResponseBody
-    public Object save(@CookieValue(name = "_token", defaultValue = "") String _token,
-                       @RequestParam("file") MultipartFile file, @RequestParam("name") String name,
-                       @RequestParam("base64String") String base64) throws JsonProcessingException {
-        try {
-            JWTUtils.checkExpired(_token);
-            String extension = FileNameUtils.getExtension(file.getOriginalFilename());
-            restTemplate = new RestTemplate();
-            String fileName = name + "." + extension;
-            String url = "/application/ApplicationTemplate/" + fileName;
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            MultiValueMap<String, Object> content = new LinkedMultiValueMap<>();
-            ApplicationType appType = ApplicationType.builder().url(url).name(fileName).file(base64).build();
-            content.add("applicationType", appType);
-            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_TYPE_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-            uploadFile(fileName, file);
-            return response;
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-    }
-
-    @GetMapping("/deleteAppType/{id}")
-    public String delete(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") int id) throws JsonProcessingException {
-        try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer" + _token);
-            HttpEntity<String> request = new HttpEntity<String>(headers);
-            ResponseEntity<ResponseModel> responseFindOne = restTemplate.exchange(APPLICATION_TYPE_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
-            if (responseFindOne.getStatusCode().is2xxSuccessful()) {
-                ResponseEntity<ResponseModel> responseDelete = restTemplate.exchange(APPLICATION_TYPE_URL + "delete/" + id, HttpMethod.DELETE, request, ResponseModel.class);
-                if (responseDelete.getStatusCode().is2xxSuccessful()) {
-                    String jsonResponse = new ObjectMapper().writeValueAsString(responseFindOne.getBody().getData());
-                    ApplicationType appType = new ObjectMapper().readValue(jsonResponse, new TypeReference<>() {
-                    });
-                    String rootPath = System.getProperty("user.dir");
-                    File uploadDir = new File(rootPath + APP_TYPE_STORE_URL + appType.getName());
-                    if (uploadDir.exists()) {
-                        uploadDir.delete();
-                    }
-                    return "redirect:/dashboard/application/app_type_index";
-                } else {
-                    return "redirect:/dashboard/application/app_type_index";
-                }
-            } else {
-                return "redirect:/dashboard/application/app_type_index";
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            return "redirect:/dashboard/login";
+            log.error("GetOne Application: " + e.getMessage());
+            return new ResponseEntity<String>("Don't find any records",HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/get_one_app_type/{id}")
+    @PostMapping("/update")
     @ResponseBody
-    public Object getOneAppType(@CookieValue(name = "_token", defaultValue = "") String _token, @PathVariable("id") String id) {
+    public Object update(@CookieValue(name = "_token", defaultValue = "") String _token, @RequestBody Application application) {
         try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            HttpEntity<String> request = new HttpEntity<String>(headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_TYPE_URL + "findOne/" + id, HttpMethod.GET, request, ResponseModel.class);
-            return response.getBody().getData();
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-    }
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                ObjectMapper objectMapper = new ObjectMapper();
+                MultiValueMap<String, Object> content = new LinkedMultiValueMap<String, Object>();
+                content.add("application", application);
+                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(content, headers);
+                ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "update", HttpMethod.PUT, request, ResponseModel.class);
 
-    @PostMapping("/save_app")
-    @ResponseBody
-    public Object save_app(@CookieValue(name = "_token", defaultValue = "") String _token, @RequestBody Application application) {
-        try {
-            JWTUtils.checkExpired(_token);
-            restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + _token);
-            MultiValueMap<String, Application> content = new LinkedMultiValueMap<>();
-            content.add("application", application);
-            HttpEntity<MultiValueMap<String, Application>> request = new HttpEntity<MultiValueMap<String, Application>>(content, headers);
-            ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "save", HttpMethod.POST, request, ResponseModel.class);
-            return response;
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-    }
+                HttpEntity<Object> requestStudent = new HttpEntity<>(headers);
+                ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL+"get/"+application.getStudentId(),HttpMethod.GET,requestStudent,ResponseModel.class);
+                String json = objectMapper.writeValueAsString(responseStudent.getBody().getData());
 
-    public void uploadFile(String fileName, MultipartFile file) {
-        InputStream is;
-        OutputStream ot;
-        String rootPath = System.getProperty("user.dir");
-        File uploadDir = new File(rootPath + APP_TYPE_STORE_URL);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-        try {
-            ot = new FileOutputStream(uploadDir + File.separator + fileName);
-            is = file.getInputStream();
-            byte[] data = new byte[is.available()];
-            is.read(data);
-            ot.write(data);
-            ot.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                Student student = objectMapper.readValue(json,Student.class);
+                String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
+                List<String> listDeviceToken = new ArrayList<>();
+                listDeviceToken.add(tokenDevices);
+
+                MulticastMessageRepresentation message = new MulticastMessageRepresentation();
+
+                DataNotification dataNotification = new DataNotification();
+                dataNotification.setContent(application.getResponseNote());
+                dataNotification.setAction("Application");
+
+                String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
+                message.setTitle("Announcement");
+                message.setData(jsonData);
+                message.setRegistrationTokens(listDeviceToken);
+
+                String messageJson = new ObjectMapper().writeValueAsString(message);
+                MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
+                params.add("message", messageJson);
+                HttpEntity<MultiValueMap<String, Object>> requestFCM = new HttpEntity<>(params, headers);
+                ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
+                return response.getBody().getData();
+            } else {
+                return new ResponseEntity<String>(isExpired,HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.error("Update Application: " + e.getMessage());
+            return new ResponseEntity<String>("Update fail",HttpStatus.BAD_REQUEST);
         }
     }
 }

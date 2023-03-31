@@ -4,10 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Thêm tin tức</title>
-    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <title>Add news</title>
     <link rel="stylesheet" href="/css/create_news.css">
     <style>
 
@@ -21,12 +18,12 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Thêm mới tin tức</h1>
+                            <h1 class="m-0">Add news</h1>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Thêm mới tin tức</li>
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Add new news</li>
                             </ol>
                         </div>
                     </div>
@@ -45,51 +42,44 @@
                                 <div style="width: 50%;border: 1px solid #92b0b3;outline: 2px dashed #92b0b3;">
                                     <img src="/img/blank.png" class="background-choose_image" style="">
                                     <input type="file" id="avatar" name="avatar" hidden>
-                                    <span class="errorAvatar">Vui lòng chọn hình ảnh</span>
+                                    <span class="errorAvatar">Please choose image</span>
                                     <img src="/img/plus_1.png" class="icon-choose_image" width="40" height="40">
                                     <img src="/img/multiply.png" class="icon-cancel_image" width="40" height="40">
                                 </div>
                             </div>
                         </div>
                         <div class="col-12">
-                            <label>Tiêu đề :</label>
+                            <label>Title :</label>
                             <textarea type="text" cols="3" rows="2" style="resize: none" class="form-control"
-                                      name="title" id="title" placeholder="Nhập tiêu đề "></textarea>
+                                      name="title" id="title" placeholder="Enter title... "></textarea>
                         </div>
                         <div class="col-12">
-                            <label>Tiêu đề con:</label>
+                            <label>SubTitle:</label>
                             <textarea type="text" cols="3" rows="2" style="resize: none" class="form-control"
-                                      name="sub_title" id="sub_title" placeholder="Nhập tiêu đề con "></textarea>
+                                      name="sub_title" id="sub_title" placeholder="Enter subtitle... "></textarea>
                         </div>
                         <div class="col-12 d-flex">
-                            <label>Hiển thị:</label>
+                            <label>Display:</label>
                             <div class="custom-control custom-switch" style="margin-left: 15px">
                                 <input type="checkbox" class="custom-control-input" id="isActive" checked>
                                 <label class="custom-control-label" for="isActive"></label>
                             </div>
                         </div>
                         <div class="col-12">
-                            <label>Nội dung :</label>
+                            <label>Content:</label>
                             <div id="editor">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <button type="submit" id="btn_create_news" class="btn btn-default">Tạo tin tức
-                        </button>
+                        <button type="submit" id="btn_create_news" class="btn btn-default">Create</button>
                     </div>
                 </form>
             </div>
-
         </div>
     </section>
 </div>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.js"></script>
-    <script src="/plugins/moment/moment.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.min.js"></script>
     <script src="/plugins/ckeditor/ckeditor.js"></script>
     <script src="/js/HelperJs.js"></script>
     <script src="/js/news/create_news.js"></script>

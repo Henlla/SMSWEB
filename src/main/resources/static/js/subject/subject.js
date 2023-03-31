@@ -8,27 +8,43 @@ $(() => {
                 required: true
             },
             create_fee_validate: {
-                required: true
+                required: true,
             },
             create_slot_validate: {
+                required: true,
+                min: 4,
+                max: 24
+            },
+            create_course_validate: {
                 required: true
             }
         },
         messages: {
             create_subject_code_validate: {
-                required: "Vui lòng nhập mã môn học"
+                required: "Please enter subject code"
             },
             create_subject_name_validate: {
-                required: "Vui lòng nhập tên môn học"
+                required: "Please enter subject name"
             },
             create_fee_validate: {
-                required: "Vui lòng nhập học phí"
+                required: "Please enter fee",
             },
             create_slot_validate: {
-                required: "Vui lòng nhập số tiết học"
+                required: "Please enter number of slot",
+                min: "Slot must be greater than 4",
+                max: "Slot must be letter than 24"
+            },
+            create_course_validate: {
+                required: "Please choose course"
             }
         },
     });
+
+    $(".select2").select2({
+        theme: "bootstrap4"
+    });
+
+    $("#curriculum").val($("#curriculum option:first").val()).trigger('change');
 
     $("#edit-form").validate({
         rules: {
@@ -39,50 +55,66 @@ $(() => {
                 required: true
             },
             edit_fee_validate: {
-                required: true
+                required: true,
             },
             edit_slot_validate: {
-                required: true
+                required: true,
+                min: 4,
+                max: 24
             }
         },
         messages: {
             edit_subject_code_validate: {
-                required: "Vui lòng nhập mã môn học"
+                required: "Please enter subject code"
             },
             edit_subject_name_validate: {
-                required: "Vui lòng nhập tên môn học"
+                required: "Please enter subject name"
             },
             edit_fee_validate: {
-                required: "Vui lòng nhập học phí"
+                required: "Please enter fee",
+                min: "Slot must be greater than 4",
+                max: "Slot must be letter than 24"
+
             },
             edit_slot_validate: {
-                required: "Vui lòng nhập số tiết học"
+                required: "Please enter number of slot"
             }
         },
     });
+
     $("#subject-table").dataTable({
         pageLength: 5,
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
         scrollCollapse: true,
         scrollY: '300px',
+        columnDefs: [
+            {
+                "targets": [0, 1, 2, 3, 4],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2, 4],
+                "orderable": false,
+            }
+        ],
         "language": {
             "decimal": "",
-            "emptyTable": "Không có dữ liệu",
+            "emptyTable": "Don't have any record",
             "info": "",
             "infoEmpty": "",
             "infoFiltered": "",
             "infoPostFix": "",
             "thousands": ",",
-            "lengthMenu": "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
             "processing": "",
-            "search": "Tìm kiếm:",
-            "zeroRecords": "Không tìm thấy dữ liệu",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first": "Trang đầu",
-                "last": "Trang cuối",
-                "next": "Trang kế tiếp",
-                "previous": "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
                 "sortAscending": ": activate to sort column ascending",
@@ -90,12 +122,139 @@ $(() => {
             }
         }
     });
+
     $(".select2-single").select2({
         theme: "bootstrap4",
         width: "100%",
         dropdownCssClass: "f-13"
     });
+
+    $("#create_major_id").on("change", function () {
+        let code = $("#create_major_id").select2('data')[0].text.split("-")[2];
+        $("#create_apartment_code").text(code + "-")
+    });
+
+    $("#edit_major_id").on("change", function () {
+        let code = $("#edit_major_id").select2('data')[0].text.split("-")[2];
+        $("#edit_apartment_code").text(code + "-")
+    });
 });
+
+var OnChangeCurriculum = () =>{
+    var majorId = $("#curriculum").val();
+    $.ajax({
+        url: "/dashboard/subject/findSubjectByMajorId/" + majorId,
+        method: "GET",
+        success: (response) => {
+            if ($.fn.dataTable.isDataTable('#subject-table')) {
+                let table = $('#subject-table').DataTable();
+                table.clear().draw();
+                table.destroy();
+                DataTable(response);
+            } else {
+                DataTable(response);
+            }
+        }, error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error(data.responseText);
+            }
+        }
+    });
+}
+
+var DataTable = (response) => {
+    let html = "";
+    var role = $("#userRole").val();
+    $("#subject-table").dataTable({
+        pageLength: 5,
+        lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
+        scrollCollapse: true,
+        scrollY: '300px',
+        data: response,
+        columnDefs: [
+            {
+                "targets": [0, 1, 2, 3, 4],
+                "className": "text-center"
+            },
+            {
+                "targets": [1, 2, 4],
+                "orderable": false,
+            }
+        ],
+        columns: [
+            {
+                render: function (data, type, row, index) {
+                    return index.row + 1;
+                }
+            },
+            {
+                data: "subjectCode",
+                render: function (data, type, row, index) {
+                    return data;
+                }
+            },
+            {
+                data: "subjectName",
+                render: function (data, type, row, index) {
+                    return data;
+                }
+            },
+            {
+                data: "fee",
+                render: function (data, type, row, index) {
+                    return data.toLocaleString('it-IT', {style: 'currency', currency: 'vnd'}).toLowerCase();
+                }
+            },
+            {
+                data: "id",
+                render: function (data, type, row, index) {
+                    if(role === "[STAFF]"){
+                        html = ` <a onclick="OnEditSubject('${data}')" class="mr-3"><i class="fas fa-pen indigo-text"></i></a>
+                              <a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
+                    }else{
+                        html = `<a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
+                    }
+                    return html;
+                }
+            }
+        ],
+        "language": {
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
+            "paginate": {
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            }
+        }
+    });
+}
 
 var OnClickImport = () => {
     $("#fileUpload").trigger("click");
@@ -112,14 +271,29 @@ var OnSaveExcelData = () => {
         method: "POST",
         contentType: false,
         processData: false,
-        success: () => {
-
+        success: (data) => {
+            toastr.success(data);
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
         },
-        error: () => {
-
+        error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error(data.responseText);
+            }
         }
     });
-    alert("ok");
 }
 
 var OnEditSubject = (id) => {
@@ -128,27 +302,34 @@ var OnEditSubject = (id) => {
         dataType: "json",
         method: "GET",
         success: (obj) => {
-            console.log(obj);
             var formatFee = obj.fee.toLocaleString('en-US', {
                 valute: "currency"
             });
+            var code = obj.subjectCode.split("-");
             $("#edit_id").val(obj.id);
-            $("#edit_subject_code").val(obj.subjectCode);
+            $("#edit_subject_code").val(code[1]);
             $("#edit_subject_name").val(obj.subjectName);
             $("#edit_fee").val(formatFee);
             $("#edit_slot").val(obj.slot);
             $("#edit_semester_id").val(obj.semesterId).trigger("change");
             $("#edit_major_id").val(obj.majorId).trigger("change");
+            $("#edit_apartment_code").text(code[0] + "-");
             $("#subject-edit-modal").modal("show");
         },
         error: (data) => {
-            if (data.toLowerCase() === "token expired") {
-                alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                setTimeout(() => {
-                    location.href = "/dashboard/login";
-                }, 2000);
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
             } else {
-                alert("Tìm thất bại");
+                toastr.error(data.responseText);
             }
         }
     });
@@ -156,7 +337,7 @@ var OnEditSubject = (id) => {
 
 var OnCreateSubject = () => {
     if ($("#create-form").valid()) {
-        var subject_code = $("#create_subject_code").val();
+        var subject_code = $("#create_apartment_code").text() + $("#create_subject_code").val();
         var subject_name = $("#create_subject_name").val();
         var fee = $("#create_fee").val().replace(/,/g, '');
         var slot = $("#create_slot").val();
@@ -176,19 +357,26 @@ var OnCreateSubject = () => {
             method: "POST",
             data: JSON.stringify(subject),
             success: (data) => {
-                alert("Tạo thành công");
+                toastr.success("Create success");
+                $("#subject-modal").modal("hide");
                 setTimeout(() => {
                     location.reload();
-                }, 2000);
+                }, 1500);
             },
             error: (data) => {
-                if (data.toLowerCase() === "token expired") {
-                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                    setTimeout(() => {
-                        location.href = "/dashboard/login";
-                    }, 2000);
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
                 } else {
-                    alert("Tạo mới thất bại");
+                    toastr.error(data.responseText);
                 }
             }
         });
@@ -198,7 +386,7 @@ var OnCreateSubject = () => {
 var OnUpdateSubject = () => {
     if ($("#edit-form").valid()) {
         var id = $("#edit_id").val();
-        var subject_code = $("#edit_subject_code").val();
+        var subject_code = $("#edit_apartment_code").text() + $("#edit_subject_code").val();
         var subject_name = $("#edit_subject_name").val();
         var fee = $("#edit_fee").val().replace(/,/g, '');
         var slot = $("#edit_slot").val();
@@ -215,37 +403,97 @@ var OnUpdateSubject = () => {
         };
         $.ajax({
             url: "/dashboard/subject/update",
-            dataType: "json",
             contentType: "application/json",
             method: "post",
             data: JSON.stringify(subject)
             , success: (data) => {
-                alert("Cập nhật thành công");
+                toastr.success("Update success");
+                $("#subject-edit-modal").modal("hide");
                 setTimeout(() => {
                     location.reload();
                 }, 2000);
             }, error: (data) => {
-                if (data.toLowerCase() === "token expired") {
-                    alert("Hết phiên đăng nhập vui lòng đăng nhập lại");
-                    setTimeout(() => {
-                        location.href = "/dashboard/login";
-                    }, 2000);
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
                 } else {
-                    alert("Cập nhật thất bại");
+                    toastr.error(data.responseText);
                 }
             }
         });
     }
 }
 
+var OnDeleteSubject = (id) => {
+    Swal.fire({
+        title: 'Do you want to delete this ?',
+        text: "When you confirm data can't recover!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: "Cancel",
+        confirmButtonText: 'Confirm!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/dashboard/subject/delete/" + id,
+                method: "GET",
+                success: () => {
+                    toastr.success("Delete success");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000)
+                },
+                error: (data) => {
+                    if (data.responseText.toLowerCase() === "token expired") {
+                        Swal.fire({
+                            title: 'End of login session please login again',
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: 'Confirm',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/dashboard/login";
+                            }
+                        });
+                    } else {
+                        toastr.error(data.responseText);
+                    }
+                }
+            });
+        }
+    });
+}
+
 var OnFormatCurrency = (obj) => {
     if (obj.id === "create_fee") {
         var fee = $("#create_fee").val();
-        $("#create_fee").val(fee.replace(/\D/g, '')
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        if (fee.replaceAll(",", "") > 10000000) {
+            fee = "9999999"
+            $("#create_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        } else {
+            $("#create_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        }
     } else {
         var fee = $("#edit_fee").val();
-        $("#edit_fee").val(fee.replace(/\D/g, '')
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        if (fee.replaceAll(",", "") > 10000000) {
+            fee = "9999999"
+            $("#edit_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        } else {
+            $("#edit_fee").val(fee.replace(/\D/g, '')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        }
     }
 }

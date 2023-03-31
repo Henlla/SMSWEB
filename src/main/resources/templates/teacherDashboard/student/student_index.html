@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{teacherDashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Student</title>
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/student_details.css">
+</head>
+<body>
+<div layout:fragment="content" class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">Student</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{'/teacher/students'}">All student</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table comman-shadow">
+                <div class="card-body">
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-outline-primary"><i class="fas fa-download"></i>
+                                    Download</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row table-responsive">
+                        <div class="col-12">
+                            <section class="d-flex col-md-6 align-items-center mb-3">
+                                <label class="me-3">Find by major: </label>
+                                <div class="mb-2" style="width: 100%;" id="select-major"></div>
+                            </section>
+                            <table id="student-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>STT</th>
+                                    <th>Student Card</th>
+                                    <th>Student Name</th>
+                                    <th>Date of Birth</th>
+                                    <th>Major</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="student:${students}">
+                                    <td><span th:text="${students.indexOf(student)+1}"></span></td>
+                                    <td><span th:text="${student.studentCard}"></span></td>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a th:data-name="${student.id}" class="avatar avatar-sm me-2">
+                                                <img class="avatar-img rounded-circle" th:src="${student.studentByProfile.getAvartarUrl()}" alt="img">
+                                            </a>
+                                            <a th:data-name="${student.id}"></a>
+                                        </h2>
+                                        <span th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
+                                    </td>
+                                    <td><span th:text="${student.getStudentByProfile().getDob()}"></span></td>
+                                    <td>
+                                        <th:block th:each="major :${student.majorStudentsById}">
+                                            [[${major.majorByMajorId.majorName}]]
+                                        </th:block>
+                                    </td>
+                                    <td class="text-center">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="optional">
+    <script src="/teacherDashboard/assets/js/customJs/student-index.js"></script>
+</th:block>
+</body>
+</html>

@@ -11,9 +11,18 @@ public class StringUtils {
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(temp).replaceAll("");
     }
+    public static String theMonth(int month){
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        return monthNames[month];
+    }
 
     public static String randomStudentCard(String numbers){
         String studentCard = "Student"+ RandomStringUtils.random(7,0,numbers.length(),true,true,numbers.toCharArray());
         return studentCard;
+    }
+
+    public static String randomTeacherCard(String numbers){
+        String teacherCard = "Teacher"+ RandomStringUtils.random(7,0,numbers.length(),true,true,numbers.toCharArray());
+        return teacherCard;
     }
 }

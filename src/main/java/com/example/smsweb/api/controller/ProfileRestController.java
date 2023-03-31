@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -23,7 +24,8 @@ public class ProfileRestController {
     private ProfileService service;
 
     @PostMapping("/")
-    public ResponseEntity<?> saveProfile(@RequestParam("profile") String profile, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> saveProfile(@RequestParam("profile") String profile,
+                                         @RequestParam("file") MultipartFile file) {
         try {
             log.info("START method saveProfile :::::::::");
             log.info("Request params profile = {}",profile);
@@ -76,5 +78,14 @@ public class ProfileRestController {
         Profile profile= service.findProfileByAccountId(id);
         log.info("FINISH method getProfileByAccountId :::::::::");
         return ResponseEntity.status(HttpStatus.OK).body(profile);
+    }
+
+    @GetMapping("/findByIdentityCard/{card}")
+    public ResponseEntity<?> getProfileByIdentityCard(@PathVariable("card")String identityCard){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel("Success", LocalDate.now().toString(),service.findProfileByIdentityCard(identityCard)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseModel("Error", LocalDate.now().toString(),"Dont' find profile"));
+        }
     }
 }

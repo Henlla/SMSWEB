@@ -1,6 +1,7 @@
 package com.example.smsweb.client.dashboard;
 
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.TeacherClassModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.mail.Mail;
 import com.example.smsweb.mail.MailService;
@@ -37,6 +38,7 @@ public class TeacherController {
     private final String ACCOUNT_URL = "http://localhost:8080/api/accounts/";
     private final String TEACHER_URL = "http://localhost:8080/api/teachers/";
     private final String ROLE_URL = "http://localhost:8080/api/roles/";
+    private final String CLASS_URL = "http://localhost:8080/api/classes/";
 
     @Autowired
     private MailService mailService;
@@ -68,10 +70,10 @@ public class TeacherController {
             String numbers = "1234567890";
             String combinedChars = capitalCaseLetters + lowerCaseLetters + numbers;
             Profile parseProfile = new ObjectMapper().readValue(profile, Profile.class);
-
+            String teacherCard = StringUtils.randomTeacherCard(numbers);
             //generate accountName = first_name+ last_name + dob
-            String accountName = StringUtils.removeAccent(parseProfile.getFirstName() + parseProfile.getLastName()).toLowerCase().replace(" ", "")
-                    + parseProfile.getDob().replace("/", "");
+//            String accountName = StringUtils.removeAccent(parseProfile.getFirstName() + parseProfile.getLastName()).toLowerCase().replace(" ", "")
+//                    + parseProfile.getDob().replace("/", "");
             String password = RandomStringUtils.random(8, 0, combinedChars.length(), true, true, combinedChars.toCharArray());
 
             //Select role
@@ -85,7 +87,7 @@ public class TeacherController {
             Role role = new ObjectMapper().readValue(responseRole.getBody(), Role.class);
 
             //Save Account
-            Account account = new Account(accountName, password, role.getId());
+            Account account = new Account(teacherCard.toLowerCase(), password, role.getId());
             String jsonAccount = new ObjectMapper().writeValueAsString(account);
             HttpHeaders headersAccount = new HttpHeaders();
             headersAccount.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -119,7 +121,7 @@ public class TeacherController {
             mail.setSubject("Account student HKT SYSTEM");
             String name = profileResponse.getFirstName() + " " + profileResponse.getLastName();
             Map<String, Object> props = new HashMap<>();
-            props.put("accountName", accountName);
+            props.put("accountName", accountResponse.getUsername());
             props.put("password", password);
             props.put("fullname", name);
             mail.setProps(props);
@@ -131,6 +133,7 @@ public class TeacherController {
             headerTeacher.set("Authorization", "Bearer " + _token);
             MultiValueMap<String, String> paramsTeacher = new LinkedMultiValueMap<>();
             paramsTeacher.add("profileId", String.valueOf(profileResponse.getId()));
+            paramsTeacher.add("teacherCard", teacherCard);
             HttpEntity<MultiValueMap<String, String>> requestEntityStudent = new HttpEntity<>(paramsTeacher, headerTeacher);
             ResponseEntity<ResponseModel> responseModelStudent = restTemplate.exchange(TEACHER_URL, HttpMethod.POST, requestEntityStudent, ResponseModel.class);
             String teacherResponseToJson = new ObjectMapper().writeValueAsString(responseModelStudent.getBody().getData());
@@ -181,7 +184,11 @@ public class TeacherController {
             });
             String convertToJson = objectMapper.writeValueAsString(responseModel.getData());
             Teacher teacher = objectMapper.readValue(convertToJson, Teacher.class);
-            return teacher;
+            ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "findClassByTeacher/" + teacher.getId(), HttpMethod.GET, request, ResponseModel.class);
+            String json = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
+            List<Classses> classsesList = new ObjectMapper().readValue(json, new TypeReference<List<Classses>>() {
+            });
+            return new TeacherClassModel(teacher,classsesList);
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return ex.getMessage();

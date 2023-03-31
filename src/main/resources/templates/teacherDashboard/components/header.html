@@ -1,0 +1,25 @@
+<div class="header">
+
+    <div class="header-left">
+        <a th:href="@{'/teacher/index'}" class="logo">
+            <img src="/teacherDashboard/assets/img/logo.png" alt="Logo">
+        </a>
+        <a th:href="@{'/teacher/index'}" class="logo logo-small">
+            <img src="/teacherDashboard/assets/img/logo.png" alt="Logo" width="30" height="30">
+        </a>
+    </div>
+
+    <div class="menu-toggle">
+        <a href="javascript:void(0);" id="toggle_btn">
+            <i class="fas fa-bars"></i>
+        </a>
+    </div>
+
+    <a class="mobile_btn" id="mobile_btn">
+        <i class="fas fa-bars"></i>
+    </a>
+
+    <div class="d-flex align-items-center justify-content-end h-100">
+        <a th:href="@{'/logout'}">Logout</a>
+    </div>
+</div>

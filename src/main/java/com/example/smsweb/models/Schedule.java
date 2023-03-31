@@ -27,11 +27,14 @@ public class Schedule {
     @Column(name = "end_date")
     private String endDate;
     @Basic
+    @Column(name = "semester")
+    private Integer semester;
+    @Basic
     @Column(name = "class_id")
     private Integer classId;
     @ManyToOne
     @JsonBackReference("class_schedule")
-    @JoinColumn(name = "class_id", referencedColumnName = "id",insertable = false,updatable = false)
+    @JoinColumn(name = "class_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Classses classsesByClassId;
     @OneToMany(mappedBy = "scheduleByScheduleId")
     @JsonManagedReference

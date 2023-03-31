@@ -5,42 +5,72 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.css">
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/css/custom.css">
-    <title>Môn học</title>
+    <title>Subject</title>
+    <style>
+        #create_subject_code-error {
+            position: absolute;
+            top: 32px;
+        }
+    </style>
 </head>
 <body>
 <section layout:fragment="content">
     <section>
         <section class="content-wrapper">
             <section class="content-header">
-                <h5 class="m-0">Quản lý môn học</h5>
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h5 class="m-0">Subject Manager</h5>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">List subject</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
             </section>
             <section class="content-body">
                 <section class="container-fluid">
                     <section class="row mb-3">
                         <section class="col-12">
-                            <button data-toggle="modal" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" data-target="#subject-modal" class="btn btn-info btn-sm">
-                                <i class="fas fa-plus" ></i> Thêm mới
+                            <input type="text" hidden th:value="${#authentication.getAuthorities()}" id="userRole">
+                            <button data-toggle="modal"
+                                    th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                    data-target="#subject-modal" class="btn btn-info btn-sm">
+                                <i class="fas fa-plus"></i> Create
                             </button>
-                            <a onclick="OnClickImport()" class="btn btn-primary btn-sm">Đỗ dữ liệu</a>
+                            <a onclick="OnClickImport()" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>
+                                Import Data</a>
                             <input type="file" onchange="OnSaveExcelData()" id="fileUpload" hidden>
+                        </section>
+                    </section>
+                    <section class="row mb-3">
+                        <section class="col-3">
+                            <label>Sort By Curriculum</label>
+                            <select id="curriculum" onchange="OnChangeCurriculum()" class="select2">
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode}]]</option>
+                            </select>
                         </section>
                     </section>
                     <section class="row">
                         <section class="col-12">
-                            <table id="subject-table" class="table table-bordered table-striped">
+                            <table id="subject-table" class="table table-bordered table-hover">
                                 <thead>
                                 <tr class="text-center">
-                                    <th class="th-sm">Mã môn học</th>
-                                    <th class="th-sm">Tên môn học</th>
-                                    <th class="th-sm">Học phí</th>
-                                    <th class="th-sm">Hành động</th>
+                                    <th class="th-sm">STT</th>
+                                    <th class="th-sm">Subject Code</th>
+                                    <th class="th-sm">Subject Name</th>
+                                    <th class="th-sm">Fee</th>
+                                    <th class="th-sm">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr class="text-center" th:each="item:${listSubject}">
+                                    <td>[[${listSubject.indexOf(item)+1}]]</td>
                                     <td>[[${item.subjectCode}]]</td>
                                     <td>[[${item.subjectName}]]</td>
                                     <td>
@@ -48,10 +78,12 @@
                                         vnd
                                     </td>
                                     <td class="text-center">
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:data-name="${item.id}"
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           th:data-name="${item.id}"
                                            onclick="OnEditSubject(this.getAttribute('data-name'))" class="mr-3"><i
                                                 class="fas fa-pen indigo-text"></i></a>
-                                        <a th:href="@{'dashboard/subject/delete/' + ${item.id}}"><i
+                                        <a th:data-name="${item.id}"
+                                           onclick="OnDeleteSubject(this.getAttribute('data-name'))"><i
                                                 class="fas fa-trash red-text"></i></a>
                                     </td>
                                 </tr>
@@ -69,7 +101,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Thêm mới môn học</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add Subject</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -77,48 +109,56 @@
                 <div class="modal-body">
                     <form th:id="create-form">
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Mã môn học</label>
-                            <input type="text" name="create_subject_code_validate" th:id="create_subject_code"
-                                   class="form-control form-control-sm"
-                                   placeholder="Nhập mã môn học">
+                            <label class="m-0" style="font-size: 13px">Subject Code</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="create_apartment_code">####</span>
+                                </div>
+                                <input type="text" name="create_subject_code_validate" th:id="create_subject_code"
+                                       class="form-control" aria-label="Small" aria-describedby="create_apartment_code"
+                                       placeholder="Enter subject code...">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Tên môn học</label>
+                            <label class="m-0" style="font-size: 13px">Subject Name</label>
                             <input type="text" name="create_subject_name_validate" th:id="create_subject_name"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập mã tên môn học">
+                                   placeholder="Enter subject name...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Học phí</label>
+                            <label class="m-0" style="font-size: 13px">Fee</label>
                             <input type="text" onkeyup="OnFormatCurrency(this)" name="create_fee_validate"
                                    th:id="create_fee"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập học phí">
+                                   placeholder="Enter fee...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Số tiết học</label>
-                            <input type="text" name="create_slot_validate" th:id="create_slot"
+                            <label class="m-0" style="font-size: 13px">Slot</label>
+                            <input type="number" name="create_slot_validate" th:id="create_slot"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập số tiết học">
+                                   placeholder="Enter slot">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Học kì</label>
+                            <label class="m-0" style="font-size: 13px">Semester</label>
                             <select th:id="create_semester_id" class="form-control select2-single form-control-sm">
                                 <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]
                                 </option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Ngành học</label>
-                            <select th:id="create_major_id" class="form-control select2-single form-control-sm">
-                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorName}]]</option>
+                            <label class="m-0" style="font-size: 13px">Course</label>
+                            <select th:id="create_major_id" name="create_course_validate"
+                                    class="form-control select2-single form-control-sm">
+                                <option value="">----Choose course----</option>
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode}]]
+                                </option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" onclick="OnCreateSubject()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Tạo
+                            class="fas fa-plus"></i> Create
                     </button>
                 </div>
             </div>
@@ -130,7 +170,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Cập nhật môn học</h5>
+                    <h5 class="modal-title">Update Subject</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times fa-sm"></i>
                     </button>
@@ -139,49 +179,54 @@
                     <input type="text" th:id="edit_id" hidden>
                     <form th:id="edit-form">
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Mã môn học</label>
-                            <input type="text" name="edit_subject_code_validate" th:id="edit_subject_code"
-                                   class="form-control form-control-sm"
-                                   placeholder="Nhập mã môn học">
+                            <label class="m-0" style="font-size: 13px">Subject Code</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="edit_apartment_code">####</span>
+                                </div>
+                                <input type="text" name="edit_subject_code_validate" th:id="edit_subject_code"
+                                       class="form-control" aria-label="Small" aria-describedby="edit_apartment_code"
+                                       placeholder="Enter subject code...">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Tên môn học</label>
+                            <label class="m-0" style="font-size: 13px">Subject Name</label>
                             <input type="text" name="edit_subject_name_validate" th:id="edit_subject_name"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập mã tên môn học">
+                                   placeholder="Enter subject name...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Học phí</label>
+                            <label class="m-0" style="font-size: 13px">Fee</label>
                             <input type="text" name="edit_fee_validate" th:id="edit_fee"
                                    onkeyup="OnFormatCurrency(this)"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập học phí">
+                                   placeholder="Enter fee">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Số tiết học</label>
-                            <input type="text" name="edit_slot_validate" th:id="edit_slot"
+                            <label class="m-0" style="font-size: 13px">Slot</label>
+                            <input type="number" name="edit_slot_validate" th:id="edit_slot"
                                    class="form-control form-control-sm"
-                                   placeholder="Nhập số tiết học">
+                                   placeholder="Enter slot...">
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Học kì</label>
+                            <label class="m-0" style="font-size: 13px">Semester</label>
                             <select id="edit_semester_id" class="form-control select2-single">
-                                <option>----Chọn học kì----</option>
                                 <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]
                                 </option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="m-0" style="font-size: 13px">Ngành học</label>
+                            <label class="m-0" style="font-size: 13px">Major</label>
                             <select th:id="edit_major_id" class="form-control select2-single">
-                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorName}]]</option>
+                                <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode}]]
+                                </option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" onclick="OnUpdateSubject()" class="btn btn-primary btn-sm"><i
-                            class="fas fa-plus"></i> Cập nhật
+                            class="fas fa-plus"></i> Update
                     </button>
                 </div>
             </div>
@@ -190,9 +235,6 @@
 
 </section>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/js/subject/subject.js"></script>
 </th:block>
 </body>

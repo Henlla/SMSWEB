@@ -1,0 +1,177 @@
+.news{
+    width: 400px;
+    float: left;
+    margin-right: 15px;
+    padding-right: 0;
+}
+.right-box ::-webkit-scrollbar {
+    width: 6px !important;
+}
+.right-box ::-webkit-scrollbar-thumb{
+    width: 1px !important;
+    background: #ccc !important;
+    border-radius: 20px !important;
+}
+.box h3{
+    height: 34px;
+    line-height: 34px;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: -34px;
+    padding: 0 15px;
+    color: #fff;
+    /* text-transform: uppercase; */
+    border-radius: 5px 5px 0 0;
+    background-image: url(/img/sprite.png);
+    background-repeat: repeat-x;
+}
+
+.blueTitle{
+    background-position: 0 -100px;
+    background-color: #0f4086;
+}
+
+.box{
+    padding: 15px 17px;
+    margin: 34px 0 50px;
+    border-radius: 0 5px 5px 5px;
+    background: #fff;
+    background: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.7) -moz-linear-gradient(top,rgba(255,255,255,1),rgba(255,255,255,0.1));
+    background: rgba(255,255,255,0.7) -o-linear-gradient(top,rgba(255,255,255,1),rgba(255,255,255,0.5));
+    background: rgba(255,255,255,0.7) -webkit-linear-gradient(top bottom,rgba(255,255,255,1),rgba(255,255,255,0.5));
+    background: rgba(255,255,255,0.7) linear-gradient(top bottom,rgba(255,255,255,1),rgba(255,255,255,0.5));
+    position: relative;
+    color: #234166;
+    box-shadow: 0 0 5px #c4cacc;
+}
+
+.date{
+    font: 12px Arial, "Times New Roman", Times, serif;
+    color: #737373;
+}
+.new{
+    text-decoration: none;
+    color: #4169E1;
+    font-weight: bold;
+    line-height: 13px;
+    font-size: 14px;
+}
+
+.orangeTitle {
+    background-position: 0 -400px;
+    background-color: #ef8d01;
+}
+
+.box-info{
+    width: 100%;
+    height: 250px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.title-info{
+    color: #6C787F;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    font-size: 25px;
+    margin-left: 20px;
+
+}
+
+.box-function{
+    width: 100%;
+    height: 100px;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.box-all-function{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-function{
+    color:#6C787F;
+}
+
+.right-box{
+    width: 100%;
+    height: 250px;
+    background-color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    border-radius: 5px;
+}
+
+.calendar-details{
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    width: 40%;
+    margin-left: 35px;
+}
+
+.calendar-box{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    /*display: flex;*/
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    /*align-items: center;*/
+    position: relative;
+    width: 100%;
+}
+
+.normal-bg:before {
+    background: #3D5EE1;
+}
+
+.calendar-box:before {
+    content: "";
+    position: absolute;
+    background: #3D5EE1;
+    width: 4px;
+    height: 100%;
+    border-radius: 25px;
+}
+
+.calendar-event-name {
+    padding-left: 10px;
+}
+
+.calendar-details p {
+    font-size: 12px;
+    font-weight: 500;
+    color: #777777;
+    margin-bottom: 0;
+    margin-right: 10px;
+    flex: none;
+}
+
+.calendar-event-name h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+
+.calendar-event-name h5 {
+    font-size: 12px;
+    font-weight: 400;
+    color: #747474;
+    margin-bottom: 0;
+}
+
+.calendar-box span {
+    color: #888888;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 20px;
+}

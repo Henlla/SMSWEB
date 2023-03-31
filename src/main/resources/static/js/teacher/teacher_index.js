@@ -1,4 +1,11 @@
 $(()=>{
+    $('#dob_calendar_u').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+
+    $('.select2').select2({
+        theme: 'bootstrap4'
+    });
     $('#student-table').DataTable({
         pageLength:5,
         lengthMenu:[[5,10,20,-1], [5, 10, 20,'All']],
@@ -10,26 +17,26 @@ $(()=>{
             targets: 1
         }],
         "language": {
-            "decimal":        "",
-            "emptyTable":     "Không có dữ liệu",
-            "info":           "",
-            "infoEmpty":      "",
-            "infoFiltered":   "",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "Hiển thị _MENU_ dữ liệu",
-            "loadingRecords": "Đang tìm...",
-            "processing":     "",
-            "search":         "Tìm kiếm:",
-            "zeroRecords":    "Không tìm thấy dữ liệu",
+            "decimal": "",
+            "emptyTable": "Don't have any record",
+            "info": "",
+            "infoEmpty": "",
+            "infoFiltered": "",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ record",
+            "loadingRecords": "Searching...",
+            "processing": "",
+            "search": "Search:",
+            "zeroRecords": "Don't find any record",
             "paginate": {
-                "first":      "Trang đầu",
-                "last":       "Trang cuối",
-                "next":       "Trang kế tiếp",
-                "previous":   "Trang trước"
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page"
             },
             "aria": {
-                "sortAscending":  ": activate to sort column ascending",
+                "sortAscending": ": activate to sort column ascending",
                 "sortDescending": ": activate to sort column descending"
             }
         }
@@ -40,7 +47,7 @@ $(()=>{
     );
 
     $('#reset_password').on('click', () => {
-        Confirm('Đặt lại mật khẩu', 'Có chắc chắn muốn đặt lại mật khẩu?', 'Có', 'Không')
+        Confirm('Reset password', 'Are you sure reset password?', 'Ok', 'Cancel')
     })
 
     function Confirm(title, msg, $true, $false) { /*change*/
@@ -77,7 +84,7 @@ $(()=>{
                     console.log(data)
                 },
                 complete: () => {
-                    toastr.success('Đặt lại mật khẩu thành công')
+                    toastr.success('Reset password success')
                     $('#spinner-div').hide()
                 }
             })
@@ -146,23 +153,23 @@ var OnDetails = (id) => {
         method: "GET",
         success: (data) => {
             console.log(data)
-            $('#tc_image').attr('src', data.profileByProfileId.avartarUrl)
-            $('#tc_fullName').html(data.profileByProfileId.firstName + ' ' + data.profileByProfileId.lastName)
-            $('#tc_dob').html(data.profileByProfileId.dob)
-            $('#tc_phone').html(data.profileByProfileId.phone)
-            $('#tc_email').html(data.profileByProfileId.email)
-            $('#tc_sex').html(data.profileByProfileId.sex)
-            $('#tc_identityId').html(data.profileByProfileId.identityCard)
-            if (data.teacherClass.length === 0) {
-                $('#tc_class').html("Chưa có")
+            $('#tc_image').attr('src', data.teacher.profileByProfileId.avartarUrl)
+            $('#tc_fullName').html(data.teacher.profileByProfileId.firstName + ' ' + data.teacher.profileByProfileId.lastName)
+            $('#tc_dob').html(data.teacher.profileByProfileId.dob)
+            $('#tc_phone').html(data.teacher.profileByProfileId.phone)
+            $('#tc_email').html(data.teacher.profileByProfileId.email)
+            $('#tc_sex').html(data.teacher.profileByProfileId.sex)
+            $('#tc_identityId').html(data.teacher.profileByProfileId.identityCard)
+            if (data.classses.length === 0) {
+                $('#tc_class').html("Don't have")
             } else {
-                for (var classes of data.teacherClass) {
+                for (var classes of data.classses) {
                     $('#tc_class').html(classes.classCode)
                 }
             }
-            $('#tc_address').html(data.profileByProfileId.address + ' , ' + data.profileByProfileId.wardByWardId.name + ' , ' + data.profileByProfileId.districtByDistrictId.name + ' , ' + data.profileByProfileId.profileProvince.name)
-            $('#accountId').val(data.profileByProfileId.accountByAccountId.id)
-            $('#email').val(data.profileByProfileId.email)
+            $('#tc_address').html(data.teacher.profileByProfileId.address + ' , ' + data.teacher.profileByProfileId.wardByWardId.name + ' , ' + data.teacher.profileByProfileId.districtByDistrictId.name + ' , ' + data.teacher.profileByProfileId.profileProvince.name)
+            $('#accountId').val(data.teacher.profileByProfileId.accountByAccountId.id)
+            $('#email').val(data.teacher.profileByProfileId.email)
             $("#teacher_details").modal("show");
         }, error: (data) => {
             console.log(data);
@@ -180,23 +187,23 @@ var OnUpdate = (id) => {
         method: "GET",
         success: (data) => {
             console.log(data)
-            $('#st_image_u').attr('src', data.profileByProfileId.avartarUrl)
-            $('#img').val(data.profileByProfileId.avartarUrl)
-            $('#firstName_u').val(data.profileByProfileId.firstName)
-            $('#lastName_u').val(data.profileByProfileId.lastName)
-            $('#dob_u').val(data.profileByProfileId.dob)
-            $('#phone_u').val(data.profileByProfileId.phone)
-            $('#email_u').val(data.profileByProfileId.email)
-            $('#address_u').val(data.profileByProfileId.address)
-            $('#identityCard_u').val(data.profileByProfileId.identityCard)
-            $('#profileId_u').val(data.profileByProfileId.id)
-            $('#accountId_u').val(data.profileByProfileId.accountId)
+            $('#st_image_u').attr('src', data.teacher.profileByProfileId.avartarUrl)
+            $('#img').val(data.teacher.profileByProfileId.avartarUrl)
+            $('#firstName_u').val(data.teacher.profileByProfileId.firstName)
+            $('#lastName_u').val(data.teacher.profileByProfileId.lastName)
+            $('#dob_u').val(data.teacher.profileByProfileId.dob)
+            $('#phone_u').val(data.teacher.profileByProfileId.phone)
+            $('#email_u').val(data.teacher.profileByProfileId.email)
+            $('#address_u').val(data.teacher.profileByProfileId.address)
+            $('#identityCard_u').val(data.teacher.profileByProfileId.identityCard)
+            $('#profileId_u').val(data.teacher.profileByProfileId.id)
+            $('#accountId_u').val(data.teacher.profileByProfileId.accountId)
 
-            const province_id = data.profileByProfileId.profileProvince.id
+            const province_id = data.teacher.profileByProfileId.profileProvince.id
 
-            const district_id = data.profileByProfileId.districtByDistrictId.id
+            const district_id = data.teacher.profileByProfileId.districtByDistrictId.id
 
-            const ward_id = data.profileByProfileId.wardByWardId.id
+            const ward_id = data.teacher.profileByProfileId.wardByWardId.id
 
             console.log(province_id, district_id, ward_id)
 
@@ -227,7 +234,7 @@ var OnUpdate = (id) => {
                 }
             })
 
-            $("input[name=sex][value=" + data.profileByProfileId.sex + "]").prop('checked', true);
+            $("input[name=sex][value=" + data.teacher.profileByProfileId.sex + "]").prop('checked', true);
 
             $("#teacher_update").modal("show");
         }, error: (data) => {
@@ -273,25 +280,112 @@ var OnUpdateSubmit = () =>{
     }
     formData.append('profile',JSON.stringify(profile))
     $('#spinner-divT').show();
-    $.ajax({
-        url:"/dashboard/teacher/teacher_update",
-        method:"POST",
-        data:formData,
-        cache : false,
-        processData: false,
-        contentType: false,
-        success:(result)=>{
-            console.log(result)
-            $("#student_update").modal("hide");
-            $('#spinner-divT').hide();
-            location.reload();
-            toastr.success('Cập nhật giáo viên thành công')
+    $.validator.addMethod("valueNotEquals", function(value, element, arg){
+        return arg !== value;
+    }, "Value must not equal arg.");
+
+    $.validator.addMethod("checkAge", function(value, element){
+        let date = new Date(value)
+        let age = _calculateAge(date)
+        return age >= 18;
+    }, "Age must be greater than 18");
+
+    $.validator.addMethod("checkPhoneNumber", function(value, element){
+        return regexPhone(value);
+    }, "Please enter incorrect phone");
+
+    $('#form_teacher_update').validate({
+        rules: {
+            firstName_u: {
+                required: true
+            },
+            lastName_u: {
+                required: true
+            },
+            phone_u: {
+                checkPhoneNumber:true,
+                required: true
+            }
+            ,dob_u: {
+                checkAge:true,
+                required: true
+            },
+            email_u: {
+                required: true,
+                email:true
+            },
+            identityCard_u: {
+                required: true
+            },
+            province_u: {
+                valueNotEquals: ""
+            },
+            district_u: {
+                valueNotEquals: ""
+            },
+            ward_u: {
+                valueNotEquals: ""
+            },
+            address_u:{
+                required: true
+            },
         },
-        error:(e)=>{
-            toastr.error('Thất bại')
-            $('#spinner-divT').hide();
-        }
+        messages:{
+            firstName_u : {
+                required:"Please enter first name"
+            },
+            lastName_u : {
+                required:"Please enter last name"
+            },
+            phone_u: {
+                checkPhoneNumber: "Please enter incorrect phone",
+                required: "Please enter phone numbers "
+            }, dob_u: {
+                checkAge:"Age must be greater than 18",
+                required: "Please enter date of birth "
+            },
+            email_u: {
+                required: "Please enter email ",
+                email:"Email wrong format xxxx@xxx.xxx"
+            },
+            identityCard_u: {
+                required: "Please enter identity card "
+            },
+            province_u: {
+                valueNotEquals: "Please enter province "
+            },
+            district_u: {
+                valueNotEquals: "Please enter district "
+            },
+            ward_u: {
+                valueNotEquals: "Please enter ward "
+            },
+            address_u:{
+                required: "Please enter address"
+            },
+        },
     })
+    if($('#form_teacher_update').valid()){
+        $.ajax({
+            url:"/dashboard/teacher/teacher_update",
+            method:"POST",
+            data:formData,
+            cache : false,
+            processData: false,
+            contentType: false,
+            success:(result)=>{
+                console.log(result)
+                $("#student_update").modal("hide");
+                $('#spinner-divT').hide();
+                location.reload();
+                toastr.success('Update success')
+            },
+            error:(e)=>{
+                toastr.error('Fail')
+                $('#spinner-divT').hide();
+            }
+        })
+    }
 }
 const imageProfile = document.getElementById('st_image_u')
 function selectFile(){
@@ -312,7 +406,7 @@ var CancelUpdateImg = () =>{
 
 var OnUpdateImg = () => {
 
-    ConfirmImg('Thay đổi hình ảnh', 'Có chắc chắn muốn thay đổi hình ảnh?', 'Có', 'Không')
+    ConfirmImg('Change image', 'Are you sure change image?', 'Ok', 'Cancel')
 }
 function ConfirmImg(title, msg, $true, $false) { /*change*/
     var $content =  "<div class='dialog-ovelay'>" +
@@ -350,7 +444,7 @@ function ConfirmImg(title, msg, $true, $false) { /*change*/
             success : (data)=>{
                 $('#spinner-divT').hide()
                 location.reload();
-                toastr.success('Thay đổi hình ảnh thành công')
+                toastr.success('Change success')
             }
         })
         $(this).parents('.dialog-ovelay').fadeOut(500, function () {

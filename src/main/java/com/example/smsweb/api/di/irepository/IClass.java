@@ -2,12 +2,17 @@ package com.example.smsweb.api.di.irepository;
 
 import com.example.smsweb.api.generic.IGenericRepository;
 import com.example.smsweb.models.Classses;
-import com.example.smsweb.models.Student;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface IClass extends IGenericRepository<Classses> {
     Classses findByClassCode(String classCode);
     List<String> searchClasssesByClassCode(String listStudentCard);
+    List<Classses> findClassByTeacherId(Integer id);
+    Classses findClassByTeacherIdAndScheduleId(Integer teacherId, Integer scheduleId);
+    List<Classses> findClassByMajorId(Integer majorId);
+    List<Classses> findClassByRoom(Integer roomId);
+    List<Classses> findClassesDepartmentId(Integer departmentId);
+    List<Classses> findClassByRoomAndDepartmentId(Integer roomId,Integer departmentId);
+    List<Classses> findClassesByShift(String shift);
 }

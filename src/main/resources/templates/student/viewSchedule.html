@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+<head>
+    <meta charset="UTF-8">
+    <title>View Schedule</title>
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/student/header.css">
+</head>
+<body style="background-color: #D9DEE1">
+<section layout:fragment="content">
+    <section class="container">
+        <div class="row">
+            <div class="col-md-8" style="display: flex;justify-content: center;align-items: center;">
+                <h2 class="font-weight-bold">HKT - ACADEMY Portal</h2>
+            </div>
+            <div class="col-md-4">
+                <h2 class="font-weight-bold">
+                    <img src="/teacherDashboard/assets/img/logo.png" alt="Logo" width="200" height="100">
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 bread-crumb">
+                <div class="navigation">
+                    <a th:href="@{'/student/index'}">Home</a>&nbsp; | &nbsp; <b>View schedules</b>
+                </div>
+                <div class="divUser">
+                    <span class="label label-success" th:text="${#authentication.getPrincipal().username}"></span>
+                     | 
+                    <a class="label label-success" th:href="${'/logout'}">Logout</a>
+                </div>
+            </div>
+        </div>
+        <section class="content-header">
+            <h5 class="m-0">View Schedule</h5>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row mb-3">
+                    <div class="col-12">
+                    </div>
+                </section>
+                <section class="row">
+                    <section class="col-12">
+                        <table style="background-color: white" id="listSubject" class="table table-bordered table-hover">
+                            <thead>
+                            <tr class="text-center">
+                                <th>Class Code</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="class:${listClass}">
+                                    <td th:text="${class.getClassCode()}"></td>
+                                    <td>
+                                        <a th:href="${'/student/viewSchedule/'+class.getClassCode()}" class="btn btn-primary">View</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+</section>
+<th:block layout:fragment="optional">
+</th:block>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{teacherDashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Teaching schedule</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<div layout:fragment="content" class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">View teaching schedule</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table comman-shadow">
+                <div class="card-body">
+                    <div class="row table-responsive">
+                        <div class="col-12">
+                          <table class="table table-hover table-bordered">
+                            <thead>
+                              <tr class="text-center">
+                                <th>STT</th>
+                                <th>Class</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr class="text-center" th:each="items:${classList}">
+                                <td style="vertical-align: middle">
+                                  [[${classList.indexOf(items)+1}]]
+                                </td>
+                                <td
+                                  style="vertical-align: middle">
+                                  [[${items.classCode}]]
+                                </td>
+                                <td style="vertical-align: middle">
+                                  <a th:href="@{'/teacher/view_teaching_schedule/'+${items.classCode}}" class="btn btn-primary">View</a>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="optional">
+    <script type="text/javascript" src="/teacherDashboard/assets/js/customJs/class.js"></script>
+</th:block>
+</body>
+</html>
+
+

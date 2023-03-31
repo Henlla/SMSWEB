@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{teacherDashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+
+<section layout:fragment="content" class="content container-fluid">
+    <section class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">Attendance</h3>
+                    <input type="text" hidden id="classId">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="form-group d-flex flex-column">
+                    <label>Date: </label>
+                    <input type="date" id="date_attendance" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="row">
+        <div class="col-sm-12">
+            <div class="card card-table comman-shadow">
+                <div class="card-body">
+                    <div class="row table-responsive">
+                        <div class="col-12">
+                            <table id="viewTable" class="table table-hover table-bordered"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="attendance-modal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 90% !important;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Take Attendance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section class="row">
+                        <section class="col-12">
+                            <table style="width: 100%;" class="table table-hover table-bordered" id="listStudent">
+                            </table>
+                        </section>
+                    </section>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <input type="button" id="btnOnsubmit" onclick="OnSubmitAttendance()" value="Confirm"
+                           style="width: 200px" class="btn btn-primary btn-sm mb-2">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit-attendance-modal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section class="row">
+                        <section class="col-12">
+                            <table style="width: 100%;" class="table table-hover table-bordered" id="listEditStudent">
+                            </table>
+                        </section>
+                    </section>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <input type="button" id="btnOnUpdate" onclick="OnUpdateAttendance()" value="Confirm"
+                           style="width: 200px" class="btn btn-primary mb-2">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="view-attendance-modal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">View attendance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section class="row">
+                        <section class="col-12">
+                            <table style="width: 100%;" class="table table-hover table-bordered" id="listViewStudent">
+                            </table>
+                        </section>
+                    </section>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-danger" style="width: 200px" data-dismiss="modal">Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+<th:block layout:fragment="optional">
+    <script src="/js/HelperJs.js"></script>
+    <script src="/js/attendance/attendance.js"></script>
+</th:block>
+
+</body>
+</html>

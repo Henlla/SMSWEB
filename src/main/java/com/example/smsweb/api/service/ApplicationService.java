@@ -7,19 +7,21 @@ import com.example.smsweb.models.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ApplicationService implements IApplication {
     @Autowired
     public ApplicationRepository dao;
+    List<Application> listApplication;
 
     @Override
     public void save(Application application) {
         try {
             dao.save(application);
         } catch (Exception e) {
-            throw new ErrorHandler("Sao lưu thất bại");
+            throw new ErrorHandler("Save fail");
         }
     }
 
@@ -28,7 +30,7 @@ public class ApplicationService implements IApplication {
         try {
             dao.deleteById(id);
         } catch (Exception e) {
-            throw new ErrorHandler("Xóa thất bại");
+            throw new ErrorHandler("Delete fail");
         }
     }
 
@@ -37,12 +39,18 @@ public class ApplicationService implements IApplication {
         try {
             return dao.findAll();
         } catch (Exception e) {
-            throw new ErrorHandler("Không tìm thấy dữ liệu");
+            throw new ErrorHandler("Don't find any records");
         }
     }
 
     @Override
     public Application findOne(int id) {
-        return dao.findById(id).orElseThrow(()-> new ErrorHandler("Không tìm thấy dữ liệu"));
+        return dao.findById(id).orElseThrow(() -> new ErrorHandler("Don't find any records"));
     }
+
+    @Override
+    public List<Application> findApplicationByStudentId(Integer id) {
+        return dao.findApplicationsByStudentId(id);
+    }
+
 }

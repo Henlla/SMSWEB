@@ -22,6 +22,9 @@ public class Teacher {
     @Basic
     @Column(name = "profile_id")
     private Integer profileId;
+    @Basic
+    @Column(name = "teacher_card")
+    private String teacherCard;
     @ManyToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Profile profileByProfileId;
@@ -29,5 +32,9 @@ public class Teacher {
     @OneToMany(mappedBy = "teacher")
     @JsonIgnore
     private List<Classses> teacherClass;
+
+    @OneToMany(mappedBy = "teacherByScheduleDetail")
+    @JsonIgnore
+    private List<ScheduleDetail> teacherScheduleDetail;
 
 }

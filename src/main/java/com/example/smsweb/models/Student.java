@@ -38,10 +38,13 @@ public class Student {
 
     @OneToMany(mappedBy = "studentByStudentId")
 //    @JsonManagedReference("student_student_subject")
+
     private List<StudentSubject> studentSubjectsById;
 
     @OneToMany(mappedBy = "classStudentByStudent")
 //    @JsonManagedReference("student_student_subject")
+    @JsonIgnore
+//    @JsonBackReference
     private List<StudentClass> studentClassById;
 
     @ManyToOne

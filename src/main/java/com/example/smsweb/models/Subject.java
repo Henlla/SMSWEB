@@ -1,13 +1,9 @@
 package com.example.smsweb.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.format.annotation.NumberFormat;
+import lombok.*;
 
 import java.util.Collection;
 
@@ -15,6 +11,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder(toBuilder = true)
 @Setter
 public class Subject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +37,11 @@ public class Subject {
     @Column(name = "major_id")
     private Integer majorId;
     @OneToMany(mappedBy = "subjectBySubjectId")
-    @JsonManagedReference("subject_schedule_detail")
+//    @JsonManagedReference("subject_schedule_detail")
+    @JsonIgnore
     private Collection<ScheduleDetail> scheduleDetailsById;
     @OneToMany(mappedBy = "subjectBySubjectId")
-    @JsonManagedReference("subject_student_subject")
+    @JsonIgnore
     private Collection<StudentSubject> studentSubjectsById;
     @ManyToOne
     @JoinColumn(name = "semester_id", referencedColumnName = "id",insertable = false,updatable = false)

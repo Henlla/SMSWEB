@@ -4,10 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách tin tức</title>
-    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <title>List news</title>
     <link rel="stylesheet" href="/css/student_details.css">
 </head>
 <body>
@@ -18,8 +15,16 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý tin tức</h5>
+                            <h5 class="m-0">News Manager</h5>
                         </div>
+
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Create news</li>
+                            </ol>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -27,8 +32,10 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/news/create_new'}" class="btn btn-info btn-sm">Thêm mới</a>
-
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                               th:href="@{'/dashboard/news/create_new'}" class="btn btn-info btn-sm">Create</a>
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}"
+                               onclick="OnCreateFileTemplate()" class="btn btn-success btn-sm">Create template</a>
                         </div>
                     </div>
                     <div class="row">
@@ -39,11 +46,11 @@
                                 <tr class="text-center">
                                     <th>STT</th>
                                     <th>Thumbnail</th>
-                                    <th>Tiêu đề</th>
-                                    <th>Tiêu đề con</th>
-                                    <th>Ngày đăng</th>
-                                    <th>Hiển thị</th>
-                                    <th>Hành động</th>
+                                    <th>Title</th>
+                                    <th>SubTitle</th>
+                                    <th>Post Date</th>
+                                    <th>Display</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -63,14 +70,16 @@
                                     <td>
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" th:id="isActive+${n.id}"
-                                                   th:checked="${n.isActive == true ? '' : checked}" th:onclick="'OnActive('+${n.id}+','+${n.isActive}+')'">
+                                                   th:checked="${n.isActive == true ? '' : checked}"
+                                                   th:onclick="'OnActive('+${n.id}+','+${n.isActive}+')'">
                                             <label class="custom-control-label" th:for="isActive+${n.id}"></label>
                                         </div>
                                     <td class="text-center">
                                         <a class="mr-3" th:data-name="${n.id}"
                                            onclick="OnDetails(this.getAttribute('data-name'))"><i
                                                 class="fas fa-eye indigo-text"></i></a>
-                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" class="mr-3" th:data-name="${n.id}"
+                                        <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           class="mr-3" th:data-name="${n.id}"
                                            onclick="OnUpdate(this.getAttribute('data-name'))"><i
                                                 class="fas fa-pencil-alt"></i></a>
                                     </td>
@@ -86,7 +95,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết tin tức</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">News Detail</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
@@ -100,19 +109,19 @@
                                     <div class="col-12">
                                         <div class="row">
                                             <div class="col-12">
-                                                <label>Tiêu đề : </label>&nbsp;<span
+                                                <label>Title : </label>&nbsp;<span
                                                     id="title"></span>
                                             </div>
                                             <div class="col-12">
-                                                <label>Tiêu đề con: </label>&nbsp;<span
+                                                <label>SubTitle: </label>&nbsp;<span
                                                     id="sub_title"></span>
                                             </div>
                                             <div class="col-12">
-                                                <label>Ngày đăng: </label>&nbsp;<span
+                                                <label>Post Date: </label>&nbsp;<span
                                                     id="post_date"></span>
                                             </div>
                                             <div class="col-12">
-                                                <label>Nội dung: </label>&nbsp;<div
+                                                <label>Content: </label>&nbsp;<div
                                                     id="content" style="height: 200px;overflow-y: scroll"></div>
                                             </div>
                                         </div>
@@ -122,7 +131,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                         </div>
                     </div>
@@ -133,7 +142,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel1">Cập nhật tin tức</h5>
+                            <h5 class="modal-title" id="exampleModalLabel1">Update News</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
@@ -146,12 +155,13 @@
                                 <div class="row">
                                     <div class="col-12" style="display: flex;flex-direction: column;">
                                         <label>Thumbnail :</label>
-                                        <img id="thumbnail_u"  style="display: block;width: 50%;margin: 0 auto;">
+                                        <img id="thumbnail_u" style="display: block;width: 50%;margin: 0 auto;">
                                         <input type="file" hidden id="fileAvatar" name="fileAvatar"
                                                onchange="previewImage()">
-                                        <button type="button" style="  width: 30%;display: block;margin: 0 auto;margin-top: 10px;" id="btn-updateImg" onclick="selectFile()"
-                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Cập nhật
-                                            hình ảnh
+                                        <button type="button"
+                                                style="  width: 30%;display: block;margin: 0 auto;margin-top: 10px;"
+                                                id="btn-updateImg" onclick="selectFile()"
+                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Update image
                                         </button>
                                         <div id="btn-function" style="display: none">
                                             <button type="button" onclick="OnUpdateImg()"
@@ -167,7 +177,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Tiêu đề :</label>
+                                                    <label class="m-0" style="font-size: 13px">Title:</label>
                                                     <input type="text" id="title_u"
                                                            class="form-control form-control-sm"
                                                            placeholder="Nhập mã môn học">
@@ -175,7 +185,7 @@
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Tiêu đề con:</label>
+                                                    <label class="m-0" style="font-size: 13px">SubTitle:</label>
                                                     <input type="text" id="sub_title_u"
                                                            class="form-control form-control-sm"
                                                            placeholder="Nhập mã môn học">
@@ -183,23 +193,24 @@
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Hiển thị:</label>
+                                                    <label class="m-0" style="font-size: 13px">Display:</label>
                                                     <div class="custom-control custom-switch">
-                                                        <input type="checkbox" class="custom-control-input" id="isActive_u" disabled>
+                                                        <input type="checkbox" class="custom-control-input"
+                                                               id="isActive_u" disabled>
                                                         <label class="custom-control-label" for="isActive_u"></label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Ngày đăng:</label>
+                                                    <label class="m-0" style="font-size: 13px">Post Date:</label>
                                                     <input type="text" id="post_date_u"
                                                            class="form-control form-control-sm" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Nội dung:</label>
+                                                    <label class="m-0" style="font-size: 13px">Content:</label>
                                                     <div id="editor">
                                                     </div>
                                                 </div>
@@ -211,10 +222,43 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                             <button type="button" onclick="OnUpdateSubmit()" class="btn btn-primary btn-sm"><i
-                                    class="fas fa-plus"></i> Cập nhật
+                                    class="fas fa-plus"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="create_file" tabindex="-1"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Create template</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times fa-sm"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <section class="row mb-3">
+                                    <section class="form-group form-control-sm col-12">
+                                        <label class="font-weight-normal f-13">Choose file</label>
+                                        <input type="file" class="form-control-file border" id="file_template">
+                                        <span class="text-danger mb-3" id="error-file"></span>
+                                    </section>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Close
+                            </button>
+                            <button type="button" onclick="OnCreateFileTemplateSubmit()" class="btn btn-primary btn-sm">
+                                <i
+                                        class="fas fa-plus"></i> Create
                             </button>
                         </div>
                     </div>
@@ -224,11 +268,6 @@
     </section>
 </div>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/moment/moment.min.js"></script>
-    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
     <script src="/plugins/ckeditor/ckeditor.js"></script>
     <script src="/js/news/index_new.js"></script>
 </th:block>

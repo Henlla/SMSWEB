@@ -4,18 +4,9 @@ import com.example.smsweb.api.di.irepository.IClass;
 import com.example.smsweb.api.di.repository.ClassRepository;
 import com.example.smsweb.api.exception.ErrorHandler;
 import com.example.smsweb.models.Classses;
-import com.example.smsweb.models.Major;
-import com.example.smsweb.models.Student;
-import com.example.smsweb.models.StudentClass;
-import com.example.smsweb.utils.ExcelHelper;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,18 +36,62 @@ public class ClassService implements IClass {
 
     @Override
     public Classses findOne(int id) {
-        return repository.findById(id).orElseThrow(() -> new ErrorHandler("Cannot find class with id := "+id));
+        return repository.findById(id).orElseThrow(() -> new ErrorHandler("Cannot find class with id := " + id));
     }
 
     @Override
     public Classses findByClassCode(String classCode) {
         return repository.findClasssesByClassCode(classCode).orElseThrow(
-                () -> new ErrorHandler("Cannot find class with class code := "+classCode));
+                () -> new ErrorHandler("Cannot find class with class code := " + classCode));
     }
 
     @Override
     public List<String> searchClasssesByClassCode(String classCode) {
         List<String> stringList = repository.searchClasssesByClassCode(classCode);
-        return  stringList;
+        return stringList;
     }
+
+    @Override
+    public List<Classses> findClassByTeacherId(Integer id) {
+        return repository.findAllByTeacherId(id);
+    }
+
+    @Override
+    public Classses findClassByTeacherIdAndScheduleId(Integer teacherId, Integer scheduleId) {
+        Optional<Classses> classsesOption = repository.findClasssesByTeacherIdAndId(teacherId, scheduleId);
+        if (classsesOption.isPresent()) {
+            return classsesOption.get();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Classses> findClassByMajorId(Integer majorId) {
+        return repository.findAllByMajorId(majorId).orElseThrow(() -> new ErrorHandler("Cannot find class with majorId = " + majorId));
+    }
+
+    @Override
+    public List<Classses> findClassByRoom(Integer roomId) {
+        List<Classses> list = repository.findAllByRoomId(roomId);
+        if(list.isEmpty()){
+            return null;
+        }
+        return repository.findAllByRoomId(roomId);
+    }
+
+    @Override
+    public List<Classses> findClassesDepartmentId(Integer departmentId) {
+        return repository.findClasssesByDepartmentId(departmentId);
+    }
+
+    @Override
+    public List<Classses> findClassByRoomAndDepartmentId(Integer roomId, Integer departmentId) {
+        return repository.findAllByRoomIdAndDepartmentId(roomId, departmentId);
+    }
+    public List<Classses> findClassesByShift(String shift) {
+        return repository.findClasssesByShift(shift);
+    }
+
+
 }

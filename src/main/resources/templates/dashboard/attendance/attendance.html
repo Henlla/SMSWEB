@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{dashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance</title>
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+<section layout:fragment="content">
+    <section class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h5 class="m-0">Attendance Manager</h5>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                            <li class="breadcrumb-item active">Attendance</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content-body">
+            <section class="container-fluid">
+                <section class="row mb-3">
+                    <div class="col-4">
+                        <div class="form-group d-flex flex-column">
+                            <label>Date: </label>
+                            <div class="input-group date" id="date" data-target-input="nearest">
+                                <input type="text" class="form-control form-control-sm datetimepicker-input"
+                                       data-target="#date" id="date_time" name="date_time"
+                                       placeholder="Choose Date"/>
+                                <div class="input-group-append" data-target="#date"
+                                     data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="class_select" class="col-4 d-none">
+                        <div class="form-group d-flex flex-column">
+                            <label>Class: </label>
+                            <select id="class" class="class_select2"></select>
+                        </div>
+                    </div>
+                    <div id="slot_select" class="col-4 d-none">
+                        <div class="form-group d-flex flex-column">
+                            <label>Slot: </label>
+                            <select id="slot" class="select2">
+                                <option value="">Choose Slot</option>
+                                <option value="1">Slot 1</option>
+                                <option value="2">Slot 2</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                <section class="row">
+                    <div class="col-12">
+                        <table id="attendance_table" style="width: 100%" class="table table-bordered table-hover"></table>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <input type="button" id="btnOnsubmit" onclick="OnUpdateAttendance()" value="Confirm" style="width: 200px" class="btn btn-primary btn-sm d-none mb-2">
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </section>
+    </section>
+</section>
+<th:block layout:fragment="optional">
+    <script src="/js/HelperJs.js"></script>
+    <script src="/js/attendance/admin_attendance.js"></script>
+</th:block>
+</body>
+</html>

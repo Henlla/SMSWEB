@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{teacherDashboard/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Class [[${class.classCode}]]</title>
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/student_details.css">
+</head>
+<body>
+<div layout:fragment="content" class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <h3 class="page-title">Class Details</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{'/teacher/classes'}">Find all</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table comman-shadow">
+                <div class="card-body">
+                    <div class="page-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="col">
+                                    <table style="width:100%; height:100%">
+                                        <tr>
+                                            <td>
+                                                <table style="width:100%; height: 100%">
+                                                    <tr>
+                                                        <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Class:&nbsp;</b>
+                                                        </h5></td>
+                                                        <td><h5 id="title_class_code">[[${class.classCode}]]</h5></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table style="width:100%; height: 100%">
+                                                    <tr>
+                                                        <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Teacher:&nbsp;</b>
+                                                        </h5></td>
+                                                        <td><h5>[[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="d-flex justify-content-end">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table style="width:100%; height: 100%">
+                                                    <tr>
+                                                        <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Number
+                                                            of Students:&nbsp;</b></h5></td>
+                                                        <td><h5>
+                                                            [[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]]
+                                                            Students</h5></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="d-flex justify-content-end">
+                                                <a data-bs-target="#mark_score" onclick="addSubject()" data-bs-toggle="modal"
+                                                   class="btn btn-primary btn-sm me-1">Input mark</a>
+                                                <a data-bs-target="#update_mark" onclick="addSubjectAndStudent()" data-bs-toggle="modal"
+                                                   class="btn btn-primary btn-sm me-1">Update mark</a>
+                                                <a id="export_student_excel" class="btn btn-success btn-sm">Download list student</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row table-responsive">
+                        <div class="col-12">
+                            <div class="d-flex align-items-center mb-3 col-md-6">
+<!--                                <label class="me-2">Find by Major :</label>-->
+<!--                                <div class="mb-2" style="width: 100%" id="select-major"></div>-->
+                            </div>
+                            <table id="student-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>STT</th>
+                                    <th>Student Code</th>
+                                    <th>Student Name</th>
+                                    <th>Date of Birth</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="student:${class.studentClassById}">
+                                    <td><span th:text="${class.studentClassById.indexOf(student)+1}"></span></td>
+                                    <td><span th:text="${student.classStudentByStudent.studentCard}"></span></td>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a th:data-name="${student.classStudentByStudent.id}" class="avatar avatar-sm me-2">
+                                                <img class="avatar-img rounded-circle" th:src="${student.classStudentByStudent.studentByProfile.avartarUrl}" alt="student-img">
+                                            </a>
+                                            <a th:data-name="${student.classStudentByStudent.id}" ></a>
+                                        </h2>
+                                        <span th:text="${student.classStudentByStudent.studentByProfile.firstName +' '+student.classStudentByStudent.studentByProfile.lastName}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${student.classStudentByStudent.studentByProfile.getDob()}"></span>
+                                    </td>
+                                    <td class="text-center">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Modal -->
+
+        <!--Timetable-->
+        <!--Mark score-->
+
+        <div class="modal fade" id="mark_score" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Input Mark</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="mark_select_subject">Input mark list</label>
+                                        <select class="form-control" id="mark_select_subject" name="mark_select_subject">
+                                            <option value="">--Select--</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mark_list">Input mark list</label>&nbsp;<a href="#" id="download_template" download>Download example file</a>
+                                        <input type="file" accept=".xlsx" class="form-control" id="mark_list" name="mark_list">
+                                    </div>
+                                </form>
+                            </div>
+                            <form>
+                                <table id="mark_table" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none;">Student Code</th>
+                                            <th style="display:none;">Subject Code</th>
+                                            <th>Student Name</th>
+                                            <th>Subject Name</th>
+                                            <th>ASM mark</th>
+                                            <th>OBJ mark</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <div class="form-group">
+                                    <input id="form_input_mark" class="form-control btn-primary text-white" type="submit" value="Submit">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="update_mark" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Mark</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col">
+                                <form id="form_update_mark">
+                                    <div class="form-group">
+                                        <label for="select_subject_update">select subject</label>
+                                        <select class="form-control mySelect2" id="select_subject_update" name="select_subject_update">
+                                            <option value="">--Select--</option>
+                                        </select>
+                                    </div><div class="form-group">
+                                        <label for="select_student_update">select student</label>
+                                        <select class="form-control mySelect2" id="select_student_update" name="select_student_update">
+                                            <option value="">--Select--</option>
+                                        </select>
+                                    </div><div class="form-group">
+                                        <label for="select_student_update">Asm Mark</label>
+                                        <input class="form-control" id="asm_mark_update" name="asm_mark_update" type="number" min="0" max="100">
+                                    </div><div class="form-group">
+                                        <label for="select_student_update">Obj Mark</label>
+                                        <input class="form-control" id="obj_mark_update" name="obj_mark_update" type="number" min="0" max="100">
+                                    </div>
+
+                                    <input style="display: none" hidden="hidden" id="mark_id" name="mark_id" value="">
+
+                                    <div class="form-group">
+                                        <input class="form-control btn-primary text-white" type="submit" value="Submit">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Input hidden-->
+        <input type="hidden" id="classId" th:value="${class.id}">
+        <input type="hidden" id="classCode" th:value="${class.classCode}">
+        <input type="hidden" id="teacherId" th:value="${class.teacher.getId()}">
+    </div>
+</div>
+
+<th:block layout:fragment="optional">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+<!--    <script src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>-->
+    <script type="text/javascript" src="/teacherDashboard/assets/js/customJs/class-details.js"></script>
+</th:block>
+</body>
+</html>

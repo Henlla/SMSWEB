@@ -44,34 +44,43 @@ public class WebConfig {
                 .authorizeRequests()
                 .requestMatchers("/api/major/**","/api/subject/**","/api/provinces/**",
                  "/api/districts/**","/api/accounts/login","/api/wards/**"
-                        ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**").permitAll()
-                .requestMatchers("/dashboard/login").permitAll()
-                .requestMatchers("/dashboard").hasAnyAuthority("ADMIN","STAFF")
+                 ,"/api/semester/**","/api/roles/**","/api/application/**","/api/application_type/**","/fcm/**"
+                        ,"/api/device/**","/api/room/**","/api/apartment/**","/api/department/**").permitAll()
+                .requestMatchers("/dashboard/login","/login/**","/dashboard/logout").permitAll()
+                .requestMatchers("/dashboard","/dashboard/view_room_active").hasAnyAuthority("ADMIN","STAFF")
                 .requestMatchers("/dashboard/teacher/**","/dashboard/student/**"
-                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**","/dashboard/news/**").hasAnyAuthority("STAFF","ADMIN")
+                        ,"/dashboard/major/**","/dashboard/subject/**","/dashboard/application/**"
+                        ,"/dashboard/applicationType/**","/dashboard/news/**","/dashboard/class/**","/dashboard/attendance/**"
+                        ,"/dashboard/room/**","/dashboard/apartment/**","/dashboard/department/**").hasAnyAuthority("STAFF","ADMIN")
                 .requestMatchers("/dashboard/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/css/**","/js/**","/plugins/**","/img/**").permitAll()
                 .requestMatchers("/api/news/list","/api/news/get/{id}").permitAll()
-                .requestMatchers("/api/accounts/changePassword/{id}","/api/profiles/get/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF","TEACHER")
-                .requestMatchers("/api/students/getByProfile/{id}").hasAnyAuthority("STUDENT")
+                .requestMatchers("/api/accounts/changePassword/{id}","/api/profiles/get/{id}","/api/teachers/get/{id}","/api/students/getByProfile/{id}").hasAnyAuthority("STUDENT","ADMIN","STAFF","TEACHER")
+//                .requestMatchers().hasAnyAuthority("STUDENT")
                 .requestMatchers("/api/teachers/getByProfile/{id}").hasAnyAuthority("TEACHER")
-                .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**",
-                 "/api/students-subject/**","/api/student-major/**","/api/teachers/**","/api/staffs/**","/api/news/**","/api/classes/**").hasAnyAuthority("ADMIN","STAFF")
-
+                .requestMatchers("/api/students-subject/**","/api/classes/**","/api/schedules/**",
+                        "/api/schedules_detail/**","/api/student-major/**").hasAnyAuthority("ADMIN","STUDENT","TEACHER","STAFF")
+                .requestMatchers("/api/accounts/**","/api/profiles/**","/api/students/**","/api/teachers/**",
+                        "/api/staffs/**","/api/news/**").hasAnyAuthority("ADMIN","STAFF")
+                //teacher
+                .requestMatchers("/api/attendance/**","/dashboard/attendance/**"
+                        ,"/api/student-class/**","/teacher/**","/api/students/**","/api/attendance_tracking/**")
+                .permitAll()
+                //student
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedPage("/access-denied")
-//                .and()
-//                .formLogin()
-//                .loginPage("/dashboard/login")
-//                .defaultSuccessUrl("/dashboard", true)
-//                .usernameParameter("username")
-//                .passwordParameter("password")
-//                .failureUrl("/dashboard/login?error=true")
                 .and()
                 .logout()
                 .logoutUrl("/dashboard/logout")
                 .logoutSuccessUrl("/dashboard/login")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID","_token")
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID","_token")

@@ -4,11 +4,7 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sinh viên</title>
-<!--    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">-->
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css">
+    <title>List Student</title>
     <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/student_details.css">
 </head>
@@ -20,7 +16,13 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h5 class="m-0">Quản lý sinh viên</h5>
+                            <h1 class="m-0">Student Index</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">List Student</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
@@ -29,24 +31,35 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm">Thêm mới</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm">Xuất dữ liệu</a>
-                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Tải biểu mẫu</a>
+<!--<<<<<<< HEAD-->
+                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm"><i class="fas fa-plus"></i> Create</a>
+                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Export Data</a>
+                            <a onclick="OnChooseFile()" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Import Data</a>
+                            <input type="file" hidden id="fileStudent" onchange="OnImportStudent()">
+<!--=======-->
+<!--                            <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"-->
+<!--                               th:href="@{'/dashboard/student/create-student'}" class="btn btn-info btn-sm"><i-->
+<!--                                    class="fas fa-plus"></i> Create</a>-->
+<!--                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-success btn-sm"><i-->
+<!--                                    class="fas fa-download"></i> Export Data</a>-->
+<!--                            <a th:href="@{'/dashboard/student/export-excel'}" class="btn btn-primary btn-sm">Download-->
+<!--                                Template</a>-->
+<!--&gt;>>>>>> origin/Develop-->
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <label>Tìm kiếm theo nghành học :</label>
+                            <label>Find by major :</label>
                             <div id="select-major"></div>
                             <table id="student-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
                                     <th>STT</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Mã sinh viên</th>
-                                    <th>Tên sinh viên</th>
-                                    <th>Nghành học</th>
-                                    <th>Hành động</th>
+                                    <th>Image</th>
+                                    <th>Student Name</th>
+                                    <th>Student Card</th>
+                                    <th>Curriculum</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -62,12 +75,17 @@
                                     <td><span th:text="${student.studentCard}"></span></td>
                                     <td>
                                         <th:block th:each="major :${student.majorStudentsById}">
-                                            [[${major.majorByMajorId.majorName}]]
+                                            [[${major.majorByMajorId.majorCode}]]
                                         </th:block>
                                     </td>
                                     <td class="text-center">
-                                        <a class="mr-3" th:data-name="${student.id}" onclick="OnDetails(this.getAttribute('data-name'))"><i class="fas fa-eye indigo-text"></i></a>
-                                        <a class="mr-3" th:data-name="${student.id}" th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}" onclick="OnUpdate(this.getAttribute('data-name'))"><i class="fas fa-pencil-alt"></i></a>
+                                        <a class="mr-3" th:data-name="${student.id}"
+                                           onclick="OnDetails(this.getAttribute('data-name'))"><i
+                                                class="fas fa-eye indigo-text"></i></a>
+                                        <a class="mr-3" th:data-name="${student.id}"
+                                           th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                           onclick="OnUpdate(this.getAttribute('data-name'))"><i
+                                                class="fas fa-pencil-alt"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -82,7 +100,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết sinh viên</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Student Detail</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
@@ -91,28 +109,28 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-3">
-                                        <img id="st_image" style="width: 100%;height: 100%">
+                                        <img id="st_image" style="width: 100%;height: 65%">
                                     </div>
                                     <div class="col-9">
                                         <div class="row">
                                             <div class="col-12">
-                                                <label>Họ và tên : </label>&nbsp;<span
+                                                <label>Full Name : </label>&nbsp;<span
                                                     id="st_fullName"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Mã số sinh viên : </label>&nbsp;<span
+                                                <label>Student Card : </label>&nbsp;<span
                                                     id="st_card"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Giới tính : </label>&nbsp;<span
+                                                <label>Gender : </label>&nbsp;<span
                                                     id="st_sex"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Ngày sinh : </label>&nbsp;<span
+                                                <label>Date of Birth : </label>&nbsp;<span
                                                     id="st_dob"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Số điện thoại : </label>&nbsp;<span
+                                                <label>Phone Numbers : </label>&nbsp;<span
                                                     id="st_phone"></span>
                                             </div>
                                             <div class="col-6">
@@ -120,30 +138,30 @@
                                                     id="st_email"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>CCCD/CMND : </label>&nbsp;<span
+                                                <label>Idnetity Card : </label>&nbsp;<span
                                                     id="st_identityId"></span>
                                             </div>
                                             <div class="col-12">
-                                                <label>Địa chỉ : </label>&nbsp;<span
+                                                <label>Address : </label>&nbsp;<span
                                                     id="st_address"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Nghành học : </label>&nbsp;<span id="st_major"></span>
+                                                <label>Curriculum : </label>&nbsp;<span id="st_major"></span>
                                             </div>
                                             <div class="col-6">
-                                                <label>Lớp học : </label>&nbsp;
-                                                <span
-                                                        id="st_class"></span>
+                                                <label>Major : </label>&nbsp;<span id="st_apartment"></span>
+                                            </div>
+                                            <div class="col-6">
+                                                <label>Class : </label>&nbsp;
+                                                <span id="st_class"></span>
                                             </div>
                                             <div class="col-12">
                                                 <div id="spinner-divI" class="pt-5">
-                                                    <div class="spinner-border text-primary" role="status">
-                                                    </div>
+                                                    <div class="spinner-border text-primary" role="status"></div>
                                                 </div>
                                                 <input type="hidden" id="accountId" value="">
                                                 <input type="hidden" id="email" value="">
-                                                <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật
-                                                    khẩu
+                                                <button id="reset_password" class="btn btn-info btn-sm">Reset password
                                                 </button>
                                             </div>
                                         </div>
@@ -153,7 +171,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                         </div>
                     </div>
@@ -164,160 +182,170 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel1">Cập nhật sinh viên</h5>
+                            <h5 class="modal-title" id="exampleModalLabel1">Update Student</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <i class="fas fa-times fa-sm"></i>
                             </button>
                         </div>
                         <div class="modal-body">
+                            <div id="spinner-divI_2" class="pt-5">
+                                <div class="spinner-border text-primary" role="status">
+                                </div>
+                            </div>
                             <div class="container">
                                 <input type="hidden" id="profileId_u">
                                 <input type="hidden" id="accountId_u">
                                 <input type="hidden" id="img">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <img id="st_image_u" style="width: 100%;height: 50%">
-                                        <input type="file" hidden id="fileAvatar" name="fileAvatar"
-                                               onchange="previewImage()">
-                                        <button type="button" id="btn-updateImg" onclick="selectFile()"
-                                                class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Cập nhật
-                                            hình ảnh
-                                        </button>
-                                        <div id="btn-function" style="display: none">
-                                            <button type="button" onclick="OnUpdateImg()"
-                                                    class="btn btn-success btn-sm"><i class="fas fa-check"></i>
+                                <form id="form_student_update">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <img id="st_image_u" style="width: 100%;height: 50%">
+                                            <input type="file" hidden id="fileAvatar" name="fileAvatar"
+                                                   onchange="previewImage()">
+                                            <button type="button" id="btn-updateImg" onclick="selectFile()"
+                                                    class="btn btn-primary btn-sm"><i class="fas fa-upload"></i>Update
+                                                Image
                                             </button>
-                                            <button type="button" onclick="CancelUpdateImg()"
-                                                    class="btn btn-danger btn-sm"><i
-                                                    class="fas fa-times"></i>
-                                            </button>
+                                            <div id="btn-function" style="display: none">
+                                                <button type="button" onclick="OnUpdateImg()"
+                                                        class="btn btn-success btn-sm"><i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button" onclick="CancelUpdateImg()"
+                                                        class="btn btn-danger btn-sm"><i
+                                                        class="fas fa-times"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Họ :</label>
-                                                    <input type="text" id="firstName_u"
-                                                           class="form-control form-control-sm"
-                                                           placeholder="Nhập mã môn học">
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Tên :</label>
-                                                    <input type="text" id="lastName_u"
-                                                           class="form-control form-control-sm"
-                                                           placeholder="Nhập mã môn học">
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">Mã sinh viên :</label>
-                                                <input type="text" id="studentCard_u" readonly
-                                                       class="form-control form-control-sm">
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label style="font-size: 13px">Giới tính :</label>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" value="Nam" type="radio"
-                                                               name="sex" id="flexRadioDefault1" checked>
-                                                        <label class="form-check-label" for="flexRadioDefault1">
-                                                            Nam
-                                                        </label>
-                                                        <input class="form-check-input" value="Nữ" type="radio"
-                                                               name="sex" style="margin-left: 15px;"
-                                                               id="flexRadioDefault2">
-                                                        <label class="form-check-label" style="margin-left: 36px;"
-                                                               for="flexRadioDefault2">
-                                                            Nữ
-                                                        </label>
+                                        <div class="col-9">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">First Name :</label>
+                                                        <input type="text" id="firstName_u" name="firstName_u"
+                                                               class="form-control form-control-sm"
+                                                               placeholder="Enter first name...">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-6" style="margin-top: -10px;">
-                                                <label style="font-size: 13px">Ngày sinh:</label>
-                                                <div class="input-group date" id="reservationdate_u"
-                                                     data-target-input="nearest">
-                                                    <input type="text"
-                                                           class="form-control form-control-sm datetimepicker-input"
-                                                           data-target="#reservationdate_u" id="dob_u" name="dob"
-                                                           placeholder="Chọn ngày sinh"/>
-                                                    <div class="input-group-append" data-target="#reservationdate_u"
-                                                         data-toggle="datetimepicker">
-                                                        <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">Last Name :</label>
+                                                        <input type="text" id="lastName_u" name="lastName_u"
+                                                               class="form-control form-control-sm"
+                                                               placeholder="Enter last name...">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="m-0" style="font-size: 13px">Student Card :</label>
+                                                    <input type="text" id="studentCard_u" readonly
+                                                           class="form-control form-control-sm">
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label style="font-size: 13px">Gender :</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" value="Nam" type="radio"
+                                                                   name="sex" id="flexRadioDefault1" checked>
+                                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                                Male
+                                                            </label>
+                                                            <input class="form-check-input" value="Nữ" type="radio"
+                                                                   name="sex" style="margin-left: 15px;"
+                                                                   id="flexRadioDefault2">
+                                                            <label class="form-check-label" style="margin-left: 36px;"
+                                                                   for="flexRadioDefault2">
+                                                                Female
+                                                            </label>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-6" style="margin-top: -10px;">
+                                                    <label style="font-size: 13px">Date of Birth:</label>
+                                                    <div class="input-group date" id="dob_calendar_u"
+                                                         data-target-input="nearest">
+                                                        <input type="text"
+                                                               class="form-control form-control-sm datetimepicker-input"
+                                                               data-target="#dob_calendar_u" id="dob_u" name="dob_u"
+                                                               placeholder="Chọn ngày sinh"/>
+                                                        <div class="input-group-append" data-target="#dob_calendar_u"
+                                                             data-toggle="datetimepicker">
+                                                            <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">Số điện thoại :</label>
-                                                <input type="text" id="phone_u"
-                                                       class="form-control form-control-sm">
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">Email :</label>
-                                                <input type="text" id="email_u"
-                                                       class="form-control form-control-sm"
-                                                       placeholder="Nhập mã môn học">
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="m-0" style="font-size: 13px">CCCD/CMND :</label>
-                                                <input type="text" id="identityCard_u"
-                                                       class="form-control form-control-sm"
-                                                       placeholder="Nhập mã môn học">
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Tỉnh/TP:</label>
-                                                    <select id="province_u" class="form-control select2 form-control-sm"
-                                                            name="province_u"
-                                                            style="width: 100%;">
-                                                        <option selected="selected" value="">-Chọn Tỉnh/TP-</option>
-                                                        <option th:each="province : ${provinces}"
-                                                                th:value="${province.id}">[[${province.name}]]
-                                                        </option>
-                                                    </select>
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Quận/Huyện:</label>
-                                                    <select id="district_u" class="form-control select2 form-control-sm"
-                                                            name="district_u"
-                                                            style="width: 100%;">
-                                                        <option selected="selected" value="">-Chọn Quận/Huyện-</option>
-                                                    </select>
+                                                <div class="col-6">
+                                                    <label class="m-0" style="font-size: 13px">Phone numbers :</label>
+                                                    <input type="text" id="phone_u" name="phone_u"
+                                                           class="form-control form-control-sm">
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label class="m-0" style="font-size: 13px">Xã/Thị trấn:</label>
-                                                    <select id="ward_u" class="form-control select2 form-control-sm"
-                                                            name="ward_u"
-                                                            style="width: 100%;">
-                                                        <option selected="selected" value="">-Chọn Xã/Thị trấn-</option>
-                                                    </select>
+                                                <div class="col-6">
+                                                    <label class="m-0" style="font-size: 13px">Email :</label>
+                                                    <input type="text" id="email_u" name="email_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Enter email...">
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="m-0" style="font-size: 13px">Địa chỉ :</label>
-                                                <input type="text" id="address_u"
-                                                       class="form-control form-control-sm"
-                                                       placeholder="Nhập địa chỉ ">
+                                                <div class="col-6">
+                                                    <label class="m-0" style="font-size: 13px">Identity Card :</label>
+                                                    <input type="text" id="identityCard_u" name="identityCard_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Enter identity card...">
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">Province:</label>
+                                                        <select id="province_u"
+                                                                class="form-control select2 form-control-sm"
+                                                                name="province_u"
+                                                                style="width: 100%;">
+                                                            <option selected="selected" value="">-Choose provice-
+                                                            </option>
+                                                            <option th:each="province : ${provinces}"
+                                                                    th:value="${province.id}">[[${province.name}]]
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">District:</label>
+                                                        <select id="district_u"
+                                                                class="form-control select2 form-control-sm"
+                                                                name="district_u"
+                                                                style="width: 100%;">
+                                                            <option selected="selected" value="">-Choose district-
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label class="m-0" style="font-size: 13px">Ward:</label>
+                                                        <select id="ward_u" class="form-control select2 form-control-sm"
+                                                                name="ward_u"
+                                                                style="width: 100%;">
+                                                            <option selected="selected" value="">-Choose ward-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="m-0" style="font-size: 13px">Address :</label>
+                                                    <input type="text" id="address_u" name="address_u"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Enter address...">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
-                                    class="fas fa-times"></i> Đóng
+                                    class="fas fa-times"></i> Close
                             </button>
                             <button type="button" onclick="OnUpdateSubmit()" class="btn btn-primary btn-sm"><i
-                                    class="fas fa-plus"></i> Cập nhật
+                                    class="fas fa-plus"></i> Update
                             </button>
                         </div>
                     </div>
@@ -327,17 +355,7 @@
     </section>
 </div>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/moment/moment.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
-    <script type="text/javascript">
-        $('#reservationdate_u').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-    </script>
-    <script src="/plugins/select2/js/select2.full.js"></script>
+    <script type="text/javascript" src="/js/HelperJs.js"></script>
     <script src="/js/student/student_index.js"></script>
 </th:block>
 </body>

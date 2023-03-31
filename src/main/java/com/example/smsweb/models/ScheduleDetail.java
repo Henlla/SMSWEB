@@ -28,16 +28,35 @@ public class ScheduleDetail {
     @Column(name = "schedule_id")
     private Integer scheduleId;
 
+
+    @Basic
+    @Column(name = "slot")
+    private Integer slot;
+
+    @Basic
+    @Column(name = "shift")
+    private String shift;
+
     @Basic
     @Column(name = "day_of_week")
     private String dayOfWeek;
 
+    @Basic
+    @Column(name = "teacher_id")
+    private Integer teacherId;
+
     @ManyToOne
-    @JsonBackReference("subject_schedule_detail")
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id",insertable = false,updatable = false)
+    private Teacher teacherByScheduleDetail;
+
+    @ManyToOne
+//    @JsonBackReference("subject_schedule_detail")
     @JoinColumn(name = "subject_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Subject subjectBySubjectId;
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "schedule_id", referencedColumnName = "id",insertable = false,updatable = false)
     private Schedule scheduleByScheduleId;
+
+
 }

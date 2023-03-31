@@ -4,10 +4,9 @@
       layout:decorate="~{dashboard/index}">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách sinh viên</title>
-    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
-    <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-    <link rel="stylesheet" href="/css/student_details.css">
+    <title>Student of class: [[${class.classCode}]]</title>
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/class_details.css">
 </head>
 <body>
 <div layout:fragment="content">
@@ -17,71 +16,593 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h5 class="m-0">Chi tiết sinh viên</h5>
+                            <h5 class="m-0">Class Detail Manager</h5>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/dashboard/class/class-index">List Class</a></li>
+                                <li class="breadcrumb-item active">Class Detail</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <table style="width:100%; height:100%">
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Class:&nbsp;</b>
+                                                </h5></td>
+                                                <td><h5>[[${class.classCode}]]</h5></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="d-flex justify-content-end"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Teacher:&nbsp;</b>
+                                                </h5></td>
+                                                <td style="width:150%;display: flex;align-items: center"><h5
+                                                        class="text-bold">
+                                                    [[${class.teacher.profileByProfileId.firstName}]]&nbsp;[[${class.teacher.profileByProfileId.lastName}]]</h5>
+                                                    <a th:data-id="${class.getTeacherId()}"
+                                                       th:data-name="${class.getTeacher().getProfileByProfileId().getFirstName()+' '+class.getTeacher().getProfileByProfileId().getLastName()}"
+                                                       onclick="OnChangeTeacher(this.getAttribute('data-name'),this.getAttribute('data-id'))"
+                                                       class="btn btn-success btn-sm">Change teacher</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="d-flex justify-content-end">
+                                        <table>
+                                            <tr>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#update_mark" data-toggle="modal">Update Mark</a></td>
+                                                <td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Number of
+                                                    student:&nbsp;</b></h5></td>
+                                                <td><h5>
+                                                    [[${#lists.size(class.studentClassById)}]]/[[${class.limitStudent}]]
+                                                    student</h5></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold">
+                                                    <b>Room:&nbsp;</b></h5></td>
+                                                <td><h5 id="title_room_code">[[${room.roomCode}]]&nbsp;&nbsp;<i
+                                                        onclick="OnchangeRoom()" class="fas fa-pencil-alt"></i></h5>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="d-flex justify-content-end">
+                                        <table>
+                                            <tr>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#class_add_student" data-toggle="modal">Add
+                                                    student</a></td>
+                                                <td><a class="btn btn-primary btn-sm"
+                                                       th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                       data-target="#class_import_student_file" data-toggle="modal">Add
+                                                    list of students</a></td>
+                                                <td>
+                                                    <a th:href="@{'/dashboard/class/export-student-excel/'+${class.id}}"
+                                                       class="btn btn-success btn-sm">Download template</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%; height: 100%">
+                                            <tr>
+                                                <td style="width:40%; height: 100%"></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="d-flex justify-content-end">
+                                        <table>
+                                            <tr>
+                                                <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
+                                                   data-target="#create_schedule" data-toggle="modal"
+                                                   class="btn btn-warning btn-sm">Create Time Table</a>
+                                                <a data-target="#details_schedule" data-toggle="modal"
+                                                   class="btn btn-primary btn-sm">View Time Table</a>
+                                                <a data-target="#send_schedule" data-toggle="modal"
+                                                   class="btn btn-success btn-sm">Send Time Table</a>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="content-body">
-                <div class="container">
+                <div class="container" style="margin-top: 10px">
                     <div class="row">
-                        <div class="col-3">
-                            <img th:src="${student.getStudentByProfile().getAvartarUrl()}" width="200" height="200">
+                        <div class="col-12">
+                            <table id="student-table" class="table table-bordered">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>STT</th>
+                                    <th>Avatar</th>
+                                    <th>Student Card</th>
+                                    <th>Student Name</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center" th:each="student:${class.studentClassById}">
+                                    <td><span
+                                            th:text="${class.studentClassById.indexOf(student)+1}"></span>
+                                    </td>
+                                    <td><img th:src="${student.classStudentByStudent.studentByProfile.avartarUrl}"
+                                             alt="" width="50"
+                                             height=50></td>
+                                    <td>
+                                        <span th:text="${student.classStudentByStudent.studentByProfile.firstName +' '+student.classStudentByStudent.studentByProfile.lastName}"></span>
+                                    </td>
+                                    <td><span th:text="${student.classStudentByStudent.studentCard}"></span></td>
+                                    <td class="text-center">
+                                        <a th:data-studentId="${student.getClassStudentByStudent().getId()}"
+                                           th:data-studentName="${student.getClassStudentByStudent().getStudentByProfile().getFirstName()+' '+student.getClassStudentByStudent().getStudentByProfile().getLastName()}"
+                                           onclick="OnChangeClassStudent(this.getAttribute('data-studentId'),this.getAttribute('data-studentName'))"
+                                           class="btn btn-info btn-sm"><i class="fas fa-sync" style="color:black"></i>&nbsp;Change
+                                            class</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col-9">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label>Họ và tên : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.firstName +' '+student.studentByProfile.lastName}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal-->
+        <div class="modal fade" id="create_schedule"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create Time Table</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="pt-5 spinner-div">
+                            <div class="spinner-border text-primary" role="status">
+                            </div>
+                        </div>
+                        <div class="container">
+                            <form id="role_create-form">
+                                <div class="col-6">
+                                    <label for="startDate">Start Date:</label>
+                                    <input type="date" class="form-control" id="startDate" name="startDate"
+                                           placeholder="chọn ngày bắt đầu học">
+                                    <span class="error-choose_day" style="color:red;font-size: 14px"></span>
+                                    <input type="text" id="inputToday" style="display: none">
                                 </div>
-                                <div class="col-4">
-                                    <label>Mã số sinh viên : </label>&nbsp;<span
-                                        th:text="${student.studentCard}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Ngày sinh : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.dob}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Số điện thoại : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.phone}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Email : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.email}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>CCCD/CMND : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.identityCard}"></span>
-                                </div>
-                                <div class="col-8">
-                                    <label>Địa chỉ : </label>&nbsp;<span
-                                        th:text="${student.studentByProfile.address+' , '+student.studentByProfile.wardByWardId.name+' , '+student.studentByProfile.districtByDistrictId.name+' , '+student.studentByProfile.profileProvince.name}"></span>
-                                </div>
-                                <div class="col-4">
-                                    <label>Nghành học : </label>&nbsp;<th:block
-                                        th:each="major :${student.majorStudentsById}"><span
-                                        th:text="${major.majorByMajorId.majorName}"></span></th:block>
-                                </div>
-                                <div class="col-4">
-                                    <label>Lớp học : </label>&nbsp;
-                                    <th:block th:if="${student.studentClassById.isEmpty()}">
-                                        <span>Chưa có</span>
-                                    </th:block>
-                                    <th:block th:unless="${student.studentClassById.isEmpty()}">
-                                        <span th:each="class :${student.studentClassById}">
-                                             <span th:text="${class.classStudentByClass.classCode}"></span>
-                                        </span>
-                                    </th:block>
-                                </div>
-                                <div class="col-12">
-                                    <div id="spinner-div" class="pt-5">
-                                        <div class="spinner-border text-primary" role="status">
-                                        </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="semester">Semester:</label>
+                                        <select id="semester" class="form-control" name="semester"
+                                                style="width: 100%;">
+                                            <option value="">-----Choose semester------</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
                                     </div>
-                                    <input type="hidden" id="accountId" th:value="${student.studentByProfile.accountByAccountId.id}">
-                                    <input type="hidden" id="email" th:value="${student.studentByProfile.email}">
-                                    <button id="reset_password" class="btn btn-info btn-sm">Đặt lại mật khẩu</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                        <button type="button" class="btn btn-info btn-sm" id="btn_create_schedule"
+                                th:data-id="${class.getId()}"
+                                th:data-major="${class.getMajorId()}"
+                                th:data-shift="${class.getShift()}"
+                                onclick="OnCreateSchedule(this.getAttribute('data-id'),
+                                    this.getAttribute('data-major'),
+                                     this.getAttribute('data-shift'))" data-dismiss="modal"><i
+                                class="fas fa-plus"></i> Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="details_schedule"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl" style="max-width: 90% !important;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">View Time Table</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="schedule_details_form">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="semester">Semester:</label>
+                                        <select id="semesterSchedule" onchange="OnChangeSemesterSchedule()"
+                                                class="form-control" name="semester" style="width: 100%;">
+                                            <option value="">-----Choose semester------</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="container">
+                            <div class="container">
+                                <div class="timetable-img text-center">
+                                    <img src="img/content/timetable.png" alt="">
+                                </div>
+                                <div class="float-right"><a id="btn_update_schedule"
+                                                            class="btn btn-info btn-sm">Edit</a></div>
+                                <a id="btnDownSchedule" class="btn btn-danger btn-sm">Download</a>
+                                <div class="table-responsive">
+                                    <table id="schedule_table" class="table table-bordered text-center">
+                                        <thead>
+                                        <tr class="bg-light-gray">
+                                            <th colspan="2" class="text-uppercase">Monday</th>
+                                            <th colspan="2" class="text-uppercase">Tuesday</th>
+                                            <th colspan="2" class="text-uppercase">Wednesday</th>
+                                            <th colspan="2" class="text-uppercase">Thursday</th>
+                                            <th colspan="2" class="text-uppercase">Friday</th>
+                                            <th colspan="2" class="text-uppercase">Saturday</th>
+                                            <!--                                            <th colspan="2" class="text-uppercase">Sunday</th>-->
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="schedule_update"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change time table</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <div class="form-group"
+                                         style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="schedule_details_id">
+                                        <div class="input-group date" id="day_default"
+                                             data-target-input="nearest">
+                                            <input type="text"
+                                                   class="form-control form-control-sm day_default datetimepicker-input"
+                                                   data-target="#day_default_input" readonly/>
+                                            <div class="input-group-append" data-target="#day_default_input"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <img src="/img/arrow_forward.png" alt="" width="20" height="20">
+                                        <input type="date" class="form-control newDate" id="newDate" name="startDate"
+                                               placeholder="Choose day to change">
+                                    </div>
+                                    <span class="error-choose_day" style="color:red;font-size: 14px"></span>
+                                    <div class="col">
+                                        <label for="slot">Slot : </label>
+                                        <select name="" id="slot">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                        </select>
+                                    </div>
+                                    <span style="color:red" id="msg_error" class="float-right"></span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submitChangeDate"><i
+                                class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="change_teacher"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change teacher</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <div class="form-group"
+                                         style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="teacherId">
+                                        <input type="text" id="teacher" readonly>
+                                        <img src="/img/arrow_forward.png" alt="" width="20" height="20">
+                                        <select id="teacher_change" class="form-control select2" name="teacher_change"
+                                                style="width: 100%;">
+                                            <option selected="selected" value="">----- Choose teacher------</option>
+                                            <th:block th:each="teacher : ${listTeacher}"
+                                                      th:if="${teacher.id != class.getTeacherId()}">
+                                                <option th:value="${teacher.getTeacherCard()}">
+                                                    [[${teacher.profileByProfileId.firstName +'
+                                                    '+teacher.profileByProfileId.lastName+' - '+teacher.teacherCard}]]
+                                                </option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submitTeacher"><i
+                                class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="change_teacher_schedule"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change teacher for <span id="date"></span> - slot <span
+                                id="slot_2"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <input type="hidden" id="schedule_detail_id">
+                                    <input type="hidden" id="date_change">
+                                    <input type="hidden" id="slot_I">
+                                    <div class="form-group">
+                                        <label>Teacher :</label>
+                                        <select id="teacher_schedule_change" class="form-control select2"
+                                                name="teacher_schedule_change"
+                                                style="width: 100%;">
+                                            <option selected="selected" value="">----- Choose teacher------</option>
+                                            <th:block th:each="teacher : ${listTeacher}">
+                                                <option th:value="${teacher.getTeacherCard()}">
+                                                    [[${teacher.profileByProfileId.firstName +'
+                                                    '+teacher.profileByProfileId.lastName+' - '+teacher.teacherCard}]]
+                                                </option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                        <button type="button" disabled="true" class="btn btn-success btn-sm"
+                                id="btn_submitTeacher_schedule"><i class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="send_schedule"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Send time table</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <input type="file" accept=".xlsx" class="form-control" id="fileSchedule">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                    class="fas fa-times"></i> Close
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" id="btnSendSchedule"><i
+                                    class="fas fa-check"></i> Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="change_class_student"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change class for student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <div class="form-group"
+                                         style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="studentId">
+                                        <div style="display: flex;justify-content: center; align-items: center;width: 100%;">
+                                            Name : <span style="font-weight: bold" class="studentName"></span>&nbsp;Class:
+                                            <span style="font-weight: bold" class="classCode"></span>
+                                            &nbsp;&nbsp;
+                                            <img src="/img/arrow_forward.png" alt="" width="20" height="20">
+                                            &nbsp;&nbsp;
+                                            <select id="classList" onchange="OnCheckStudentInClass()"
+                                                    class="form-control select2" name="classList" style="width: 200px;">
+                                                <option selected="selected" value="">----- Choose class------</option>
+                                                <th:block th:each="classs : ${classList}">
+                                                    <option th:value="${classs.getId()}">[[${classs.classCode}]]
+                                                    </option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Đóng
+                        </button>
+                        <button type="button" id="btn_change_class_student" class="btn btn-success btn-sm"
+                                style="display: none" onclick="OnSubmitChangeClassStudent()"><i
+                                class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Modal add student-->
+        <div class="modal fade" id="class_add_student"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="form_add_student">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputStudentCard">Student card:&nbsp;</label>
+                                        <input class="form-control" id="inputStudentCard" name="inputStudentCard"
+                                               placeholder="Enter student card...">
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control btn-primary" type="submit" value="Add student">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Modal add student  by file-->
+        <div class="modal fade" id="class_import_student_file"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <!--                            <form id="form_import_student_file" enctype="multipart/form-data">-->
+                            <!--                                <div class="col">-->
+                            <!--                                    <div class="form-group">-->
+                            <!--                                        <label for="studentList">Add list of student&nbsp;</label><a-->
+                            <!--                                            href="/TempExcel/them-sinh-vien-vao-lop.xlsx" download>Download example file</a>-->
+                            <!--                                        <input type="file" accept=".xlsx" class="form-control" id="studentList"-->
+                            <!--                                               name="studentList">-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="form-group">-->
+                            <!--                                        <input class="form-control btn-primary" type="submit" value="Add student">-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </form>-->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="studentList">Add list of student&nbsp;</label><a
+                                        href="/TempExcel/student_import.xlsx" download>Download example file</a>
+                                    <input type="file" accept=".xlsx" class="form-control" id="studentList"
+                                           name="studentList">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control btn-primary" onclick="OnImportListStudent()"
+                                           type="submit" value="Add student">
                                 </div>
                             </div>
                         </div>
@@ -89,13 +610,109 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="change_room" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change room</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form>
+                                <div class="col">
+                                    <div class="form-group"
+                                         style="display: flex;justify-content: center;align-items: center">
+                                        <input type="hidden" id="b">
+                                        <input type="text" id="room" hidden="hidden" readonly>
+                                        <select id="room_change" class="form-control select2" name="room_change"
+                                                style="width: 100%;">
+                                            <option selected="selected" value="">----- Choose room------</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="fas fa-times"></i> Close
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" id="btn_submit_change_room"><i
+                                class="fas fa-check"></i> Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="update_mark" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Mark</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times fa-sm"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form id="form_update_mark">
+                                <div class="form-group">
+                                    <label for="select_subject_update">select subject</label>
+                                    <select class="form-control mySelect2" id="select_subject_update" name="select_subject_update">
+                                        <option value="">--Select--</option>
+                                        <th:block th:each="subject : ${class.getMajor().getSubjectsById()}">
+                                            <option th:value="${subject.id}">[[${subject.subjectName}]] - [[${subject.subjectCode}]]</option>
+                                        </th:block>
+                                    </select>
+                                </div><div class="form-group">
+                                <label for="select_student_update">select student</label>
+                                <select class="form-control mySelect2" id="select_student_update" name="select_student_update">
+                                    <option value="">--Select--</option>
+                                    <th:block th:each="student : ${class.getStudentClassById()}">
+                                        <option th:value="${student.getClassStudentByStudent().getId()}">[[${student.getClassStudentByStudent().getStudentByProfile().getFirstName()}]]&nbsp;[[${student.getClassStudentByStudent().getStudentByProfile().getLastName()}]]</option>
+                                    </th:block>
+                                </select>
+                            </div><div class="form-group">
+                                <label for="select_student_update">Asm Mark</label>
+                                <input class="form-control" id="asm_mark_update" name="asm_mark_update" type="number" min="0" max="100">
+                            </div><div class="form-group">
+                                <label for="select_student_update">Obj Mark</label>
+                                <input class="form-control" id="obj_mark_update" name="obj_mark_update" type="number" min="0" max="100">
+                            </div>
+
+                                <input style="display: none" hidden="hidden" id="mark_id" name="mark_id" value="">
+
+                                <div class="form-group">
+                                    <input class="form-control btn-primary text-white" type="submit" value="Submit">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="classId" th:value="${class.id}">
+        <input type="hidden" id="classCode" th:value="${class.classCode}">
+        <input type="hidden" id="shift" th:value="${class.getShift()}">
+        <input type="hidden" id="teacherId_v" th:value="${class.getTeacherId()}">
+        <input type="hidden" id="roomId" th:value="${class.getId()}">
+        <input type="hidden" id="departmentId" th:value="${class.getDepartmentId()}">
+        <input type="hidden" id="availablePlace"
+               th:value="${class.getLimitStudent() - class.getStudentClassById().size()}">
     </section>
 </div>
 <th:block layout:fragment="optional">
-    <script src="/plugins/jquery/jquery.min.js"></script>
-    <script src="/plugins/toastr/toastr.min.js"></script>
-    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="/js/student_details.js"></script>
+    <script src="/js/class/class_details.js"></script>
 </th:block>
 </body>
 </html>

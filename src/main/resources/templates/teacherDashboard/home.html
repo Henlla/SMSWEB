@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{teacherDashboard/index}"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Home</title>
+    <style>
+
+        .chartMenu p {
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        /*.chartCard {*/
+        /*    width: 100vw;*/
+        /*    margin-left: 100px;*/
+        /*}*/
+        .chartBox {
+            width: 700px;
+            padding: 20px;
+            border-radius: 20px;
+            border: solid 3px rgba(54, 162, 235, 1);
+            background: white;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-sub-header">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/teacher/index">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active">Teacher</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div onclick="window.location='/teacher/classes'"
+                         class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-info">
+                            <h6>Total Classes</h6>
+                            <h3 class="text-center">[[${totalClass < 10 ? '0'+totalClass: totalClass}]]</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img src="/teacherDashboard/assets/img/icons/teacher-icon-01.svg" alt="Dashboard Icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div onclick="window.location='/teacher/students'"
+                         class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-info">
+                            <h6>Total Students</h6>
+                            <h3 class="text-center">[[${totalStudent < 10 ? '0'+totalStudent: totalStudent}]]</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img src="/teacherDashboard/assets/img/icons/dash-icon-01.svg" alt="Dashboard Icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-info">
+                            <h6>Total Lessons</h6>
+                            <h3>30/50</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img src="/teacherDashboard/assets/img/icons/teacher-icon-02.svg" alt="Dashboard Icon"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-comman w-100">
+                <div class="card-body">
+                    <div
+                            class="db-widgets d-flex justify-content-between align-items-center"
+                    >
+                        <div class="db-info">
+                            <h6>Total Hours</h6>
+                            <h3>[[${currentMonthTotalAttendanceTracking < 10 ? '0'+currentMonthTotalAttendanceTracking:
+                                currentMonthTotalAttendanceTracking}]]</h3>
+                        </div>
+                        <div class="db-icon">
+                            <img
+                                    src="/teacherDashboard/assets/img/icons/teacher-icon-03.svg"
+                                    alt="Dashboard Icon"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-12 col-xl-8">
+            <div class="row">
+                <div class="col-12 col-lg-12 col-xl-12 d-flex">
+                    <div class="card flex-fill comman-shadow">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col-12" style="display: flex;justify-content: space-between">
+                                    <h5 class="card-title">Attendance tracking daily month</h5>&nbsp;
+                                    <div class="form-group">
+                                        <input type="hidden" th:value="${listAttendanceCurrenMonth}"
+                                               id="listAttendanceCurrenMonth">
+                                        <input type="hidden" th:value="${teacherId}" id="teacherId">
+                                        <input type="month" th:value="${month}" id="month" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <span class="float-end view-link"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-3 pb-3">
+                            <div class="table-responsive lesson">
+                                <table id="table_attendance_tracking" class="table table-center table-bordered">
+                                </table>
+                            </div>
+                            <span class="total"
+                                  style="float: right;font-size: 20px;color: green;font-weight: bold;margin-right: 20px;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-lg-12 col-xl-12 d-flex">
+                    <div class="card flex-fill comman-shadow">
+                        <div class="card-header d-flex align-items-center">
+                            <h5 class="card-title">Attendance tracking report by year</h5>
+                        </div>
+                        <div class="card-body">
+                            <input type="hidden" th:value="${chartList}" id="chartList">
+                            <div class="teaching-card d-flex justify-content-center">
+                                <div class="chartCard">
+                                    <div class="chartBox">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-12 col-xl-4 d-flex">
+            <div class="card flex-fill comman-shadow">
+                <div class="card-body">
+                    <div id="calendar-doctor" class="calendar-container"></div>
+                    <div class="calendar-info calendar-info1">
+                        <div class="up-come-header">
+                            <h2 class="card-title">Teaching Activity</h2>
+                            <span
+                            ><a href="javascript:;"><i class="feather-plus"></i></a
+                            ></span>
+                        </div>
+                        <div class="upcome-event-date">
+                            <h3 th:text="${currentDate}"></h3>
+                            <span><i class="fas fa-ellipsis-h"></i></span>
+                        </div>
+                        <th:block th:if="${not #lists.isEmpty(listCurrenTeachingDate)}">
+                            <th:block th:each="event:${listCurrenTeachingDate}">
+                                <div class="calendar-details">
+                                    <p th:text="${event.startTime}"></p>
+                                    <div class="calendar-box normal-bg">
+                                        <div class="calandar-event-name">
+                                            <h4 th:text="${event.classCode}"></h4>
+                                            <h5 th:text="${event.subject.subjectName}"></h5>
+                                        </div>
+                                        <span th:text="${event.time}"></span>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+                        <th:block th:unless="${not #lists.isEmpty(listCurrenTeachingDate)}">
+                            <div class="calendar-details">
+                                <span>Nothing event today's</span>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block layout:fragment="optional">
+    <script src="/teacherDashboard/assets/js/customJs/teacher_home.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+</th:block>
+</html>

@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface IStudent extends IGenericRepository<Student> {
     Student getByProfileId(Integer id);
+    Student findStudentByStudentCard(String studentCard);
+    Student findStudentCard(String studentCard);
     List<Student> findStudentIdByRangeStudentCard(List<String> listStudentCard);
 }

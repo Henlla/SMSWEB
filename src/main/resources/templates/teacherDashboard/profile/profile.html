@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{teacherDashboard/index}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Profile</title>
+    <link rel="stylesheet" href="/css/custom.css" />
+  </head>
+  <body>
+    <section layout:fragment="content" class="content container-fluid">
+      <section class="page-header">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="page-sub-header">
+              <h3 class="page-title">Profile</h3>
+              <input type="text" hidden id="classId" />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="row">
+        <div class="col-sm-12">
+          <div class="card card-table comman-shadow">
+            <div class="card-body">
+              <div class="row table-responsive">
+                <div class="col-4">
+                  <img width="70%" height="70%"
+                    th:src="${teacher.getProfileByProfileId().getAvartarUrl()}"
+                    alt=""
+                  />
+                </div>
+                <div class="col-8">
+                  <div class="row">
+                    <div class="col-6">
+                      <label> Full Name : </label>
+                      <b th:text="${teacher.profileByProfileId.firstName +' '+teacher.profileByProfileId.lastName}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Teacher Card : </label>
+                      <b th:text="${teacher.teacherCard}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Gender : </label>
+                      <b th:text="${teacher.profileByProfileId.sex}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Date of birth : </label>
+                      <b th:text="${teacher.profileByProfileId.dob}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Email : </label>
+                      <b th:text="${teacher.profileByProfileId.email}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Phone : </label>
+                      <b th:text="${teacher.profileByProfileId.phone}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Identity card : </label>
+                      <b th:text="${teacher.profileByProfileId.identityCard}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Account : </label>
+                      <b th:text="${#authentication.getPrincipal().username}"></b>
+                    </div>
+                    <div class="col-12">
+                      <label> Address : </label>
+                      <b th:text="${teacher.profileByProfileId.address+' , '+teacher.profileByProfileId.wardByWardId.name+' , '+teacher.profileByProfileId.districtByDistrictId.name+' , '+teacher.profileByProfileId.profileProvince.name}"></b>
+                    </div>
+                    <div class="col-6">
+                      <label> Teaching class : </label>
+                      <th:block th:if="${#lists.isEmpty(classList)}">
+                        <b> None </b>
+                      </th:block>
+                      <th:block th:if="${not #lists.isEmpty(classList)}">
+                        <th:block th:each="class:${classList}">
+                          <b th:text="${class.classCode+' '}"></b>
+                        </th:block>
+                      </th:block>
+                    </div>
+                    <div class="col-12">
+                      <button
+                        type="button"
+                        id="btn_changePassword"
+                        class="btn btn-primary btn-sm"
+                      >
+                        Change password
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+                  class="modal fade"
+                  id="change_password"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">
+                    Change password
+                  </h5>
+                </div>
+                <div class="modal-body">
+                  <form id="form_change_password">
+                    <div class="container">
+                      <input type="hidden" id="accountId" th:value="${account.id}">
+                      <div class="form-group">
+                        <label for="oldPass">Old password :</label>
+                        <input
+                                type="password"
+                                name="oldPass"
+                                id="oldPass"
+                                class="form-control"
+                                placeholder=""
+                                aria-describedby="oldPass"
+                        />
+                        <small id="mess_oldPass" class="text-muted"
+                        ></small
+                        >
+                      </div>
+                      <div class="form-group">
+                        <label for="newPass">New password</label>
+                        <input
+                                type="password"
+                                name="newPass"
+                                id="newPass"
+                                class="form-control"
+                                placeholder=""
+                                aria-describedby="newPass"
+                        />
+                        <small id="mess_newPass" class="text-muted"></small
+                        >
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                              type="button"
+                              class="btn btn-danger btn-sm"
+                              data-dismiss="modal"
+                      >
+                        <i class="fas fa-times"></i> Close
+                      </button>
+                      <button
+                              type="submit"
+                              id="submitChange"
+                              class="btn btn-success btn-sm"
+                      >
+                        <i class="fas fa-times"></i> Change
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+    <th:block layout:fragment="optional">
+      <script src="/teacherDashboard/assets/js/customJs/profile.js"></script>
+    </th:block>
+  </body>
+</html>
