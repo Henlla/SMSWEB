@@ -36,8 +36,6 @@
                                th:href="@{'/dashboard/news/create_new'}" class="btn btn-info btn-sm">Create</a>
                             <a th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'')')}"
                                onclick="OnCreateFileTemplate()" class="btn btn-success btn-sm">Create template</a>
-                            <a th:if="${#authorization.expression('hasAnyAuthority(''ADMIN'',''STAFF'')')}"
-                               onclick="OnDownLoadTemplate()" class="btn btn-primary btn-sm">Get template</a>
                         </div>
                     </div>
                     <div class="row">

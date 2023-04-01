@@ -151,9 +151,9 @@ $(()=>{
     selectDayOfWeek.change(multipleFunc);
     selectMajor.change(autoFillClassCode());
     selectDepartment.change(multipleFunc);
+
     $('#btn_create_class').on('click',function (e){
         e.preventDefault();
-
         var classCode = $('#classCode').val();
         var majorId = $('#majorId').val()
         var teacherId = $('#teacherId').val()
@@ -237,8 +237,8 @@ $(()=>{
         if($('#form-create').valid()){
             Swal.fire({
                 icon: 'question',
-                title: 'Warning',
-                text: 'Create class ?',
+                title: 'Confirm',
+                text: 'Do you want to create class ?',
                 showCancelButton: true,
                 showDenyButton: false,
                 confirmButtonColor: '#3085d6',
@@ -303,11 +303,9 @@ $(()=>{
                         }
                     })
                 }
-            })
-
+            });
         }
-
-    })
+    });
 })
 
 
