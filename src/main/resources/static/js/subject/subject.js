@@ -89,11 +89,11 @@ $(() => {
         scrollY: '300px',
         columnDefs: [
             {
-                "targets": [0, 1, 2, 3, 4],
+                "targets": [0, 1, 2, 3],
                 "className": "text-center"
             },
             {
-                "targets": [1, 2, 4],
+                "targets": [1, 2, 3],
                 "orderable": false,
             }
         ],
@@ -140,11 +140,58 @@ $(() => {
     });
 });
 
-var OnChangeCurriculum = () =>{
+var OnChangeCurriculum = () => {
     var majorId = $("#curriculum").val();
+    var semester = $("#semester").val();
+    var formData = new FormData();
+    formData.append("majorId", majorId);
+    formData.append("semesterId", semester);
     $.ajax({
-        url: "/dashboard/subject/findSubjectByMajorId/" + majorId,
-        method: "GET",
+        url: "/dashboard/subject/findSubjectByMajorId",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType:false,
+        success: (response) => {
+            if ($.fn.dataTable.isDataTable('#subject-table')) {
+                let table = $('#subject-table').DataTable();
+                table.clear().draw();
+                table.destroy();
+                DataTable(response);
+            } else {
+                DataTable(response);
+            }
+        }, error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error(data.responseText);
+            }
+        }
+    });
+}
+
+var OnChangeSemester = () => {
+    var majorId = $("#curriculum").val();
+    var semester = $("#semester").val();
+    var formData = new FormData();
+    formData.append("majorId", majorId);
+    formData.append("semesterId", semester);
+    $.ajax({
+        url: "/dashboard/subject/findSubjectByMajorId",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType:false,
         success: (response) => {
             if ($.fn.dataTable.isDataTable('#subject-table')) {
                 let table = $('#subject-table').DataTable();
@@ -184,11 +231,11 @@ var DataTable = (response) => {
         data: response,
         columnDefs: [
             {
-                "targets": [0, 1, 2, 3, 4],
+                "targets": [0, 1, 2, 3],
                 "className": "text-center"
             },
             {
-                "targets": [1, 2, 4],
+                "targets": [1, 2, 3],
                 "orderable": false,
             }
         ],
@@ -211,18 +258,12 @@ var DataTable = (response) => {
                 }
             },
             {
-                data: "fee",
-                render: function (data, type, row, index) {
-                    return data.toLocaleString('it-IT', {style: 'currency', currency: 'vnd'}).toLowerCase();
-                }
-            },
-            {
                 data: "id",
                 render: function (data, type, row, index) {
-                    if(role === "[STAFF]"){
+                    if (role === "[STAFF]") {
                         html = ` <a onclick="OnEditSubject('${data}')" class="mr-3"><i class="fas fa-pen indigo-text"></i></a>
                               <a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
-                    }else{
+                    } else {
                         html = `<a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
                     }
                     return html;

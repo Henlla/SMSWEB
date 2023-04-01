@@ -116,7 +116,7 @@ public class AttendanceController {
                 HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(content, headers);
 
                 //Lấy Schedule Detail theo ngày
-                ResponseEntity<ResponseModel> scheduleDetailResponse = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailsByDate", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
+                ResponseEntity<ResponseModel> scheduleDetailResponse = restTemplate.exchange(SCHEDULE_DETAIL_URL + "findScheduleDetailsByDateAndTeacherId", HttpMethod.POST, requestScheduleDetail, ResponseModel.class);
                 String scheduleDetailJson = new ObjectMapper().writeValueAsString(scheduleDetailResponse.getBody().getData());
                 listScheduleDetail = new ObjectMapper().readValue(scheduleDetailJson, new TypeReference<List<ScheduleDetail>>() {
                 });
@@ -420,26 +420,28 @@ public class AttendanceController {
                         ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL + "get/" + studentSubject.getStudentId(), HttpMethod.GET, request, ResponseModel.class);
                         String json = new ObjectMapper().writeValueAsString(responseStudent.getBody().getData());
                         Student student = new ObjectMapper().readValue(json, Student.class);
-                        String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
-                        List<String> listDeviceToken = new ArrayList<>();
-                        listDeviceToken.add(tokenDevices);
+                        if (!student.getStudentByProfile().getAccountByAccountId().getAccountDevices().isEmpty()) {
+                            String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
+                            List<String> listDeviceToken = new ArrayList<>();
+                            listDeviceToken.add(tokenDevices);
+                            MulticastMessageRepresentation message = new MulticastMessageRepresentation();
 
-                        MulticastMessageRepresentation message = new MulticastMessageRepresentation();
+                            DataNotification dataNotification = new DataNotification();
+                            dataNotification.setContent("Today , you have absent " + scheduleDetail.getSubjectBySubjectId().getSubjectCode());
+                            dataNotification.setAction("Attendance");
 
-                        DataNotification dataNotification = new DataNotification();
-                        dataNotification.setContent("Today , you have absent " + scheduleDetail.getSubjectBySubjectId().getSubjectCode());
-                        dataNotification.setAction("Attendance");
+                            String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
+                            message.setTitle("Announcement");
+                            message.setData(jsonData);
+                            message.setRegistrationTokens(listDeviceToken);
 
-                        String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
-                        message.setTitle("Announcement");
-                        message.setData(jsonData);
-                        message.setRegistrationTokens(listDeviceToken);
+                            String messageJson = new ObjectMapper().writeValueAsString(message);
+                            MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
+                            params.add("message", messageJson);
+                            HttpEntity<MultiValueMap<String, Object>> requestFCM = new HttpEntity<>(params, headers);
+                            ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
 
-                        String messageJson = new ObjectMapper().writeValueAsString(message);
-                        MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
-                        params.add("message", messageJson);
-                        HttpEntity<MultiValueMap<String, Object>> requestFCM = new HttpEntity<>(params, headers);
-                        ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
+                        }
                     }
                     Attendance attendance = new Attendance();
                     attendance.setStudentSubjectId(studentSubject.getId());
@@ -470,6 +472,7 @@ public class AttendanceController {
                     contentAttendance.add("list_attendance", attendanceJson);
                     HttpEntity<MultiValueMap<String, String>> requestAttendance = new HttpEntity<>(contentAttendance, headers);
                     ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "saveAll", HttpMethod.POST, requestAttendance, ResponseModel.class);
+                    listStudentSubject.clear();
                     if (responseAttendance.getStatusCode().is2xxSuccessful()) {
                         for (Attendance attendance : listAttendance) {
                             // Lấy student subject
@@ -713,6 +716,33 @@ public class AttendanceController {
                     ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getOne", HttpMethod.POST, requestStudentSubject, ResponseModel.class);
                     String studentSubjectJson = new ObjectMapper().writeValueAsString(responseStudentSubject.getBody().getData());
                     StudentSubject studentSubject = new ObjectMapper().readValue(studentSubjectJson, StudentSubject.class);
+                    if (attend.getStatus().equals("Absent")) {
+                        ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL + "get/" + studentSubject.getStudentId(), HttpMethod.GET, request, ResponseModel.class);
+                        String json = new ObjectMapper().writeValueAsString(responseStudent.getBody().getData());
+                        Student student = new ObjectMapper().readValue(json, Student.class);
+                        if (!student.getStudentByProfile().getAccountByAccountId().getAccountDevices().isEmpty()) {
+                            String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
+                            List<String> listDeviceToken = new ArrayList<>();
+                            listDeviceToken.add(tokenDevices);
+                            MulticastMessageRepresentation message = new MulticastMessageRepresentation();
+
+                            DataNotification dataNotification = new DataNotification();
+                            dataNotification.setContent("Today , you have absent " + scheduleDetail.getSubjectBySubjectId().getSubjectCode());
+                            dataNotification.setAction("Attendance");
+
+                            String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
+                            message.setTitle("Announcement");
+                            message.setData(jsonData);
+                            message.setRegistrationTokens(listDeviceToken);
+
+                            String messageJson = new ObjectMapper().writeValueAsString(message);
+                            MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
+                            params.add("message", messageJson);
+                            HttpEntity<MultiValueMap<String, Object>> requestFCM = new HttpEntity<>(params, headers);
+                            ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
+
+                        }
+                    }
                     Attendance attendance = new Attendance();
                     attendance.setStudentSubjectId(studentSubject.getId());
                     attendance.setNote(attend.getNote());
@@ -723,12 +753,13 @@ public class AttendanceController {
                     attendance.setShift(classses.getShift());
                     listAttendance.add(attendance);
                 }
+
                 MultiValueMap<String, String> contentAttendance = new LinkedMultiValueMap<>();
                 String attendanceJson = new ObjectMapper().writeValueAsString(listAttendance);
                 contentAttendance.add("list_attendance", attendanceJson);
                 HttpEntity<MultiValueMap<String, String>> requestAttendance = new HttpEntity<>(contentAttendance, headers);
                 ResponseEntity<ResponseModel> responseAttendance = restTemplate.exchange(ATTENDANCE_URL + "saveAll", HttpMethod.POST, requestAttendance, ResponseModel.class);
-
+                listStudentSubject.clear();
                 for (Attendance attendance : listAttendance) {
                     // Lấy student subject
                     ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(STUDENT_SUBJECT_URL + "getById/" + attendance.getStudentSubjectId(), HttpMethod.GET, request, ResponseModel.class);

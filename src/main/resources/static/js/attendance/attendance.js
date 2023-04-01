@@ -715,6 +715,10 @@ const OnTakeAttendance = (data) => {
         url: "/teacher/attendance/listStudentInClass/" + classId[0],
         method: "GET",
         success: (response) => {
+            console.log(response);
+            if (response.length <= 0) {
+                $("#btnOnsubmit").addClass("d-none");
+            }
             $("#attendance-modal").modal("show");
             let table;
             if ($.fn.dataTable.isDataTable('#listStudent')) {

@@ -2,6 +2,7 @@ package com.example.smsweb.client.dashboard;
 
 import com.example.smsweb.api.di.irepository.ISubject;
 import com.example.smsweb.dto.ResponseModel;
+import com.example.smsweb.dto.SubjectModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.Major;
 import com.example.smsweb.models.Semester;
@@ -89,6 +90,7 @@ public class SubjectController {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
+                List<SubjectModel> listSubjectModal = new ArrayList<>();
                 restTemplate = new RestTemplate();
                 listSubject = new ArrayList<>();
                 HttpHeaders headers = new HttpHeaders();
@@ -100,6 +102,35 @@ public class SubjectController {
                 listSubject = new ObjectMapper().readValue(majorJson, new TypeReference<List<Subject>>() {
                 });
                 return listSubject;
+            } else {
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<String>("Can't get Major", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/findSubjectByMajorId")
+    @ResponseBody
+    public Object findSubjectByMajorId(@CookieValue(name = "_token") String _token,
+                                       @RequestParam("majorId") Integer majorId,
+                                       @RequestParam("semesterId")Integer semesterId) {
+        try {
+            String isExpired = JWTUtils.isExpired(_token);
+            if (!isExpired.toLowerCase().equals("token expired")) {
+                List<SubjectModel> listSubjectModal = new ArrayList<>();
+                restTemplate = new RestTemplate();
+                listSubject = new ArrayList<>();
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + _token);
+                HttpEntity<String> request = new HttpEntity<>(headers);
+
+                ResponseEntity<ResponseModel> responseMajor = restTemplate.exchange(SUBJECT_URL + "findByMajorId/" + majorId, HttpMethod.GET, request, ResponseModel.class);
+                String majorJson = new ObjectMapper().writeValueAsString(responseMajor.getBody().getData());
+                listSubject = new ObjectMapper().readValue(majorJson, new TypeReference<List<Subject>>() {
+                });
+                return listSubject.stream().filter(subject -> subject.getSemesterId().equals(semesterId)).toList();
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }

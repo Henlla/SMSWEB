@@ -109,7 +109,7 @@ public class ProfileService {
     }
 
     public Profile findProfileByIdentityCard(String card) {
-        return repository.findProfileByIdentityCard(card);
+        return repository.findProfileByIdentityCard(card).orElse(null);
     }
 
 }

@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface ProfileRepository extends JpaRepository<Profile,Integer> {
     Optional<Profile> findProfileByAccountId(Integer id);
 
-    Profile findProfileByIdentityCard(String card);
+    Optional<Profile> findProfileByIdentityCard(String card);
 }

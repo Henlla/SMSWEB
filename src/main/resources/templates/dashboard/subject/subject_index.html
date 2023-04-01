@@ -51,8 +51,14 @@
                     <section class="row mb-3">
                         <section class="col-3">
                             <label>Sort By Curriculum</label>
-                            <select id="curriculum" onchange="OnChangeCurriculum()" class="select2">
+                            <select id="curriculum" style="width: 100%" onchange="OnChangeCurriculum()" class="select2">
                                 <option th:each="item:${listMajor}" th:value="${item.id}">[[${item.majorCode}]]</option>
+                            </select>
+                        </section>
+                        <section class="col-3">
+                            <label>Sort By Semester</label>
+                            <select id="semester" style="width: 100%" onchange="OnChangeSemester()" class="select2">
+                                <option th:each="item:${listSemester}" th:value="${item.id}">[[${item.semesterCode}]]</option>
                             </select>
                         </section>
                     </section>
@@ -64,7 +70,6 @@
                                     <th class="th-sm">STT</th>
                                     <th class="th-sm">Subject Code</th>
                                     <th class="th-sm">Subject Name</th>
-                                    <th class="th-sm">Fee</th>
                                     <th class="th-sm">Action</th>
                                 </tr>
                                 </thead>
@@ -73,10 +78,10 @@
                                     <td>[[${listSubject.indexOf(item)+1}]]</td>
                                     <td>[[${item.subjectCode}]]</td>
                                     <td>[[${item.subjectName}]]</td>
-                                    <td>
-                                        [[${#strings.replace(#strings.replace(#numbers.formatCurrency(item.fee),'.00',''),'$','')}]]
-                                        vnd
-                                    </td>
+<!--                                    <td>-->
+<!--                                        [[${#strings.replace(#strings.replace(#numbers.formatCurrency(item.fee),'.00',''),'$','')}]]-->
+<!--                                        vnd-->
+<!--                                    </td>-->
                                     <td class="text-center">
                                         <a th:if="${#authorization.expression('hasAnyAuthority(''STAFF'')')}"
                                            th:data-name="${item.id}"
