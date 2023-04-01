@@ -933,16 +933,20 @@ public class ClassController {
                 String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
                 LocalDate date = LocalDate.parse(currenDate);
-                int getDate = date.getDayOfMonth();
-                int getMonth = date.getMonthValue();
-                boolean isSameDate = schedule.getScheduleDetailsById().stream()
-                        .anyMatch(dates -> LocalDate.parse(dates.getDate()).getDayOfMonth() == getDate
-                                && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth
-                                && dates.getSlot().equals(slot));
-                if (isSameDate) {
-                    return "error";
-                } else {
-                    return "success";
+                if(date.getDayOfWeek().getValue() != 7){
+                    int getDate = date.getDayOfMonth();
+                    int getMonth = date.getMonthValue();
+                    boolean isSameDate = schedule.getScheduleDetailsById().stream()
+                            .anyMatch(dates -> LocalDate.parse(dates.getDate()).getDayOfMonth() == getDate
+                                    && LocalDate.parse(dates.getDate()).getMonthValue() == getMonth
+                                    && dates.getSlot().equals(slot));
+                    if (isSameDate) {
+                        return "error";
+                    } else {
+                        return "success";
+                    }
+                }else{
+                    return "error date";
                 }
             }
             return "";
