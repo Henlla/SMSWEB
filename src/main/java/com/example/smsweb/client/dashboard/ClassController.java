@@ -2278,6 +2278,7 @@ public class ClassController {
                                                 HttpEntity<MultiValueMap<String, String>> requestEntityMajorStudent = new HttpEntity<>(paramsMajorStudent, headersMajorStudent);
                                                 restTemplate.exchange(STUDENT_MAJOR_URL, HttpMethod.POST, requestEntityMajorStudent, ResponseModel.class);
                                                 //---------
+
                                             } else {
                                                 ResponseEntity<Student> responseStudent = restTemplate.exchange(STUDENT_URL + "getByProfile/" + profile.getId(), HttpMethod.GET, request, Student.class);
 
@@ -2313,7 +2314,7 @@ public class ClassController {
                                         restTemplate.exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, studentClassRequest, ResponseModel.class);
                                         return new ResponseEntity<String>("Success", HttpStatus.OK);
                                     } else {
-                                        return new ResponseEntity<String>("All student was have in this class", HttpStatus.BAD_REQUEST);
+                                        return new ResponseEntity<String>("Success", HttpStatus.OK);
                                     }
                                 } else {
                                     return new ResponseEntity<String>("Success", HttpStatus.OK);
