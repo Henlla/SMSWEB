@@ -183,7 +183,13 @@ $(document).ready(function () {
                             "This slot was exists, please choose another ",
                             "error"
                         )
-                    } else {
+                    } else if(res.toLowerCase() === "error date"){
+                        Swal.fire(
+                            "",
+                            "Cannot choose SUNDAY . Try again! ",
+                            "error"
+                        )
+                    }else {
                         let data2 = new FormData()
                         data2.append("schedule_details_id", $('#schedule_details_id').val())
                         data2.append("newDate", i_newDate.val())
@@ -1562,6 +1568,7 @@ var OnSubmitChangeClassStudent = () => {
                 "Change class for student success",
                 "success"
             )
+            location.reload();
             $('#btn_change_class_student').hide()
         }, error: (err) => {
         }
