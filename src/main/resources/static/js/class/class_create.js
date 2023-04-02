@@ -37,6 +37,7 @@ function getAvailableTeacherByDateAndShift(){
     }
 }
 function getAvailableRoomByDateAndDepartment(){
+    $("#roomList").empty();
     let shift1 = $('#shift').val();
     let shift2 = $("#dayOfWeek").val();
     let startdate = $('#startDate').val();
@@ -56,7 +57,6 @@ function getAvailableRoomByDateAndDepartment(){
             contentType: false,
             enctype: "multipart/form-data",
             success: (response) => {
-                $("#roomList").empty();
                 let parse = JSON.parse(response);
                 if (parse.length == 0){
                     $(`<option value="">--No room available--</option>`).appendTo("#roomList");
@@ -139,12 +139,10 @@ $(()=>{
         function(value, element, params) {
             let val = $(params).val();
             if (val == null || val == undefined || val ==""){
-                console.log("f");
                 return false;
             }
-            console.log("t");
             return true;
-        }, 'Required');
+        },'Required.');
 
     selectShift.change(multipleFunc);
     inputStartDate.change(multipleFunc);
@@ -216,10 +214,12 @@ $(()=>{
                     required:"Please choose curriculum"
                 },
                 teacherId: {
-                    required: "Please choose teacher"
+                    required: "Please choose a teacher",
+                    checkNullOrUndefine: "Please choose a teacher"
                 },
                 roomList: {
-                    required: "Please choose room"
+                    required: "Please choose room",
+                    checkNullOrUndefine: "Please choose a room"
                 },
                 shift: {
                     required: "Please choose timer"
@@ -229,7 +229,7 @@ $(()=>{
                 },
                 startDate: {
                     required: "Please enter start date",
-                    date: "Date format mm/dd/yyyy",
+                    date: "Date format dd/mm/yyyy",
                     dateGreaterThan: "Start date must be in the future !!"
                 },
             },

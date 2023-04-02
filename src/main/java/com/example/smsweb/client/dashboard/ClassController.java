@@ -94,10 +94,8 @@ public class ClassController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "get", HttpMethod.GET, request,
                 String.class);
-        List<Classses> classList = new ObjectMapper().readValue(response.getBody(),
-                new TypeReference<List<Classses>>() {
-                });
-        model.addAttribute("classes", classList);
+        List<Classses> classList = new ObjectMapper().readValue(response.getBody(),new TypeReference<>() {});
+        model.addAttribute("classes", classList.stream().sorted(Comparator.comparingInt(Classses::getId).reversed()).toList());
         return "dashboard/class/class_index";
     }
 
@@ -114,8 +112,7 @@ public class ClassController {
 
         ResponseEntity<String> teacherResponse = restTemplate.exchange(TEACHER_URL + "list", HttpMethod.GET, request,
                 String.class);
-        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<List<Teacher>>() {
-        });
+        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<>() {});
 
         ResponseEntity<ResponseModel> departmentResponse
                 = restTemplate.exchange(DEPARTMENT_URL, HttpMethod.GET, request, ResponseModel.class);
@@ -1166,57 +1163,91 @@ public class ClassController {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + _token);
-            boolean flag = false;
-            HttpEntity<Object> requestClass = new HttpEntity<>(headers);
-            Classses classses = new ObjectMapper().readValue(newClass, Classses.class);
-            Room room = restTemplate.getForObject(URL_ROOM + classses.getRoomId(), Room.class);
-            ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "findClassByRoom/" + room.getId(), HttpMethod.GET, requestClass, ResponseModel.class);
-            String jsonClassList = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
-            List<Classses> list = new ObjectMapper().readValue(jsonClassList, new TypeReference<List<Classses>>() {
-            });
-            if (list != null) {
-                boolean isCheck = list.stream().anyMatch(classses1 -> classses1.getShift().equals(classses.getShift()));
-                if (isCheck) {
-                    flag = true;
-                }
-            } else {
-                flag = false;
-            }
-            if (!flag) {
-                MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
-                headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                content.add("newClass", newClass);
 
-                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
-                ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request,
-                        ResponseModel.class);
-                if (response.getStatusCode().is2xxSuccessful()) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    Classses classModel = objectMapper.readValue(newClass, Classses.class);
-                    Object data = response.getBody().getData();
-                    if (file != null) {
-                        try {
-                            ClassResponse result = importStudentClass(_token, file, classModel.getClassCode(),
-                                    classModel.getLimitStudent());
-                            if (result.getStatus() == "success") {
-                                return result.toString();
-                            } else {
-                                return new ClassResponse("success",
-                                        "Add student fail. " + result.getMessage()).toString();
-                            }
-                        } catch (Exception e) {
-                            String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
-                            return new ClassResponse("success", "Add student fail. " + message).toString();
+//            boolean flag = false;
+//            HttpEntity<Object> requestClass = new HttpEntity<>(headers);
+//            Classses classses = new ObjectMapper().readValue(newClass, Classses.class);
+
+            MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            content.add("newClass", newClass);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+            ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request,
+                    ResponseModel.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Classses classModel = objectMapper.readValue(newClass, Classses.class);
+                Object data = response.getBody().getData();
+                if (file != null) {
+                    try {
+                        ClassResponse result = importStudentClass(_token, file, classModel.getClassCode(),
+                                classModel.getLimitStudent());
+                        if (result.getStatus() == "success") {
+                            return result.toString();
+                        } else {
+                            return new ClassResponse("success",
+                                    "Add student fail. " + result.getMessage()).toString();
                         }
-                    } else {
-                        return new ClassResponse("success", "").toString();
+                    } catch (Exception e) {
+                        String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
+                        return new ClassResponse("success", "Add student fail. " + message).toString();
                     }
                 } else {
-                    return new ClassResponse("fail", "").toString();
+                    return new ClassResponse("success", "").toString();
                 }
             } else {
                 return new ClassResponse("fail", "").toString();
             }
+
+//            Room room = restTemplate.getForObject(URL_ROOM + classses.getRoomId(), Room.class);
+//            ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "findClassByRoom/" + room.getId(), HttpMethod.GET, requestClass, ResponseModel.class);
+//            String jsonClassList = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
+//            List<Classses> list = new ObjectMapper().readValue(jsonClassList, new TypeReference<List<Classses>>() {
+//            });
+//            if (list != null) {
+//                boolean isCheck = list.stream().anyMatch(classses1 -> classses1.getShift().equals(classses.getShift()));
+//                if (isCheck) {
+//                    flag = true;
+//                }
+//            } else {
+//                flag = false;
+//            }
+//            if (!flag) {
+//                MultiValueMap<String, String> content = new LinkedMultiValueMap<>();
+//                headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//                content.add("newClass", newClass);
+//
+//                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(content, headers);
+//                ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "save", HttpMethod.POST, request,
+//                        ResponseModel.class);
+//                if (response.getStatusCode().is2xxSuccessful()) {
+//                    ObjectMapper objectMapper = new ObjectMapper();
+//                    Classses classModel = objectMapper.readValue(newClass, Classses.class);
+//                    Object data = response.getBody().getData();
+//                    if (file != null) {
+//                        try {
+//                            ClassResponse result = importStudentClass(_token, file, classModel.getClassCode(),
+//                                    classModel.getLimitStudent());
+//                            if (result.getStatus() == "success") {
+//                                return result.toString();
+//                            } else {
+//                                return new ClassResponse("success",
+//                                        "Add student fail. " + result.getMessage()).toString();
+//                            }
+//                        } catch (Exception e) {
+//                            String message = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
+//                            return new ClassResponse("success", "Add student fail. " + message).toString();
+//                        }
+//                    } else {
+//                        return new ClassResponse("success", "").toString();
+//                    }
+//                } else {
+//                    return new ClassResponse("fail", "").toString();
+//                }
+//            } else {
+//                return new ClassResponse("fail", "").toString();
+//            }
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
             if (ex.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -1852,10 +1883,10 @@ public class ClassController {
                 if (classsesList.size() != 0) {
                     List<Room> availableRooms = new ArrayList<>();
                     for (Room room : roomList) {
-                        for (Classses clazz : classsesList) {
-                            if (room.getId() != clazz.getRoomId()) {
-                                availableRooms.add(room);
-                            }
+                        if (classsesList.stream().anyMatch(clazz -> clazz.getRoomId().equals(room.getId()))){
+                            continue;
+                        }else {
+                            availableRooms.add(room);
                         }
                     }
                     return objectMapper.writeValueAsString(availableRooms);
@@ -1963,11 +1994,10 @@ public class ClassController {
                 if (classesByShift.size() != 0) {
                     List<Teacher> availableTeachers = new ArrayList<>();
                     for (Teacher teacher : allTeachers) {
-                        for (Classses clazz : classesByShift) {
-                            if (clazz.getTeacherId() != teacher.getId()) {
-                                availableTeachers.add(teacher);
-                            }
+                        if (!classesByShift.stream().anyMatch(s1 -> s1.getTeacherId().equals(teacher.getId()))){
+                            availableTeachers.add(teacher);
                         }
+
                     }
                     return objectMapper.writeValueAsString(availableTeachers);
                 }

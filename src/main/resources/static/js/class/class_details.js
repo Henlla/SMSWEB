@@ -1592,7 +1592,7 @@ let OnchangeRoom = () => {
 
     data.append("shift", $("#shift").val());
     data.append("departmentId", $("#departmentId").val())
-    data.append("date", moment().format('YYYY-MM-D'))
+    data.append("date", moment().format('YYYY-MM-DD'))
     $.ajax({
         url: "/dashboard/class/getAvailableRoom",
         method: "POST",
@@ -1672,14 +1672,15 @@ btn_submit_change_room.click((event) => {
                     success: (response) => {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Succcess',
-                            text: error.responseJSON.message,
+                            title: 'Success',
                             showDenyButton: false,
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Ok',
                         })
+                        location.reload();
                     },
                     error: (error) => {
+                        console.log(error);
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',

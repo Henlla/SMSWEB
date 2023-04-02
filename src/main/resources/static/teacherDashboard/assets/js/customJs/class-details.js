@@ -388,7 +388,7 @@ $(document).ready(function () {
                             </td><td>
                                 <input class="check_numberic_0_100" value="${dataArray[i].objMark == null || dataArray[i].objMark == 'null' || dataArray[i].objMark == undefined ? '': dataArray[i].objMark}" onchange="check_numberic_0_100(event)" type="number" min="0" max="100" />
                             </td><td>
-                                <span>${dataArray[i].updateTimes == -1?'New' :'<span class="text-warning">Update</span>&nbsp;<i class="fas fa-times" onclick="remove_update_item()" style="color: #de1721;"></i>'}</span>
+                                <span>${dataArray[i].updateTimes == -1?'<span class="text-warning">New</span>' :'<span class="text-warning">Update</span>&nbsp;<i class="fas fa-times" onclick="remove_update_item()" style="color: #de1721;"></i>'}</span>
                             </td>
                         </tr>`).appendTo("#mark_table tbody");
                     }
@@ -662,6 +662,8 @@ $(document).ready(function () {
                         success: (response) => {
                             $("#select_subject_update").val("").change();
                             $("#select_student_update").val("").change();
+                            $("#asm_mark_update").val('');
+                            $("#obj_mark_update").val('');
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success',
@@ -674,6 +676,8 @@ $(document).ready(function () {
                         error: (error)=>{
                             $("#select_subject_update").val("").change();
                             $("#select_student_update").val("").change();
+                            $("#asm_mark_update").val('');
+                            $("#obj_mark_update").val('');
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',

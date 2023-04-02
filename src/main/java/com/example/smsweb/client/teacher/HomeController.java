@@ -900,7 +900,7 @@ public class HomeController {
                             HttpMethod.GET, request, Mark.class);
                     Mark body = responseMark.getBody();
                     Mark newMark = new Mark(0, item.getAsmMark(), item.getObjMark(),
-                            inputMarkModel.getUpdateTimes(),
+                            inputMarkModel.getUpdateTimes()+1,
                             inputMarkModel.getStudentSubjectId(), null);
                     if (body != null) {
                         if (body.getUpdateTimes()<2){
