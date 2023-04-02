@@ -462,7 +462,7 @@ public class ClassController {
                             SCHEDULE_URL + "getScheduleByClassAndSemester", HttpMethod.POST, requestScheduleSemesterBefore,
                             ResponseModel.class);
 
-                    if(responseScheduleSemesterBefore.getBody().getData()!=null){
+                    if (responseScheduleSemesterBefore.getBody().getData() != null) {
                         String jsonConvert = objectMapper
                                 .writeValueAsString(responseScheduleSemesterBefore.getBody().getData());
                         Schedule scheduleCheck = objectMapper.readValue(jsonConvert, Schedule.class);
@@ -648,7 +648,7 @@ public class ClassController {
                                     requestSchedule, ResponseModel.class);
                             return "success";
                         }
-                    }else{
+                    } else {
                         return "error schedule";
                     }
                 }
@@ -933,7 +933,7 @@ public class ClassController {
                 String jsonSchedule = objectMapper.writeValueAsString(responseSchedule.getBody().getData());
                 Schedule schedule = objectMapper.readValue(jsonSchedule, Schedule.class);
                 LocalDate date = LocalDate.parse(currenDate);
-                if(date.getDayOfWeek().getValue() != 7){
+                if (date.getDayOfWeek().getValue() != 7) {
                     int getDate = date.getDayOfMonth();
                     int getMonth = date.getMonthValue();
                     boolean isSameDate = schedule.getScheduleDetailsById().stream()
@@ -945,7 +945,7 @@ public class ClassController {
                     } else {
                         return "success";
                     }
-                }else{
+                } else {
                     return "error date";
                 }
             }
@@ -1812,9 +1812,9 @@ public class ClassController {
 
             //@RequestParam processing
             LocalDate date;
-            if (inputDate == null || inputDate == ""){
+            if (inputDate == null || inputDate == "") {
                 date = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            }else {
+            } else {
                 date = LocalDate.parse(inputDate);
             }
 
@@ -1985,7 +1985,7 @@ public class ClassController {
     @ResponseBody
     public Object getMarkBySubjectIdAndStudentId(@CookieValue(name = "_token", defaultValue = "") String _token,
                                                  @PathVariable("subjectId") int subjectId,
-                                                 @PathVariable("studentId") int studentId      ) {
+                                                 @PathVariable("studentId") int studentId) {
         try {
             if (JWTUtils.isExpired(_token).equalsIgnoreCase("token expired")) return "redirect:/login";
 
@@ -2002,12 +2002,13 @@ public class ClassController {
             content.add("studentId", studentId);
             resquestPOST = new HttpEntity<>(content, headers);
             ResponseEntity<ResponseModel> responseStudentSubject = restTemplate.exchange(
-                    STUDENT_SUBJECT_URL +"findStudentSubjectBySubjectIdAndStudentId",
-                    HttpMethod.POST,resquestPOST, ResponseModel.class);
+                    STUDENT_SUBJECT_URL + "findStudentSubjectBySubjectIdAndStudentId",
+                    HttpMethod.POST, resquestPOST, ResponseModel.class);
             String jsonStudentSubject = objectMapper.writeValueAsString(responseStudentSubject.getBody().getData());
 
-            StudentSubject studentSubject = objectMapper.readValue(jsonStudentSubject, new TypeReference<>(){});
-            if (studentSubject == null){
+            StudentSubject studentSubject = objectMapper.readValue(jsonStudentSubject, new TypeReference<>() {
+            });
+            if (studentSubject == null) {
                 throw new ErrorHandler("Dont have any record for this student");
             }
             ResponseEntity<Mark> responseMark = restTemplate.exchange(
@@ -2015,7 +2016,7 @@ public class ClassController {
                     HttpMethod.GET, requestGET, Mark.class);
             Mark mark = responseMark.getBody();
 
-            if (mark == null){
+            if (mark == null) {
                 throw new ErrorHandler("This student have no mark in this subject to update !");
             }
             return objectMapper.writeValueAsString(mark);
@@ -2040,20 +2041,22 @@ public class ClassController {
             MultiValueMap<String, Object> content;
             ObjectMapper objectMapper = new ObjectMapper();
 
-            Mark newMark = objectMapper.readValue(jsonMark, new TypeReference<>(){});
+            Mark newMark = objectMapper.readValue(jsonMark, new TypeReference<>() {
+            });
 
             ResponseEntity<ResponseModel> responseMark = restTemplate.exchange(
                     MARK_URL + "get/" + newMark.getId(),
                     HttpMethod.GET, requestGET, ResponseModel.class);
             String jsonResponseMark = objectMapper.writeValueAsString(responseMark.getBody().getData());
-            Mark mark = objectMapper.readValue(jsonResponseMark, new TypeReference<>(){});
+            Mark mark = objectMapper.readValue(jsonResponseMark, new TypeReference<>() {
+            });
 
-            if (mark == null){
+            if (mark == null) {
                 throw new ErrorHandler("Dont find any Mark record fo this student");
             }
             mark.setAsm(newMark.getAsm());
             mark.setObj(newMark.getObj());
-            mark.setUpdateTimes(mark.getUpdateTimes()+1);
+            mark.setUpdateTimes(mark.getUpdateTimes() + 1);
 
 
             //Save markList
@@ -2278,7 +2281,6 @@ public class ClassController {
                                                 HttpEntity<MultiValueMap<String, String>> requestEntityMajorStudent = new HttpEntity<>(paramsMajorStudent, headersMajorStudent);
                                                 restTemplate.exchange(STUDENT_MAJOR_URL, HttpMethod.POST, requestEntityMajorStudent, ResponseModel.class);
                                                 //---------
-
                                             } else {
                                                 ResponseEntity<Student> responseStudent = restTemplate.exchange(STUDENT_URL + "getByProfile/" + profile.getId(), HttpMethod.GET, request, Student.class);
 
@@ -2289,6 +2291,7 @@ public class ClassController {
                                                 ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "getStudentClassByClassIdAndStudentId", HttpMethod.POST, studentClassRequest, ResponseModel.class);
                                                 String studentClassJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
                                                 StudentClass studentClassResponse = new ObjectMapper().readValue(studentClassJson, StudentClass.class);
+
                                                 if (studentClassResponse == null) {
                                                     StudentClass studentInClass = new StudentClass();
                                                     studentInClass.setClassId(classId);
@@ -2306,16 +2309,12 @@ public class ClassController {
                                         return new ResponseEntity<String>("Some field at row " + (rowIndex + 1) + " is empty please fill it", HttpStatus.BAD_REQUEST);
                                     }
                                 }
-                                if (!flag) {
-                                    if (!listStudentClass.isEmpty()) {
-                                        MultiValueMap<String, String> studentClassContent = new LinkedMultiValueMap<>();
-                                        studentClassContent.add("listStudentClass", new ObjectMapper().writeValueAsString(listStudentClass));
-                                        HttpEntity<MultiValueMap<String, String>> studentClassRequest = new HttpEntity<>(studentClassContent, headers);
-                                        restTemplate.exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, studentClassRequest, ResponseModel.class);
-                                        return new ResponseEntity<String>("Success", HttpStatus.OK);
-                                    } else {
-                                        return new ResponseEntity<String>("Success", HttpStatus.OK);
-                                    }
+                                if (flag) {
+                                    MultiValueMap<String, String> studentClassContent = new LinkedMultiValueMap<>();
+                                    studentClassContent.add("listStudentClass", new ObjectMapper().writeValueAsString(listStudentClass));
+                                    HttpEntity<MultiValueMap<String, String>> studentClassRequest = new HttpEntity<>(studentClassContent, headers);
+                                    restTemplate.exchange(STUDENT_CLASS_URL + "saveAll", HttpMethod.POST, studentClassRequest, ResponseModel.class);
+                                    return new ResponseEntity<String>("Success", HttpStatus.OK);
                                 } else {
                                     return new ResponseEntity<String>("Success", HttpStatus.OK);
                                 }
