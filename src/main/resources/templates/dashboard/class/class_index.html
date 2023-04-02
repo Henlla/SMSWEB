@@ -35,12 +35,13 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <label>Find by Teacher :</label>
-                            <div id="select-teacher"></div>
+                            <label>Find by Department :</label>
+                            <div id="select-department"></div>
                             <table id="class-table" class="table table-bordered">
                                 <thead>
                                 <tr class="text-center">
                                     <th>STT</th>
+                                    <th>Department</th>
                                     <th>Class Code</th>
                                     <th>Teacher</th>
                                     <th>Major</th>
@@ -52,6 +53,7 @@
                                 <tbody>
                                 <tr class="text-center" th:each="class:${classes}">
                                     <td><span th:text="${classes.indexOf(class)+1}"></span></td>
+                                    <td><span th:text="${class.departmentByDepartmentId.departmentName}"></span></td>
                                     <td><span th:text="${class.getClassCode()}"></span></td>
                                     <td>
                                         <span th:text="${class.teacher.profileByProfileId.getFirstName()+' '+class.teacher.profileByProfileId.getLastName()}"/>
