@@ -7,9 +7,7 @@ import com.example.smsweb.utils.Format;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -239,6 +236,7 @@ public class AttendanceAdminController {
                         editAttendance.setStudent_name(student.getStudentByProfile().getFirstName() + " " + student.getStudentByProfile().getLastName());
                         editAttendance.setNote(attendance.getNote());
                         editAttendance.setIsPresent(attendance.getStatus());
+                        editAttendance.setStudent_card(student.getStudentCard());
                         listEditAttendance.add(editAttendance);
                     }
                     return listEditAttendance;
@@ -256,6 +254,7 @@ public class AttendanceAdminController {
                         editAttendance.setStudent_name(student.getStudentByProfile().getFirstName() + " " + student.getStudentByProfile().getLastName());
                         editAttendance.setNote("");
                         editAttendance.setIsPresent(1);
+                        editAttendance.setStudent_card(student.getStudentCard());
                         listEditAttendance.add(editAttendance);
                     }
                     return listEditAttendance;
@@ -342,7 +341,8 @@ public class AttendanceAdminController {
                             MulticastMessageRepresentation message = new MulticastMessageRepresentation();
 
                             DataNotification dataNotification = new DataNotification();
-                            dataNotification.setContent("Today , you have absent " + scheduleDetail.getSubjectBySubjectId().getSubjectCode());
+                            String content = attend.getNote().isEmpty() ? Format.dateFormat(date,"dd/MM/yyyy") + " ," +  " you have absent " + scheduleDetail.getSubjectBySubjectId().getSubjectCode() : Format.dateFormat(date,"dd/MM/yyyy") + " ," +  attend.getNote();
+                            dataNotification.setContent(content);
                             dataNotification.setAction("Attendance");
 
                             String jsonData = new ObjectMapper().writeValueAsString(dataNotification);

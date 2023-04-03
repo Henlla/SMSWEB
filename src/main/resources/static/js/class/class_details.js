@@ -387,9 +387,10 @@ $(document).ready(function () {
                             }
                         },
                         error: (e) => {
+                            console.log(e);
                             Swal.fire({
                                 title: 'Error',
-                                text: e.messages,
+                                text: e.responseJSON.message,
                                 icon: 'error',
                                 showDenyButton: false,
                                 showCancelButton: false,
@@ -936,61 +937,67 @@ $(document).ready(function () {
 
 });
 var OnImportListStudent = () => {
-    swal.showLoading();
     var file = $("#studentList").get(0).files[0];
-    var formData = new FormData();
-    var availablePlace = $("#availablePlace").val();
-    var classId = $("#classId").val();
-    formData.append("file", file);
-    formData.append("classId", classId);
-    formData.append("availablePlace", availablePlace);
-    $.ajax({
-        url: "/dashboard/class/import-excel-student",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        enctype: "multipart/file",
-        beforeSend: () => {
-            $("#class_import_student_file").modal("hide");
-            var sweet_loader = `<div id="spinner-divI">
+    if(file !== undefined){
+        var formData = new FormData();
+        var availablePlace = $("#availablePlace").val();
+        var classId = $("#classId").val();
+        formData.append("file", file);
+        formData.append("classId", classId);
+        formData.append("availablePlace", availablePlace);
+        $.ajax({
+            url: "/dashboard/class/import-excel-student",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            enctype: "multipart/file",
+            beforeSend: () => {
+                $("#class_import_student_file").modal("hide");
+                var sweet_loader = `<div id="spinner-divI">
                             <div style="overflow: hidden" class="spinner-border m-0 text-primary" role="status"></div>
                         </div>`
-            Swal.fire({
-                title: 'Importing student',
-                html: sweet_loader,// add html attribute if you want or remove
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                customClass: "swal-height",
-            });
-        }, success: (response) => {
-            setTimeout(() => {
-                Swal.close();
-                toastr.success("Import student success");
-                setTimeout(()=>{
-                    location.reload();
-                },1500)
-            }, 1500);
-        }, error: (data) => {
-            if (data.responseText.toLowerCase() === "token expired") {
                 Swal.fire({
-                    title: 'End of login session please login again',
-                    showDenyButton: false,
-                    showCancelButton: false,
-                    confirmButtonText: 'Confirm',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.href = "/dashboard/login";
-                    }
+                    title: 'Importing student',
+                    html: sweet_loader,// add html attribute if you want or remove
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    customClass: "swal-height",
                 });
-            } else {
+            }, success: (response) => {
                 setTimeout(() => {
                     Swal.close();
-                    toastr.error(data.responseText);
+                    toastr.success("Import student success");
+                    setTimeout(()=>{
+                        location.reload();
+                    },1500)
                 }, 1500);
+            }, error: (data) => {
+                if (data.responseText.toLowerCase() === "token expired") {
+                    Swal.fire({
+                        title: 'End of login session please login again',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: 'Confirm',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = "/dashboard/login";
+                        }
+                    });
+                } else {
+                    setTimeout(() => {
+                        Swal.close();
+                        toastr.error(data.responseText);
+                        setTimeout(()=>{
+                            location.reload();
+                        },2000);
+                    }, 1500);
+                }
             }
-        }
-    });
+        });
+    }else{
+        toastr.error("Please choose file to import");
+    }
 }
 
 var OnUpdateDate = (id, date, slot) => {

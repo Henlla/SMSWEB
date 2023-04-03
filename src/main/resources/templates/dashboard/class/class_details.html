@@ -35,9 +35,12 @@
                                     <td>
                                         <table style="width:100%; height: 100%">
                                             <tr>
-                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Class:&nbsp;</b>
-                                                </h5></td>
-                                                <td><h5>[[${class.classCode}]]</h5></td>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Class:&nbsp;</b></h5></td>
+                                                <td><h5>[[${class.classCode}]] <span> - </span> [[${class.departmentByDepartmentId.departmentName}]]</h5></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:40%; height: 100%"><h5 class="text-bold"><b>Curriculum:&nbsp;</b></h5></td>
+                                                <td><h5>[[${class.major.majorCode}]]</h5></td>
                                             </tr>
                                         </table>
                                     </td>

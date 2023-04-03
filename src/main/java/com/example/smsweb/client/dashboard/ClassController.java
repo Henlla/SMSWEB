@@ -94,7 +94,8 @@ public class ClassController {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(CLASS_URL + "get", HttpMethod.GET, request,
                 String.class);
-        List<Classses> classList = new ObjectMapper().readValue(response.getBody(),new TypeReference<>() {});
+        List<Classses> classList = new ObjectMapper().readValue(response.getBody(), new TypeReference<>() {
+        });
         model.addAttribute("classes", classList.stream().sorted(Comparator.comparingInt(Classses::getId).reversed()).toList());
         return "dashboard/class/class_index";
     }
@@ -112,7 +113,8 @@ public class ClassController {
 
         ResponseEntity<String> teacherResponse = restTemplate.exchange(TEACHER_URL + "list", HttpMethod.GET, request,
                 String.class);
-        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<>() {});
+        List<Teacher> teacherList = new ObjectMapper().readValue(teacherResponse.getBody(), new TypeReference<>() {
+        });
 
         ResponseEntity<ResponseModel> departmentResponse
                 = restTemplate.exchange(DEPARTMENT_URL, HttpMethod.GET, request, ResponseModel.class);
@@ -1016,15 +1018,14 @@ public class ClassController {
             headers.set("Authorization", "Bearer " + _token);
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ObjectMapper objectMapper = new ObjectMapper();
-            ResponseEntity<String> response = restTemplate.exchange(
-                    STUDENT_URL + "findStudentByStudentCard/" + studentCard, HttpMethod.GET, request, String.class);
-            Student student = objectMapper.readValue(response.getBody(), new TypeReference<Student>() {
-            });
-            if (student != null) {
-                String convertToJson = objectMapper.writeValueAsString(student);
+            ResponseEntity<Student> response = restTemplate.exchange(
+                    STUDENT_URL + "findStudentCard/" + studentCard, HttpMethod.GET, request, Student.class);
+
+            if (response.getBody() != null) {
+                String convertToJson = objectMapper.writeValueAsString(response.getBody());
                 return convertToJson;
             } else {
-                throw new ErrorHandler("Student: " + studentCard + " is not existed !");
+                throw new ErrorHandler(studentCard + " is not existed !");
             }
         } catch (HttpClientErrorException ex) {
             log.error(ex.getMessage());
@@ -1431,7 +1432,8 @@ public class ClassController {
     @PostMapping("/checkTeacherChange")
     @ResponseBody
     public Object checkTeacherChange(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                     @RequestParam("card") String card, @RequestParam("shift") String shift) throws JsonProcessingException {
+                                     @RequestParam("card") String card,
+                                     @RequestParam("shift") String shift) throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
@@ -1464,23 +1466,41 @@ public class ClassController {
     @PostMapping("change_teacher")
     @ResponseBody
     public Object change_teacher(@CookieValue(name = "_token", defaultValue = "") String _token,
-                                 @RequestParam("classId") Integer classId, @RequestParam("teacherCard") String teacherCard)
+                                 @RequestParam("classId") Integer classId,
+                                 @RequestParam("teacherCard") String teacherCard)
             throws JsonProcessingException {
         try {
             JWTUtils.checkExpired(_token);
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + _token);
+
             ObjectMapper objectMapper = new ObjectMapper();
             HttpEntity<Object> request = new HttpEntity<>(headers);
             ResponseEntity<ResponseModel> response = restTemplate.exchange(CLASS_URL + "getClass/" + classId,
                     HttpMethod.GET, request, ResponseModel.class);
             String json = objectMapper.writeValueAsString(response.getBody().getData());
             Classses classses = objectMapper.readValue(json, Classses.class);
+
+
             HttpEntity<Object> requestTeacher = new HttpEntity<>(headers);
             ResponseEntity<String> responseTeacher = restTemplate.exchange(TEACHER_URL + "getByCard/" + teacherCard,
                     HttpMethod.GET, request, String.class);
             Teacher teacher = objectMapper.readValue(responseTeacher.getBody(), Teacher.class);
+
+            Schedule listSchedule = classses.getSchedulesById().get(classses.getSchedulesById().size() - 1);
+            List<ScheduleDetail> listScheduleDetail = new ArrayList<>();
+            for (ScheduleDetail scheduleDetail : listSchedule.getScheduleDetailsById()) {
+                if (LocalDate.parse(scheduleDetail.getDate()).isAfter(LocalDate.now())) {
+                    scheduleDetail.setTeacherId(teacher.getId());
+                    listScheduleDetail.add(scheduleDetail);
+                }
+            }
+            MultiValueMap<String, String> contentScheduleDetail = new LinkedMultiValueMap<>();
+            contentScheduleDetail.add("listSchedule", new ObjectMapper().writeValueAsString(listScheduleDetail));
+            HttpEntity<MultiValueMap<String, String>> requestScheduleDetail = new HttpEntity<>(contentScheduleDetail, headers);
+            ResponseEntity<ResponseModel> responseScheduleDetail = restTemplate.exchange(SCHEDULE_DETAIL_URL + "saveAll", HttpMethod.POST,requestScheduleDetail,ResponseModel.class);
+
             classses.setTeacherId(teacher.getId());
 
             String jsonClass = objectMapper.writeValueAsString(classses);
@@ -1883,9 +1903,9 @@ public class ClassController {
                 if (classsesList.size() != 0) {
                     List<Room> availableRooms = new ArrayList<>();
                     for (Room room : roomList) {
-                        if (classsesList.stream().anyMatch(clazz -> clazz.getRoomId().equals(room.getId()))){
+                        if (classsesList.stream().anyMatch(clazz -> clazz.getRoomId().equals(room.getId()))) {
                             continue;
-                        }else {
+                        } else {
                             availableRooms.add(room);
                         }
                     }
@@ -1994,7 +2014,7 @@ public class ClassController {
                 if (classesByShift.size() != 0) {
                     List<Teacher> availableTeachers = new ArrayList<>();
                     for (Teacher teacher : allTeachers) {
-                        if (!classesByShift.stream().anyMatch(s1 -> s1.getTeacherId().equals(teacher.getId()))){
+                        if (!classesByShift.stream().anyMatch(s1 -> s1.getTeacherId().equals(teacher.getId()))) {
                             availableTeachers.add(teacher);
                         }
 
@@ -2130,6 +2150,11 @@ public class ClassController {
                             String numbers = "1234567890";
                             String combinedChars = capitalCaseLetters + lowerCaseLetters + numbers;
 
+                            // Get Class by classId
+                            ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
+                            String jsonClass = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
+                            Classses classModel = new ObjectMapper().readValue(jsonClass, Classses.class);
+
                             //Select role
                             HttpHeaders headersRole = new HttpHeaders();
                             headersRole.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -2223,13 +2248,13 @@ public class ClassController {
                                                 String profileResponseToJson = new ObjectMapper().writeValueAsString(responseProfile.getBody().getData());
                                                 Profile saveProfileResponse = new ObjectMapper().readValue(profileResponseToJson, Profile.class);
 
-//                                          // Send mail
+//                                              // Send mail
                                                 Mail mail = new Mail();
                                                 mail.setToMail(parseProfile.getEmail());
                                                 mail.setSubject("Account student HKT SYSTEM");
                                                 String name = saveProfileResponse.getFirstName() + " " + saveProfileResponse.getLastName();
                                                 Map<String, Object> props = new HashMap<>();
-                                                props.put("accountName", studentCard);
+                                                props.put("accountName", studentCard.toLowerCase());
                                                 props.put("password", password);
                                                 props.put("fullname", name);
                                                 mail.setProps(props);
@@ -2246,12 +2271,7 @@ public class ClassController {
                                                 Student studentResponse = new ObjectMapper().readValue(studentResponseToJson, Student.class);
                                                 //----------------------
 
-                                                // Get Class by classId
-                                                ResponseEntity<ResponseModel> responseClass = restTemplate.exchange(CLASS_URL + "getClass/" + classId, HttpMethod.GET, request, ResponseModel.class);
-                                                String jsonClass = new ObjectMapper().writeValueAsString(responseClass.getBody().getData());
-                                                Classses classModel = new ObjectMapper().readValue(jsonClass, Classses.class);
                                                 List<StudentSubject> studentSubjectList = new ArrayList<>();
-
                                                 //Add value to studentSubjectList
                                                 for (Subject subject : classModel.getMajor().getSubjectsById()) {
                                                     MultiValueMap<String, Integer> studentSubjectContent = new LinkedMultiValueMap<>();
@@ -2313,23 +2333,30 @@ public class ClassController {
                                                 //---------
                                             } else {
                                                 ResponseEntity<Student> responseStudent = restTemplate.exchange(STUDENT_URL + "getByProfile/" + profile.getId(), HttpMethod.GET, request, Student.class);
+                                                if (responseStudent.getBody().getMajorStudentsById().get(0).getMajorByMajorId().getMajorCode().equals(course)) {
+                                                    if (responseStudent.getBody().getMajorStudentsById().get(0).getMajorId().equals(classModel.getMajorId())) {
+                                                        MultiValueMap<String, Integer> studentClassContent = new LinkedMultiValueMap<>();
+                                                        studentClassContent.add("classId", classId);
+                                                        studentClassContent.add("studentId", responseStudent.getBody().getId());
+                                                        HttpEntity<MultiValueMap<String, Integer>> studentClassRequest = new HttpEntity<>(studentClassContent, headers);
+                                                        ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "getStudentClassByClassIdAndStudentId", HttpMethod.POST, studentClassRequest, ResponseModel.class);
+                                                        String studentClassJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
+                                                        StudentClass studentClassResponse = new ObjectMapper().readValue(studentClassJson, StudentClass.class);
 
-                                                MultiValueMap<String, Integer> studentClassContent = new LinkedMultiValueMap<>();
-                                                studentClassContent.add("classId", classId);
-                                                studentClassContent.add("studentId", responseStudent.getBody().getId());
-                                                HttpEntity<MultiValueMap<String, Integer>> studentClassRequest = new HttpEntity<>(studentClassContent, headers);
-                                                ResponseEntity<ResponseModel> responseStudentClass = restTemplate.exchange(STUDENT_CLASS_URL + "getStudentClassByClassIdAndStudentId", HttpMethod.POST, studentClassRequest, ResponseModel.class);
-                                                String studentClassJson = new ObjectMapper().writeValueAsString(responseStudentClass.getBody().getData());
-                                                StudentClass studentClassResponse = new ObjectMapper().readValue(studentClassJson, StudentClass.class);
-
-                                                if (studentClassResponse == null) {
-                                                    StudentClass studentInClass = new StudentClass();
-                                                    studentInClass.setClassId(classId);
-                                                    studentInClass.setStudentId(responseStudent.getBody().getId());
-                                                    listStudentClass.add(studentInClass);
-                                                    flag = true;
+                                                        if (studentClassResponse == null) {
+                                                            StudentClass studentInClass = new StudentClass();
+                                                            studentInClass.setClassId(classId);
+                                                            studentInClass.setStudentId(responseStudent.getBody().getId());
+                                                            listStudentClass.add(studentInClass);
+                                                            flag = true;
+                                                        } else {
+                                                            return new ResponseEntity<String>("Student at row " + (rowIndex + 1) + " have in this class", HttpStatus.BAD_REQUEST);
+                                                        }
+                                                    } else {
+                                                        return new ResponseEntity<String>("Student course at row " + (rowIndex + 1) + " is not consistent this class", HttpStatus.BAD_REQUEST);
+                                                    }
                                                 } else {
-                                                    return new ResponseEntity<String>("Student at row " + (rowIndex + 1) + " have in this class", HttpStatus.BAD_REQUEST);
+                                                    return new ResponseEntity<String>("Student at row " + (rowIndex + 1) + " is wrong course", HttpStatus.BAD_REQUEST);
                                                 }
                                             }
                                         } else {

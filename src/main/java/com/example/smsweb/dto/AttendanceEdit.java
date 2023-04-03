@@ -16,4 +16,5 @@ public class AttendanceEdit {
     private Integer isPresent;
     private String avatar;
     private String student_name;
+    private String student_card;
 }
