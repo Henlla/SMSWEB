@@ -82,7 +82,7 @@ let autoFillClassCode = function (){
         var day = inputDate.getDate() < 10? "0"+inputDate.getDate(): inputDate.getDate().toString();
         var month = (inputDate.getMonth()+1) < 10? "0"+(inputDate.getMonth()+1): (inputDate.getMonth()+1).toString();
 
-        var classCode =selectShift.val()+selectDayOfWeek.val()+"."+day+month+"."+"T";
+        var classCode ="."+day+month+"."+selectShift.val()+selectDayOfWeek.val();
 
         $.ajax({
             url: "/dashboard/class/class-searchClasssesByClassCode?classCode="+classCode,
@@ -90,7 +90,7 @@ let autoFillClassCode = function (){
             success: (result) => {
                 result =JSON.parse(result);
                 for(var increaseNumber = 1;increaseNumber < 99;increaseNumber++){
-                    var temp  = classCode+increaseNumber;
+                    var temp  = "T"+increaseNumber+classCode;
                     if (result.filter( c => c == temp).length == 0){
                         $("#classCode").val(temp);
                         break;
