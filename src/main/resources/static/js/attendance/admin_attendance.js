@@ -15,7 +15,7 @@ $(() => {
         ajax: {
             url: "/dashboard/attendance/findScheduleDetailByDate",
             method: "GET",
-            delay:250,
+            delay: 250,
             data: function (params) {
                 let query = {
                     searchTerm: params.term,
@@ -72,6 +72,7 @@ $(() => {
         columns: [
             {title: "STT"},
             {title: "Avatar"},
+            {title: "Student Card"},
             {title: "Student name"},
             {title: "Present"},
             {title: "Absent"},
@@ -205,7 +206,7 @@ $(() => {
                     }
                 }
             });
-        }else{
+        } else {
             let table = $('#attendance_table').DataTable();
             table.clear().draw();
             $("#btnOnsubmit").addClass("d-none");
@@ -310,6 +311,12 @@ const DataTableEdit = (response) => {
                 render: function (data, type, row, index) {
                     html = '<img style="width: 50px;height: 50px" src="' + data + '"/>'
                     return html;
+                }
+            },
+            {
+                data: "student_card",
+                render: function (data, type, row, index) {
+                    return data;
                 }
             },
             {

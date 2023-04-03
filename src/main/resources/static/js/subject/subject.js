@@ -261,10 +261,9 @@ var DataTable = (response) => {
                 data: "id",
                 render: function (data, type, row, index) {
                     if (role === "[STAFF]") {
-                        html = ` <a onclick="OnEditSubject('${data}')" class="mr-3"><i class="fas fa-pen indigo-text"></i></a>
-                              <a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
+                        html = ` <a onclick="OnEditSubject('${data}')" class="mr-3"><i class="fas fa-pen indigo-text"></i></a>`
                     } else {
-                        html = `<a onclick="OnDeleteSubject('${data}')"><i  class="fas fa-trash red-text"></i></a>`
+                        html = `<a onclick="OnViewSubject('${data}')"><i  class="fas fa-eye indigo-text"></i></a>`
                     }
                     return html;
                 }
@@ -356,6 +355,45 @@ var OnEditSubject = (id) => {
             $("#edit_major_id").val(obj.majorId).trigger("change");
             $("#edit_apartment_code").text(code[0] + "-");
             $("#subject-edit-modal").modal("show");
+        },
+        error: (data) => {
+            if (data.responseText.toLowerCase() === "token expired") {
+                Swal.fire({
+                    title: 'End of login session please login again',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: 'Confirm',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/dashboard/login";
+                    }
+                });
+            } else {
+                toastr.error(data.responseText);
+            }
+        }
+    });
+}
+
+var OnViewSubject = (id) =>{
+    $.ajax({
+        url: "/dashboard/subject/findOne/" + id,
+        dataType: "json",
+        method: "GET",
+        success: (obj) => {
+            var formatFee = obj.fee.toLocaleString('en-US', {
+                valute: "currency"
+            });
+            var code = obj.subjectCode.split("-");
+            $("#view_id").val(obj.id);
+            $("#view_subject_code").val(code[1]);
+            $("#view_subject_name").val(obj.subjectName);
+            $("#view_fee").val(formatFee);
+            $("#view_slot").val(obj.slot);
+            $("#view_semester_id").val(obj.semesterId).trigger("change");
+            $("#view_major_id").val(obj.majorId).trigger("change");
+            $("#view_apartment_code").text(code[0] + "-");
+            $("#subject-view-modal").modal("show");
         },
         error: (data) => {
             if (data.responseText.toLowerCase() === "token expired") {

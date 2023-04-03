@@ -1,12 +1,13 @@
 package com.example.smsweb.client.dashboard;
 
+import com.example.smsweb.dto.ApplicationDto;
 import com.example.smsweb.dto.DataNotification;
 import com.example.smsweb.dto.MulticastMessageRepresentation;
 import com.example.smsweb.dto.ResponseModel;
 import com.example.smsweb.jwt.JWTUtils;
 import com.example.smsweb.models.Application;
-import com.example.smsweb.models.Devices;
 import com.example.smsweb.models.Student;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.MultipartConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -32,18 +33,40 @@ public class ApplicationController {
     private final String STUDENT_URL = "http://localhost:8080/api/students/";
     private RestTemplate restTemplate;
 
+    private List<ApplicationDto> listApplicationDto;
+
     @GetMapping("/app_index")
     public String regis_index(@CookieValue(name = "_token", defaultValue = "") String _token, Model model) {
         try {
             String isExpired = JWTUtils.isExpired(_token);
             if (!isExpired.toLowerCase().equals("token expired")) {
                 restTemplate = new RestTemplate();
+                listApplicationDto = new ArrayList<>();
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", "Bearer " + _token);
                 HttpEntity<String> request = new HttpEntity<>(headers);
+
                 ResponseEntity<ResponseModel> responseApplication = restTemplate.exchange(APPLICATION_URL + "list", HttpMethod.GET, request, ResponseModel.class);
+                List<Application> listApplication = new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(responseApplication.getBody().getData()), new TypeReference<List<Application>>() {
+                });
+                for (Application application : listApplication) {
+                    ApplicationDto applicationDto = new ApplicationDto();
+                    ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL + "get/" + application.getStudentId(), HttpMethod.GET, request, ResponseModel.class);
+                    String studentJson = new ObjectMapper().writeValueAsString(responseStudent.getBody().getData());
+                    Student student = new ObjectMapper().readValue(studentJson, Student.class);
+                    applicationDto.setFile(application.getFile());
+                    applicationDto.setId(application.getId());
+                    applicationDto.setNote(application.getNote());
+                    applicationDto.setStatus(application.getStatus());
+                    applicationDto.setResponseNote(application.getResponseNote());
+                    applicationDto.setNote(applicationDto.getNote());
+                    applicationDto.setSendDate(application.getSendDate());
+                    applicationDto.setStudentName(student.getStudentByProfile().getFirstName() + " " + student.getStudentByProfile().getLastName());
+                    applicationDto.setStudentCard(student.getStudentCard());
+                    listApplicationDto.add(applicationDto);
+                }
                 ResponseEntity<ResponseModel> responseAppType = restTemplate.exchange(APPLICATION_TYPE_URL + "list", HttpMethod.GET, request, ResponseModel.class);
-                model.addAttribute("listApplication", responseApplication.getBody().getData());
+                model.addAttribute("listApplication", listApplicationDto);
                 model.addAttribute("listAppType", responseAppType.getBody().getData());
                 return "dashboard/application/app_index";
             } else {
@@ -72,7 +95,7 @@ public class ApplicationController {
             }
         } catch (Exception e) {
             log.error("GetOne Application: " + e.getMessage());
-            return new ResponseEntity<String>("Don't find any records",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("Don't find any records", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -91,10 +114,10 @@ public class ApplicationController {
                 ResponseEntity<ResponseModel> response = restTemplate.exchange(APPLICATION_URL + "update", HttpMethod.PUT, request, ResponseModel.class);
 
                 HttpEntity<Object> requestStudent = new HttpEntity<>(headers);
-                ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL+"get/"+application.getStudentId(),HttpMethod.GET,requestStudent,ResponseModel.class);
+                ResponseEntity<ResponseModel> responseStudent = restTemplate.exchange(STUDENT_URL + "get/" + application.getStudentId(), HttpMethod.GET, requestStudent, ResponseModel.class);
                 String json = objectMapper.writeValueAsString(responseStudent.getBody().getData());
 
-                Student student = objectMapper.readValue(json,Student.class);
+                Student student = objectMapper.readValue(json, Student.class);
                 String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
                 List<String> listDeviceToken = new ArrayList<>();
                 listDeviceToken.add(tokenDevices);
@@ -117,11 +140,11 @@ public class ApplicationController {
                 ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
                 return response.getBody().getData();
             } else {
-                return new ResponseEntity<String>(isExpired,HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
             log.error("Update Application: " + e.getMessage());
-            return new ResponseEntity<String>("Update fail",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("Update fail", HttpStatus.BAD_REQUEST);
         }
     }
 }

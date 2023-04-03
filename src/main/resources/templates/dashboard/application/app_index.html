@@ -37,6 +37,8 @@
                             <thead>
                             <tr class="text-center">
                                 <td>STT</td>
+                                <td>Student Name</td>
+                                <td>Student Card</td>
                                 <td>Send Date</td>
                                 <td>Note</td>
                                 <td>Status</td>
@@ -46,6 +48,8 @@
                             <tbody>
                             <tr class="text-center" th:each="item:${listApplication}">
                                 <td>[[${listApplication.indexOf(item)+1}]]</td>
+                                <td>[[${item.studentName}]]</td>
+                                <td>[[${item.studentCard}]]</td>
                                 <td>[[${item.sendDate}]]</td>
                                 <td>[[${item.note}]]</td>
                                 <th:block th:switch="${item.status}">

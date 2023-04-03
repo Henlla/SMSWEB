@@ -2,6 +2,7 @@ $(()=>{
     $('#apartment').select2({
         theme:'bootstrap4'
     })
+
     $("#department-table").dataTable({
         pageLength: 5,
         lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']],
@@ -92,7 +93,6 @@ let OnCreateDepartment = () => {
         },
     })
     if($('#create-form').valid()){
-
         $.ajax({
             url:"/dashboard/department/create_department",
             method:"POST",

@@ -529,7 +529,6 @@ var CancelUpdateImg = () => {
 }
 
 var OnUpdateImg = () => {
-
     ConfirmImg('Change picture', 'Are you sure change picture?', 'Confirm', 'Cancel')
 }
 
@@ -654,9 +653,14 @@ const OnImportStudent = () => {
                     });
                 } else {
                     Swal.close();
+                    setTimeout(()=>{
+                        location.reload();
+                    },2000)
                     toastr.error(data.responseText);
                 }
             }
         });
+    }else{
+        toastr.error("Please to file to import");
     }
 }

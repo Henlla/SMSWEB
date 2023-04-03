@@ -103,8 +103,8 @@ public class SubjectService implements ISubject {
                             major = new Major();
                             subject = Optional.of(new Subject());
                             semester = new Semester();
-                            major = majorDao.findMajorByMajorCode(subject_major);
-                            semester = semesterDao.findBySemesterCode(subject_semester);
+                            major = majorDao.findMajorByMajorCode(subject_major.trim());
+                            semester = semesterDao.findBySemesterCode(subject_semester.trim());
                             if (major != null && semester != null) {
                                 subject = subjectDao.findSubjectBySubjectCode(major.getMajorId() + "-" + subject_code);
                                 if (subject.isEmpty()) {
@@ -113,7 +113,7 @@ public class SubjectService implements ISubject {
                                             .slot(Integer.valueOf(subject_slot)).semesterId(semester.getId()).majorId(major.getId()).build();
                                     listSubject.add(subject);
                                 } else {
-                                    status = "Row " + (rowIndex + 1) + " was had";
+                                    status = "Subject in excel at row " + (rowIndex + 1) + " is existed";
                                     break;
                                 }
                             } else {
