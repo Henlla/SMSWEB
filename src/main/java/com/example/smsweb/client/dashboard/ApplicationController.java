@@ -118,27 +118,29 @@ public class ApplicationController {
                 String json = objectMapper.writeValueAsString(responseStudent.getBody().getData());
 
                 Student student = objectMapper.readValue(json, Student.class);
-                String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
-                List<String> listDeviceToken = new ArrayList<>();
-                listDeviceToken.add(tokenDevices);
+                if(!student.getStudentByProfile().getAccountByAccountId().getAccountDevices().isEmpty()){
+                    String tokenDevices = student.getStudentByProfile().getAccountByAccountId().getAccountDevices().stream().findFirst().get().getDeviceToken();
+                    List<String> listDeviceToken = new ArrayList<>();
+                    listDeviceToken.add(tokenDevices);
 
-                MulticastMessageRepresentation message = new MulticastMessageRepresentation();
+                    MulticastMessageRepresentation message = new MulticastMessageRepresentation();
 
-                DataNotification dataNotification = new DataNotification();
-                dataNotification.setContent(application.getResponseNote());
-                dataNotification.setAction("Application");
+                    DataNotification dataNotification = new DataNotification();
+                    dataNotification.setContent(application.getResponseNote());
+                    dataNotification.setAction("Application");
 
-                String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
-                message.setTitle("Announcement");
-                message.setData(jsonData);
-                message.setRegistrationTokens(listDeviceToken);
+                    String jsonData = new ObjectMapper().writeValueAsString(dataNotification);
+                    message.setTitle("Announcement");
+                    message.setData(jsonData);
+                    message.setRegistrationTokens(listDeviceToken);
 
-                String messageJson = new ObjectMapper().writeValueAsString(message);
-                MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
-                params.add("message", messageJson);
-                HttpEntity<MultiValueMap<String, Object>> requestFCM = new HttpEntity<>(params, headers);
-                ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
-                return response.getBody().getData();
+                    String messageJson = new ObjectMapper().writeValueAsString(message);
+                    MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
+                    params.add("message", messageJson);
+                    HttpEntity<MultiValueMap<String, Object>> requestFCM = new HttpEntity<>(params, headers);
+                    ResponseEntity<String> responseFCM = restTemplate.exchange(URL_FCM + "clients", HttpMethod.POST, requestFCM, String.class);
+                }
+               return response.getBody().getData();
             } else {
                 return new ResponseEntity<String>(isExpired, HttpStatus.UNAUTHORIZED);
             }

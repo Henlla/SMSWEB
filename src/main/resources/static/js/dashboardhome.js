@@ -92,12 +92,12 @@ function getOverviewlist () {
                                 teacherCard: clazz2.teacher.teacherCard,
                                 teacherName: clazz2.teacher.profileByProfileId.firstName + " " + clazz2.teacher.profileByProfileId.lastName,
                                 subjectName: clazz2.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "12:00 - 17:30" : "12:00 - 15:00"
+                                time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "13:30 - 17:30" : "13:30 - 15:30"
                             };
                             cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
                                 <span class="col-12">${schedule2.teacherName}</span>
-                                <span class="col-12">${schedule2.subjectName}</span
+                                <span class="col-12">${schedule2.subjectName}</span>
                                 <span class="col-12">${schedule2.time}</span>
                             </div>`;
                         }else {
@@ -273,12 +273,12 @@ $(() => {
                                     teacherCard: clazz2.teacher.teacherCard,
                                     teacherName: clazz2.teacher.profileByProfileId.firstName + " " + clazz2.teacher.profileByProfileId.lastName,
                                     subjectName: clazz2.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "12:00 - 17:30" : "12:00 - 15:00"
+                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "13:30 - 17:30" : "13:30 - 15:30"
                                 };
                                 cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
                                 <span class="col-12">${schedule2.teacherName}</span>
-                                <span class="col-12">${schedule2.subjectName}</span
+                                <span class="col-12">${schedule2.subjectName}</span>
                                 <span class="col-12">${schedule2.time}</span>
                             </div>`;
                             }else {
@@ -452,12 +452,12 @@ $(() => {
                                     teacherCard: clazz2.teacher.teacherCard,
                                     teacherName: clazz2.teacher.profileByProfileId.firstName + " " + clazz2.teacher.profileByProfileId.lastName,
                                     subjectName: clazz2.schedulesById[0].scheduleDetailsById[0].subjectBySubjectId.subjectName,
-                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "12:00 - 17:30" : "12:00 - 15:00"
+                                    time: clazz2.schedulesById[0].scheduleDetailsById.length == 2 ? "13:30 - 17:30" : "13:30 - 15:30"
                                 };
                                 cell3.innerHTML = `<div class="row text-center">
                                 <span class="badge badge-secondary text-md col-12">${schedule2.classCode}</span>
                                 <span class="col-12">${schedule2.teacherName}</span>
-                                <span class="col-12">${schedule2.subjectName}</span
+                                <span class="col-12">${schedule2.subjectName}</span>
                                 <span class="col-12">${schedule2.time}</span>
                             </div>`;
                             }else {
